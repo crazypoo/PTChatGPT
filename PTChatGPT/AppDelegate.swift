@@ -18,6 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 
         let token:String = UserDefaults.standard.value(forKey: "UserToken") == nil ? "" : UserDefaults.standard.value(forKey: "UserToken") as! String
 
+        PTLocalConsoleFunction.share.pNSLog("\(token)")
         var viewC:UIViewController!
         if token.stringIsEmpty()
         {
