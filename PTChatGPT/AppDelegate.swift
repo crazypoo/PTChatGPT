@@ -7,6 +7,14 @@
 
 import UIKit
 import PooTools
+#if DEBUG
+#if canImport(FLEX)
+import FLEX
+#endif
+#if canImport(InAppViewDebugger)
+import InAppViewDebugger
+#endif
+#endif
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -32,6 +40,40 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window = UIWindow.init(frame: UIScreen.main.bounds)
         self.window?.rootViewController = nav
         self.window?.makeKeyAndVisible()
+
+        
+        let devFunction = PTDevFunction()
+        devFunction.createLabBtn()
+        devFunction.goToAppDevVC = {
+            let vc = PTDebugViewController()
+            let nav = UINavigationController(rootViewController: vc)
+            PTUtils.getCurrentVC().present(nav, animated: true)
+        }
+#if DEBUG
+        devFunction.flex = {
+            if FLEXManager.shared.isHidden
+            {
+                FLEXManager.shared.showExplorer()
+            }
+            else
+            {
+                FLEXManager.shared.hideExplorer()
+            }
+        }
+        devFunction.inApp = {
+            InAppViewDebugger.present()
+        }
+        devFunction.flexBool = { show in
+            if show
+            {
+                FLEXManager.shared.showExplorer()
+            }
+            else
+            {
+                FLEXManager.shared.hideExplorer()
+            }
+        }
+#endif
 
         return true
     }

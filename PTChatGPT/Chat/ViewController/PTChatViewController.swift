@@ -69,10 +69,9 @@ class PTChatViewController: MessagesViewController {
             }
             else
             {
-                var windows = AppDelegate.appDelegate()!.window!
+                let windows = AppDelegate.appDelegate()!.window!
                 let viewC = PTSettingViewController()
                 let nav = UINavigationController(rootViewController: viewC)
-                windows = UIWindow.init(frame: UIScreen.main.bounds)
                 windows.rootViewController = nav
                 windows.makeKeyAndVisible()
             }
@@ -319,7 +318,7 @@ extension PTChatViewController:MessagesDataSource
 extension PTChatViewController:MessageCellDelegate
 {
     func didTapAvatar(in _: MessageCollectionViewCell) {
-        print("Avatar tapped")
+        PTLocalConsoleFunction.share.pNSLog("Avatar tapped")
     }
 
     func didTapMessage(in cell: MessageCollectionViewCell) {

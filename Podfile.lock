@@ -8,7 +8,7 @@ PODS:
   - EmptyDataSet-Swift (5.0.0)
   - FDFullscreenPopGesture (1.1)
   - FLEX (5.22.10)
-  - FloatingPanel (2.6.0)
+  - FloatingPanel (2.6.1)
   - FluentDarkModeKit (1.0.4)
   - HandyJSON (5.0.2)
   - InAppViewDebugger (1.0.3)
@@ -63,9 +63,9 @@ PODS:
     - YYText
     - ZXNavigationBar
   - pop (1.0.12)
-  - SDWebImage (5.15.4):
-    - SDWebImage/Core (= 5.15.4)
-  - SDWebImage/Core (5.15.4)
+  - SDWebImage (5.15.5):
+    - SDWebImage/Core (= 5.15.5)
+  - SDWebImage/Core (5.15.5)
   - SJAttributesStringMaker (2.1.1):
     - SJAttributesStringMaker/Deprecated (= 2.1.1)
   - SJAttributesStringMaker/Deprecated (2.1.1)
@@ -167,7 +167,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   PooTools:
-    :commit: 302dd39a6e87c7fbf37f869ea7b70d7395f5cc07
+    :commit: c91f81c6d7ba560e0e73c850abd2c5fdd3e107f7
     :git: https://github.com/crazypoo/PTools.git
 
 SPEC CHECKSUMS:
@@ -178,7 +178,7 @@ SPEC CHECKSUMS:
   EmptyDataSet-Swift: eb382c0c87a2d9c678077385a595cec52da38171
   FDFullscreenPopGesture: a8a620179e3d9c40e8e00256dcee1c1a27c6d0f0
   FLEX: f21ee4f498eed3f8a1eded66b21939fd3b7a22ce
-  FloatingPanel: 2d4a82745948d9c66be1daf51a03e9e70c9d2a2a
+  FloatingPanel: de6bb891912ede28da7b1140f7b583c474fec28a
   FluentDarkModeKit: b6317653a00329564582884772ec57c4eaad1a1f
   HandyJSON: 9e4e236f5d2dbefad5155a77417bbea438201c03
   InAppViewDebugger: 5f1cd0189d348679f153502da1343ba513b5cbae
@@ -196,7 +196,7 @@ SPEC CHECKSUMS:
   NotificationBannerSwift: 437e135298d297fcb03f3eec4466f45cdb128d3d
   PooTools: f7345815d62d90fb8ad55335c60a66e6fff6e154
   pop: d582054913807fd11fd50bfe6a539d91c7e1a55a
-  SDWebImage: 1c39de67663e5eebb2f41324d5d580eeea12dd4c
+  SDWebImage: fd7e1a22f00303e058058278639bf6196ee431fe
   SJAttributesStringMaker: 8b5f54c487cc88fa26d2f540166cd43dfceca816
   SnapKit: e01d52ebb8ddbc333eefe2132acf85c8227d9c25
   SwiftDate: bbc26e26fc8c0c33fbee8c140c5e8a68293a148a
@@ -214,4 +214,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 73c2af0ac36aad4fc23d77646ca0772e57511f90
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.12.0
