@@ -25,7 +25,7 @@ private struct PTImageMediaItem: MediaItem {
     init(imageURL: URL) {
         url = imageURL
         size = CGSize(width: 240, height: 240)
-        placeholderImage = UIImage(imageLiteralResourceName: "image_message_placeholder")
+        placeholderImage = UIImage(imageLiteralResourceName: "DemoImage")
     }
 }
 

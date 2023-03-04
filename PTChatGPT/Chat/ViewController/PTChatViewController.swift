@@ -17,11 +17,19 @@ fileprivate extension String{
     static let loading = "思考中....."
 }
 
+enum PTChatCase
+{
+    case draw
+    case chat
+}
+
 class PTChatViewController: MessagesViewController {
+    
+    var chatCase:PTChatCase = .chat
     
     var editMessage:Bool = false
     var editString:String = ""
-    var openAI:OpenAISwift!// = OpenAISwift(authToken: "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")
+    var openAI:OpenAISwift!
 
     lazy var messageList:[PTMessageModel] = []
     
@@ -48,6 +56,29 @@ class PTChatViewController: MessagesViewController {
         self.configureMessageCollectionView()
         self.configureMessageInputBar()
         self.title = .navTitle
+        
+        let logout = UIButton(type: .custom)
+        logout.setTitle("退出", for: .normal)
+        logout.setTitleColor(.black, for: .normal)
+        logout.addActionHandlers { sender in
+            UserDefaults.standard.set("", forKey: uTokenKey)
+            
+            if self.presentingViewController != nil
+            {
+                self.dismiss(animated: true, completion: nil)
+            }
+            else
+            {
+                var windows = AppDelegate.appDelegate()!.window!
+                let viewC = PTSettingViewController()
+                let nav = UINavigationController(rootViewController: viewC)
+                windows = UIWindow.init(frame: UIScreen.main.bounds)
+                windows.rootViewController = nav
+                windows.makeKeyAndVisible()
+            }
+        }
+        
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: logout)
     }
     
     @objc func loadMoreMessage()
@@ -115,9 +146,9 @@ class PTChatViewController: MessagesViewController {
     // MARK: - Private properties
 
     private let formatter: DateFormatter = {
-      let formatter = DateFormatter()
-      formatter.dateStyle = .medium
-      return formatter
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        return formatter
     }()
 
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -407,9 +438,43 @@ extension PTChatViewController: MessageLabelDelegate {
 
 extension PTChatViewController: InputBarAccessoryViewDelegate
 {
+    
+    func drawImage(str:String)
+    {
+        Task{
+            do{
+                let result = try await self.openAI.getImages(with:str)
+                await MainActor.run{
+                    let imageURL = result.data.first?.url ?? URL(string: "")
+                    let message = PTMessageModel(imageURL: imageURL!, user: PTChatData.share.bot, messageId: UUID().uuidString, date: Date())
+                    self.insertMessage(message)
+
+                    PTLocalConsoleFunction.share.pNSLog(result.data.first?.url ?? "")
+                    self.title = .navTitle
+                }
+            }catch{
+                PTGCDManager.gcdMain {
+                    PTBaseViewController.gobal_drop(title: error.localizedDescription)
+                    self.title = .navTitle
+                }
+            }
+        }
+    }
+    
     // MARK: Internal
     @objc func inputBar(_: InputBarAccessoryView, didPressSendButtonWith _: String) {
-        processInputBar(messageInputBar)
+        
+        UIAlertController.base_alertVC(title: "想我做什麼",okBtns: ["聊天","畫畫"],cancelBtn: "取消") {
+            self.messageInputBar.inputTextView.text = ""
+        } moreBtn: { index, title in
+            switch index {
+            case 0:
+                self.chatCase = .chat
+            default:
+                self.chatCase = .draw
+            }
+            self.processInputBar(self.messageInputBar)
+        }
     }
 
     func processInputBar(_ inputBar: InputBarAccessoryView) {
@@ -452,37 +517,48 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
                 let message = PTMessageModel(text: str, user: user, messageId: UUID().uuidString, date: Date())
                 insertMessage(message)
                 self.title = .loading
-                if self.editMessage
-                {
-                    self.openAI.sendEdits(with: str, input: self.editString) { result in
-                        switch result {
-                        case .success(let success):
-                            let botMessage = PTMessageModel(text: success.choices.first?.text ?? "", user: PTChatData.share.bot, messageId: UUID().uuidString, date: Date())
-                            self.insertMessage(botMessage)
-                            PTGCDManager.gcdMain {
-                                self.editString = ""
-                                self.editMessage = false
-                                self.title = .navTitle
+                switch self.chatCase {
+                case .chat:
+                    if self.editMessage
+                    {
+                        self.openAI.sendEdits(with: str, input: self.editString) { result in
+                            switch result {
+                            case .success(let success):
+                                let botMessage = PTMessageModel(text: success.choices.first?.text ?? "", user: PTChatData.share.bot, messageId: UUID().uuidString, date: Date())
+                                self.insertMessage(botMessage)
+                                PTGCDManager.gcdMain {
+                                    self.editString = ""
+                                    self.editMessage = false
+                                    self.title = .navTitle
+                                }
+                            case .failure(let failure):
+                                PTGCDManager.gcdMain {
+                                    self.title = .navTitle
+                                    PTBaseViewController.gobal_drop(title: failure.localizedDescription)
+                                }
                             }
-                        case .failure(let failure):
-                            PTBaseViewController.gobal_drop(title: failure.localizedDescription)
                         }
                     }
-                }
-                else
-                {
-                    self.openAI.sendCompletion(with: str,maxTokens: 2048) { result in
-                        switch result {
-                        case .success(let success):
-                            let botMessage = PTMessageModel(text: success.choices.first?.text ?? "", user: PTChatData.share.bot, messageId: UUID().uuidString, date: Date())
-                            self.insertMessage(botMessage)
-                            PTGCDManager.gcdMain {
-                                self.title = .navTitle
+                    else
+                    {
+                        self.openAI.sendCompletion(with: str,maxTokens: 2048) { result in
+                            switch result {
+                            case .success(let success):
+                                let botMessage = PTMessageModel(text: success.choices.first?.text ?? "", user: PTChatData.share.bot, messageId: UUID().uuidString, date: Date())
+                                self.insertMessage(botMessage)
+                                PTGCDManager.gcdMain {
+                                    self.title = .navTitle
+                                }
+                            case .failure(let failure):
+                                PTGCDManager.gcdMain {
+                                    self.title = .navTitle
+                                    PTBaseViewController.gobal_drop(title: failure.localizedDescription)
+                                }
                             }
-                        case .failure(let failure):
-                            PTBaseViewController.gobal_drop(title: failure.localizedDescription)
                         }
                     }
+                default:
+                    self.drawImage(str: str)
                 }
             } else if let img = component as? UIImage {
                 let message = PTMessageModel(image: img, user: user, messageId: UUID().uuidString, date: Date())

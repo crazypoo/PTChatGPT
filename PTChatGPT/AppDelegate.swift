@@ -16,7 +16,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
                 
-        let token:String = UserDefaults.standard.value(forKey: "UserToken") == nil ? "" : UserDefaults.standard.value(forKey: "UserToken") as! String
+        let token:String = UserDefaults.standard.value(forKey: uTokenKey) == nil ? "" : UserDefaults.standard.value(forKey: uTokenKey) as! String
 
         PTLocalConsoleFunction.share.pNSLog("\(token)")
         var viewC:UIViewController!
@@ -34,6 +34,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window?.makeKeyAndVisible()
 
         return true
+    }
+    
+    @objc class func appDelegate() -> AppDelegate? {
+        UIApplication.shared.delegate as? AppDelegate
     }
 }
 

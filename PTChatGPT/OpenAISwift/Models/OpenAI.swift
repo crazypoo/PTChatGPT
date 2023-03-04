@@ -16,3 +16,13 @@ public struct OpenAI: Codable {
 public struct Choice: Codable {
     public let text: String
 }
+
+public struct OpenAIImageGeneration:Codable
+{
+    struct ImageResponse:Codable
+    {
+        let url:URL
+    }
+    let created:Int
+    let data:[ImageResponse]
+}

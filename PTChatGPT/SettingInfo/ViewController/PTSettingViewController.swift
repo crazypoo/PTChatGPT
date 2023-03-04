@@ -10,6 +10,8 @@ import PooTools
 import SnapKit
 import SwifterSwift
 
+let uTokenKey = "UserToken"
+
 class PTSettingViewController: PTBaseViewController {
 
     lazy var token:UITextField = {
@@ -49,7 +51,7 @@ extension PTSettingViewController:UITextFieldDelegate
             nav.modalPresentationStyle = .fullScreen
             self.navigationController?.present(nav, animated: true)
             
-            UserDefaults.standard.set(textField.text, forKey: "UserToken")
+            UserDefaults.standard.set(textField.text, forKey: uTokenKey)
         }
         return true
     }

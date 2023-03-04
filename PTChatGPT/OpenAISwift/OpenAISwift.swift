@@ -79,6 +79,30 @@ extension OpenAISwift {
         }
     }
     
+    public func getImages(with prompt:String) async throws -> OpenAIImageGeneration
+    {
+        let endpoint = Endpoint.generateImage
+        let parameters: [String: Any] = [
+            "prompt" : prompt,
+            "n" : 1,
+            "size" : "1024x1024",
+            "user" : UUID().uuidString
+        ]
+        
+        var urlComponents = URLComponents(url: URL(string: endpoint.baseURL())!, resolvingAgainstBaseURL: true)
+        urlComponents?.path = endpoint.path
+
+        let data: Data = try JSONSerialization.data(withJSONObject: parameters)
+        var request = URLRequest(url: urlComponents!.url!)
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer \(self.token!)", forHTTPHeaderField: "Authorization")
+        request.httpMethod = "POST"
+        request.httpBody = data
+        let (response, _) = try await URLSession.shared.data(for: request)
+        let result = try JSONDecoder().decode(OpenAIImageGeneration.self, from: response)
+        return result
+    }
+    
     private func makeRequest(request: URLRequest, completionHandler: @escaping (Result<Data, Error>) -> Void) {
         let session = URLSession.shared
         let task = session.dataTask(with: request) { (data, response, error) in
