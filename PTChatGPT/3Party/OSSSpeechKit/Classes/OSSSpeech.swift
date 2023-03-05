@@ -25,6 +25,7 @@
 import Speech
 import Foundation
 import AVFoundation
+import SwiftDate
 
 typealias AudioCompletionHandler = (_ success: Bool) -> Void
 
@@ -566,7 +567,7 @@ public class OSSSpeech: NSObject {
     
     func readyToRecord()
     {
-        self.audioFileURL = getDocumentsDirectory().appendingPathComponent("recording.m4a")
+        self.audioFileURL = getDocumentsDirectory().appendingPathComponent("\(Date().toString())UserVoice.m4a")
 
         let audioSettings = [
                     AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
