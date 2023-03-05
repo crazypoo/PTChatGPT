@@ -632,7 +632,7 @@ extension OSSSpeech:AVAudioRecorderDelegate
         if flag
         {
             self.audioRecorder?.stop()
-            print("Audio file path:")
+            print("Audio file save")
         }
     }
 }
