@@ -9,6 +9,6 @@ Se puede usar ir al sitio web oficial de la API de openai para solicitar un toke
 
 現在支持ChatGPT和DallE
 
-Now support ChatGPT & DallE
+Now support ChatGPT & DallE & Speech input
 
-Ahora soporte ChatGPT y DallE
+Ahora soporte ChatGPT y DallE y Speech input
