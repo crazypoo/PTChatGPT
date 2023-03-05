@@ -11,6 +11,7 @@ import InputBarAccessoryView
 import PooTools
 import MapKit
 import SDWebImage
+import AVFAudio
 
 fileprivate extension String{
     static let navTitle = "ChatGPT"
@@ -27,21 +28,32 @@ class PTChatViewController: MessagesViewController {
     
     var chatCase:PTChatCase = .chat
     
+    lazy var audioPlayer = PTAudioPlayer(messageCollectionView: messagesCollectionView)
+
     var editMessage:Bool = false
     var editString:String = ""
     var openAI:OpenAISwift!
-
     lazy var messageList:[PTMessageModel] = []
+    let speechKit = OSSSpeech.shared
+    
+    lazy var microphoneButton:UIBarButtonItem = {
+        var micImage = UIImage(systemName: "mic.fill")?.withRenderingMode(.alwaysTemplate)
+        let button = UIBarButtonItem(image: micImage, style: .plain, target: self, action: #selector(recordVoice))
+        button.tintColor = .label
+        button.accessibilityIdentifier = "MicButton"
+        return button
+    }()
     
     private(set) lazy var refreshControl:UIRefreshControl = {
         let control = UIRefreshControl()
         control.addTarget(self, action: #selector(loadMoreMessage), for: .valueChanged)
         return control
     }()
-        
     
-    init(token:String) {
+    init(token:String,language:OSSVoiceEnum) {
         super.init(nibName: nil, bundle: nil)
+        speechKit.voice = OSSVoice(quality: .enhanced, language: language)
+        speechKit.utterance?.rate = 0.45
         self.openAI = OpenAISwift(authToken: token)
     }
     
@@ -56,6 +68,7 @@ class PTChatViewController: MessagesViewController {
         self.configureMessageCollectionView()
         self.configureMessageInputBar()
         self.title = .navTitle
+        self.speechKit.delegate = self
         
         let logout = UIButton(type: .custom)
         logout.setTitle("退出", for: .normal)
@@ -78,6 +91,7 @@ class PTChatViewController: MessagesViewController {
         }
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: logout)
+        self.navigationItem.leftBarButtonItem = self.microphoneButton
     }
     
     @objc func loadMoreMessage()
@@ -156,6 +170,56 @@ class PTChatViewController: MessagesViewController {
             self.messageInputBar.inputTextView.resignFirstResponder()
         }
     }
+    
+    @objc func recordVoice()
+    {
+        self.shouldStartRecordingVoice(recording: self.microphoneButton.tintColor != .red)
+    }
+    
+    func shouldStartRecordingVoice(recording:Bool)
+    {
+        self.updateMicButtonColor(forState: recording)
+        if !recording
+        {
+            self.speechKit.endVoiceRecording()
+            return
+        }
+        self.speechKit.recordVoice()
+    }
+    
+    func updateMicButtonColor(forState isRecording:Bool)
+    {
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            self.microphoneButton.tintColor = isRecording ? .red : .label
+        }
+    }
+    
+    func sendVoiceMessage(text:String)
+    {
+        self.title = .loading
+        switch self.chatCase {
+        case .chat:
+            self.openAI.sendEdits(with: text, input: self.editString) { result in
+                switch result {
+                case .success(let success):
+                    let botMessage = PTMessageModel(text: success.choices.first?.text ?? "", user: PTChatData.share.bot, messageId: UUID().uuidString, date: Date())
+                    self.insertMessage(botMessage)
+                    PTGCDManager.gcdMain {
+                        self.title = .navTitle
+                    }
+                case .failure(let failure):
+                    PTGCDManager.gcdMain {
+                        self.title = .navTitle
+                        PTBaseViewController.gobal_drop(title: failure.localizedDescription)
+                    }
+                }
+            }
+        default:
+            self.drawImage(str: text)
+        }
+    }
+
 }
 
 // MARK: - MessagesDisplayDelegate
@@ -235,9 +299,8 @@ extension PTChatViewController: MessagesDisplayDelegate {
     }
     
     func configureAudioCell(_ cell: AudioMessageCell, message: MessageType) {
-//        audioController.configureAudioCell(cell, message: message) // this is needed especially when the cell is reconfigure while is playing sound
+        self.audioPlayer.configureAudioCell(cell, message: message)
     }
-
 }
 
 
@@ -355,32 +418,33 @@ extension PTChatViewController:MessageCellDelegate
         PTLocalConsoleFunction.share.pNSLog("Bottom label tapped")
     }
 
-//    func didTapPlayButton(in cell: AudioMessageCell) {
-//      guard
-//        let indexPath = messagesCollectionView.indexPath(for: cell),
-//        let message = messagesCollectionView.messagesDataSource?.messageForItem(at: indexPath, in: messagesCollectionView)
-//      else {
-//        print("Failed to identify message when audio cell receive tap gesture")
-//        return
-//      }
-//      guard audioController.state != .stopped else {
-//        // There is no audio sound playing - prepare to start playing for given audio message
-//        audioController.playSound(for: message, in: cell)
-//        return
-//      }
-//      if audioController.playingMessage?.messageId == message.messageId {
-//        // tap occur in the current cell that is playing audio sound
-//        if audioController.state == .playing {
-//          audioController.pauseSound(for: message, in: cell)
-//        } else {
-//          audioController.resumeSound()
-//        }
-//      } else {
-//        // tap occur in a difference cell that the one is currently playing sound. First stop currently playing and start the sound for given message
-//        audioController.stopAnyOngoingPlaying()
-//        audioController.playSound(for: message, in: cell)
-//      }
-//    }
+    func didTapPlayButton(in cell: AudioMessageCell) {
+        guard
+            let indexPath = messagesCollectionView.indexPath(for: cell),
+            let message = messagesCollectionView.messagesDataSource?.messageForItem(at: indexPath, in: messagesCollectionView)
+        else {
+            PTLocalConsoleFunction.share.pNSLog("Failed to identify message when audio cell receive tap gesture")
+            return
+        }
+        guard audioPlayer.state != .stopped else {
+            self.audioPlayer.playSound(for: message, in: cell)
+            return
+        }
+        if self.audioPlayer.playingMessage?.messageId == message.messageId {
+            if self.audioPlayer.state == .playing {
+                self.audioPlayer.pauseSound(for: message, in: cell)
+            }
+            else
+            {
+                self.audioPlayer.resumeSound()
+            }
+        }
+        else
+        {
+            self.audioPlayer.stopAnyOngoingPlaying()
+            self.audioPlayer.playSound(for: message, in: cell)
+        }
+    }
 
     func didStartAudio(in _: AudioMessageCell) {
         PTLocalConsoleFunction.share.pNSLog("Did start playing audio sound")
@@ -563,6 +627,46 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
                 let message = PTMessageModel(image: img, user: user, messageId: UUID().uuidString, date: Date())
                 insertMessage(message)
             }
+        }
+    }
+}
+
+extension PTChatViewController:OSSSpeechDelegate
+{
+    func didFinishListening(withText text: String) {
+    }
+    
+    func authorizationToMicrophone(withAuthentication type: OSSSpeechKitAuthorizationStatus) {
+        
+    }
+    
+    func didFailToCommenceSpeechRecording() {
+        
+    }
+    
+    func didCompleteTranslation(withText text: String) {
+        
+    }
+    
+    func didFailToProcessRequest(withError error: Error?) {
+        
+    }
+    
+    func didFinishListening(withAudioFileURL url: URL, withText text: String) {
+        PTLocalConsoleFunction.share.pNSLog("url:\(url) \ntext:\(text)")
+        let voiceMessage = PTMessageModel(audioURL: URL(fileURLWithPath: url.absoluteString.replacingOccurrences(of: "file://", with: "")), user: PTChatData.share.user, messageId: UUID().uuidString, date: Date())
+        self.insertMessage(voiceMessage)
+        
+        UIAlertController.base_alertVC(title: "想我做什麼",okBtns: ["聊天","畫畫"],cancelBtn: "取消") {
+        } moreBtn: { index, title in
+            switch index {
+            case 0:
+                self.chatCase = .chat
+            default:
+                self.chatCase = .draw
+            }
+            self.sendVoiceMessage(text: text)
+            self.messagesCollectionView.scrollToLastItem(animated: true)
         }
     }
 }

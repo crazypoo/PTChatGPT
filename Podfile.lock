@@ -1,5 +1,17 @@
 PODS:
   - Alamofire (5.6.4)
+  - BRPickerView (2.8.0):
+    - BRPickerView/AddressPickerView (= 2.8.0)
+    - BRPickerView/Base (= 2.8.0)
+    - BRPickerView/DatePickerView (= 2.8.0)
+    - BRPickerView/StringPickerView (= 2.8.0)
+  - BRPickerView/AddressPickerView (2.8.0):
+    - BRPickerView/Base
+  - BRPickerView/Base (2.8.0)
+  - BRPickerView/DatePickerView (2.8.0):
+    - BRPickerView/Base
+  - BRPickerView/StringPickerView (2.8.0):
+    - BRPickerView/Base
   - CocoaLumberjack/Core (3.8.0)
   - CocoaLumberjack/Swift (3.8.0):
     - CocoaLumberjack/Core
@@ -62,6 +74,9 @@ PODS:
     - YYCategories
     - YYText
     - ZXNavigationBar
+  - PooTools/Picker (3.0.8):
+    - BRPickerView
+    - PooTools/Core
   - pop (1.0.12)
   - SDWebImage (5.15.5):
     - SDWebImage/Core (= 5.15.5)
@@ -116,12 +131,14 @@ DEPENDENCIES:
   - LookinServer
   - MessageKit
   - PooTools/Core (from `https://github.com/crazypoo/PTools.git`)
+  - PooTools/Picker (from `https://github.com/crazypoo/PTools.git`)
   - SwiftLint
   - Swinject
 
 SPEC REPOS:
   trunk:
     - Alamofire
+    - BRPickerView
     - CocoaLumberjack
     - DeviceKit
     - DZNEmptyDataSet
@@ -172,6 +189,7 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   Alamofire: 4e95d97098eacb88856099c4fc79b526a299e48c
+  BRPickerView: a0ff460bf092bc069db5a54153395b1f7e8f5300
   CocoaLumberjack: 78abfb691154e2a9df8ded4350d504ee19d90732
   DeviceKit: 0fd016a2cb67aca17c33dc23171cac270131eb88
   DZNEmptyDataSet: 9525833b9e68ac21c30253e1d3d7076cc828eaa7
@@ -212,6 +230,6 @@ SPEC CHECKSUMS:
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
   ZXNavigationBar: a8ceb13fe37f9ca894cf6ae22d805cbdbb9ad6b1
 
-PODFILE CHECKSUM: 73c2af0ac36aad4fc23d77646ca0772e57511f90
+PODFILE CHECKSUM: b225044338949d706c99934110c028646c74ad1e
 
 COCOAPODS: 1.12.0

@@ -15,16 +15,22 @@ import FLEX
 import InAppViewDebugger
 #endif
 #endif
+//import YCSymbolTracker
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    var devFunction:PTDevFunction = PTDevFunction()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
                 
+//        let filePath = NSTemporaryDirectory().appending("/demo.order")
+//        YCSymbolTracker.exportSymbols(filePath: filePath)
+        
         let token:String = UserDefaults.standard.value(forKey: uTokenKey) == nil ? "" : UserDefaults.standard.value(forKey: uTokenKey) as! String
+        let language:OSSVoiceEnum = UserDefaults.standard.value(forKey: uLanguageKey) == nil ? .ChineseSimplified : UserDefaults.standard.value(forKey: uLanguageKey) as! OSSVoiceEnum
 
         PTLocalConsoleFunction.share.pNSLog("\(token)")
         var viewC:UIViewController!
@@ -34,23 +40,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         else
         {
-            viewC = PTChatViewController(token: token)
+            viewC = PTChatViewController(token: token,language: language)
         }
         let nav = UINavigationController(rootViewController: viewC)
         self.window = UIWindow.init(frame: UIScreen.main.bounds)
         self.window?.rootViewController = nav
         self.window?.makeKeyAndVisible()
 
-        
-        let devFunction = PTDevFunction()
-        devFunction.createLabBtn()
-        devFunction.goToAppDevVC = {
+        self.devFunction.createLabBtn()
+        self.devFunction.goToAppDevVC = {
             let vc = PTDebugViewController()
             let nav = UINavigationController(rootViewController: vc)
             PTUtils.getCurrentVC().present(nav, animated: true)
         }
 #if DEBUG
-        devFunction.flex = {
+        self.devFunction.flex = {
             if FLEXManager.shared.isHidden
             {
                 FLEXManager.shared.showExplorer()
@@ -60,10 +64,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 FLEXManager.shared.hideExplorer()
             }
         }
-        devFunction.inApp = {
+        self.devFunction.inApp = {
             InAppViewDebugger.present()
         }
-        devFunction.flexBool = { show in
+        self.devFunction.flexBool = { show in
             if show
             {
                 FLEXManager.shared.showExplorer()

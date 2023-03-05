@@ -10,6 +10,8 @@ post_install do |installer|
             target.build_configurations.each do |config|
                 config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
       end
+#  require './Pods/YCSymbolTracker/YCSymbolTracker/symbol_tracker.rb'
+#  symbol_tracker(installer)
   end
 end
 
@@ -20,9 +22,12 @@ target 'PTChatGPT' do
   pod 'LifetimeTracker', :configurations => ['Debug']
 
   pod 'PooTools/Core', :git => 'https://github.com/crazypoo/PTools.git'
+  pod 'PooTools/Picker', :git => 'https://github.com/crazypoo/PTools.git'
+  
   pod 'MessageKit'
 
   pod 'SwiftLint'
   pod 'Swinject'
+#  pod 'YCSymbolTracker'
   
 end
