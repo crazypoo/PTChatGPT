@@ -15,6 +15,8 @@
 		5512AB7629B43D520059D840 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5512AB6E29B43D520059D840 /* Localizable.strings */; };
 		5512AB7729B43D520059D840 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5512AB6F29B43D520059D840 /* Images.xcassets */; };
 		5512AB7C29B470310059D840 /* PTAudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5512AB7B29B470310059D840 /* PTAudioPlayer.swift */; };
+		5514B37129B9CBFD00890161 /* PTChatCustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B37029B9CBFD00890161 /* PTChatCustomCell.swift */; };
+		5514B37429B9D50D00890161 /* PTChatModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B37329B9D50D00890161 /* PTChatModel.swift */; };
 		55A5D71829B1D23D00DCA096 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A5D71729B1D23D00DCA096 /* AppDelegate.swift */; };
 		55A5D71F29B1D23D00DCA096 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 55A5D71D29B1D23D00DCA096 /* Main.storyboard */; };
 		55A5D72129B1D23E00DCA096 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55A5D72029B1D23E00DCA096 /* Assets.xcassets */; };
@@ -43,6 +45,8 @@
 		5512AB6E29B43D520059D840 /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		5512AB6F29B43D520059D840 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		5512AB7B29B470310059D840 /* PTAudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTAudioPlayer.swift; sourceTree = "<group>"; };
+		5514B37029B9CBFD00890161 /* PTChatCustomCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTChatCustomCell.swift; sourceTree = "<group>"; };
+		5514B37329B9D50D00890161 /* PTChatModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTChatModel.swift; sourceTree = "<group>"; };
 		55A5D71429B1D23D00DCA096 /* PTChatGPT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PTChatGPT.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		55A5D71729B1D23D00DCA096 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		55A5D71E29B1D23D00DCA096 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -130,6 +134,22 @@
 			path = Function;
 			sourceTree = "<group>";
 		};
+		5514B36F29B9CBDD00890161 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				5514B37029B9CBFD00890161 /* PTChatCustomCell.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		5514B37229B9D4E600890161 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				5514B37329B9D50D00890161 /* PTChatModel.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		55A5D70B29B1D23D00DCA096 = {
 			isa = PBXGroup;
 			children = (
@@ -189,6 +209,8 @@
 		55A5D7F429B1DFCD00DCA096 /* Chat */ = {
 			isa = PBXGroup;
 			children = (
+				5514B37229B9D4E600890161 /* Models */,
+				5514B36F29B9CBDD00890161 /* Views */,
 				5512AB7A29B470160059D840 /* Function */,
 				55A5D7F529B1DFD500DCA096 /* ViewController */,
 			);
@@ -371,7 +393,9 @@
 				55A5D7F229B1D9A900DCA096 /* OpenAIEndpoint.swift in Sources */,
 				55A5D7F129B1D9A900DCA096 /* Command.swift in Sources */,
 				5512AB7C29B470310059D840 /* PTAudioPlayer.swift in Sources */,
+				5514B37429B9D50D00890161 /* PTChatModel.swift in Sources */,
 				55A5D80129B1F29800DCA096 /* PTMessageModel.swift in Sources */,
+				5514B37129B9CBFD00890161 /* PTChatCustomCell.swift in Sources */,
 				55A5D7EE29B1D9A900DCA096 /* OpenAIModelType.swift in Sources */,
 				5512AB7329B43D520059D840 /* OSSVoice.swift in Sources */,
 				55A5D7FC29B1E41400DCA096 /* PTChatUser.swift in Sources */,

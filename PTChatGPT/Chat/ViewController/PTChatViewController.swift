@@ -13,6 +13,10 @@ import MapKit
 import SDWebImage
 import AVFAudio
 
+//https://platform.openai.com/account/api-keys
+let uChatHistory = "ChatHistory"
+let kSeparator = "[,]"
+
 fileprivate extension String{
     static let navTitle = "ChatGPT"
     static let loading = "思考中....."
@@ -35,21 +39,84 @@ class PTChatViewController: MessagesViewController {
     var openAI:OpenAISwift!
     lazy var messageList:[PTMessageModel] = []
     let speechKit = OSSSpeech.shared
-    
-    lazy var microphoneButton:UIBarButtonItem = {
-        var micImage = UIImage(systemName: "mic.fill")?.withRenderingMode(.alwaysTemplate)
-        let button = UIBarButtonItem(image: micImage, style: .plain, target: self, action: #selector(recordVoice))
-        button.tintColor = .label
-        button.accessibilityIdentifier = "MicButton"
-        return button
-    }()
-    
+        
     private(set) lazy var refreshControl:UIRefreshControl = {
         let control = UIRefreshControl()
         control.addTarget(self, action: #selector(loadMoreMessage), for: .valueChanged)
         return control
     }()
     
+    lazy var sendTypeButton:UIButton = {
+        let view = UIButton(type: .custom)
+        view.isSelected = false
+        view.setImage(UIImage(systemName: "character.bubble.fill")?.withTintColor(.black, renderingMode: .automatic), for: .normal)
+        view.setImage(UIImage(systemName: "paintbrush.fill")?.withTintColor(.black, renderingMode: .automatic), for: .selected)
+        view.addActionHandlers { sender in
+            sender.isSelected = !sender.isSelected
+            if sender.isSelected
+            {
+                self.chatCase = .draw
+            }
+            else
+            {
+                self.chatCase = .chat
+            }
+        }
+        return view
+    }()
+    
+    lazy var tapVoiceSaveString = ""
+    var isRecording:Bool = false
+    var isSendVoice:Bool = false
+    
+    lazy var voiceButton:UIButton = {
+        let view = UIButton(type: .custom)
+        view.backgroundColor = .white
+        view.addTarget(self, action: #selector(self.recordButtonPressed), for: .touchDown)
+        view.addTarget(self, action: #selector(self.recordButtonReleased), for: .touchUpInside)
+        view.addTarget(self, action: #selector(self.recordButtonReleased), for: .touchUpOutside)
+        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPress(_:)))
+        longPressRecognizer.minimumPressDuration = 0.3
+        view.addGestureRecognizer(longPressRecognizer)
+        view.viewCorner(radius: 5, borderWidth: 1, borderColor: .black)
+        view.setTitle("長按開始錄音", for: .normal)
+        view.setTitleColor(.black, for: .normal)
+        return view
+    }()
+    
+    lazy var voiceTypeButton:UIButton = {
+        let view = UIButton(type: .custom)
+        view.isSelected = false
+        view.setImage(UIImage(systemName: "mic")?.withTintColor(.black, renderingMode: .automatic), for: .normal)
+        view.setImage(UIImage(systemName: "mic.fill")?.withTintColor(.black, renderingMode: .automatic), for: .selected)
+        view.addActionHandlers { sender in
+            sender.isSelected = !sender.isSelected
+            if sender.isSelected
+            {
+                if !self.messageInputBar.inputTextView.text.stringIsEmpty()
+                {
+                    self.tapVoiceSaveString = self.messageInputBar.inputTextView.text
+                    self.messageInputBar.inputTextView.text = ""
+                }
+                self.messageInputBar.addSubview(self.voiceButton)
+                self.voiceButton.snp.makeConstraints { make in
+                    make.left.right.equalTo(self.messageInputBar.inputTextView)
+                    make.height.bottom.equalTo(self.voiceTypeButton)
+                }
+            }
+            else
+            {
+                if !self.tapVoiceSaveString.stringIsEmpty()
+                {
+                    self.messageInputBar.inputTextView.text = self.tapVoiceSaveString
+                }
+                self.tapVoiceSaveString = ""
+                self.voiceButton.removeFromSuperview()
+            }
+        }
+        return view
+    }()
+
     init(token:String,language:OSSVoiceEnum) {
         super.init(nibName: nil, bundle: nil)
         speechKit.voice = OSSVoice(quality: .enhanced, language: language)
@@ -89,9 +156,40 @@ class PTChatViewController: MessagesViewController {
                 windows.makeKeyAndVisible()
             }
         }
-        
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: logout)
-        self.navigationItem.leftBarButtonItem = self.microphoneButton
+        
+        if let userHistoryModelString :String = UserDefaults.standard.value(forKey: uChatHistory) as? String
+        {
+            if !userHistoryModelString.stringIsEmpty()
+            {
+                let userModelsStringArr = userHistoryModelString.components(separatedBy: kSeparator)
+                userModelsStringArr.enumerated().forEach { index,value in
+                    let models = PTChatModel.deserialize(from: value)
+                    
+                    let questionModel:PTMessageModel
+                    switch models!.questionType {
+                    case 0:
+                        print(String(describing: models!.questionDate))
+                        questionModel = PTMessageModel(text: models!.question, user: PTChatData.share.user, messageId: UUID().uuidString, date: models!.questionDate.toDate()!.date)
+                    default:
+                        let voiceURL = URL(fileURLWithPath: models!.questionVoiceURL)
+                        questionModel = PTMessageModel(audioURL: voiceURL, user: PTChatData.share.user, messageId: UUID().uuidString, date: models!.questionDate.toDate()!.date)
+                    }
+//                    self.insertMessage(questionModel)
+                    self.messageList.append(questionModel)
+                    let answerModel:PTMessageModel
+                    switch models!.answerType {
+                    case 0:
+                        answerModel = PTMessageModel(text: models!.answer, user: PTChatData.share.bot, messageId: UUID().uuidString, date: models!.answerDate.toDate()!.date)
+                    default:
+                        answerModel = PTMessageModel(imageURL: URL(string: models!.answerImageURL)!, user: PTChatData.share.bot, messageId: UUID().uuidString, date: models!.answerDate.toDate()!.date)
+                    }
+//                    self.insertMessage(answerModel)
+                    self.messageList.append(answerModel)
+                    self.messagesCollectionView.reloadData()
+                }
+            }
+        }
     }
     
     @objc func loadMoreMessage()
@@ -105,6 +203,7 @@ class PTChatViewController: MessagesViewController {
     }
     
     func configureMessageCollectionView() {
+        messagesCollectionView.register(PTChatCustomCell.self)
         messagesCollectionView.messagesDataSource = self
         messagesCollectionView.messageCellDelegate = self
 
@@ -114,7 +213,7 @@ class PTChatViewController: MessagesViewController {
         messagesCollectionView.refreshControl = refreshControl
         messagesCollectionView.messagesLayoutDelegate = self
         messagesCollectionView.messagesDisplayDelegate = self
-
+        messagesCollectionView.contentInsetAdjustmentBehavior = .automatic
     }
     
     func configureMessageInputBar() {
@@ -124,6 +223,29 @@ class PTChatViewController: MessagesViewController {
         messageInputBar.sendButton.setTitleColor(
             UIColor.black.withAlphaComponent(0.3),
             for: .highlighted)
+        messageInputBar.sendButton.snp.makeConstraints { make in
+            make.right.equalToSuperview().inset(PTAppBaseConfig.share.defaultViewSpace)
+            make.bottom.equalToSuperview().inset(CGFloat.kTabbarSaveAreaHeight + 10)
+            make.width.equalTo(messageInputBar.sendButton.sizeFor(size: CGSize(width: CGFloat(MAXFLOAT), height: 44)).width + 10)
+        }
+        
+        messageInputBar.addSubviews([self.voiceTypeButton,self.sendTypeButton])
+        self.sendTypeButton.snp.makeConstraints { make in
+            make.right.equalTo(messageInputBar.sendButton.snp.left).offset(-10)
+            make.bottom.equalTo(messageInputBar.sendButton)
+            make.width.height.equalTo(34)
+        }
+        
+        self.voiceTypeButton.snp.makeConstraints { make in
+            make.left.equalToSuperview().inset(PTAppBaseConfig.share.defaultViewSpace)
+            make.bottom.size.equalTo(self.sendTypeButton)
+        }
+        
+        messageInputBar.inputTextView.snp.makeConstraints { make in
+            make.top.bottom.equalToSuperview()
+            make.right.equalTo(self.sendTypeButton.snp.left).offset(-10)
+            make.left.equalTo(self.voiceTypeButton.snp.right).offset(10)
+        }
     }
     
     // MARK: - Helpers
@@ -170,32 +292,8 @@ class PTChatViewController: MessagesViewController {
             self.messageInputBar.inputTextView.resignFirstResponder()
         }
     }
-    
-    @objc func recordVoice()
-    {
-        self.shouldStartRecordingVoice(recording: self.microphoneButton.tintColor != .red)
-    }
-    
-    func shouldStartRecordingVoice(recording:Bool)
-    {
-        self.updateMicButtonColor(forState: recording)
-        if !recording
-        {
-            self.speechKit.endVoiceRecording()
-            return
-        }
-        self.speechKit.recordVoice()
-    }
-    
-    func updateMicButtonColor(forState isRecording:Bool)
-    {
-        DispatchQueue.main.async { [weak self] in
-            guard let self else { return }
-            self.microphoneButton.tintColor = isRecording ? .red : .label
-        }
-    }
-    
-    func sendVoiceMessage(text:String)
+        
+    func sendVoiceMessage(text:String,saveModel:PTChatModel)
     {
         self.title = .loading
         switch self.chatCase {
@@ -203,11 +301,18 @@ class PTChatViewController: MessagesViewController {
             self.openAI.sendEdits(with: text, input: self.editString) { result in
                 switch result {
                 case .success(let success):
-                    let botMessage = PTMessageModel(text: success.choices.first?.text ?? "", user: PTChatData.share.bot, messageId: UUID().uuidString, date: Date())
+                    let date = Date()
+                    saveModel.answerDate = self.dateFormatter(date: date)
+                    saveModel.answerType = 0
+                    saveModel.answer = success.choices.first?.text ?? ""
+
+                    let botMessage = PTMessageModel(text: success.choices.first?.text ?? "", user: PTChatData.share.bot, messageId: UUID().uuidString, date: date)
                     self.insertMessage(botMessage)
                     PTGCDManager.gcdMain {
                         self.title = .navTitle
                     }
+                    
+                    self.chatModelToJsonString(model: saveModel)
                 case .failure(let failure):
                     PTGCDManager.gcdMain {
                         self.title = .navTitle
@@ -216,10 +321,103 @@ class PTChatViewController: MessagesViewController {
                 }
             }
         default:
-            self.drawImage(str: text)
+            self.drawImage(str: text,saveModel: saveModel)
         }
     }
 
+    //MARK: Voice action
+    @objc func recordButtonPressed()
+    {
+        // 開始錄音
+        self.isRecording = true
+        PTLocalConsoleFunction.share.pNSLog("開始錄音")
+    }
+    
+    @objc func recordButtonReleased()
+    {
+        // 停止錄音
+        self.isRecording = false
+        PTLocalConsoleFunction.share.pNSLog("停止錄音")
+    }
+    
+    @objc func longPress(_ sender: UILongPressGestureRecognizer) {
+        self.voiceButton.setTitle("鬆開結束", for: .normal)
+        if self.isRecording
+        {
+            self.speechKit.recordVoice()
+            self.isRecording = false
+        }
+        switch sender.state {
+        case .began:
+            // 開始錄音，顯示錄音的動畫和文字
+            PTLocalConsoleFunction.share.pNSLog("開始錄音，顯示錄音的動畫和文字")
+        case .changed:
+            let touchPoint = sender.location(in: self.voiceButton)
+            if touchPoint.y < -100 {
+                PTLocalConsoleFunction.share.pNSLog("超過閾值，顯示「向上取消」的提示")
+                self.voiceButton.setTitle("取消錄音", for: .normal)
+                // 超過閾值，顯示「向上取消」的提示
+            } else {
+                // 未超過閾值，顯示「鬆開發送」的提示
+                PTLocalConsoleFunction.share.pNSLog("未超過閾值，顯示「鬆開發送」的提示")
+                self.voiceButton.setTitle("鬆開發送", for: .normal)
+            }
+        case .ended:
+            self.voiceButton.setTitle("長按開始錄音", for: .normal)
+            let touchPoint = sender.location(in: self.voiceButton)
+            if touchPoint.y < -100 {
+                self.isSendVoice = false
+                PTLocalConsoleFunction.share.pNSLog("取消錄音")
+            } else {
+                self.isSendVoice = true
+                PTLocalConsoleFunction.share.pNSLog("發送錄音")
+            }
+            self.isRecording = false
+            self.speechKit.endVoiceRecording()
+
+        default:
+            break
+        }
+    }
+    
+    //MARK: 保存聊天記錄
+    
+    func chatModelToJsonString(model:PTChatModel)
+    {
+        self.saveHistory(jsonString: (model.toJSON()?.toJSON())!, key: uChatHistory)
+    }
+    
+    func saveHistory(jsonString:String,key:String)
+    {
+        if let userHistoryModelString :String = UserDefaults.standard.value(forKey: key) as? String
+        {
+            if !userHistoryModelString.stringIsEmpty()
+            {
+                var userModelsStringArr = userHistoryModelString.components(separatedBy: kSeparator)
+                userModelsStringArr.append(jsonString)
+                let saaveString = userModelsStringArr.joined(separator: kSeparator)
+                UserDefaults.standard.set(saaveString, forKey: key)
+                print(saaveString)
+            }
+            else
+            {
+                UserDefaults.standard.set(jsonString, forKey: key)
+                print(jsonString)
+            }
+        }
+        else
+        {
+            UserDefaults.standard.set(jsonString, forKey: key)
+            print(jsonString)
+        }
+    }
+    
+    func dateFormatter(date:Date)->String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        let dateString = dateFormatter.string(from: date)
+        return dateString
+    }
 }
 
 // MARK: - MessagesDisplayDelegate
@@ -372,14 +570,30 @@ extension PTChatViewController:MessagesDataSource
         attributes: [NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .caption2)])
     }
 
-    func textCell(for _: MessageType, at _: IndexPath, in _: MessagesCollectionView) -> UICollectionViewCell? {
-      nil
+    func textCell(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UICollectionViewCell? {
+//        let cell = messagesCollectionView.dequeueReusableCell(withClass: PTChatCustomCell.self, for: indexPath)
+//        cell.configure(with: message, at: indexPath, and: messagesCollectionView)
+        return nil
     }
 
 }
 
 extension PTChatViewController:MessageCellDelegate
 {
+    func didTapBackground(in cell: MessageCollectionViewCell) {
+        PTLocalConsoleFunction.share.pNSLog("didTapBackground")
+        let indexPath = self.messagesCollectionView.indexPath(for: cell)
+        let messageModel = self.messageList[indexPath!.section]
+        if messageModel.sender.senderId == PTChatData.share.bot.senderId
+        {
+            UIAlertController.base_alertVC(title: "提示",msg: "您想要保存這個結果嗎?",okBtns: ["確定"],cancelBtn: "取消") {
+                
+            } moreBtn: { index, title in
+                
+            }
+        }
+    }
+    
     func didTapAvatar(in _: MessageCollectionViewCell) {
         PTLocalConsoleFunction.share.pNSLog("Avatar tapped")
     }
@@ -501,19 +715,27 @@ extension PTChatViewController: MessageLabelDelegate {
 
 extension PTChatViewController: InputBarAccessoryViewDelegate
 {
-    
-    func drawImage(str:String)
+    func drawImage(str:String,saveModel:PTChatModel)
     {
         Task{
             do{
                 let result = try await self.openAI.getImages(with:str)
                 await MainActor.run{
+                    
                     let imageURL = result.data.first?.url ?? URL(string: "")
-                    let message = PTMessageModel(imageURL: imageURL!, user: PTChatData.share.bot, messageId: UUID().uuidString, date: Date())
+
+                    let date = Date()
+
+                    saveModel.answerDate = self.dateFormatter(date: date)
+                    saveModel.answerType = 1
+                    saveModel.answerImageURL = imageURL?.absoluteString ?? ""
+
+                    let message = PTMessageModel(imageURL: imageURL!, user: PTChatData.share.bot, messageId: UUID().uuidString, date: date)
                     self.insertMessage(message)
 
                     PTLocalConsoleFunction.share.pNSLog(result.data.first?.url ?? "")
                     self.title = .navTitle
+                    self.chatModelToJsonString(model: saveModel)
                 }
             }catch{
                 PTGCDManager.gcdMain {
@@ -526,18 +748,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
     
     // MARK: Internal
     @objc func inputBar(_: InputBarAccessoryView, didPressSendButtonWith _: String) {
-        
-        UIAlertController.base_alertVC(title: "想我做什麼",okBtns: ["聊天","畫畫"],cancelBtn: "取消") {
-            self.messageInputBar.inputTextView.text = ""
-        } moreBtn: { index, title in
-            switch index {
-            case 0:
-                self.chatCase = .chat
-            default:
-                self.chatCase = .draw
-            }
-            self.processInputBar(self.messageInputBar)
-        }
+        self.processInputBar(self.messageInputBar)
     }
 
     func processInputBar(_ inputBar: InputBarAccessoryView) {
@@ -576,8 +787,14 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
     {
         for component in data {
             let user = PTChatData.share.user
+            let date = Date()
             if let str = component as? String {
-                let message = PTMessageModel(text: str, user: user, messageId: UUID().uuidString, date: Date())
+                let saveModel = PTChatModel()
+                saveModel.questionType = 0
+                saveModel.question = str
+                saveModel.questionDate = self.dateFormatter(date: date)
+
+                let message = PTMessageModel(text: str, user: user, messageId: UUID().uuidString, date: date)
                 insertMessage(message)
                 self.title = .loading
                 switch self.chatCase {
@@ -587,13 +804,20 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
                         self.openAI.sendEdits(with: str, input: self.editString) { result in
                             switch result {
                             case .success(let success):
-                                let botMessage = PTMessageModel(text: success.choices.first?.text ?? "", user: PTChatData.share.bot, messageId: UUID().uuidString, date: Date())
+                                let botDate = Date()
+                                
+                                saveModel.answerDate = self.dateFormatter(date: botDate)
+                                saveModel.answerType = 0
+                                saveModel.answer = success.choices.first?.text ?? ""
+                                
+                                let botMessage = PTMessageModel(text: success.choices.first?.text ?? "", user: PTChatData.share.bot, messageId: UUID().uuidString, date: botDate)
                                 self.insertMessage(botMessage)
                                 PTGCDManager.gcdMain {
                                     self.editString = ""
                                     self.editMessage = false
                                     self.title = .navTitle
                                 }
+                                self.chatModelToJsonString(model: saveModel)
                             case .failure(let failure):
                                 PTGCDManager.gcdMain {
                                     self.title = .navTitle
@@ -607,11 +831,18 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
                         self.openAI.sendCompletion(with: str,maxTokens: 2048) { result in
                             switch result {
                             case .success(let success):
-                                let botMessage = PTMessageModel(text: success.choices.first?.text ?? "", user: PTChatData.share.bot, messageId: UUID().uuidString, date: Date())
+                                let botDate = Date()
+                                
+                                saveModel.answerDate = self.dateFormatter(date: botDate)
+                                saveModel.answerType = 0
+                                saveModel.answer = success.choices.first?.text ?? ""
+
+                                let botMessage = PTMessageModel(text: success.choices.first?.text ?? "", user: PTChatData.share.bot, messageId: UUID().uuidString, date: botDate)
                                 self.insertMessage(botMessage)
                                 PTGCDManager.gcdMain {
                                     self.title = .navTitle
                                 }
+                                self.chatModelToJsonString(model: saveModel)
                             case .failure(let failure):
                                 PTGCDManager.gcdMain {
                                     self.title = .navTitle
@@ -621,7 +852,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
                         }
                     }
                 default:
-                    self.drawImage(str: str)
+                    self.drawImage(str: str,saveModel: saveModel)
                 }
             } else if let img = component as? UIImage {
                 let message = PTMessageModel(image: img, user: user, messageId: UUID().uuidString, date: Date())
@@ -633,6 +864,10 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
 
 extension PTChatViewController:OSSSpeechDelegate
 {
+    func deleteVoiceFile(withFinish finish: Bool, withError error: Error?) {
+        print("\(finish)  error:\(String(describing: error?.localizedDescription))")
+    }
+    
     func didFinishListening(withText text: String) {
     }
     
@@ -654,19 +889,24 @@ extension PTChatViewController:OSSSpeechDelegate
     
     func didFinishListening(withAudioFileURL url: URL, withText text: String) {
         PTLocalConsoleFunction.share.pNSLog("url:\(url) \ntext:\(text)")
-        let voiceMessage = PTMessageModel(audioURL: URL(fileURLWithPath: url.absoluteString.replacingOccurrences(of: "file://", with: "")), user: PTChatData.share.user, messageId: UUID().uuidString, date: Date())
-        self.insertMessage(voiceMessage)
+        let date = Date()
+        let voiceURL = URL(fileURLWithPath: url.absoluteString.replacingOccurrences(of: "file://", with: ""))
+        let voiceMessage = PTMessageModel(audioURL: voiceURL, user: PTChatData.share.user, messageId: UUID().uuidString, date: date)
         
-        UIAlertController.base_alertVC(title: "想我做什麼",okBtns: ["聊天","畫畫"],cancelBtn: "取消") {
-        } moreBtn: { index, title in
-            switch index {
-            case 0:
-                self.chatCase = .chat
-            default:
-                self.chatCase = .draw
-            }
-            self.sendVoiceMessage(text: text)
+        let saveModel = PTChatModel()
+        saveModel.questionType = 1
+        saveModel.questionVoiceURL = voiceURL.absoluteString
+        saveModel.questionDate = self.dateFormatter(date: date)
+        if self.isSendVoice
+        {
+            self.isSendVoice = false
+            self.insertMessage(voiceMessage)
+            self.sendVoiceMessage(text: text,saveModel: saveModel)
             self.messagesCollectionView.scrollToLastItem(animated: true)
+        }
+        else
+        {
+            self.speechKit.deleteVoiceFolderItem(url: URL(fileURLWithPath: url.absoluteString.replacingOccurrences(of: "file://", with: "")))
         }
     }
 }

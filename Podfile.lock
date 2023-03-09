@@ -115,7 +115,7 @@ PODS:
   - SwiftyJSON (5.0.1)
   - Swinject (2.8.3)
   - SwipeCellKit (2.7.1)
-  - UIColor_Hex_Swift (5.1.7)
+  - UIColor_Hex_Swift (5.1.9)
   - "UIViewController+Swizzled (1.4)"
   - WZLBadge (1.2.6)
   - YYCategories (1.0.4):
@@ -184,7 +184,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   PooTools:
-    :commit: c91f81c6d7ba560e0e73c850abd2c5fdd3e107f7
+    :commit: e685067b834161551f0a9f49bd3bc372c6ec9d76
     :git: https://github.com/crazypoo/PTools.git
 
 SPEC CHECKSUMS:
@@ -223,7 +223,7 @@ SPEC CHECKSUMS:
   SwiftyJSON: 2f33a42c6fbc52764d96f13368585094bfd8aa5e
   Swinject: 893c9a543000ac2f10ee4cbaf0933c6992c935d5
   SwipeCellKit: 3972254a826da74609926daf59b08d6c72e619ea
-  UIColor_Hex_Swift: 31cd3e47440f07a20d2503a36bb0437a445b3c29
+  UIColor_Hex_Swift: 20cb4e8d51b63e168a9da6933bc5d39cd8fb4ab5
   "UIViewController+Swizzled": 1cd9397598ede6930f94fbcac4b43d63c7aa0dbb
   WZLBadge: 9ec779dcfd94c825518b395e8315fccaabff1bfa
   YYCategories: 6bcd4314c6661a561410dce4a793379ebd306abd
