@@ -14,7 +14,7 @@ import BRPickerView
 let uTokenKey = "UserToken"
 let uLanguageKey = "UserLanguage"
 
-class PTSettingViewController: PTBaseViewController {
+class PTSettingViewController: PTChatBaseViewController {
 
     var languageType:OSSVoiceEnum = .ChineseSimplified
     var currentSelectLanguage:String = OSSVoiceEnum.ChineseSimplified.rawValue

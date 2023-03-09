@@ -23,15 +23,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     var devFunction:PTDevFunction = PTDevFunction()
     
+    let appConfig = PTAppConfig.share
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
                 
 //        let filePath = NSTemporaryDirectory().appending("/demo.order")
 //        YCSymbolTracker.exportSymbols(filePath: filePath)
         
+        
+        
         let token:String = UserDefaults.standard.value(forKey: uTokenKey) == nil ? "" : UserDefaults.standard.value(forKey: uTokenKey) as! String
         let language:OSSVoiceEnum = UserDefaults.standard.value(forKey: uLanguageKey) == nil ? .ChineseSimplified : UserDefaults.standard.value(forKey: uLanguageKey) as! OSSVoiceEnum
-
+        
         PTLocalConsoleFunction.share.pNSLog("\(token)")
         var viewC:UIViewController!
         if token.stringIsEmpty()

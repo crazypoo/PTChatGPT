@@ -23,7 +23,10 @@ target 'PTChatGPT' do
 
   pod 'PooTools/Core', :git => 'https://github.com/crazypoo/PTools.git'
   pod 'PooTools/Picker', :git => 'https://github.com/crazypoo/PTools.git'
-  
+  pod 'PooTools/ColorPicker', :git => 'https://github.com/crazypoo/PTools.git'
+  pod 'PooTools/DarkModeSetting', :git => 'https://github.com/crazypoo/PTools.git'
+  pod 'PooTools/LanguageSetting', :git => 'https://github.com/crazypoo/PTools.git'
+
   pod 'MessageKit'
 
   pod 'SwiftLint'

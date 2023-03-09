@@ -1,5 +1,5 @@
 //
-//  PTChatViewController.swift
+//  OpenAIModelType.swift
 //  PTChatGPT
 //
 //  Created by 邓杰豪 on 3/3/23.

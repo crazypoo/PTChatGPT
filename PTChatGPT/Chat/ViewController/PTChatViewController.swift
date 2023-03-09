@@ -14,10 +14,9 @@ import SDWebImage
 import AVFAudio
 
 //https://platform.openai.com/account/api-keys
-let uChatHistory = "ChatHistory"
-let kSeparator = "[,]"
 
 fileprivate extension String{
+    static let saveNavTitle = "個人精選"
     static let navTitle = "ChatGPT"
     static let loading = "思考中....."
 }
@@ -117,6 +116,8 @@ class PTChatViewController: MessagesViewController {
         return view
     }()
 
+    var onlyShowSave:Bool = false
+    
     init(token:String,language:OSSVoiceEnum) {
         super.init(nibName: nil, bundle: nil)
         speechKit.voice = OSSVoice(quality: .enhanced, language: language)
@@ -124,40 +125,42 @@ class PTChatViewController: MessagesViewController {
         self.openAI = OpenAISwift(authToken: token)
     }
     
+    init(saveModel:PTChatModel)
+    {
+        super.init(nibName: nil, bundle: nil)
+        self.onlyShowSave = true
+        
+        let models = saveModel
+        
+        let questionModel:PTMessageModel
+        switch models.questionType {
+        case 0:
+            print(String(describing: models.questionDate))
+            questionModel = PTMessageModel(text: models.question, user: PTChatData.share.user, messageId: UUID().uuidString, date: models.questionDate.toDate()!.date)
+        default:
+            let voiceURL = URL(fileURLWithPath: models.questionVoiceURL)
+            questionModel = PTMessageModel(audioURL: voiceURL, user: PTChatData.share.user, messageId: UUID().uuidString, date: models.questionDate.toDate()!.date)
+        }
+//                    self.insertMessage(questionModel)
+        self.messageList.append(questionModel)
+        let answerModel:PTMessageModel
+        switch models.answerType {
+        case 0:
+            answerModel = PTMessageModel(text: models.answer, user: PTChatData.share.bot, messageId: UUID().uuidString, date: models.answerDate.toDate()!.date)
+        default:
+            answerModel = PTMessageModel(imageURL: URL(string: models.answerImageURL)!, user: PTChatData.share.bot, messageId: UUID().uuidString, date: models.answerDate.toDate()!.date)
+        }
+//                    self.insertMessage(answerModel)
+        self.messageList.append(answerModel)
+    }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        navigationItem.largeTitleDisplayMode = .never
-        
-        self.configureMessageCollectionView()
-        self.configureMessageInputBar()
-        self.title = .navTitle
-        self.speechKit.delegate = self
-        
-        let logout = UIButton(type: .custom)
-        logout.setTitle("退出", for: .normal)
-        logout.setTitleColor(.black, for: .normal)
-        logout.addActionHandlers { sender in
-            UserDefaults.standard.set("", forKey: uTokenKey)
-            
-            if self.presentingViewController != nil
-            {
-                self.dismiss(animated: true, completion: nil)
-            }
-            else
-            {
-                let windows = AppDelegate.appDelegate()!.window!
-                let viewC = PTSettingViewController()
-                let nav = UINavigationController(rootViewController: viewC)
-                windows.rootViewController = nav
-                windows.makeKeyAndVisible()
-            }
-        }
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: logout)
-        
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        messagesCollectionView.contentInsetAdjustmentBehavior = .automatic
         if let userHistoryModelString :String = UserDefaults.standard.value(forKey: uChatHistory) as? String
         {
             if !userHistoryModelString.stringIsEmpty()
@@ -175,7 +178,6 @@ class PTChatViewController: MessagesViewController {
                         let voiceURL = URL(fileURLWithPath: models!.questionVoiceURL)
                         questionModel = PTMessageModel(audioURL: voiceURL, user: PTChatData.share.user, messageId: UUID().uuidString, date: models!.questionDate.toDate()!.date)
                     }
-//                    self.insertMessage(questionModel)
                     self.messageList.append(questionModel)
                     let answerModel:PTMessageModel
                     switch models!.answerType {
@@ -184,11 +186,53 @@ class PTChatViewController: MessagesViewController {
                     default:
                         answerModel = PTMessageModel(imageURL: URL(string: models!.answerImageURL)!, user: PTChatData.share.bot, messageId: UUID().uuidString, date: models!.answerDate.toDate()!.date)
                     }
-//                    self.insertMessage(answerModel)
                     self.messageList.append(answerModel)
                     self.messagesCollectionView.reloadData()
                 }
             }
+        }
+
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        navigationItem.largeTitleDisplayMode = .never
+        
+        self.configureMessageCollectionView()
+        if self.onlyShowSave
+        {
+            self.title = .saveNavTitle
+            messageInputBar.delegate = nil
+            messageInputBar.removeFromSuperview()
+            messageInputBar.alpha = 0
+        }
+        else
+        {
+            self.configureMessageInputBar()
+            self.title = .navTitle
+            self.speechKit.delegate = self
+            let logout = UIButton(type: .custom)
+            logout.setImage(UIImage(systemName: "gear")?.withTintColor(.black, renderingMode: .automatic), for: .normal)
+            logout.addActionHandlers { sender in
+                let vc = PTSettingListViewController()
+                self.navigationController?.pushViewController(vc)
+    //            UserDefaults.standard.set("", forKey: uTokenKey)
+    //
+    //            if self.presentingViewController != nil
+    //            {
+    //                self.dismiss(animated: true, completion: nil)
+    //            }
+    //            else
+    //            {
+    //                let windows = AppDelegate.appDelegate()!.window!
+    //                let viewC = PTSettingViewController()
+    //                let nav = UINavigationController(rootViewController: viewC)
+    //                windows.rootViewController = nav
+    //                windows.makeKeyAndVisible()
+    //            }
+            }
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: logout)
+            
         }
     }
     
@@ -213,7 +257,6 @@ class PTChatViewController: MessagesViewController {
         messagesCollectionView.refreshControl = refreshControl
         messagesCollectionView.messagesLayoutDelegate = self
         messagesCollectionView.messagesDisplayDelegate = self
-        messagesCollectionView.contentInsetAdjustmentBehavior = .automatic
     }
     
     func configureMessageInputBar() {
@@ -387,6 +430,11 @@ class PTChatViewController: MessagesViewController {
         self.saveHistory(jsonString: (model.toJSON()?.toJSON())!, key: uChatHistory)
     }
     
+    func saveChatModelToJsonString(model:PTChatModel)
+    {
+        self.saveHistory(jsonString: (model.toJSON()?.toJSON())!, key: uSaveChat)
+    }
+    
     func saveHistory(jsonString:String,key:String)
     {
         if let userHistoryModelString :String = UserDefaults.standard.value(forKey: key) as? String
@@ -442,9 +490,9 @@ extension PTChatViewController: MessagesDisplayDelegate {
     }
     
     // MARK: - All Messages
-    
+    //MARK: 設置Bubble顏色
     func backgroundColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
-        return isFromCurrentSender(message: message) ? .systemBlue : UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
+        return isFromCurrentSender(message: message) ? AppDelegate.appDelegate()!.appConfig.userBubbleColor : AppDelegate.appDelegate()!.appConfig.botBubbleColor
     }
     
     func messageStyle(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageStyle {
@@ -584,12 +632,50 @@ extension PTChatViewController:MessageCellDelegate
         PTLocalConsoleFunction.share.pNSLog("didTapBackground")
         let indexPath = self.messagesCollectionView.indexPath(for: cell)
         let messageModel = self.messageList[indexPath!.section]
+        let userModel = self.messageList[indexPath!.section - 1]
         if messageModel.sender.senderId == PTChatData.share.bot.senderId
         {
-            UIAlertController.base_alertVC(title: "提示",msg: "您想要保存這個結果嗎?",okBtns: ["確定"],cancelBtn: "取消") {
+            
+            UIAlertController.base_alertVC(title: "提示",msg: "您想要保存這個問題和結果嗎?",okBtns: ["確定"],cancelBtn: "取消") {
                 
             } moreBtn: { index, title in
                 
+                let saveChatArr = AppDelegate.appDelegate()!.appConfig.getSaveChatData()
+                for saveModel in saveChatArr
+                {
+                    if saveModel.questionDate == self.dateFormatter(date: userModel.sentDate) && saveModel.answerDate == self.dateFormatter(date: messageModel.sentDate)
+                    {
+                        PTBaseViewController.gobal_drop(title: "不可以保存重複內容")
+                        return
+                    }
+                }
+                let model = PTChatModel()
+                
+                switch userModel.kind {
+                case .audio(let item):
+                    model.questionType = 1
+                    model.questionVoiceURL = item.url.absoluteString
+                case .text(let text):
+                    model.questionType = 0
+                    model.question = text
+                default:
+                    break
+                }
+                model.questionDate = self.dateFormatter(date: userModel.sentDate)
+                
+                switch messageModel.kind {
+                case .photo(let item):
+                    model.answerType = 1
+                    model.answerImageURL = item.url!.absoluteString
+                case .text(let text):
+                    model.answerType = 0
+                    model.answer = text
+                default:
+                    break
+                }
+                model.answerDate = self.dateFormatter(date: messageModel.sentDate)
+                self.saveChatModelToJsonString(model: model)
+                PTBaseViewController.gobal_drop(title: "保存成功")
             }
         }
     }
@@ -895,6 +981,7 @@ extension PTChatViewController:OSSSpeechDelegate
         
         let saveModel = PTChatModel()
         saveModel.questionType = 1
+        saveModel.question = text
         saveModel.questionVoiceURL = voiceURL.absoluteString
         saveModel.questionDate = self.dateFormatter(date: date)
         if self.isSendVoice

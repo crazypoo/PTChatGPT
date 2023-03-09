@@ -17,6 +17,13 @@
 		5512AB7C29B470310059D840 /* PTAudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5512AB7B29B470310059D840 /* PTAudioPlayer.swift */; };
 		5514B37129B9CBFD00890161 /* PTChatCustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B37029B9CBFD00890161 /* PTChatCustomCell.swift */; };
 		5514B37429B9D50D00890161 /* PTChatModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B37329B9D50D00890161 /* PTChatModel.swift */; };
+		5514B37629B9F5AC00890161 /* PTAppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B37529B9F5AC00890161 /* PTAppConfig.swift */; };
+		5514B37829B9F87C00890161 /* PTSettingListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B37729B9F87C00890161 /* PTSettingListViewController.swift */; };
+		5514B37A29BA02E300890161 /* PTChatBaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B37929BA02E300890161 /* PTChatBaseViewController.swift */; };
+		5514B37D29BA102400890161 /* PTSettingHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B37C29BA102400890161 /* PTSettingHeader.swift */; };
+		5514B38029BA112A00890161 /* PTSettingModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B37F29BA112A00890161 /* PTSettingModels.swift */; };
+		5514B38229BA14C400890161 /* PTColorSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B38129BA14C400890161 /* PTColorSettingViewController.swift */; };
+		5514B38429BA233A00890161 /* PTSaveChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B38329BA233A00890161 /* PTSaveChatViewController.swift */; };
 		55A5D71829B1D23D00DCA096 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A5D71729B1D23D00DCA096 /* AppDelegate.swift */; };
 		55A5D71F29B1D23D00DCA096 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 55A5D71D29B1D23D00DCA096 /* Main.storyboard */; };
 		55A5D72129B1D23E00DCA096 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55A5D72029B1D23E00DCA096 /* Assets.xcassets */; };
@@ -47,7 +54,14 @@
 		5512AB7B29B470310059D840 /* PTAudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTAudioPlayer.swift; sourceTree = "<group>"; };
 		5514B37029B9CBFD00890161 /* PTChatCustomCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTChatCustomCell.swift; sourceTree = "<group>"; };
 		5514B37329B9D50D00890161 /* PTChatModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTChatModel.swift; sourceTree = "<group>"; };
-		55A5D71429B1D23D00DCA096 /* PTChatGPT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PTChatGPT.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5514B37529B9F5AC00890161 /* PTAppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTAppConfig.swift; sourceTree = "<group>"; };
+		5514B37729B9F87C00890161 /* PTSettingListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSettingListViewController.swift; sourceTree = "<group>"; };
+		5514B37929BA02E300890161 /* PTChatBaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTChatBaseViewController.swift; sourceTree = "<group>"; };
+		5514B37C29BA102400890161 /* PTSettingHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSettingHeader.swift; sourceTree = "<group>"; };
+		5514B37F29BA112A00890161 /* PTSettingModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSettingModels.swift; sourceTree = "<group>"; };
+		5514B38129BA14C400890161 /* PTColorSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTColorSettingViewController.swift; sourceTree = "<group>"; };
+		5514B38329BA233A00890161 /* PTSaveChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSaveChatViewController.swift; sourceTree = "<group>"; };
+		55A5D71429B1D23D00DCA096 /* Chat走啦.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Chat走啦.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		55A5D71729B1D23D00DCA096 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		55A5D71E29B1D23D00DCA096 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		55A5D72029B1D23E00DCA096 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -150,6 +164,22 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		5514B37B29BA100A00890161 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				5514B37C29BA102400890161 /* PTSettingHeader.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		5514B37E29BA110D00890161 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				5514B37F29BA112A00890161 /* PTSettingModels.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		55A5D70B29B1D23D00DCA096 = {
 			isa = PBXGroup;
 			children = (
@@ -163,7 +193,7 @@
 		55A5D71529B1D23D00DCA096 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				55A5D71429B1D23D00DCA096 /* PTChatGPT.app */,
+				55A5D71429B1D23D00DCA096 /* Chat走啦.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -231,6 +261,8 @@
 				55A5D7FB29B1E41400DCA096 /* PTChatUser.swift */,
 				55A5D7FD29B1EEF400DCA096 /* PTChatData.swift */,
 				55A5D80029B1F29800DCA096 /* PTMessageModel.swift */,
+				5514B37529B9F5AC00890161 /* PTAppConfig.swift */,
+				5514B37929BA02E300890161 /* PTChatBaseViewController.swift */,
 			);
 			path = Base;
 			sourceTree = "<group>";
@@ -238,6 +270,8 @@
 		55A5D80329B2429300DCA096 /* SettingInfo */ = {
 			isa = PBXGroup;
 			children = (
+				5514B37E29BA110D00890161 /* Models */,
+				5514B37B29BA100A00890161 /* Views */,
 				55A5D80429B242B400DCA096 /* ViewController */,
 			);
 			path = SettingInfo;
@@ -247,6 +281,9 @@
 			isa = PBXGroup;
 			children = (
 				55A5D80529B242CF00DCA096 /* PTSettingViewController.swift */,
+				5514B37729B9F87C00890161 /* PTSettingListViewController.swift */,
+				5514B38129BA14C400890161 /* PTColorSettingViewController.swift */,
+				5514B38329BA233A00890161 /* PTSaveChatViewController.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -279,7 +316,7 @@
 			);
 			name = PTChatGPT;
 			productName = PTChatGPT;
-			productReference = 55A5D71429B1D23D00DCA096 /* PTChatGPT.app */;
+			productReference = 55A5D71429B1D23D00DCA096 /* Chat走啦.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -383,18 +420,25 @@
 				55A5D7F029B1D9A900DCA096 /* Instruction.swift in Sources */,
 				5512AB7229B43D520059D840 /* OSSUtterance.swift in Sources */,
 				5512AB7429B43D520059D840 /* OSSSpeechUtility.swift in Sources */,
+				5514B38429BA233A00890161 /* PTSaveChatViewController.swift in Sources */,
 				55A5D7F329B1D9A900DCA096 /* OpenAISwift.swift in Sources */,
 				55A5D7F729B1DFF200DCA096 /* PTChatViewController.swift in Sources */,
+				5514B38229BA14C400890161 /* PTColorSettingViewController.swift in Sources */,
+				5514B37A29BA02E300890161 /* PTChatBaseViewController.swift in Sources */,
 				55A5D7EF29B1D9A900DCA096 /* OpenAI.swift in Sources */,
 				55A5D80629B242CF00DCA096 /* PTSettingViewController.swift in Sources */,
+				5514B37D29BA102400890161 /* PTSettingHeader.swift in Sources */,
 				55A5D7FE29B1EEF400DCA096 /* PTChatData.swift in Sources */,
 				55A5D71829B1D23D00DCA096 /* AppDelegate.swift in Sources */,
 				5512AB7029B43D520059D840 /* OSSSpeech.swift in Sources */,
 				55A5D7F229B1D9A900DCA096 /* OpenAIEndpoint.swift in Sources */,
 				55A5D7F129B1D9A900DCA096 /* Command.swift in Sources */,
+				5514B38029BA112A00890161 /* PTSettingModels.swift in Sources */,
 				5512AB7C29B470310059D840 /* PTAudioPlayer.swift in Sources */,
 				5514B37429B9D50D00890161 /* PTChatModel.swift in Sources */,
 				55A5D80129B1F29800DCA096 /* PTMessageModel.swift in Sources */,
+				5514B37829B9F87C00890161 /* PTSettingListViewController.swift in Sources */,
+				5514B37629B9F5AC00890161 /* PTAppConfig.swift in Sources */,
 				5514B37129B9CBFD00890161 /* PTChatCustomCell.swift in Sources */,
 				55A5D7EE29B1D9A900DCA096 /* OpenAIModelType.swift in Sources */,
 				5512AB7329B43D520059D840 /* OSSVoice.swift in Sources */,
@@ -546,7 +590,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = JL4FNX8668;
+				DEVELOPMENT_TEAM = SFU2CNYFPC;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = PTChatGPT/Info.plist;
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "我要用Mic";
@@ -563,8 +607,8 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.respect.ChatGPT;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.zola.chat;
+				PRODUCT_NAME = "Chat走啦";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -579,7 +623,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = JL4FNX8668;
+				DEVELOPMENT_TEAM = SFU2CNYFPC;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = PTChatGPT/Info.plist;
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "我要用Mic";
@@ -596,8 +640,8 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.respect.ChatGPT;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.zola.chat;
+				PRODUCT_NAME = "Chat走啦";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

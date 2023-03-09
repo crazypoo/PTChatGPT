@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "55A5D71329B1D23D00DCA096"
-               BuildableName = "PTChatGPT.app"
+               BuildableName = "Chat&#x8d70;&#x5566;.app"
                BlueprintName = "PTChatGPT"
                ReferencedContainer = "container:PTChatGPT.xcodeproj">
             </BuildableReference>
@@ -44,7 +44,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "55A5D71329B1D23D00DCA096"
-            BuildableName = "PTChatGPT.app"
+            BuildableName = "Chat&#x8d70;&#x5566;.app"
             BlueprintName = "PTChatGPT"
             ReferencedContainer = "container:PTChatGPT.xcodeproj">
          </BuildableReference>
@@ -61,7 +61,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "55A5D71329B1D23D00DCA096"
-            BuildableName = "PTChatGPT.app"
+            BuildableName = "Chat&#x8d70;&#x5566;.app"
             BlueprintName = "PTChatGPT"
             ReferencedContainer = "container:PTChatGPT.xcodeproj">
          </BuildableReference>
