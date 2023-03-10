@@ -11,8 +11,8 @@ import PooTools
 
 class PTDisclaimerViewController: PTChatBaseViewController {
 
-    let firstTitle = "App disclaimer"
-    let secondTitle = "External links disclaimer"
+    let firstTitle = PTLanguage.share.text(forKey: "disclaimer_App")
+    let secondTitle = PTLanguage.share.text(forKey: "disclaimer_External")
 
     lazy var labelContent:UIScrollView = {
         let view = UIScrollView()

@@ -27,7 +27,7 @@ class PTColorSettingViewController: PTChatBaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.zx_navTitle = "顏色設置"
+        self.zx_navTitle = PTLanguage.share.text(forKey: "color_Setting")
         self.setupColorPicker()
         self.setupBrightnessSlider()
         self.setupColorPickerHandles()

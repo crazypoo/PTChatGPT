@@ -15,9 +15,9 @@ import AVFAudio
 
 
 fileprivate extension String{
-    static let saveNavTitle = "個人精選"
+    static let saveNavTitle = PTLanguage.share.text(forKey: "about_SavedChat")
     static let navTitle = kAppName
-    static let loading = "思考中....."
+    static let loading = PTLanguage.share.text(forKey: "chat_Thinking")
 }
 
 enum PTChatCase
@@ -77,7 +77,7 @@ class PTChatViewController: MessagesViewController {
         longPressRecognizer.minimumPressDuration = 0.3
         view.addGestureRecognizer(longPressRecognizer)
         view.viewCorner(radius: 5, borderWidth: 1, borderColor: .black)
-        view.setTitle("長按開始錄音", for: .normal)
+        view.setTitle(PTLanguage.share.text(forKey: "button_Long_tap"), for: .normal)
         view.setTitleColor(.black, for: .normal)
         return view
     }()
@@ -225,7 +225,7 @@ class PTChatViewController: MessagesViewController {
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: logout)
         }
     }
-    
+        
     @objc func showURLNotifi(notifi:Notification)
     {
         let urlString = (notifi.object as! [String:String])["URLS"]
@@ -262,6 +262,7 @@ class PTChatViewController: MessagesViewController {
         messageInputBar.backgroundView.backgroundColor = .gobalBackgroundColor
         messageInputBar.inputTextView.textColor = .gobalTextColor
         messageInputBar.inputTextView.tintColor = .gobalTextColor
+        messageInputBar.sendButton.setTitle(PTLanguage.share.text(forKey: "chat_Send"), for: .normal)
         messageInputBar.sendButton.setTitleColor( .gobalTextColor, for: .normal)
         messageInputBar.sendButton.setTitleColor(
             .gobalTextColor.withAlphaComponent(0.3),
@@ -384,7 +385,7 @@ class PTChatViewController: MessagesViewController {
     }
     
     @objc func longPress(_ sender: UILongPressGestureRecognizer) {
-        self.voiceButton.setTitle("鬆開結束", for: .normal)
+        self.voiceButton.setTitle(PTLanguage.share.text(forKey: "button_Long_tap_end"), for: .normal)
         if self.isRecording
         {
             self.speechKit.recordVoice()
@@ -398,15 +399,16 @@ class PTChatViewController: MessagesViewController {
             let touchPoint = sender.location(in: self.voiceButton)
             if touchPoint.y < -100 {
                 PTLocalConsoleFunction.share.pNSLog("超過閾值，顯示「向上取消」的提示")
-                self.voiceButton.setTitle("取消錄音", for: .normal)
+                self.voiceButton.setTitle(PTLanguage.share.text(forKey: "button_Long_tap_cancel"), for: .normal)
                 // 超過閾值，顯示「向上取消」的提示
             } else {
                 // 未超過閾值，顯示「鬆開發送」的提示
                 PTLocalConsoleFunction.share.pNSLog("未超過閾值，顯示「鬆開發送」的提示")
-                self.voiceButton.setTitle("鬆開發送", for: .normal)
+                self.voiceButton.setTitle(PTLanguage.share.text(forKey: "button_Long_tap_release"), for: .normal)
+                
             }
         case .ended:
-            self.voiceButton.setTitle("長按開始錄音", for: .normal)
+            self.voiceButton.setTitle(PTLanguage.share.text(forKey: "button_Long_tap"), for: .normal)
             let touchPoint = sender.location(in: self.voiceButton)
             if touchPoint.y < -100 {
                 self.isSendVoice = false
@@ -597,7 +599,7 @@ extension PTChatViewController:MessagesDataSource
 
     func cellBottomLabelAttributedText(for _: MessageType, at _: IndexPath) -> NSAttributedString? {
       NSAttributedString(
-        string: "Read",
+        string: PTLanguage.share.text(forKey: "chat_Read"),
         attributes: [
           NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10),
           NSAttributedString.Key.foregroundColor: UIColor.darkGray,
@@ -635,8 +637,7 @@ extension PTChatViewController:MessageCellDelegate
         let userModel = self.messageList[indexPath!.section - 1]
         if messageModel.sender.senderId == PTChatData.share.bot.senderId
         {
-            
-            UIAlertController.base_alertVC(title: "提示",msg: "您想要保存這個問題和結果嗎?",okBtns: ["確定"],cancelBtn: "取消") {
+            UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),msg: PTLanguage.share.text(forKey: "alert_Save_Q&A"),okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
                 
             } moreBtn: { index, title in
                 
@@ -645,7 +646,7 @@ extension PTChatViewController:MessageCellDelegate
                 {
                     if saveModel.questionDate == self.dateFormatter(date: userModel.sentDate) && saveModel.answerDate == self.dateFormatter(date: messageModel.sentDate)
                     {
-                        PTBaseViewController.gobal_drop(title: "不可以保存重複內容")
+                        PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Error_same"))
                         return
                     }
                 }
@@ -675,7 +676,7 @@ extension PTChatViewController:MessageCellDelegate
                 }
                 model.answerDate = self.dateFormatter(date: messageModel.sentDate)
                 self.saveChatModelToJsonString(model: model)
-                PTBaseViewController.gobal_drop(title: "保存成功")
+                PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Save_success"))
             }
         }
     }
@@ -690,7 +691,7 @@ extension PTChatViewController:MessageCellDelegate
         switch messageModel.kind {
         case .text(let text):
             self.editString = text
-            messageInputBar.inputTextView.placeholder = "請輸入對\(self.editString)須要修改的內容"
+            messageInputBar.inputTextView.placeholder = String(format: PTLanguage.share.text(forKey: "chat_Edit"), self.editString)
         default: break
         }
         
@@ -853,7 +854,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
         inputBar.invalidatePlugins()
         // Send button activity animation
         inputBar.sendButton.startAnimating()
-        inputBar.inputTextView.placeholder = "Sending..."
+        inputBar.inputTextView.placeholder = PTLanguage.share.text(forKey: "chat_Sending")
         // Resign first responder for iPad split view
         inputBar.inputTextView.resignFirstResponder()
         DispatchQueue.global(qos: .default).async {

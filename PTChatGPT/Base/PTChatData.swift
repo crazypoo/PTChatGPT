@@ -7,6 +7,7 @@
 
 import UIKit
 import MessageKit
+import PooTools
 
 final internal class PTChatData
 {
@@ -16,7 +17,7 @@ final internal class PTChatData
         
     }
         
-    let user = PTChatUser(senderId: "000000", displayName: "用戶")
+    let user = PTChatUser(senderId: "000000", displayName: PTLanguage.share.text(forKey: "chat_User"))
     let bot = PTChatUser(senderId: "000001", displayName: "ZolaAi")
     
     func getAvatarFor(sender:SenderType) -> Avatar

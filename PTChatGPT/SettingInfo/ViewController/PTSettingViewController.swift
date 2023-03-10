@@ -31,7 +31,7 @@ class PTSettingViewController: PTChatBaseViewController {
         
     lazy var selectLanguage:UIButton = {
         let button = UIButton(type: .custom)
-        button.setTitle("Select your language defult:zh-CN", for: .normal)
+        button.setTitle(PTLanguage.share.text(forKey: "first_Select_speech_language"), for: .normal)
         button.setTitleColor(.black, for: .normal)
         button.addActionHandlers { sender in
             self.languagePicker.selectValue = self.currentSelectLanguage
@@ -49,7 +49,7 @@ class PTSettingViewController: PTChatBaseViewController {
     
     lazy var token:UITextField = {
         let view = UITextField()
-        view.placeholder = "粘貼你嘅Token/Paste your Token/Pega tu token"
+        view.placeholder = PTLanguage.share.text(forKey: "first_Paste")
         view.delegate = self
         return view
     }()
@@ -62,7 +62,7 @@ class PTSettingViewController: PTChatBaseViewController {
     
     lazy var getApiToken:UIButton = {
         let button = UIButton(type: .custom)
-        button.setTitle("Get API token", for: .normal)
+        button.setTitle(PTLanguage.share.text(forKey: "first_Go_get_api_token"), for: .normal)
         button.setTitleColor(.black, for: .normal)
         button.addActionHandlers { sender in
             let url = URL(string: getApiUrl)!
@@ -73,7 +73,7 @@ class PTSettingViewController: PTChatBaseViewController {
     
     lazy var disclaimerButton:UIButton = {
         let button = UIButton(type: .custom)
-        button.setTitle("Disclaimer", for: .normal)
+        button.setTitle(PTLanguage.share.text(forKey: "first_Disclaimer"), for: .normal)
         button.setTitleColor(.black, for: .normal)
         button.addActionHandlers { sender in
             let vc = PTDisclaimerViewController()
@@ -84,7 +84,7 @@ class PTSettingViewController: PTChatBaseViewController {
     
     lazy var gogogoButton:UIButton = {
         let button = UIButton(type: .custom)
-        button.setTitle("開始使用", for: .normal)
+        button.setTitle(PTLanguage.share.text(forKey: "first_Start"), for: .normal)
         button.setTitleColor(.black, for: .normal)
         button.addActionHandlers { sender in
             self.checkTextField(textField: self.token)
@@ -94,7 +94,7 @@ class PTSettingViewController: PTChatBaseViewController {
     
     lazy var disclaimerLabel : UILabel = {
         let view = UILabel()
-        view.text = "By continuing you agree to have read the disclaimer"
+        view.text = PTLanguage.share.text(forKey: "first_Disclaimer_info")
         view.textColor = .gobalTextColor
         view.textAlignment = .center
         view.numberOfLines = 0
@@ -104,7 +104,7 @@ class PTSettingViewController: PTChatBaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.zx_navTitle = "獲取OpenAi Api key"
+        self.zx_navTitle = PTLanguage.share.text(forKey: "first_Title")
         
         self.view.backgroundColor = .white
         
@@ -119,8 +119,8 @@ class PTSettingViewController: PTChatBaseViewController {
             make.left.right.equalToSuperview().inset(PTAppBaseConfig.share.defaultViewSpace)
         }
         self.infoLabel.attributedText = NSMutableAttributedString.sj.makeText({ make in
-            make.append("To use the app, you must generate a token to access the OpenAI API.").font(.appfont(size: 13)).alignment(.left).textColor(.gobalTextColor)
-            make.append("\nThis app was not made by OpeanAI. This is an independent and completely free project that connects to OpenAI's public API. The app is not affiliated with OpenAI in any way, and if OpenAI would like to request closure of the project they could contact me.").font(.appfont(size: 16,bold: true)).alignment(.left).textColor(.red)
+            make.append(PTLanguage.share.text(forKey: "first_Info_title")).font(.appfont(size: 13)).alignment(.left).textColor(.gobalTextColor)
+            make.append("\n\(PTLanguage.share.text(forKey: "first_Info_info"))").font(.appfont(size: 16,bold: true)).alignment(.left).textColor(.red)
         })
         
         // Do any additional setup after loading the view.
@@ -170,7 +170,7 @@ class PTSettingViewController: PTChatBaseViewController {
     {
         if (textField.text ?? "").stringIsEmpty() || !(textField.text ?? "").nsString.contains("sk-")
         {
-            PTBaseViewController.gobal_drop(title: "Token錯誤/Wrong Token/Token incorrecta")
+            PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Token_error"))
         }
         else
         {

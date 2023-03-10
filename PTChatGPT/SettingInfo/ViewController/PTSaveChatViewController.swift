@@ -80,7 +80,7 @@ class PTSaveChatViewController: PTChatBaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.zx_navTitle = "個人精選列表"
+        self.zx_navTitle = PTLanguage.share.text(forKey: "selected_List")
         self.saveChatModel = AppDelegate.appDelegate()!.appConfig.getSaveChatData()
 
         self.view.backgroundColor = .gobalScrollerBackgroundColor
@@ -217,9 +217,9 @@ extension PTSaveChatViewController:SwipeCollectionViewCellDelegate
    func collectionView(_ collectionView: UICollectionView, editActionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
        if orientation == .right {
            
-           let delete = SwipeAction(style: .destructive, title: "删除") { action, indexPath in
+           let delete = SwipeAction(style: .destructive, title: PTLanguage.share.text(forKey: "cell_Delete")) { action, indexPath in
                PTGCDManager.gcdMain {
-                   UIAlertController.base_alertVC(title: "提示",msg:"是否確定刪除這條信息",okBtns:["確定"],cancelBtn: "取消") {
+                   UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),msg:PTLanguage.share.text(forKey: "cell_Delete_one_cell"),okBtns:[PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
                        self.showDetail()
                    } moreBtn: { index, title in
                        self.saveChatModel.remove(at: indexPath.row)
@@ -231,6 +231,7 @@ extension PTSaveChatViewController:SwipeCollectionViewCellDelegate
                        let dataStrings = newArr.joined(separator: kSeparator)
                        UserDefaults.standard.set(dataStrings, forKey: uSaveChat)
                        self.showDetail()
+                       PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_done"))
                    }
                }
            }

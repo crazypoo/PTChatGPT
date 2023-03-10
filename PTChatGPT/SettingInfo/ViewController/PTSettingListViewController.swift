@@ -15,18 +15,18 @@ fileprivate extension String
     //MARK: 主題
     static let colorString = PTLanguage.share.text(forKey: "about_Color")
     static let languageString = PTLanguage.share.text(forKey: "about_Language")
-    static let themeString = PTLanguage.share.text(forKey: "about_Theme")
+    static let themeString = PTLanguage.share.text(forKey: "about_Main_Theme")
     //MARK: 聊天相關
     static let savedChat = PTLanguage.share.text(forKey: "about_SavedChat")
     static let deleteAllChat = PTLanguage.share.text(forKey: "about_DeleteAllChat")
     //MARK: Speech
-    static let speech = PTLanguage.share.text(forKey: "about_Speech")
+    static let speech = PTLanguage.share.text(forKey: "about_Main_Speech")
     //MARK: API
     static let apiAIType = PTLanguage.share.text(forKey: "about_APIAIType")
     static let apiAIToken = PTLanguage.share.text(forKey: "about_APIAIToken")
     static let getAPIAIToken = PTLanguage.share.text(forKey: "about_GetAPIAIToken")
     //MARK: Other
-    static let github = PTLanguage.share.text(forKey: "about_Github")
+    static let github = PTLanguage.share.text(forKey: "Github")
     static let forum = PTLanguage.share.text(forKey: "about_Forum")
     static let rate = PTLanguage.share.text(forKey: "about_Rate")
     static let share = PTLanguage.share.text(forKey: "about_Share")
@@ -37,7 +37,7 @@ fileprivate extension String
 class PTSettingListViewController: PTChatBaseViewController {
 
     lazy var pickerData : [String] = {
-        return ["中文(简体)/中文(簡體)/Chinese(Simplified)/Chine(Simplificado)","中文(繁体)/中文(簡體)/Chinese(Hong Kong)/Chino(Hong Kong)","英语/英語/English/Ingles","西班牙语/西班牙語/Spanish/Espanol"]
+        return ["中文(简体)/中文(簡體)/Chinese(Simplified)/Chine(Simplificado)","中文(繁体)/中文(簡體)/Chinese(Hong Kong)/Chino(Hong Kong)","英语/英語/English/Inglés","西班牙语/西班牙語/Spanish/Español"]
     }()
     
     lazy var languageFileName:[String] = {
@@ -73,7 +73,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         let disclosureIndicatorImageName = UIImage(systemName: "chevron.right")!.withTintColor(.gobalTextColor,renderingMode: .alwaysOriginal)
         
         let themeMain = PTSettingModels()
-        themeMain.name = "主題"
+        themeMain.name = PTLanguage.share.text(forKey: "about_Main_Theme")
         
         //MARK: 主題
         let color = PTFunctionCellModel()
@@ -98,7 +98,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         
         //MARK: Speech
         let speechMain = PTSettingModels()
-        speechMain.name = "Speech"
+        speechMain.name = PTLanguage.share.text(forKey: "about_Main_Speech")
 
         let speechLanguage = PTFunctionCellModel()
         speechLanguage.name = .speech
@@ -151,7 +151,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         apiMain.models = [aiType,aiToken,getApiToken]
         
         let otherMain = PTSettingModels()
-        otherMain.name = "其他"
+        otherMain.name = PTLanguage.share.text(forKey: "about_Main_Other")
 
         //MARK: Other
         let github = PTFunctionCellModel()
@@ -259,7 +259,7 @@ class PTSettingListViewController: PTChatBaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.zx_navTitle = "設置"
+        self.zx_navTitle = PTLanguage.share.text(forKey: "about_Setting")
         self.view.backgroundColor = .gobalScrollerBackgroundColor
         // Do any additional setup after loading the view.
         self.view.addSubviews([self.collectionView])
@@ -279,7 +279,7 @@ class PTSettingListViewController: PTChatBaseViewController {
                 let row_List = PTRows.init(title: subValue.name, placeholder: subValue.content,cls: PTFusionCell.self, ID: PTFusionCell.ID, dataModel: subValue)
                 rows.append(row_List)
             }
-            let cellSection = PTSection.init(headerTitle:value.name,headerCls:PTSettingHeader.self,headerID: PTSettingHeader.ID,headerHeight: 34,rows: rows)
+            let cellSection = PTSection.init(headerTitle:value.name,headerCls:PTSettingHeader.self,headerID: PTSettingHeader.ID,headerHeight: 44,rows: rows)
             mSections.append(cellSection)
         }
         
@@ -325,7 +325,6 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
             cell.cellModel = (itemRow.dataModel as! PTFunctionCellModel)
             cell.dataContent.lineView.isHidden = indexPath.row == (itemSec.rows.count - 1) ? true : false
             cell.dataContent.topLineView.isHidden = true
-//            cell.contentView.backgroundColor = .gobalCellBackgroundColor
             return cell
         }
         else
@@ -353,11 +352,11 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
         }
         else if itemRow.title == .deleteAllChat
         {
-            UIAlertController.base_alertVC(title: "提示",msg: "您想要刪除全部聊天記錄嗎?",okBtns: ["確定"],cancelBtn: "取消") {
+            UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),msg: PTLanguage.share.text(forKey: "chat_Delete_all_chat"),okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
                 
             } moreBtn: { index, title in
                 UserDefaults.standard.set("", forKey: uChatHistory)
-                PTBaseViewController.gobal_drop(title: "刪除成功")
+                PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_done"))
             }
         }
         else if itemRow.title == .apiAIType
@@ -366,13 +365,13 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
         }
         else if itemRow.title == .apiAIToken
         {
-            let textKey = "請輸入APIToken"
+            let textKey = PTLanguage.share.text(forKey: "alert_Input_token")
             let apiToken = AppDelegate.appDelegate()!.appConfig.apiToken
-            UIAlertController.base_textfiele_alertVC(title:"請輸入您的ApiToken",okBtn: "確定", cancelBtn: "取消", placeHolders: [textKey], textFieldTexts: [apiToken], keyboardType: [.default],textFieldDelegate: self) { result in
+            UIAlertController.base_textfiele_alertVC(title:textKey,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"), placeHolders: [textKey], textFieldTexts: [apiToken], keyboardType: [.default],textFieldDelegate: self) { result in
                 let newToken:String? = result[textKey]!
                 if (newToken ?? "").stringIsEmpty() || !(newToken ?? "").nsString.contains("sk-")
                 {
-                    PTBaseViewController.gobal_drop(title: "Token錯誤/Wrong Token/Token incorrecta")
+                    PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Token_error"))
                 }
                 else
                 {
