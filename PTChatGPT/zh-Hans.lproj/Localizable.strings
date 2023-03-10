@@ -66,3 +66,4 @@
 "color_Bubble_bot" = "AI聊天框颜色";
 "color_Text_bot" = "AI文字颜色";
 "color_Text_user" = "用户文字颜色";
+"about_AI_smart" = "AI聪明度";

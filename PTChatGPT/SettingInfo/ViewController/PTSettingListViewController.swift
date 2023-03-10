@@ -24,6 +24,7 @@ fileprivate extension String
     //MARK: API
     static let apiAIType = PTLanguage.share.text(forKey: "about_APIAIType")
     static let apiAIToken = PTLanguage.share.text(forKey: "about_APIAIToken")
+    static let aiSmart = PTLanguage.share.text(forKey: "about_AI_smart")
     static let getAPIAIToken = PTLanguage.share.text(forKey: "about_GetAPIAIToken")
     //MARK: Other
     static let github = PTLanguage.share.text(forKey: "Github")
@@ -137,6 +138,10 @@ class PTSettingListViewController: PTChatBaseViewController {
         aiType.nameColor = .gobalTextColor
         aiType.disclosureIndicatorImageName = disclosureIndicatorImageName
         
+        let aiSmart = PTFunctionCellModel()
+        aiSmart.name = .aiSmart
+        aiSmart.nameColor = .gobalTextColor
+
         let aiToken = PTFunctionCellModel()
         aiToken.name = .apiAIToken
         aiToken.haveDisclosureIndicator = true
@@ -149,7 +154,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         getApiToken.nameColor = .gobalTextColor
         getApiToken.disclosureIndicatorImageName = disclosureIndicatorImageName
 
-        apiMain.models = [aiType,aiToken,getApiToken]
+        apiMain.models = [aiType,aiSmart,aiToken,getApiToken]
         
         let otherMain = PTSettingModels()
         otherMain.name = PTLanguage.share.text(forKey: "about_Main_Other")
@@ -212,9 +217,14 @@ class PTSettingListViewController: PTChatBaseViewController {
         var customers = [NSCollectionLayoutGroupCustomItem]()
         var groupH:CGFloat = 0
         sectionModel.rows.enumerated().forEach { (index,model) in
-            let customItem = NSCollectionLayoutGroupCustomItem.init(frame: CGRect.init(x: PTAppBaseConfig.share.defaultViewSpace, y: groupH, width: CGFloat.kSCREEN_WIDTH - PTAppBaseConfig.share.defaultViewSpace * 2, height: 44), zIndex: 1000+index)
+            var cellHeight:CGFloat = 44
+            if (model.dataModel as! PTFunctionCellModel).name == .aiSmart
+            {
+                cellHeight = 78
+            }
+            let customItem = NSCollectionLayoutGroupCustomItem.init(frame: CGRect.init(x: PTAppBaseConfig.share.defaultViewSpace, y: groupH, width: CGFloat.kSCREEN_WIDTH - PTAppBaseConfig.share.defaultViewSpace * 2, height: cellHeight), zIndex: 1000+index)
             customers.append(customItem)
-            groupH += 44
+            groupH += cellHeight
         }
         bannerGroupSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(CGFloat.kSCREEN_WIDTH), heightDimension: NSCollectionLayoutDimension.absolute(groupH))
         group = NSCollectionLayoutGroup.custom(layoutSize: bannerGroupSize, itemProvider: { layoutEnvironment in
@@ -277,8 +287,17 @@ class PTSettingListViewController: PTChatBaseViewController {
         self.aboutModels.enumerated().forEach { (index,value) in
             var rows = [PTRows]()
             value.models.enumerated().forEach { (subIndex,subValue) in
-                let row_List = PTRows.init(title: subValue.name, placeholder: subValue.content,cls: PTFusionCell.self, ID: PTFusionCell.ID, dataModel: subValue)
-                rows.append(row_List)
+                
+                if subValue.name == .aiSmart
+                {
+                    let row_List = PTRows.init(title: subValue.name, placeholder: subValue.content,cls: PTAISmartCell.self, ID: PTAISmartCell.ID, dataModel: subValue)
+                    rows.append(row_List)
+                }
+                else
+                {
+                    let row_List = PTRows.init(title: subValue.name, placeholder: subValue.content,cls: PTFusionCell.self, ID: PTFusionCell.ID, dataModel: subValue)
+                    rows.append(row_List)
+                }
             }
             let cellSection = PTSection.init(headerTitle:value.name,headerCls:PTSettingHeader.self,headerID: PTSettingHeader.ID,headerHeight: 44,rows: rows)
             mSections.append(cellSection)
@@ -326,6 +345,16 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
             cell.cellModel = (itemRow.dataModel as! PTFunctionCellModel)
             cell.dataContent.lineView.isHidden = indexPath.row == (itemSec.rows.count - 1) ? true : false
             cell.dataContent.topLineView.isHidden = true
+            return cell
+        }
+        else if itemRow.ID == PTAISmartCell.ID
+        {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTAISmartCell
+            cell.cellModel = (itemRow.dataModel as! PTFunctionCellModel)
+            cell.aiSlider.addSliderAction { sender in
+                AppDelegate.appDelegate()!.appConfig.aiSmart = Double(sender.value)
+                UserDefaults.standard.set(Double(sender.value), forKey: uAiSmart)
+            }
             return cell
         }
         else

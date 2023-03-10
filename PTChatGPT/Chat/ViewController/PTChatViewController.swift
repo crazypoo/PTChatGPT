@@ -915,7 +915,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
                     }
                     else
                     {
-                        self.openAI.sendCompletion(with: str,model: AppDelegate.appDelegate()!.appConfig.getAIMpdelType(typeString: AppDelegate.appDelegate()!.appConfig.aiModelType),maxTokens: 2048) { result in
+                        self.openAI.sendCompletion(with: str,model: AppDelegate.appDelegate()!.appConfig.getAIMpdelType(typeString: AppDelegate.appDelegate()!.appConfig.aiModelType),maxTokens: 2048,temperature: AppDelegate.appDelegate()!.appConfig.aiSmart) { result in
                             switch result {
                             case .success(let success):
                                 let botDate = Date()

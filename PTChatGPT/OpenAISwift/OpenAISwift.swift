@@ -31,9 +31,9 @@ extension OpenAISwift {
     ///   - prompt: 內容
     ///   - model: OpenAI模型,默認`OpenAIModelType.gpt3(.davinci)`
     ///   - maxTokens: 返回响应的限制字符，根据API默认为16
-    ///   - temperature: 较高的值(如0.8)将使输出更加随机，而较低的值(如0.2)将使输出更加集中和确定。默认值为0.2
+    ///   - temperature: 较高的值(如0.8)将使输出更加随机，而较低的值(如0.2)将使输出更加集中和确定。默认值为1
     ///   - completionHandler: 返回OpenAI模型
-    public func sendCompletion(with prompt: String, model: OpenAIModelType = .gpt3(.davinci), maxTokens: Int = 16, temperature: Double = 0.2, completionHandler: @escaping (Result<OpenAI, OpenAIError>) -> Void) {
+    public func sendCompletion(with prompt: String, model: OpenAIModelType = .gpt3(.davinci), maxTokens: Int = 16, temperature: Double = 1, completionHandler: @escaping (Result<OpenAI, OpenAIError>) -> Void) {
         let endpoint = Endpoint.completions
         let body = Command(prompt: prompt, model: model.modelName, maxTokens: maxTokens, temperature: temperature)
         let request = prepareRequest(endpoint, body: body)
@@ -148,7 +148,7 @@ extension OpenAISwift {
     /// - Returns: 返回OpenAI模型
     @available(swift 5.5)
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    public func sendCompletion(with prompt: String, model: OpenAIModelType = .gpt3(.davinci), maxTokens: Int = 16, temperature: Double = 0.2) async throws -> OpenAI {
+    public func sendCompletion(with prompt: String, model: OpenAIModelType = .gpt3(.davinci), maxTokens: Int = 16, temperature: Double = 1) async throws -> OpenAI {
         return try await withCheckedThrowingContinuation { continuation in
             sendCompletion(with: prompt, model: model, maxTokens: maxTokens, temperature: temperature) { result in
                 continuation.resume(with: result)

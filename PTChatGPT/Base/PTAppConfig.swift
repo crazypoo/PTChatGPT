@@ -24,6 +24,8 @@ let uChatHistory = "ChatHistory"
 let uSaveChat = "uSaveChat"
 ///保存的機器人類型
 let uAiModelType = "uAiModelType"
+///保存的機器人智障程度
+let uAiSmart = "uAiSmart"
 
 let kSeparator = "[,]"
 
@@ -62,6 +64,7 @@ class PTAppConfig {
 
     var aiModelType:String = UserDefaults.standard.value(forKey: uAiModelType) == nil ? "text-davinci-003" : UserDefaults.standard.value(forKey: uAiModelType) as! String
     var apiToken:String = UserDefaults.standard.value(forKey: uTokenKey) == nil ? "" : UserDefaults.standard.value(forKey: uTokenKey) as! String
+    var aiSmart:Double = UserDefaults.standard.value(forKey: uAiSmart) == nil ? 0.2 : UserDefaults.standard.value(forKey: uAiSmart) as! Double
     
     var language:String = UserDefaults.standard.value(forKey: uLanguageKey) == nil ? OSSVoiceEnum.ChineseSimplified.rawValue : UserDefaults.standard.value(forKey: uLanguageKey) as! String
 
