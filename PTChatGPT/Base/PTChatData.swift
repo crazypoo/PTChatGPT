@@ -16,8 +16,8 @@ final internal class PTChatData
         
     }
         
-    let user = PTChatUser(senderId: "000000", displayName: "豺狼")
-    let bot = PTChatUser(senderId: "000001", displayName: "ChatGPT")
+    let user = PTChatUser(senderId: "000000", displayName: "用戶")
+    let bot = PTChatUser(senderId: "000001", displayName: "ZolaAi")
     
     func getAvatarFor(sender:SenderType) -> Avatar
     {

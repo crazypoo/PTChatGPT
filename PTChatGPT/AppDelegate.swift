@@ -29,6 +29,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
                 
         PTDrakModeOption.defaultDark()
+        PTAppBaseConfig.share.decorationBackgroundColor = .gobalCellBackgroundColor
 //        let filePath = NSTemporaryDirectory().appending("/demo.order")
 //        YCSymbolTracker.exportSymbols(filePath: filePath)
                         
@@ -47,7 +48,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window?.rootViewController = nav
         self.window?.makeKeyAndVisible()
 
-        PTLaunchAdMonitor.showAt(path: ["https://avatars.githubusercontent.com/u/1111976?v=4"], onView: self.window!, timeInterval: 2, param: ["URLS":"https://github.com/crazypoo"], year: "2023", skipFont: .appfont(size: 10), comName: "Crazypoo", comNameFont: .appfont(size: 10)) {
+        PTLaunchAdMonitor.showAt(path: ["https://avatars.githubusercontent.com/u/1111976?v=4"], onView: self.window!, timeInterval: 2, param: ["URLS":myGithubUrl], year: "2023", skipFont: .appfont(size: 10), comName: "Crazypoo", comNameFont: .appfont(size: 10)) {
         }
 
 #if DEBUG

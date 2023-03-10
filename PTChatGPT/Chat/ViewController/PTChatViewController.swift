@@ -16,7 +16,7 @@ import AVFAudio
 
 fileprivate extension String{
     static let saveNavTitle = "個人精選"
-    static let navTitle = "ChatGPT"
+    static let navTitle = kAppName
     static let loading = "思考中....."
 }
 
@@ -160,6 +160,7 @@ class PTChatViewController: MessagesViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         messagesCollectionView.contentInsetAdjustmentBehavior = .automatic
+        self.messageList.removeAll()
         if let userHistoryModelString :String = UserDefaults.standard.value(forKey: uChatHistory) as? String
         {
             if !userHistoryModelString.stringIsEmpty()
@@ -247,7 +248,7 @@ class PTChatViewController: MessagesViewController {
         messagesCollectionView.register(PTChatCustomCell.self)
         messagesCollectionView.messagesDataSource = self
         messagesCollectionView.messageCellDelegate = self
-
+        messagesCollectionView.backgroundColor = .gobalBackgroundColor
         scrollsToLastItemOnKeyboardBeginsEditing = true // default false
         showMessageTimestampOnSwipeLeft = true // default false
 
@@ -258,10 +259,12 @@ class PTChatViewController: MessagesViewController {
     
     func configureMessageInputBar() {
         messageInputBar.delegate = self
-        messageInputBar.inputTextView.tintColor = .black
-        messageInputBar.sendButton.setTitleColor(.black, for: .normal)
+        messageInputBar.backgroundView.backgroundColor = .gobalBackgroundColor
+        messageInputBar.inputTextView.textColor = .gobalTextColor
+        messageInputBar.inputTextView.tintColor = .gobalTextColor
+        messageInputBar.sendButton.setTitleColor( .gobalTextColor, for: .normal)
         messageInputBar.sendButton.setTitleColor(
-            UIColor.black.withAlphaComponent(0.3),
+            .gobalTextColor.withAlphaComponent(0.3),
             for: .highlighted)
         messageInputBar.sendButton.snp.makeConstraints { make in
             make.right.equalToSuperview().inset(PTAppBaseConfig.share.defaultViewSpace)
@@ -470,9 +473,9 @@ class PTChatViewController: MessagesViewController {
 extension PTChatViewController: MessagesDisplayDelegate {
     
     // MARK: - Text Messages
-    
+    //MARK: 文字顏色
     func textColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
-        return isFromCurrentSender(message: message) ? .white : .darkText
+        return isFromCurrentSender(message: message) ? AppDelegate.appDelegate()!.appConfig.userTextColor : AppDelegate.appDelegate()!.appConfig.botTextColor
     }
     
     func detectorAttributes(for detector: DetectorType, and message: MessageType, at indexPath: IndexPath) -> [NSAttributedString.Key: Any] {
@@ -536,7 +539,7 @@ extension PTChatViewController: MessagesDisplayDelegate {
     }
 
     // MARK: - Audio Messages
-
+    //MARK: 語音文字顏色
     func audioTintColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
         return isFromCurrentSender(message: message) ? .white : UIColor(red: 15/255, green: 135/255, blue: 255/255, alpha: 1.0)
     }
@@ -605,14 +608,14 @@ extension PTChatViewController:MessagesDataSource
       let name = message.sender.displayName
       return NSAttributedString(
         string: name,
-        attributes: [NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .caption1)])
+        attributes: [NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .caption1),NSAttributedString.Key.foregroundColor:UIColor.gobalTextColor])
     }
 
     func messageBottomLabelAttributedText(for message: MessageType, at _: IndexPath) -> NSAttributedString? {
       let dateString = formatter.string(from: message.sentDate)
       return NSAttributedString(
         string: dateString,
-        attributes: [NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .caption2)])
+        attributes: [NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .caption2),NSAttributedString.Key.foregroundColor:UIColor.gobalTextColor])
     }
 
     func textCell(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UICollectionViewCell? {

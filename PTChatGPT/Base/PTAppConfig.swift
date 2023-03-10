@@ -14,6 +14,10 @@ import BRPickerView
 let uUserBubbleColor = "uUserBubbleColor"
 ///機器人的BubbleColor key
 let uBotBubbleColor = "uBotBubbleColor"
+///用戶的TextColor key
+let uUserTextColor = "uUserTextColor"
+///機器人的TextColor key
+let uBotTextColor = "uBotTextColor"
 ///歷史記錄 key
 let uChatHistory = "ChatHistory"
 ///保存記錄 key
@@ -34,9 +38,17 @@ extension UIColor
 {
     static let botBubbleColor = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
     static let userBubbleColor = UIColor.systemBlue
+    
+    static let userTextColor = UIColor.darkText
+    static let botTextColor = UIColor.darkText
     /// 字體顏色
     private(set) static var gobalTextColor = PTDrakModeOption.colorLightDark(lightColor: .black, darkColor: UIColor.white)
     private(set) static var gobalBackgroundColor = PTDrakModeOption.colorLightDark(lightColor: .white, darkColor: UIColor.black)
+    
+    private(set) static var gobalScrollerBackgroundColor = PTDrakModeOption.colorLightDark(lightColor: PTAppBaseConfig.share.viewControllerBaseBackgroundColor, darkColor: UIColor.black)
+    
+    private(set) static var gobalCellBackgroundColor = PTDrakModeOption.colorLightDark(lightColor: .white, darkColor: .Black25PercentColor)
+
 }
 
 class PTAppConfig {
@@ -45,6 +57,9 @@ class PTAppConfig {
     var userBubbleColor:UIColor = UserDefaults.standard.value(forKey: uUserBubbleColor) == nil ? .userBubbleColor : UIColor(hexString: UserDefaults.standard.value(forKey: uUserBubbleColor) as! String)!
     var botBubbleColor:UIColor = UserDefaults.standard.value(forKey: uBotBubbleColor) == nil ? .botBubbleColor : UIColor(hexString: UserDefaults.standard.value(forKey: uBotBubbleColor) as! String)!
     
+    var userTextColor:UIColor = UserDefaults.standard.value(forKey: uUserTextColor) == nil ? .userTextColor : UIColor(hexString: UserDefaults.standard.value(forKey: uUserTextColor) as! String)!
+    var botTextColor:UIColor = UserDefaults.standard.value(forKey: uBotTextColor) == nil ? .botTextColor : UIColor(hexString: UserDefaults.standard.value(forKey: uBotTextColor) as! String)!
+
     var aiModelType:String = UserDefaults.standard.value(forKey: uAiModelType) == nil ? "text-davinci-003" : UserDefaults.standard.value(forKey: uAiModelType) as! String
     var apiToken:String = UserDefaults.standard.value(forKey: uTokenKey) == nil ? "" : UserDefaults.standard.value(forKey: uTokenKey) as! String
     

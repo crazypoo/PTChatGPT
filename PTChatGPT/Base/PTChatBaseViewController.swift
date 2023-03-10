@@ -19,7 +19,8 @@ class PTChatBaseViewController: PTBaseViewController {
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        self.changeStatusBar(type: .Auto)
+        let type:VCStatusBarChangeStatusType = PTDrakModeOption.isLight ? .Light : .Dark
+        self.changeStatusBar(type: type)
     }
     
     override func viewDidLoad() {

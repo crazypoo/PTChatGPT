@@ -83,7 +83,7 @@ class PTSaveChatViewController: PTChatBaseViewController {
         self.zx_navTitle = "個人精選列表"
         self.saveChatModel = AppDelegate.appDelegate()!.appConfig.getSaveChatData()
 
-        self.view.backgroundColor = PTAppBaseConfig.share.viewControllerBaseBackgroundColor
+        self.view.backgroundColor = .gobalScrollerBackgroundColor
         self.view.addSubviews([self.collectionView])
         self.collectionView.snp.makeConstraints { make in
             make.left.right.bottom.equalToSuperview()

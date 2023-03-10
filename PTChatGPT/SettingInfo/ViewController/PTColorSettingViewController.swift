@@ -16,16 +16,35 @@ class PTColorSettingViewController: PTChatBaseViewController {
     let brightnessSlider = ChromaBrightnessSlider()
     var userBubbleHandle = ChromaColorHandle()
     var botBubbleHandle = ChromaColorHandle()
+    var userTextHandle = ChromaColorHandle()
+    var botTextHandle = ChromaColorHandle()
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationController?.fd_fullscreenPopGestureRecognizer.isEnabled = false
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        self.navigationController?.fd_fullscreenPopGestureRecognizer.isEnabled = false
         
         self.zx_navTitle = "顏色設置"
         self.setupColorPicker()
         self.setupBrightnessSlider()
         self.setupColorPickerHandles()
+        
+        let backBtn = UIButton.init(type: .custom)
+        backBtn.setImage(UIImage(systemName: "chevron.left")!.withTintColor(.black, renderingMode: .automatic), for: .normal)
+        backBtn.bounds = CGRect.init(x: 0, y: 0, width: 24, height: 24)
+        backBtn.addActionHandlers { seder in
+            self.returnFrontVC()
+        }
+        self.zx_navBar?.addSubview(backBtn)
+        backBtn.snp.makeConstraints { make in
+            make.size.equalTo(34)
+            make.left.equalToSuperview().inset(PTAppBaseConfig.share.defaultViewSpace)
+            make.bottom.equalToSuperview()
+        }
+        
         
         self.view.addSubviews([self.colorPicker,self.brightnessSlider])
         self.colorPicker.snp.makeConstraints { make in
@@ -55,7 +74,6 @@ class PTColorSettingViewController: PTChatBaseViewController {
     func setupColorPickerHandles()
     {
         self.userBubbleHandle = self.colorPicker.addHandle(at: AppDelegate.appDelegate()!.appConfig.userBubbleColor)
-
         let userBubbleImageView = UIImageView(image: UIImage(systemName: "bubble.left.fill")?.withRenderingMode(.alwaysTemplate))
         userBubbleImageView.contentMode = .scaleAspectFit
         userBubbleImageView.tintColor = .white
@@ -68,6 +86,21 @@ class PTColorSettingViewController: PTChatBaseViewController {
         botBubbleImageView.tintColor = .white
         self.botBubbleHandle.accessoryView = botBubbleImageView
         self.botBubbleHandle.accessoryViewEdgeInsets = UIEdgeInsets(top: 0, left: 4, bottom: 4, right: 4)
+        
+        self.userTextHandle = self.colorPicker.addHandle(at: AppDelegate.appDelegate()!.appConfig.userTextColor)
+        let userTextImageView = UIImageView(image: UIImage(systemName: "plus.bubble.fill")?.withRenderingMode(.alwaysTemplate))
+        userTextImageView.contentMode = .scaleAspectFit
+        userTextImageView.tintColor = .white
+        self.userTextHandle.accessoryView = userTextImageView
+        self.userTextHandle.accessoryViewEdgeInsets = UIEdgeInsets(top: 0, left: 4, bottom: 4, right: 4)
+
+        self.botTextHandle = self.colorPicker.addHandle(at: AppDelegate.appDelegate()!.appConfig.botTextColor)
+        let botTextImageView = UIImageView(image: UIImage(systemName: "text.bubble.fill")?.withRenderingMode(.alwaysTemplate))
+        botTextImageView.contentMode = .scaleAspectFit
+        botTextImageView.tintColor = .white
+        self.botTextHandle.accessoryView = botTextImageView
+        self.botTextHandle.accessoryViewEdgeInsets = UIEdgeInsets(top: 0, left: 4, bottom: 4, right: 4)
+
     }
 }
 
@@ -84,5 +117,16 @@ extension PTColorSettingViewController:ChromaColorPickerDelegate
             AppDelegate.appDelegate()?.appConfig.userBubbleColor = color
             UserDefaults.standard.set(color.toHexString, forKey: uUserBubbleColor)
         }
+        else if handle == self.userTextHandle
+        {
+            AppDelegate.appDelegate()?.appConfig.userTextColor = color
+            UserDefaults.standard.set(color.toHexString, forKey: uUserTextColor)
+        }
+        else if handle == self.botTextHandle
+        {
+            AppDelegate.appDelegate()?.appConfig.botTextColor = color
+            UserDefaults.standard.set(color.toHexString, forKey: uBotTextColor)
+        }
+
     }
 }

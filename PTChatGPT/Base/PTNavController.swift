@@ -76,6 +76,7 @@ class PTNavController: ZXNavigationBarNavigationController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.zx_disableFullScreenGesture = false
     }
     
     // MARK: Lifecycle

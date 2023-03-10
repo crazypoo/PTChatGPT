@@ -17,7 +17,8 @@ class PTSettingHeader: PTBaseCollectionReusableView {
     lazy var titleLabel : UILabel = {
         let view = UILabel()
         view.textAlignment = .left
-        view.font = .appfont(size: 14)
+        view.font = .appfont(size: 18,bold: true)
+        view.textColor = .gobalTextColor
         return view
     }()
     

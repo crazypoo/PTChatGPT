@@ -260,7 +260,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         super.viewDidLoad()
 
         self.zx_navTitle = "設置"
-        self.view.backgroundColor = PTAppBaseConfig.share.viewControllerBaseBackgroundColor
+        self.view.backgroundColor = .gobalScrollerBackgroundColor
         // Do any additional setup after loading the view.
         self.view.addSubviews([self.collectionView])
         self.collectionView.snp.makeConstraints { make in
@@ -323,9 +323,9 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
         {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTFusionCell
             cell.cellModel = (itemRow.dataModel as! PTFunctionCellModel)
-//            cell.dataContent.lineView.isHidden = indexPath.row == (itemSec.rows.count - 1) ? true : false
-            cell.dataContent.lineView.isHidden = false
-            cell.dataContent.topLineView.isHidden = false
+            cell.dataContent.lineView.isHidden = indexPath.row == (itemSec.rows.count - 1) ? true : false
+            cell.dataContent.topLineView.isHidden = true
+//            cell.contentView.backgroundColor = .gobalCellBackgroundColor
             return cell
         }
         else
@@ -342,7 +342,9 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
         if itemRow.title == .colorString
         {
             let vc = PTColorSettingViewController()
-            self.navigationController?.pushViewController(vc)
+            let nav = PTNavController(rootViewController: vc)
+            nav.modalPresentationStyle = .fullScreen
+            self.navigationController?.present(nav, animated: true)
         }
         else if itemRow.title == .savedChat
         {
