@@ -29,7 +29,7 @@ final internal class PTChatData
         case "000000":
             return Avatar(image: #imageLiteral(resourceName: "DemoImage"), initials: initials)
         default:
-            return Avatar(image: #imageLiteral(resourceName: "ChatGPT"), initials: initials)
+            return Avatar(image: #imageLiteral(resourceName: "Applaunch"), initials: initials)
         }
     }
 }
