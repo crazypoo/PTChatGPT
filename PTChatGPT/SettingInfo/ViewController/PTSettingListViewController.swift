@@ -47,10 +47,9 @@ class PTSettingListViewController: PTChatBaseViewController {
     lazy var currentSelectedLanguage = PTLanguage.share.language
 
     lazy var languagePicker:BRStringPickerView = {
-        let pickerStyle = BRPickerStyle()
-        pickerStyle.topCornerRadius = 10
         let picker = BRStringPickerView(pickerMode: .componentSingle)
-        picker.pickerStyle = pickerStyle
+        picker.pickerStyle = PTAppConfig.gobal_BRPickerStyle()
+
         return picker
     }()
 
@@ -65,6 +64,8 @@ class PTSettingListViewController: PTChatBaseViewController {
             UserDefaults.standard.set(resultModel!.last!.value!,forKey: uAiModelType)
             AppDelegate.appDelegate()!.appConfig.aiModelType = resultModel!.last!.value!
         }
+        picker.pickerStyle = PTAppConfig.gobal_BRPickerStyle()
+        picker.title = PTLanguage.share.text(forKey: "about_APIAIType")
         return picker
     }()
     
@@ -410,7 +411,8 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
             PTAppStoreFunction.rateApp(appid: "")
         }
         else if itemRow.title == .speech
-        {            
+        {
+            self.languagePicker.title = PTLanguage.share.text(forKey: "about_Main_Speech")
             self.languagePicker.selectValue = AppDelegate.appDelegate()!.appConfig.language
             self.languagePicker.dataSourceArr = AppDelegate.appDelegate()!.appConfig.languagePickerData
             self.languagePicker.show()
@@ -421,6 +423,7 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
         }
         else if itemRow.title == .languageString
         {
+            self.languagePicker.title = PTLanguage.share.text(forKey: "about_Language")
             self.languagePicker.selectValue = self.currentSelectedLanguage
             self.languagePicker.dataSourceArr = self.pickerData
             self.languagePicker.show()

@@ -244,4 +244,22 @@ class PTAppConfig {
         }
         return saveChatModel
     }
+    
+    class open func gobal_BRPickerStyle()->BRPickerStyle
+    {
+        let style = BRPickerStyle()
+        style.topCornerRadius = 10
+        style.pickerTextFont = .appfont(size: 16)
+        style.pickerColor = .gobalBackgroundColor
+        style.pickerTextColor = .gobalTextColor
+        style.titleBarColor = .gobalBackgroundColor
+        style.cancelBtnTitle = PTLanguage.share.text(forKey: "button_Cancel")
+        style.cancelTextFont = .appfont(size: 17)
+        style.cancelTextColor = .systemBlue
+        style.doneBtnTitle = PTLanguage.share.text(forKey: "button_Confirm")
+        style.doneTextFont = .appfont(size: 17)
+        style.doneTextColor = .systemBlue
+        return style
+    }
+
 }

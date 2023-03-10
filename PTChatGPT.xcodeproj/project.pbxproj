@@ -330,12 +330,12 @@
 		55A5D80429B242B400DCA096 /* ViewController */ = {
 			isa = PBXGroup;
 			children = (
-				5514B39629BB013600890161 /* PTDarkModeSettingViewController.swift */,
-				55A5D80529B242CF00DCA096 /* PTSettingViewController.swift */,
-				5514B37729B9F87C00890161 /* PTSettingListViewController.swift */,
 				5514B38129BA14C400890161 /* PTColorSettingViewController.swift */,
-				5514B38329BA233A00890161 /* PTSaveChatViewController.swift */,
+				5514B39629BB013600890161 /* PTDarkModeSettingViewController.swift */,
 				5514B38C29BAFA6A00890161 /* PTDisclaimerViewController.swift */,
+				5514B38329BA233A00890161 /* PTSaveChatViewController.swift */,
+				5514B37729B9F87C00890161 /* PTSettingListViewController.swift */,
+				55A5D80529B242CF00DCA096 /* PTSettingViewController.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";

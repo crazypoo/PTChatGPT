@@ -54,24 +54,24 @@ class DarkModePickerView: UIView {
     /// 视图的父视图
     lazy var bgView: UIView = {
         let view = UIView(frame: CGRect(x: 0, y: UIScreen.main.bounds.height - 200 - 44, width:  UIScreen.main.bounds.width, height: 200 + 44))
-        view.backgroundColor = .white
+        view.backgroundColor = .gobalBackgroundColor
         return view
     }()
     /// 取消
     lazy var cancelButton: UIButton = {
         let button = UIButton(frame: CGRect(x: 0, y: 0, width: 88, height: 44))
-        button.setTitle(PTLanguage.share.text(forKey: "alert_Cancel"), for: .normal)
+        button.setTitle(PTLanguage.share.text(forKey: "button_Cancel"), for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
-        button.setTitleColor(UIColor.gray, for: .normal)
+        button.setTitleColor(.systemBlue, for: .normal)
         button.addTarget(self, action: #selector(dismissView), for: .touchUpInside)
         return button
     }()
     /// 确定
     lazy var sureButton: UIButton = {
         let button = UIButton(frame: CGRect(x: UIScreen.main.bounds.width - 88, y: 0, width: 88, height: 44))
-        button.setTitle(PTLanguage.share.text(forKey: "alert_OK"), for: .normal)
+        button.setTitle(PTLanguage.share.text(forKey: "button_Confirm"), for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
-        button.setTitleColor(UIColor.red, for: .normal)
+        button.setTitleColor(.systemBlue, for: .normal)
         button.addTarget(self, action: #selector(sureButtonClick), for: .touchUpInside)
         return button
     }()
@@ -105,6 +105,7 @@ class DarkModePickerView: UIView {
         bgView.addSubview(rightTimePickerView)
         bgView.addSubview(middeleLabel)
         bgView.addSubview(topLineView)
+        bgView.viewCornerRectCorner(cornerRadii: 10,corner: [.topLeft,.topRight])
     }
     
     /// 添加控件和设置约束

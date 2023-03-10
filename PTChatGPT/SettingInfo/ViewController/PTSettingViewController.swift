@@ -20,12 +20,10 @@ class PTSettingViewController: PTChatBaseViewController {
     var currentSelectLanguage:String = OSSVoiceEnum.ChineseSimplified.rawValue
     
     lazy var languagePicker:BRStringPickerView = {
-        
-        let pickerStyle = BRPickerStyle()
-        pickerStyle.topCornerRadius = 10
-        
+                
         let picker = BRStringPickerView(pickerMode: .componentSingle)
-        picker.pickerStyle = pickerStyle
+        picker.pickerStyle = PTAppConfig.gobal_BRPickerStyle()
+        picker.title = PTLanguage.share.text(forKey: "first_Select_speech_language")
         return picker
     }()
         
@@ -34,13 +32,16 @@ class PTSettingViewController: PTChatBaseViewController {
         button.setTitle(PTLanguage.share.text(forKey: "first_Select_speech_language"), for: .normal)
         button.setTitleColor(.black, for: .normal)
         button.addActionHandlers { sender in
+            self.token.resignFirstResponder()
+            
             self.languagePicker.selectValue = self.currentSelectLanguage
             self.languagePicker.dataSourceArr = AppDelegate.appDelegate()!.appConfig.languagePickerData
             self.languagePicker.show()
             self.languagePicker.resultModelBlock = { route in
                 self.currentSelectLanguage = OSSVoiceEnum.allCases[route!.index].rawValue
                 self.languageType = OSSVoiceEnum.allCases[route!.index]
-                UserDefaults.standard.set(self.languageType, forKey: uLanguageKey)
+                AppDelegate.appDelegate()!.appConfig.language = self.languageType.rawValue
+                UserDefaults.standard.set(self.languageType.rawValue, forKey: uLanguageKey)
                 self.selectLanguage.setTitle(self.currentSelectLanguage, for: .normal)
             }
         }
@@ -65,6 +66,7 @@ class PTSettingViewController: PTChatBaseViewController {
         button.setTitle(PTLanguage.share.text(forKey: "first_Go_get_api_token"), for: .normal)
         button.setTitleColor(.black, for: .normal)
         button.addActionHandlers { sender in
+            self.token.resignFirstResponder()
             let url = URL(string: getApiUrl)!
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
@@ -76,6 +78,7 @@ class PTSettingViewController: PTChatBaseViewController {
         button.setTitle(PTLanguage.share.text(forKey: "first_Disclaimer"), for: .normal)
         button.setTitleColor(.black, for: .normal)
         button.addActionHandlers { sender in
+            self.token.resignFirstResponder()
             let vc = PTDisclaimerViewController()
             self.navigationController?.pushViewController(vc)
         }
@@ -87,6 +90,7 @@ class PTSettingViewController: PTChatBaseViewController {
         button.setTitle(PTLanguage.share.text(forKey: "first_Start"), for: .normal)
         button.setTitleColor(.black, for: .normal)
         button.addActionHandlers { sender in
+            self.token.resignFirstResponder()
             self.checkTextField(textField: self.token)
         }
         return button
@@ -95,7 +99,7 @@ class PTSettingViewController: PTChatBaseViewController {
     lazy var disclaimerLabel : UILabel = {
         let view = UILabel()
         view.text = PTLanguage.share.text(forKey: "first_Disclaimer_info")
-        view.textColor = .gobalTextColor
+        view.textColor = .lightText
         view.textAlignment = .center
         view.numberOfLines = 0
         return view
@@ -129,23 +133,33 @@ class PTSettingViewController: PTChatBaseViewController {
             make.height.equalTo(44)
             make.top.equalTo(self.infoLabel.snp.bottom).offset(10)
         }
-        self.token.viewCorner(radius: 5,borderWidth: 1,borderColor: .black)
+        self.token.viewCorner(radius: 5,borderWidth: 1,borderColor: .gobalTextColor)
         
+        var selectHeight = self.selectLanguage.sizeFor(size: CGSize(width: CGFloat.kSCREEN_WIDTH - PTAppBaseConfig.share.defaultViewSpace * 2, height: CGFloat(MAXFLOAT))).height
+        if selectHeight < 44
+        {
+            selectHeight = 44
+        }
         self.selectLanguage.snp.makeConstraints { make in
             make.left.right.equalTo(self.infoLabel)
             make.top.equalTo(self.token.snp.bottom).offset(20)
+            make.height.equalTo(selectHeight)
         }
-        
+        self.selectLanguage.viewCorner(radius: 5,borderWidth: 1,borderColor: .gobalTextColor)
+
         self.getApiToken.snp.makeConstraints { make in
             make.left.right.equalTo(self.infoLabel)
             make.top.equalTo(self.selectLanguage.snp.bottom).offset(20)
+            make.height.equalTo(44)
         }
-        
+        self.getApiToken.viewCorner(radius: 5,borderWidth: 1,borderColor: .gobalTextColor)
+
         self.gogogoButton.snp.makeConstraints { make in
             make.left.right.equalTo(self.infoLabel)
             make.height.equalTo(44)
             make.top.equalTo(self.getApiToken.snp.bottom).offset(20)
         }
+        self.gogogoButton.viewCorner(radius: 5,borderWidth: 1,borderColor: .gobalTextColor)
         
         self.disclaimerLabel.snp.makeConstraints { make in
             make.left.right.equalTo(self.infoLabel)
@@ -155,7 +169,9 @@ class PTSettingViewController: PTChatBaseViewController {
         self.disclaimerButton.snp.makeConstraints { make in
             make.bottom.equalToSuperview().inset(CGFloat.kTabbarHeight_Total + 5)
             make.left.right.equalTo(self.infoLabel)
+            make.height.equalTo(44)
         }
+        self.disclaimerButton.viewCorner(radius: 5,borderWidth: 1,borderColor: .gobalTextColor)
     }
     
     @objc func showURLNotifi(notifi:Notification)

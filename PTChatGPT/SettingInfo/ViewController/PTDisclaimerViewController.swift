@@ -28,7 +28,7 @@ class PTDisclaimerViewController: PTChatBaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.zx_navTitle = "Disclaimer"
+        self.zx_navTitle = PTLanguage.share.text(forKey: "first_Disclaimer")
         
         self.view.addSubview(self.labelContent)
         self.labelContent.snp.makeConstraints { make in
