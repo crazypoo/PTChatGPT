@@ -680,7 +680,7 @@
 				DEVELOPMENT_TEAM = SFU2CNYFPC;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = PTChatGPT/Info.plist;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "我要用Mic";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "我要用語音";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -717,7 +717,7 @@
 				DEVELOPMENT_TEAM = SFU2CNYFPC;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = PTChatGPT/Info.plist;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "我要用Mic";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "我要用語音";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
