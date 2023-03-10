@@ -368,7 +368,7 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
         {
             let textKey = PTLanguage.share.text(forKey: "alert_Input_token")
             let apiToken = AppDelegate.appDelegate()!.appConfig.apiToken
-            UIAlertController.base_textfiele_alertVC(title:textKey,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"), placeHolders: [textKey], textFieldTexts: [apiToken], keyboardType: [.default],textFieldDelegate: self) { result in
+            UIAlertController.base_textfiele_alertVC(title:textKey,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey], textFieldTexts: [apiToken], keyboardType: [.default],textFieldDelegate: self) { result in
                 let newToken:String? = result[textKey]!
                 if (newToken ?? "").stringIsEmpty() || !(newToken ?? "").nsString.contains("sk-")
                 {
