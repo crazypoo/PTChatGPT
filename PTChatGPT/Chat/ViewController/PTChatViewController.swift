@@ -190,7 +190,7 @@ class PTChatViewController: MessagesViewController {
                 }
             }
         }
-
+        HSNavControl.GobalNavControl(nav: self.navigationController!,textColor: .gobalTextColor,navColor: .gobalBackgroundColor)
     }
     
     override func viewDidLoad() {

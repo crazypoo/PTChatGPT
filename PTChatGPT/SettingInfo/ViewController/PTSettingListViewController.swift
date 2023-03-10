@@ -36,11 +36,19 @@ fileprivate extension String
 
 class PTSettingListViewController: PTChatBaseViewController {
 
+    lazy var pickerData : [String] = {
+        return ["中文(简体)/中文(簡體)/Chinese(Simplified)/Chine(Simplificado)","中文(繁体)/中文(簡體)/Chinese(Hong Kong)/Chino(Hong Kong)","英语/英語/English/Ingles","西班牙语/西班牙語/Spanish/Espanol"]
+    }()
+    
+    lazy var languageFileName:[String] = {
+        return ["zh-Hans","zh-HK","en","es"]
+    }()
+    
+    lazy var currentSelectedLanguage = PTLanguage.share.language
+
     lazy var languagePicker:BRStringPickerView = {
-        
         let pickerStyle = BRPickerStyle()
         pickerStyle.topCornerRadius = 10
-        
         let picker = BRStringPickerView(pickerMode: .componentSingle)
         picker.pickerStyle = pickerStyle
         return picker
@@ -402,13 +410,29 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
         }
         else if itemRow.title == .speech
         {            
-            self.languagePicker.selectValue = AppDelegate.appDelegate()!.appConfig.language.rawValue
+            self.languagePicker.selectValue = AppDelegate.appDelegate()!.appConfig.language
             self.languagePicker.dataSourceArr = AppDelegate.appDelegate()!.appConfig.languagePickerData
             self.languagePicker.show()
             self.languagePicker.resultModelBlock = { route in
-                AppDelegate.appDelegate()!.appConfig.language = OSSVoiceEnum.allCases[route!.index]
-                UserDefaults.standard.set(AppDelegate.appDelegate()!.appConfig.language.rawValue, forKey: uLanguageKey)
+                AppDelegate.appDelegate()!.appConfig.language = OSSVoiceEnum.allCases[route!.index].rawValue
+                UserDefaults.standard.set(AppDelegate.appDelegate()!.appConfig.language, forKey: uLanguageKey)
             }
+        }
+        else if itemRow.title == .languageString
+        {
+            self.languagePicker.selectValue = self.currentSelectedLanguage
+            self.languagePicker.dataSourceArr = self.pickerData
+            self.languagePicker.show()
+            self.languagePicker.resultModelBlock = { route in
+                self.currentSelectedLanguage = self.languageFileName[route!.index]
+                PTLanguage.share.language = self.currentSelectedLanguage
+                self.showDetail()
+            }
+        }
+        else if itemRow.title == .themeString
+        {
+            let vc = PTDarkModeSettingViewController()
+            self.navigationController?.pushViewController(vc)
         }
     }
 }

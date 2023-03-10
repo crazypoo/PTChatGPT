@@ -28,6 +28,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
                 
+        PTDrakModeOption.defaultDark()
 //        let filePath = NSTemporaryDirectory().appending("/demo.order")
 //        YCSymbolTracker.exportSymbols(filePath: filePath)
                         
@@ -39,9 +40,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         else
         {
-            viewC = PTChatViewController(token: self.appConfig.apiToken,language: self.appConfig.language)
+            viewC = PTChatViewController(token: self.appConfig.apiToken,language: OSSVoiceEnum(rawValue: self.appConfig.language)!)
         }
-        let nav = UINavigationController(rootViewController: viewC)
+        let nav = PTNavController(rootViewController: viewC)
         self.window = UIWindow.init(frame: UIScreen.main.bounds)
         self.window?.rootViewController = nav
         self.window?.makeKeyAndVisible()

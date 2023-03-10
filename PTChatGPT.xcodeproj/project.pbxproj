@@ -26,6 +26,14 @@
 		5514B38429BA233A00890161 /* PTSaveChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B38329BA233A00890161 /* PTSaveChatViewController.swift */; };
 		5514B38729BAE76E00890161 /* PTShareItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B38629BAE76D00890161 /* PTShareItem.swift */; };
 		5514B38929BAE7E400890161 /* SwipeCellOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B38829BAE7E400890161 /* SwipeCellOption.swift */; };
+		5514B38B29BAF5E900890161 /* PTNavController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B38A29BAF5E900890161 /* PTNavController.swift */; };
+		5514B38D29BAFA6A00890161 /* PTDisclaimerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B38C29BAFA6A00890161 /* PTDisclaimerViewController.swift */; };
+		5514B39229BB013000890161 /* SettingCustomViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B38E29BB012F00890161 /* SettingCustomViewCell.swift */; };
+		5514B39329BB013000890161 /* PTDarkModeHeadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B38F29BB012F00890161 /* PTDarkModeHeadView.swift */; };
+		5514B39429BB013000890161 /* DescriptionCustomViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B39029BB013000890161 /* DescriptionCustomViewCell.swift */; };
+		5514B39529BB013000890161 /* DarkModePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B39129BB013000890161 /* DarkModePickerView.swift */; };
+		5514B39729BB013600890161 /* PTDarkModeSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B39629BB013600890161 /* PTDarkModeSettingViewController.swift */; };
+		5514B39929BB024D00890161 /* HSNavControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B39829BB024D00890161 /* HSNavControl.swift */; };
 		55A5D71829B1D23D00DCA096 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A5D71729B1D23D00DCA096 /* AppDelegate.swift */; };
 		55A5D71F29B1D23D00DCA096 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 55A5D71D29B1D23D00DCA096 /* Main.storyboard */; };
 		55A5D72129B1D23E00DCA096 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55A5D72029B1D23E00DCA096 /* Assets.xcassets */; };
@@ -65,6 +73,14 @@
 		5514B38329BA233A00890161 /* PTSaveChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSaveChatViewController.swift; sourceTree = "<group>"; };
 		5514B38629BAE76D00890161 /* PTShareItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PTShareItem.swift; sourceTree = "<group>"; };
 		5514B38829BAE7E400890161 /* SwipeCellOption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwipeCellOption.swift; sourceTree = "<group>"; };
+		5514B38A29BAF5E900890161 /* PTNavController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PTNavController.swift; sourceTree = "<group>"; };
+		5514B38C29BAFA6A00890161 /* PTDisclaimerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTDisclaimerViewController.swift; sourceTree = "<group>"; };
+		5514B38E29BB012F00890161 /* SettingCustomViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingCustomViewCell.swift; sourceTree = "<group>"; };
+		5514B38F29BB012F00890161 /* PTDarkModeHeadView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PTDarkModeHeadView.swift; sourceTree = "<group>"; };
+		5514B39029BB013000890161 /* DescriptionCustomViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DescriptionCustomViewCell.swift; sourceTree = "<group>"; };
+		5514B39129BB013000890161 /* DarkModePickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DarkModePickerView.swift; sourceTree = "<group>"; };
+		5514B39629BB013600890161 /* PTDarkModeSettingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PTDarkModeSettingViewController.swift; sourceTree = "<group>"; };
+		5514B39829BB024D00890161 /* HSNavControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HSNavControl.swift; sourceTree = "<group>"; };
 		55A5D71429B1D23D00DCA096 /* Chat走啦.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Chat走啦.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		55A5D71729B1D23D00DCA096 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		55A5D71E29B1D23D00DCA096 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -171,6 +187,10 @@
 		5514B37B29BA100A00890161 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				5514B39129BB013000890161 /* DarkModePickerView.swift */,
+				5514B39029BB013000890161 /* DescriptionCustomViewCell.swift */,
+				5514B38F29BB012F00890161 /* PTDarkModeHeadView.swift */,
+				5514B38E29BB012F00890161 /* SettingCustomViewCell.swift */,
 				5514B37C29BA102400890161 /* PTSettingHeader.swift */,
 			);
 			path = Views;
@@ -272,6 +292,8 @@
 		55A5D7FF29B1EFA000DCA096 /* Base */ = {
 			isa = PBXGroup;
 			children = (
+				5514B39829BB024D00890161 /* HSNavControl.swift */,
+				5514B38A29BAF5E900890161 /* PTNavController.swift */,
 				55A5D7FB29B1E41400DCA096 /* PTChatUser.swift */,
 				55A5D7FD29B1EEF400DCA096 /* PTChatData.swift */,
 				55A5D80029B1F29800DCA096 /* PTMessageModel.swift */,
@@ -294,10 +316,12 @@
 		55A5D80429B242B400DCA096 /* ViewController */ = {
 			isa = PBXGroup;
 			children = (
+				5514B39629BB013600890161 /* PTDarkModeSettingViewController.swift */,
 				55A5D80529B242CF00DCA096 /* PTSettingViewController.swift */,
 				5514B37729B9F87C00890161 /* PTSettingListViewController.swift */,
 				5514B38129BA14C400890161 /* PTColorSettingViewController.swift */,
 				5514B38329BA233A00890161 /* PTSaveChatViewController.swift */,
+				5514B38C29BAFA6A00890161 /* PTDisclaimerViewController.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -432,19 +456,26 @@
 			buildActionMask = 2147483647;
 			files = (
 				55A5D7F029B1D9A900DCA096 /* Instruction.swift in Sources */,
+				5514B39529BB013000890161 /* DarkModePickerView.swift in Sources */,
 				5512AB7229B43D520059D840 /* OSSUtterance.swift in Sources */,
 				5512AB7429B43D520059D840 /* OSSSpeechUtility.swift in Sources */,
+				5514B39729BB013600890161 /* PTDarkModeSettingViewController.swift in Sources */,
 				5514B38429BA233A00890161 /* PTSaveChatViewController.swift in Sources */,
+				5514B38B29BAF5E900890161 /* PTNavController.swift in Sources */,
 				55A5D7F329B1D9A900DCA096 /* OpenAISwift.swift in Sources */,
 				55A5D7F729B1DFF200DCA096 /* PTChatViewController.swift in Sources */,
 				5514B38229BA14C400890161 /* PTColorSettingViewController.swift in Sources */,
+				5514B39929BB024D00890161 /* HSNavControl.swift in Sources */,
 				5514B37A29BA02E300890161 /* PTChatBaseViewController.swift in Sources */,
 				55A5D7EF29B1D9A900DCA096 /* OpenAI.swift in Sources */,
 				55A5D80629B242CF00DCA096 /* PTSettingViewController.swift in Sources */,
+				5514B39429BB013000890161 /* DescriptionCustomViewCell.swift in Sources */,
+				5514B39329BB013000890161 /* PTDarkModeHeadView.swift in Sources */,
 				5514B37D29BA102400890161 /* PTSettingHeader.swift in Sources */,
 				55A5D7FE29B1EEF400DCA096 /* PTChatData.swift in Sources */,
 				55A5D71829B1D23D00DCA096 /* AppDelegate.swift in Sources */,
 				5514B38729BAE76E00890161 /* PTShareItem.swift in Sources */,
+				5514B39229BB013000890161 /* SettingCustomViewCell.swift in Sources */,
 				5512AB7029B43D520059D840 /* OSSSpeech.swift in Sources */,
 				55A5D7F229B1D9A900DCA096 /* OpenAIEndpoint.swift in Sources */,
 				55A5D7F129B1D9A900DCA096 /* Command.swift in Sources */,
@@ -458,6 +489,7 @@
 				5514B37129B9CBFD00890161 /* PTChatCustomCell.swift in Sources */,
 				55A5D7EE29B1D9A900DCA096 /* OpenAIModelType.swift in Sources */,
 				5512AB7329B43D520059D840 /* OSSVoice.swift in Sources */,
+				5514B38D29BAFA6A00890161 /* PTDisclaimerViewController.swift in Sources */,
 				55A5D7FC29B1E41400DCA096 /* PTChatUser.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
