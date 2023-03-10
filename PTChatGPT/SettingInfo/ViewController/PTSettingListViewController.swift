@@ -8,6 +8,7 @@
 
 import UIKit
 import PooTools
+import BRPickerView
 
 fileprivate extension String
 {
@@ -18,6 +19,8 @@ fileprivate extension String
     //MARK: 聊天相關
     static let savedChat = PTLanguage.share.text(forKey: "about_SavedChat")
     static let deleteAllChat = PTLanguage.share.text(forKey: "about_DeleteAllChat")
+    //MARK: Speech
+    static let speech = PTLanguage.share.text(forKey: "about_Speech")
     //MARK: API
     static let apiAIType = PTLanguage.share.text(forKey: "about_APIAIType")
     static let apiAIToken = PTLanguage.share.text(forKey: "about_APIAIToken")
@@ -26,12 +29,37 @@ fileprivate extension String
     static let github = PTLanguage.share.text(forKey: "about_Github")
     static let forum = PTLanguage.share.text(forKey: "about_Forum")
     static let rate = PTLanguage.share.text(forKey: "about_Rate")
+    static let share = PTLanguage.share.text(forKey: "about_Share")
     static let version = PTLanguage.share.text(forKey: "about_Version")
 
 }
 
 class PTSettingListViewController: PTChatBaseViewController {
 
+    lazy var languagePicker:BRStringPickerView = {
+        
+        let pickerStyle = BRPickerStyle()
+        pickerStyle.topCornerRadius = 10
+        
+        let picker = BRStringPickerView(pickerMode: .componentSingle)
+        picker.pickerStyle = pickerStyle
+        return picker
+    }()
+
+    lazy var AIModelPicker:BRStringPickerView = {
+        let picker = BRStringPickerView(pickerMode: .componentLinkage)
+        AppDelegate.appDelegate()!.appConfig.getAiModelPickerDate(currentAi: AppDelegate.appDelegate()!.appConfig.aiModelType) { result, selectIndex in
+            picker.dataSourceArr = result
+            picker.selectIndexs = selectIndex
+        }
+        picker.numberOfComponents = 2
+        picker.resultModelArrayBlock = { resultModel in
+            UserDefaults.standard.set(resultModel!.last!.value!,forKey: uAiModelType)
+            AppDelegate.appDelegate()!.appConfig.aiModelType = resultModel!.last!.value!
+        }
+        return picker
+    }()
+    
     var aboutModels : [PTSettingModels] = {
         
         let disclosureIndicatorImageName = UIImage(systemName: "chevron.right")!.withTintColor(.gobalTextColor,renderingMode: .alwaysOriginal)
@@ -60,10 +88,22 @@ class PTSettingListViewController: PTChatBaseViewController {
         
         themeMain.models = [color,language,theme]
         
+        //MARK: Speech
+        let speechMain = PTSettingModels()
+        speechMain.name = "Speech"
+
+        let speechLanguage = PTFunctionCellModel()
+        speechLanguage.name = .speech
+        speechLanguage.haveDisclosureIndicator = true
+        speechLanguage.nameColor = .gobalTextColor
+        speechLanguage.disclosureIndicatorImageName = disclosureIndicatorImageName
+
+        speechMain.models = [speechLanguage]
+
+        //MARK: Chat
         let chatMain = PTSettingModels()
         chatMain.name = "Chat"
 
-        //MARK: Chat
         let savedMessage = PTFunctionCellModel()
         savedMessage.name = .savedChat
         savedMessage.haveDisclosureIndicator = true
@@ -124,6 +164,12 @@ class PTSettingListViewController: PTChatBaseViewController {
         rate.nameColor = .gobalTextColor
         rate.disclosureIndicatorImageName = disclosureIndicatorImageName
 
+        let share = PTFunctionCellModel()
+        share.name = .share
+        share.haveDisclosureIndicator = true
+        share.nameColor = .gobalTextColor
+        share.disclosureIndicatorImageName = disclosureIndicatorImageName
+
         let version = PTFunctionCellModel()
         version.name = .version
         version.haveDisclosureIndicator = false
@@ -131,8 +177,8 @@ class PTSettingListViewController: PTChatBaseViewController {
         version.content = "v" + kAppVersion!
         version.contentTextColor = .gobalTextColor
         
-        otherMain.models = [github,forum,rate,version]
-        return [themeMain,chatMain,apiMain,otherMain]
+        otherMain.models = [github,forum,rate,share,version]
+        return [themeMain,speechMain,chatMain,apiMain,otherMain]
     }()
 
     var mSections = [PTSection]()
@@ -304,6 +350,71 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                 PTBaseViewController.gobal_drop(title: "刪除成功")
             }
         }
+        else if itemRow.title == .apiAIType
+        {
+            self.AIModelPicker.show()
+        }
+        else if itemRow.title == .apiAIToken
+        {
+            let textKey = "請輸入APIToken"
+            let apiToken = AppDelegate.appDelegate()!.appConfig.apiToken
+            UIAlertController.base_textfiele_alertVC(title:"請輸入您的ApiToken",okBtn: "確定", cancelBtn: "取消", placeHolders: [textKey], textFieldTexts: [apiToken], keyboardType: [.default],textFieldDelegate: self) { result in
+                let newToken:String? = result[textKey]!
+                if (newToken ?? "").stringIsEmpty() || !(newToken ?? "").nsString.contains("sk-")
+                {
+                    PTBaseViewController.gobal_drop(title: "Token錯誤/Wrong Token/Token incorrecta")
+                }
+                else
+                {
+                    AppDelegate.appDelegate()!.appConfig.apiToken = newToken!
+                    UserDefaults.standard.set(newToken,forKey: uTokenKey)
+                }
+            }
+        }
+        else if itemRow.title == .getAPIAIToken
+        {
+            let url = URL(string: getApiUrl)!
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        }
+        else if itemRow.title == .github
+        {
+            let url = URL(string: myGithubUrl)!
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        }
+        else if itemRow.title == .forum
+        {
+            let url = URL(string: projectGithubUrl)!
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        }
+        else if itemRow.title == .share
+        {
+            let title = kAppName!
+            let content = "看看我的頁面"
+            let shareLink = projectGithubUrl
+            let url = URL(string: shareLink)!
+            let shareItem = PTShareItem(title: title, content: content, url: url)
+            let activityViewController = UIActivityViewController(activityItems: [shareItem], applicationActivities: nil)
+            present(activityViewController, animated: true, completion: nil)
+        }
+        else if itemRow.title == .rate
+        {
+            PTAppStoreFunction.rateApp(appid: "")
+        }
+        else if itemRow.title == .speech
+        {            
+            self.languagePicker.selectValue = AppDelegate.appDelegate()!.appConfig.language.rawValue
+            self.languagePicker.dataSourceArr = AppDelegate.appDelegate()!.appConfig.languagePickerData
+            self.languagePicker.show()
+            self.languagePicker.resultModelBlock = { route in
+                AppDelegate.appDelegate()!.appConfig.language = OSSVoiceEnum.allCases[route!.index]
+                UserDefaults.standard.set(AppDelegate.appDelegate()!.appConfig.language.rawValue, forKey: uLanguageKey)
+            }
+        }
     }
+}
+
+extension PTSettingListViewController:UITextFieldDelegate
+{
+    
 }
 

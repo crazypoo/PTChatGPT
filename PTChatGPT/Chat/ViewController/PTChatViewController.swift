@@ -13,7 +13,6 @@ import MapKit
 import SDWebImage
 import AVFAudio
 
-//https://platform.openai.com/account/api-keys
 
 fileprivate extension String{
     static let saveNavTitle = "個人精選"
@@ -198,6 +197,11 @@ class PTChatViewController: MessagesViewController {
         super.viewDidLoad()
         navigationItem.largeTitleDisplayMode = .never
         
+        if !AppDelegate.appDelegate()!.appConfig.apiToken.stringIsEmpty()
+        {
+            NotificationCenter.default.addObserver(self, selector: #selector(self.showURLNotifi(notifi:)), name: NSNotification.Name(rawValue: PLaunchAdDetailDisplayNotification), object: nil)
+        }
+
         self.configureMessageCollectionView()
         if self.onlyShowSave
         {
@@ -216,23 +220,16 @@ class PTChatViewController: MessagesViewController {
             logout.addActionHandlers { sender in
                 let vc = PTSettingListViewController()
                 self.navigationController?.pushViewController(vc)
-    //            UserDefaults.standard.set("", forKey: uTokenKey)
-    //
-    //            if self.presentingViewController != nil
-    //            {
-    //                self.dismiss(animated: true, completion: nil)
-    //            }
-    //            else
-    //            {
-    //                let windows = AppDelegate.appDelegate()!.window!
-    //                let viewC = PTSettingViewController()
-    //                let nav = UINavigationController(rootViewController: viewC)
-    //                windows.rootViewController = nav
-    //                windows.makeKeyAndVisible()
-    //            }
             }
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: logout)
-            
+        }
+    }
+    
+    @objc func showURLNotifi(notifi:Notification)
+    {
+        let urlString = (notifi.object as! [String:String])["URLS"]
+        if let url = URL(string: urlString) {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
     }
     
@@ -914,7 +911,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
                     }
                     else
                     {
-                        self.openAI.sendCompletion(with: str,maxTokens: 2048) { result in
+                        self.openAI.sendCompletion(with: str,model: AppDelegate.appDelegate()!.appConfig.getAIMpdelType(typeString: AppDelegate.appDelegate()!.appConfig.aiModelType),maxTokens: 2048) { result in
                             switch result {
                             case .success(let success):
                                 let botDate = Date()

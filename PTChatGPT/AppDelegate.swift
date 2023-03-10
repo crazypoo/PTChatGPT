@@ -30,34 +30,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 
 //        let filePath = NSTemporaryDirectory().appending("/demo.order")
 //        YCSymbolTracker.exportSymbols(filePath: filePath)
-        
-        
-        
-        let token:String = UserDefaults.standard.value(forKey: uTokenKey) == nil ? "" : UserDefaults.standard.value(forKey: uTokenKey) as! String
-        let language:OSSVoiceEnum = UserDefaults.standard.value(forKey: uLanguageKey) == nil ? .ChineseSimplified : UserDefaults.standard.value(forKey: uLanguageKey) as! OSSVoiceEnum
-        
-        PTLocalConsoleFunction.share.pNSLog("\(token)")
+                        
+        PTLocalConsoleFunction.share.pNSLog("\(self.appConfig.apiToken)")
         var viewC:UIViewController!
-        if token.stringIsEmpty()
+        if self.appConfig.apiToken.stringIsEmpty()
         {
             viewC = PTSettingViewController()
         }
         else
         {
-            viewC = PTChatViewController(token: token,language: language)
+            viewC = PTChatViewController(token: self.appConfig.apiToken,language: self.appConfig.language)
         }
         let nav = UINavigationController(rootViewController: viewC)
         self.window = UIWindow.init(frame: UIScreen.main.bounds)
         self.window?.rootViewController = nav
         self.window?.makeKeyAndVisible()
 
+        PTLaunchAdMonitor.showAt(path: ["https://avatars.githubusercontent.com/u/1111976?v=4"], onView: self.window!, timeInterval: 2, param: ["URLS":"https://github.com/crazypoo"], year: "2023", skipFont: .appfont(size: 10), comName: "Crazypoo", comNameFont: .appfont(size: 10)) {
+        }
+
+#if DEBUG
         self.devFunction.createLabBtn()
         self.devFunction.goToAppDevVC = {
             let vc = PTDebugViewController()
             let nav = UINavigationController(rootViewController: vc)
             PTUtils.getCurrentVC().present(nav, animated: true)
         }
-#if DEBUG
         self.devFunction.flex = {
             if FLEXManager.shared.isHidden
             {

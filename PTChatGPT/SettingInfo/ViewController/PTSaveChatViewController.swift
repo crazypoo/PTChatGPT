@@ -8,11 +8,13 @@
 
 import UIKit
 import PooTools
+import SwipeCellKit
 
 class PTSaveChatViewController: PTChatBaseViewController {
 
     var saveChatModel = [PTChatModel]()
-    
+    fileprivate var isSwipeRightEnabled = false
+
     var mSections = [PTSection]()
     func comboLayout()->UICollectionViewCompositionalLayout
     {
@@ -103,7 +105,7 @@ class PTSaveChatViewController: PTChatBaseViewController {
             cellModel.haveDisclosureIndicator = true
             cellModel.nameColor = .gobalTextColor
             cellModel.disclosureIndicatorImageName = disclosureIndicatorImageName
-            let row_List = PTRows.init(cls: PTFusionCell.self, ID: PTFusionCell.ID, dataModel: cellModel)
+            let row_List = PTRows.init(cls: PTFusionSwipeCell.self, ID: PTFusionSwipeCell.ID, dataModel: cellModel)
             rows.append(row_List)
         }
         let cellSection = PTSection.init(rows: rows)
@@ -112,6 +114,17 @@ class PTSaveChatViewController: PTChatBaseViewController {
         self.collectionView.pt_register(by: mSections)
         self.collectionView.reloadData()
     }
+    
+    class open func swipe_cell_buttonStyle(_ type:ButtonStyle? = .circular)->ButtonStyle
+    {
+        type!
+    }
+    
+    class open func swipe_cell_buttonDisplayMode(_ type:ButtonDisplayMode? = .imageOnly)->ButtonDisplayMode
+    {
+        type!
+    }
+
 }
 
 extension PTSaveChatViewController:UICollectionViewDelegate,UICollectionViewDataSource
@@ -145,12 +158,13 @@ extension PTSaveChatViewController:UICollectionViewDelegate,UICollectionViewData
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let itemSec = mSections[indexPath.section]
         let itemRow = itemSec.rows[indexPath.row]
-        if itemRow.ID == PTFusionCell.ID
+        if itemRow.ID == PTFusionSwipeCell.ID
         {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTFusionCell
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTFusionSwipeCell
             cell.cellModel = (itemRow.dataModel as! PTFunctionCellModel)
             cell.dataContent.lineView.isHidden = indexPath.row == (itemSec.rows.count - 1) ? true : false
             cell.dataContent.topLineView.isHidden = true
+            cell.delegate = self
             return cell
         }
         else
@@ -165,4 +179,80 @@ extension PTSaveChatViewController:UICollectionViewDelegate,UICollectionViewData
         let vc = PTChatViewController(saveModel: self.saveChatModel[indexPath.row])
         self.navigationController?.pushViewController(vc)
     }
+}
+
+extension PTSaveChatViewController:SwipeCollectionViewCellDelegate
+{
+    func swipe_cell_configure(action: SwipeAction, with descriptor: ActionDescriptor,buttonDisplayMode: ButtonDisplayMode? = PTSaveChatViewController.swipe_cell_buttonDisplayMode(),buttonStyle: ButtonStyle? = PTSaveChatViewController.swipe_cell_buttonStyle()) {
+       action.title = descriptor.title(forDisplayMode: buttonDisplayMode!)
+       action.image = descriptor.image(forStyle: buttonStyle!, displayMode: buttonDisplayMode!)
+       action.hidesWhenSelected = true
+       
+       switch buttonStyle! {
+       case .backgroundColor:
+           action.backgroundColor = descriptor.color(forStyle: buttonStyle!)
+       case .circular:
+           action.backgroundColor = .clear
+           action.textColor = descriptor.color(forStyle: buttonStyle!)
+           action.font = UIFont.appfont(size: 13)
+           action.transitionDelegate = ScaleTransition.default
+       }
+   }
+
+   
+   func collectionView(_ collectionView: UICollectionView, editActionsOptionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
+       var options = SwipeOptions()
+       options.expansionStyle = orientation == .left ? .selection : .destructive(automaticallyDelete: false)
+       options.transitionStyle = .border
+       switch PTSaveChatViewController.swipe_cell_buttonStyle() {
+       case .backgroundColor:
+           options.buttonSpacing = 4
+       case .circular:
+           options.buttonSpacing = 4
+           options.backgroundColor = .clear
+       }
+       return options
+   }
+   
+   func collectionView(_ collectionView: UICollectionView, editActionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
+       if orientation == .right {
+           
+           let delete = SwipeAction(style: .destructive, title: "删除") { action, indexPath in
+               PTGCDManager.gcdMain {
+                   UIAlertController.base_alertVC(title: "提示",msg:"是否確定刪除這條信息",okBtns:["確定"],cancelBtn: "取消") {
+                       self.showDetail()
+                   } moreBtn: { index, title in
+                       self.saveChatModel.remove(at: indexPath.row)
+                       self.mSections[0].rows.remove(at: indexPath.row)
+                       var newArr = [String]()
+                       self.saveChatModel.enumerated().forEach { index,value in
+                           newArr.append((value.toJSON()?.toJSON())!)
+                       }
+                       let dataStrings = newArr.joined(separator: kSeparator)
+                       UserDefaults.standard.set(dataStrings, forKey: uSaveChat)
+                       self.showDetail()
+                   }
+               }
+           }
+           delete.font = .appfont(size: 14)
+           delete.backgroundColor = .red
+           delete.fulfill(with: .delete)
+           self.swipe_cell_configure(action: delete, with: .trash)
+           return  [delete]
+       }
+       else
+       {
+           guard isSwipeRightEnabled else { return nil }
+
+           let read = SwipeAction(style: .default, title: nil) { action, indexPath in
+           }
+
+           read.hidesWhenSelected = true
+
+           let descriptor: ActionDescriptor = .unread
+           self.swipe_cell_configure(action: read, with: descriptor)
+           return [read]
+       }
+   }
+
 }

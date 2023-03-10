@@ -24,6 +24,8 @@
 		5514B38029BA112A00890161 /* PTSettingModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B37F29BA112A00890161 /* PTSettingModels.swift */; };
 		5514B38229BA14C400890161 /* PTColorSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B38129BA14C400890161 /* PTColorSettingViewController.swift */; };
 		5514B38429BA233A00890161 /* PTSaveChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B38329BA233A00890161 /* PTSaveChatViewController.swift */; };
+		5514B38729BAE76E00890161 /* PTShareItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B38629BAE76D00890161 /* PTShareItem.swift */; };
+		5514B38929BAE7E400890161 /* SwipeCellOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B38829BAE7E400890161 /* SwipeCellOption.swift */; };
 		55A5D71829B1D23D00DCA096 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A5D71729B1D23D00DCA096 /* AppDelegate.swift */; };
 		55A5D71F29B1D23D00DCA096 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 55A5D71D29B1D23D00DCA096 /* Main.storyboard */; };
 		55A5D72129B1D23E00DCA096 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55A5D72029B1D23E00DCA096 /* Assets.xcassets */; };
@@ -61,6 +63,8 @@
 		5514B37F29BA112A00890161 /* PTSettingModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSettingModels.swift; sourceTree = "<group>"; };
 		5514B38129BA14C400890161 /* PTColorSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTColorSettingViewController.swift; sourceTree = "<group>"; };
 		5514B38329BA233A00890161 /* PTSaveChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSaveChatViewController.swift; sourceTree = "<group>"; };
+		5514B38629BAE76D00890161 /* PTShareItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PTShareItem.swift; sourceTree = "<group>"; };
+		5514B38829BAE7E400890161 /* SwipeCellOption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwipeCellOption.swift; sourceTree = "<group>"; };
 		55A5D71429B1D23D00DCA096 /* Chat走啦.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Chat走啦.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		55A5D71729B1D23D00DCA096 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		55A5D71E29B1D23D00DCA096 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -180,6 +184,15 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		5514B38529BAE76600890161 /* Tools */ = {
+			isa = PBXGroup;
+			children = (
+				5514B38829BAE7E400890161 /* SwipeCellOption.swift */,
+				5514B38629BAE76D00890161 /* PTShareItem.swift */,
+			);
+			path = Tools;
+			sourceTree = "<group>";
+		};
 		55A5D70B29B1D23D00DCA096 = {
 			isa = PBXGroup;
 			children = (
@@ -201,6 +214,7 @@
 		55A5D71629B1D23D00DCA096 /* PTChatGPT */ = {
 			isa = PBXGroup;
 			children = (
+				5514B38529BAE76600890161 /* Tools */,
 				5512AB6429B43C2E0059D840 /* 3Party */,
 				55A5D80329B2429300DCA096 /* SettingInfo */,
 				55A5D7F429B1DFCD00DCA096 /* Chat */,
@@ -430,9 +444,11 @@
 				5514B37D29BA102400890161 /* PTSettingHeader.swift in Sources */,
 				55A5D7FE29B1EEF400DCA096 /* PTChatData.swift in Sources */,
 				55A5D71829B1D23D00DCA096 /* AppDelegate.swift in Sources */,
+				5514B38729BAE76E00890161 /* PTShareItem.swift in Sources */,
 				5512AB7029B43D520059D840 /* OSSSpeech.swift in Sources */,
 				55A5D7F229B1D9A900DCA096 /* OpenAIEndpoint.swift in Sources */,
 				55A5D7F129B1D9A900DCA096 /* Command.swift in Sources */,
+				5514B38929BAE7E400890161 /* SwipeCellOption.swift in Sources */,
 				5514B38029BA112A00890161 /* PTSettingModels.swift in Sources */,
 				5512AB7C29B470310059D840 /* PTAudioPlayer.swift in Sources */,
 				5514B37429B9D50D00890161 /* PTChatModel.swift in Sources */,
@@ -593,6 +609,7 @@
 				DEVELOPMENT_TEAM = SFU2CNYFPC;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = PTChatGPT/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "我要用Mic";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "我要用語音";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -626,6 +643,7 @@
 				DEVELOPMENT_TEAM = SFU2CNYFPC;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = PTChatGPT/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "我要用Mic";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "我要用語音";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

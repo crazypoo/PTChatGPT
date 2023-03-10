@@ -28,22 +28,14 @@ class PTSettingViewController: PTChatBaseViewController {
         picker.pickerStyle = pickerStyle
         return picker
     }()
-    
-    lazy var pickerData:[String] = {
-        var data = [String]()
-        OSSVoiceEnum.allCases.enumerated().forEach { index,value in
-            data.append(value.rawValue)
-        }
-        return data
-    }()
-    
+        
     lazy var selectLanguage:UIButton = {
         let button = UIButton(type: .custom)
         button.setTitle("Select your language defult:zh-CN", for: .normal)
         button.setTitleColor(.black, for: .normal)
         button.addActionHandlers { sender in
             self.languagePicker.selectValue = self.currentSelectLanguage
-            self.languagePicker.dataSourceArr = self.pickerData
+            self.languagePicker.dataSourceArr = AppDelegate.appDelegate()!.appConfig.languagePickerData
             self.languagePicker.show()
             self.languagePicker.resultModelBlock = { route in
                 self.currentSelectLanguage = OSSVoiceEnum.allCases[route!.index].rawValue
@@ -67,6 +59,11 @@ class PTSettingViewController: PTChatBaseViewController {
 
         self.view.backgroundColor = .white
         
+        if AppDelegate.appDelegate()!.appConfig.apiToken.stringIsEmpty()
+        {
+            NotificationCenter.default.addObserver(self, selector: #selector(self.showURLNotifi(notifi:)), name: NSNotification.Name(rawValue: PLaunchAdDetailDisplayNotification), object: nil)
+        }
+
         self.view.addSubviews([self.token,self.selectLanguage])
         // Do any additional setup after loading the view.
         self.token.snp.makeConstraints { make in
@@ -79,6 +76,14 @@ class PTSettingViewController: PTChatBaseViewController {
         self.selectLanguage.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.top.equalTo(self.token.snp.bottom).offset(20)
+        }
+    }
+    
+    @objc func showURLNotifi(notifi:Notification)
+    {
+        let urlString = (notifi.object as! [String:String])["URLS"]
+        if let url = URL(string: urlString) {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
     }
 }
