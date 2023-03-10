@@ -9,6 +9,7 @@
 import UIKit
 import PooTools
 import SwipeCellKit
+import LXFProtocolTool
 
 class PTSaveChatViewController: PTChatBaseViewController {
 
@@ -90,6 +91,14 @@ class PTSaveChatViewController: PTChatBaseViewController {
             make.top.equalToSuperview().inset(CGFloat.kNavBarHeight_Total)
         }
         
+        self.showEmptyDataSet(currentScroller: self.collectionView)
+        self.lxf_tapEmptyView(self.collectionView) { sender in
+            let viewC = PTChatViewController(token: AppDelegate.appDelegate()!.appConfig.apiToken,language: OSSVoiceEnum(rawValue: AppDelegate.appDelegate()!.appConfig.language)!)
+            let nav = PTNavController(rootViewController: viewC)
+            AppDelegate.appDelegate()!.window!.rootViewController = nav
+            AppDelegate.appDelegate()!.window!.makeKeyAndVisible()
+        }
+        
         self.showDetail()
     }
     
@@ -97,19 +106,22 @@ class PTSaveChatViewController: PTChatBaseViewController {
     {
         mSections.removeAll()
 
-        var rows = [PTRows]()
-        self.saveChatModel.enumerated().forEach { (index,value) in
-            let disclosureIndicatorImageName = UIImage(systemName: "chevron.right")!.withTintColor(.gobalTextColor,renderingMode: .alwaysOriginal)
-            let cellModel = PTFunctionCellModel()
-            cellModel.name = value.question
-            cellModel.haveDisclosureIndicator = true
-            cellModel.nameColor = .gobalTextColor
-            cellModel.disclosureIndicatorImageName = disclosureIndicatorImageName
-            let row_List = PTRows.init(cls: PTFusionSwipeCell.self, ID: PTFusionSwipeCell.ID, dataModel: cellModel)
-            rows.append(row_List)
+        if self.saveChatModel.count > 0
+        {
+            var rows = [PTRows]()
+            self.saveChatModel.enumerated().forEach { (index,value) in
+                let disclosureIndicatorImageName = UIImage(systemName: "chevron.right")!.withTintColor(.gobalTextColor,renderingMode: .alwaysOriginal)
+                let cellModel = PTFunctionCellModel()
+                cellModel.name = value.question
+                cellModel.haveDisclosureIndicator = true
+                cellModel.nameColor = .gobalTextColor
+                cellModel.disclosureIndicatorImageName = disclosureIndicatorImageName
+                let row_List = PTRows.init(cls: PTFusionSwipeCell.self, ID: PTFusionSwipeCell.ID, dataModel: cellModel)
+                rows.append(row_List)
+            }
+            let cellSection = PTSection.init(rows: rows)
+            mSections.append(cellSection)
         }
-        let cellSection = PTSection.init(rows: rows)
-        mSections.append(cellSection)
 
         self.collectionView.pt_register(by: mSections)
         self.collectionView.reloadData()
@@ -255,5 +267,23 @@ extension PTSaveChatViewController:SwipeCollectionViewCellDelegate
            return [read]
        }
    }
+}
 
+extension PTSaveChatViewController
+{
+    override func showEmptyDataSet(currentScroller: UIScrollView) {
+        self.lxf_EmptyDataSet(currentScroller) { () -> ([LXFEmptyDataSetAttributeKeyType : Any]) in
+            let color:UIColor = .gobalTextColor
+            return [
+                .tipStr : PTLanguage.share.text(forKey: "chat_Select"),
+                .tipColor : color,
+                .verticalOffset : 0,
+                .tipImage : UIImage(systemName:"info.circle.fill")!.withTintColor(.gobalTextColor, renderingMode: .automatic)
+            ]
+        }
+    }
+    
+    override func buttonTitle(forEmptyDataSet scrollView: UIScrollView!, for state: UIControl.State) -> NSAttributedString! {
+        return NSAttributedString()
+    }
 }

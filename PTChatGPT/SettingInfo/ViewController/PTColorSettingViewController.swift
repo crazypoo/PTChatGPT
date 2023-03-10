@@ -19,6 +19,22 @@ class PTColorSettingViewController: PTChatBaseViewController {
     var userTextHandle = ChromaColorHandle()
     var botTextHandle = ChromaColorHandle()
 
+    lazy var userBubbleInfo:BKLayoutButton = {
+        return self.createImageInfo(image: UIImage(systemName: "bubble.left.fill")!.withRenderingMode(.automatic), info: PTLanguage.share.text(forKey: "color_Bubble_user"))
+    }()
+    
+    lazy var botBubbleInfo:BKLayoutButton = {
+        return self.createImageInfo(image: UIImage(systemName: "bubble.right.fill")!.withRenderingMode(.automatic), info: PTLanguage.share.text(forKey: "color_Bubble_bot"))
+    }()
+    
+    lazy var userTextInfo:BKLayoutButton = {
+        return self.createImageInfo(image: UIImage(systemName: "plus.bubble.fill")!.withRenderingMode(.automatic), info: PTLanguage.share.text(forKey: "color_Text_user"))
+    }()
+
+    lazy var botTextInfo:BKLayoutButton = {
+        return self.createImageInfo(image: UIImage(systemName: "text.bubble.fill")!.withRenderingMode(.automatic), info: PTLanguage.share.text(forKey: "color_Text_bot"))
+    }()
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.fd_fullscreenPopGestureRecognizer.isEnabled = false
@@ -33,7 +49,7 @@ class PTColorSettingViewController: PTChatBaseViewController {
         self.setupColorPickerHandles()
         
         let backBtn = UIButton.init(type: .custom)
-        backBtn.setImage(UIImage(systemName: "chevron.left")!.withTintColor(.black, renderingMode: .automatic), for: .normal)
+        backBtn.setImage(UIImage(systemName: "chevron.left")!.withTintColor(.gobalTextColor, renderingMode: .automatic), for: .normal)
         backBtn.bounds = CGRect.init(x: 0, y: 0, width: 24, height: 24)
         backBtn.addActionHandlers { seder in
             self.returnFrontVC()
@@ -46,7 +62,7 @@ class PTColorSettingViewController: PTChatBaseViewController {
         }
         
         
-        self.view.addSubviews([self.colorPicker,self.brightnessSlider])
+        self.view.addSubviews([self.colorPicker,self.brightnessSlider,self.userBubbleInfo,self.botBubbleInfo,self.userTextInfo,self.botTextInfo])
         self.colorPicker.snp.makeConstraints { make in
             make.left.right.equalToSuperview().inset(20)
             make.height.equalTo(self.colorPicker.snp.width)
@@ -57,6 +73,27 @@ class PTColorSettingViewController: PTChatBaseViewController {
             make.height.equalTo(28)
             make.top.equalTo(self.colorPicker.snp.bottom).offset(20)
         }
+        
+        self.userBubbleInfo.snp.makeConstraints { make in
+            make.left.right.equalTo(self.brightnessSlider)
+            make.top.equalTo(self.brightnessSlider.snp.bottom).offset(10)
+        }
+        
+        self.botBubbleInfo.snp.makeConstraints { make in
+            make.left.right.equalTo(self.brightnessSlider)
+            make.top.equalTo(self.userBubbleInfo.snp.bottom).offset(10)
+        }
+
+        self.userTextInfo.snp.makeConstraints { make in
+            make.left.right.equalTo(self.brightnessSlider)
+            make.top.equalTo(self.botBubbleInfo.snp.bottom).offset(10)
+        }
+        
+        self.botTextInfo.snp.makeConstraints { make in
+            make.left.right.equalTo(self.brightnessSlider)
+            make.top.equalTo(self.userTextInfo.snp.bottom).offset(10)
+        }
+
     }
     
     func setupColorPicker()
@@ -74,7 +111,7 @@ class PTColorSettingViewController: PTChatBaseViewController {
     func setupColorPickerHandles()
     {
         self.userBubbleHandle = self.colorPicker.addHandle(at: AppDelegate.appDelegate()!.appConfig.userBubbleColor)
-        let userBubbleImageView = UIImageView(image: UIImage(systemName: "bubble.left.fill")?.withRenderingMode(.alwaysTemplate))
+        let userBubbleImageView = UIImageView(image: UIImage(systemName: "bubble.left.fill")?.withRenderingMode(.automatic))
         userBubbleImageView.contentMode = .scaleAspectFit
         userBubbleImageView.tintColor = .white
         self.userBubbleHandle.accessoryView = userBubbleImageView
@@ -100,7 +137,20 @@ class PTColorSettingViewController: PTChatBaseViewController {
         botTextImageView.tintColor = .white
         self.botTextHandle.accessoryView = botTextImageView
         self.botTextHandle.accessoryViewEdgeInsets = UIEdgeInsets(top: 0, left: 4, bottom: 4, right: 4)
-
+    }
+    
+    func createImageInfo(image:UIImage,info:String)->BKLayoutButton
+    {
+        let view = BKLayoutButton()
+        view.setImage(image, for: .normal)
+        view.layoutStyle = .leftImageRightTitle
+        view.setMidSpacing(CGFloat.ScaleW(w: 5))
+        view.setImageSize(CGSize(width: 18, height: 15))
+        view.titleLabel?.font = .appfont(size: 14)
+        view.setTitleColor(.gobalTextColor, for: .normal)
+        view.setTitle(info, for: .normal)
+        view.isUserInteractionEnabled = false
+        return view
     }
 }
 
