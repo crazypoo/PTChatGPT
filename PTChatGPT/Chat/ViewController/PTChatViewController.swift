@@ -13,7 +13,6 @@ import MapKit
 import SDWebImage
 import AVFAudio
 
-
 fileprivate extension String{
     static let saveNavTitle = PTLanguage.share.text(forKey: "about_SavedChat")
     static let navTitle = kAppName
@@ -243,6 +242,7 @@ class PTChatViewController: MessagesViewController {
                 self.voiceCanTap = false
             }
         }
+        self.speechKit.saveTextToVoiceFile("123321")
     }
         
     @objc func showURLNotifi(notifi:Notification)
@@ -365,7 +365,7 @@ class PTChatViewController: MessagesViewController {
                 switch result {
                 case .success(let success):
                     let date = Date()
-                    saveModel.answerDate = self.dateFormatter(date: date)
+                    saveModel.answerDate = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
                     saveModel.answerType = 0
                     saveModel.answer = success.choices.first?.text ?? ""
 
@@ -479,13 +479,6 @@ class PTChatViewController: MessagesViewController {
             UserDefaults.standard.set(jsonString, forKey: key)
             print(jsonString)
         }
-    }
-    
-    func dateFormatter(date:Date)->String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        let dateString = dateFormatter.string(from: date)
-        return dateString
     }
 }
 
@@ -663,7 +656,7 @@ extension PTChatViewController:MessageCellDelegate
                 let saveChatArr = AppDelegate.appDelegate()!.appConfig.getSaveChatData()
                 for saveModel in saveChatArr
                 {
-                    if saveModel.questionDate == self.dateFormatter(date: userModel.sentDate) && saveModel.answerDate == self.dateFormatter(date: messageModel.sentDate)
+                    if saveModel.questionDate == userModel.sentDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss") && saveModel.answerDate == messageModel.sentDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
                     {
                         PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Error_same"))
                         return
@@ -684,7 +677,7 @@ extension PTChatViewController:MessageCellDelegate
                 default:
                     break
                 }
-                model.questionDate = self.dateFormatter(date: userModel.sentDate)
+                model.questionDate = userModel.sentDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
                 
                 switch messageModel.kind {
                 case .photo(let item):
@@ -696,7 +689,7 @@ extension PTChatViewController:MessageCellDelegate
                 default:
                     break
                 }
-                model.answerDate = self.dateFormatter(date: messageModel.sentDate)
+                model.answerDate = messageModel.sentDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
                 self.saveChatModelToJsonString(model: model)
                 PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Save_success"))
             }
@@ -835,7 +828,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
 
                     let date = Date()
 
-                    saveModel.answerDate = self.dateFormatter(date: date)
+                    saveModel.answerDate = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
                     saveModel.answerType = 1
                     saveModel.answerImageURL = imageURL?.absoluteString ?? ""
 
@@ -901,7 +894,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
                 let saveModel = PTChatModel()
                 saveModel.questionType = 0
                 saveModel.question = str
-                saveModel.questionDate = self.dateFormatter(date: date)
+                saveModel.questionDate = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
 
                 let message = PTMessageModel(text: str, user: user, messageId: UUID().uuidString, date: date)
                 insertMessage(message)
@@ -915,7 +908,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
                             case .success(let success):
                                 let botDate = Date()
                                 
-                                saveModel.answerDate = self.dateFormatter(date: botDate)
+                                saveModel.answerDate = botDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
                                 saveModel.answerType = 0
                                 saveModel.answer = success.choices.first?.text ?? ""
                                 
@@ -942,7 +935,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
                             case .success(let success):
                                 let botDate = Date()
                                 
-                                saveModel.answerDate = self.dateFormatter(date: botDate)
+                                saveModel.answerDate = botDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
                                 saveModel.answerType = 0
                                 saveModel.answer = success.choices.first?.text ?? ""
 
@@ -1011,7 +1004,7 @@ extension PTChatViewController:OSSSpeechDelegate
         saveModel.questionType = 1
         saveModel.question = text
         saveModel.questionVoiceURL = voiceURL.lastPathComponent
-        saveModel.questionDate = self.dateFormatter(date: date)
+        saveModel.questionDate = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
         if self.isSendVoice
         {
             self.isSendVoice = false
