@@ -440,7 +440,7 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
         }
         else if itemRow.title == .deleteAllChat
         {
-            UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),msg: PTLanguage.share.text(forKey: "chat_Delete_all_chat"),okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
+            UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "chat_Delete_all_chat"),msgColor: .gobalTextColor,okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
                 
             } moreBtn: { index, title in
                 UserDefaults.standard.set("", forKey: uChatHistory)
@@ -553,9 +553,13 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
         }
         else if itemRow.title == .deleteAllVoiceFile
         {
-            let speechKit = OSSSpeech.shared
-            speechKit.delegate = self
-            speechKit.deleteVoiceFolderItem(url: nil)
+            UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "chat_Delete_all_voice_file"),msgColor: .gobalTextColor,okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
+                
+            } moreBtn: { index, title in
+                let speechKit = OSSSpeech.shared
+                speechKit.delegate = self
+                speechKit.deleteVoiceFolderItem(url: nil)
+            }
         }
         else if itemRow.title == .drawImageSize
         {

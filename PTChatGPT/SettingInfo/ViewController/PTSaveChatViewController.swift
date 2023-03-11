@@ -231,7 +231,7 @@ extension PTSaveChatViewController:SwipeCollectionViewCellDelegate
            
            let delete = SwipeAction(style: .destructive, title: PTLanguage.share.text(forKey: "cell_Delete")) { action, indexPath in
                PTGCDManager.gcdMain {
-                   UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),msg:PTLanguage.share.text(forKey: "cell_Delete_one_cell"),okBtns:[PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
+                   UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg:PTLanguage.share.text(forKey: "cell_Delete_one_cell"),msgColor: .gobalTextColor,okBtns:[PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
                        self.showDetail()
                    } moreBtn: { index, title in
                        self.saveChatModel.remove(at: indexPath.row)

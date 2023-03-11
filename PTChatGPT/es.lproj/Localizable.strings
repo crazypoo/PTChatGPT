@@ -74,3 +74,5 @@
 "alert_Can_not_send_voice" = "No está autorizado a utilizar la función de entrada de voz.";
 "about_Draw_image_size" = "Dibuja el tamaño de la imagen";
 "size_Wrong" = "Hay un error en el tamaño. Por favor, compruébalo e inténtalo de nuevo.Max 1024 X 1024";
+"chat_Delete_all_voice_file" = "¿Estás seguro de eliminar todos los archivos de voz?";
+"chat_Empty" = "Es tan solitario. Haz clic en mí para empezar a charlar conmigo.";

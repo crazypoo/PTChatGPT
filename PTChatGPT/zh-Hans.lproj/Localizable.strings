@@ -74,3 +74,5 @@
 "alert_Can_not_send_voice" = "你没有授权使用语音输入功能";
 "about_Draw_image_size" = "AI绘画Size";
 "size_Wrong" = "Size有误,请检查后重试.最大1024 X 1024";
+"chat_Delete_all_voice_file" = "是否确认删除全部语音文件?";
+"chat_Empty" = "好寂寞啊,点击我就可以开始跟我聊天了";

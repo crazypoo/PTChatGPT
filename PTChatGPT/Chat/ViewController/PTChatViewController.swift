@@ -12,6 +12,7 @@ import PooTools
 import MapKit
 import SDWebImage
 import AVFAudio
+import LXFProtocolTool
 
 fileprivate extension String{
     static let saveNavTitle = PTLanguage.share.text(forKey: "about_SavedChat")
@@ -244,7 +245,12 @@ class PTChatViewController: MessagesViewController {
             default:
                 self.voiceCanTap = false
             }
-        }        
+        }
+        
+        self.showEmptyDataSet(currentScroller: self.messagesCollectionView)
+        self.lxf_tapEmptyView(self.messagesCollectionView) { sender in
+            self.messageInputBar.inputTextView.becomeFirstResponder()
+        }
     }
         
     @objc func showURLNotifi(notifi:Notification)
@@ -657,7 +663,7 @@ extension PTChatViewController:MessageCellDelegate
         let userModel = self.messageList[indexPath!.section - 1]
         if messageModel.sender.senderId == PTChatData.share.bot.senderId
         {
-            UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),msg: PTLanguage.share.text(forKey: "alert_Save_Q&A"),okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
+            UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "alert_Save_Q&A"),msgColor: .gobalTextColor,okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
                 
             } moreBtn: { index, title in
                 
@@ -1055,5 +1061,24 @@ extension PTChatViewController:OSSSpeechDelegate
         {
             self.speechKit.deleteVoiceFolderItem(url: URL(fileURLWithPath: url.absoluteString.replacingOccurrences(of: "file://", with: "")))
         }
+    }
+}
+
+extension PTChatViewController:LXFEmptyDataSetable
+{
+    func showEmptyDataSet(currentScroller: UIScrollView) {
+        self.lxf_EmptyDataSet(currentScroller) { () -> ([LXFEmptyDataSetAttributeKeyType : Any]) in
+            let color:UIColor = .gobalTextColor
+            return [
+                .tipStr : PTLanguage.share.text(forKey: "chat_Empty"),
+                .tipColor : color,
+                .verticalOffset : 0,
+                .tipImage : UIImage(systemName:"info.circle.fill")!.withTintColor(.gobalTextColor, renderingMode: .automatic)
+            ]
+        }
+    }
+    
+    func buttonTitle(forEmptyDataSet scrollView: UIScrollView!, for state: UIControl.State) -> NSAttributedString! {
+        return NSAttributedString()
     }
 }
