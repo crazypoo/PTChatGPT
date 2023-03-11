@@ -194,7 +194,9 @@ class PTChatViewController: MessagesViewController {
                         answerModel = PTMessageModel(imageURL: URL(string: models!.answerImageURL)!, user: PTChatData.share.bot, messageId: UUID().uuidString, date: models!.answerDate.toDate()!.date)
                     }
                     self.messageList.append(answerModel)
-                    self.messagesCollectionView.reloadData()
+                    self.messagesCollectionView.reloadData {
+                        self.messagesCollectionView.scrollToLastItem()
+                    }
                 }
             }
         }
@@ -242,7 +244,19 @@ class PTChatViewController: MessagesViewController {
                 self.voiceCanTap = false
             }
         }
-        self.speechKit.saveTextToVoiceFile("123321")
+        
+//        let chat: [ChatMessage] = [
+//            ChatMessage(role: .system, content: "Send me some emoji"),
+//        ]
+//
+//        self.openAI.sendChat(with: chat,maxTokens: 2048,temperature: AppDelegate.appDelegate()!.appConfig.aiSmart) { result in
+//            switch result {
+//            case .success(let success):
+//                print(">>>>>>>>>>>>>>>>>\(success.choices.first?.message.content ?? "Nothing")")
+//            case .failure(let failure):
+//                print(">>>>>>>>>>>>>>>>>\(failure.localizedDescription)")
+//            }
+//        }
     }
         
     @objc func showURLNotifi(notifi:Notification)
@@ -701,17 +715,23 @@ extension PTChatViewController:MessageCellDelegate
     }
 
     func didTapMessage(in cell: MessageCollectionViewCell) {
-        let indexPath = self.messagesCollectionView.indexPath(for: cell)
-        let messageModel = self.messageList[indexPath!.section]
-        switch messageModel.kind {
-        case .text(let text):
-            self.editString = text
-            messageInputBar.inputTextView.placeholder = String(format: PTLanguage.share.text(forKey: "chat_Edit"), self.editString)
-        default: break
+        let type = AppDelegate.appDelegate()!.appConfig.getAIMpdelType(typeString: AppDelegate.appDelegate()!.appConfig.aiModelType)
+        switch type {
+        case .chat(.chatgpt),.chat(.chatgpt0301):
+            break
+        default:
+            let indexPath = self.messagesCollectionView.indexPath(for: cell)
+            let messageModel = self.messageList[indexPath!.section]
+            switch messageModel.kind {
+            case .text(let text):
+                self.editString = text
+                messageInputBar.inputTextView.placeholder = String(format: PTLanguage.share.text(forKey: "chat_Edit"), self.editString)
+            default: break
+            }
+            
+            self.editMessage = true
+            messageInputBar.inputTextView.becomeFirstResponder()
         }
-        
-        self.editMessage = true
-        messageInputBar.inputTextView.becomeFirstResponder()
     }
 
     func didTapImage(in _: MessageCollectionViewCell) {
@@ -821,6 +841,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
     {
         Task{
             do{
+                //TODO: 这里设置图片大小
                 let result = try await self.openAI.getImages(with:str)
                 await MainActor.run{
                     
@@ -906,6 +927,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
                         self.openAI.sendEdits(with: str, input: self.editString) { result in
                             switch result {
                             case .success(let success):
+                                
                                 let botDate = Date()
                                 
                                 saveModel.answerDate = botDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
@@ -930,25 +952,34 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
                     }
                     else
                     {
-                        self.openAI.sendCompletion(with: str,model: AppDelegate.appDelegate()!.appConfig.getAIMpdelType(typeString: AppDelegate.appDelegate()!.appConfig.aiModelType),maxTokens: 2048,temperature: AppDelegate.appDelegate()!.appConfig.aiSmart) { result in
-                            switch result {
-                            case .success(let success):
-                                let botDate = Date()
-                                
-                                saveModel.answerDate = botDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
-                                saveModel.answerType = 0
-                                saveModel.answer = success.choices.first?.text ?? ""
-
-                                let botMessage = PTMessageModel(text: success.choices.first?.text ?? "", user: PTChatData.share.bot, messageId: UUID().uuidString, date: botDate)
-                                self.insertMessage(botMessage)
-                                PTGCDManager.gcdMain {
-                                    self.title = .navTitle
+                        let type = AppDelegate.appDelegate()!.appConfig.getAIMpdelType(typeString: AppDelegate.appDelegate()!.appConfig.aiModelType)
+                        switch type {
+                        case .chat(.chatgpt),.chat(.chatgpt0301):
+                            let chat: [ChatMessage] = [
+                                ChatMessage(role: .system, content: str),
+                            ]
+                            self.openAI.sendChat(with: chat,model: type,maxTokens: 2048,temperature: AppDelegate.appDelegate()!.appConfig.aiSmart) { result in
+                                switch result {
+                                case .success(let success):
+                                    self.saveQAndAText(question: success.choices.first?.message.content ?? "", saveModel: saveModel)
+                                case .failure(let failure):
+                                    PTGCDManager.gcdMain {
+                                        self.title = .navTitle
+                                        PTBaseViewController.gobal_drop(title: failure.localizedDescription)
+                                    }
                                 }
-                                self.chatModelToJsonString(model: saveModel)
-                            case .failure(let failure):
-                                PTGCDManager.gcdMain {
-                                    self.title = .navTitle
-                                    PTBaseViewController.gobal_drop(title: failure.localizedDescription)
+                            }
+
+                        default:
+                            self.openAI.sendCompletion(with: str,model: type,maxTokens: 2048,temperature: AppDelegate.appDelegate()!.appConfig.aiSmart) { result in
+                                switch result {
+                                case .success(let success):
+                                    self.saveQAndAText(question: success.choices.first?.text ?? "", saveModel: saveModel)
+                                case .failure(let failure):
+                                    PTGCDManager.gcdMain {
+                                        self.title = .navTitle
+                                        PTBaseViewController.gobal_drop(title: failure.localizedDescription)
+                                    }
                                 }
                             }
                         }
@@ -961,6 +992,21 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
                 insertMessage(message)
             }
         }
+    }
+    
+    func saveQAndAText(question:String,saveModel:PTChatModel)
+    {
+        let botDate = Date()
+        saveModel.answerDate = botDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+        saveModel.answerType = 0
+        saveModel.answer = question
+
+        let botMessage = PTMessageModel(text: question, user: PTChatData.share.bot, messageId: UUID().uuidString, date: botDate)
+        self.insertMessage(botMessage)
+        PTGCDManager.gcdMain {
+            self.title = .navTitle
+        }
+        self.chatModelToJsonString(model: saveModel)
     }
 }
 

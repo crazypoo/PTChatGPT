@@ -21,9 +21,15 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>20230311170202</string>
+	<string>20230311195901</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_adhp._tcp</string>
+	</array>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>I want to access the local network so that you can have a better experience.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>To use commands, we need to access the microphone.</string>
 	<key>NSPhotoLibraryUsageDescription</key>

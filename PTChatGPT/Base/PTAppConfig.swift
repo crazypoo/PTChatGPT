@@ -111,6 +111,14 @@ class PTAppConfig {
         {
             return OpenAIModelType.feature(.davinci)
         }
+        else if typeString == "gpt-3.5-turbo"
+        {
+            return OpenAIModelType.chat(.chatgpt)
+        }
+        else if typeString == "gpt-3.5-turbo-0301"
+        {
+            return OpenAIModelType.chat(.chatgpt0301)
+        }
         else
         {
             return OpenAIModelType.gpt3(.davinci)
@@ -190,6 +198,27 @@ class PTAppConfig {
         featureDavinciModel.key = "3"
         featureDavinciModel.value = OpenAIModelType.feature(.davinci).modelName
         modelArr.append(featureDavinciModel)
+        
+        let gptXMainModel = BRResultModel()
+        gptXMainModel.parentKey = "-1"
+        gptXMainModel.parentValue = ""
+        gptXMainModel.key = "GPTX"
+        gptXMainModel.value = "GPTX"
+        modelArr.append(gptXMainModel)
+
+        let gptThreePointFiveModel = BRResultModel()
+        gptThreePointFiveModel.parentKey = "GPTX"
+        gptThreePointFiveModel.parentValue = OpenAIModelType.chat(.chatgpt).modelName
+        gptThreePointFiveModel.key = "1"
+        gptThreePointFiveModel.value = OpenAIModelType.chat(.chatgpt).modelName
+        modelArr.append(gptThreePointFiveModel)
+
+        let gptThreePointFive0301Model = BRResultModel()
+        gptThreePointFive0301Model.parentKey = "GPTX"
+        gptThreePointFive0301Model.parentValue = OpenAIModelType.chat(.chatgpt0301).modelName
+        gptThreePointFive0301Model.key = "2"
+        gptThreePointFive0301Model.value = OpenAIModelType.chat(.chatgpt0301).modelName
+        modelArr.append(gptThreePointFive0301Model)
 
         var indexPath = [NSNumber]()
         if currentAi == "text-davinci-003"
@@ -226,6 +255,16 @@ class PTAppConfig {
         {
             indexPath.append(NSNumber(value: 2))
             indexPath.append(NSNumber(value: 0))
+        }
+        else if currentAi == "gpt-3.5-turbo"
+        {
+            indexPath.append(NSNumber(value: 3))
+            indexPath.append(NSNumber(value: 0))
+        }
+        else if currentAi == "gpt-3.5-turbo-0301"
+        {
+            indexPath.append(NSNumber(value: 3))
+            indexPath.append(NSNumber(value: 1))
         }
         else
         {

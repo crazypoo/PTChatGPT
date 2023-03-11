@@ -133,6 +133,7 @@ PODS:
   - TZImagePickerController/Location (3.8.3)
   - UIColor_Hex_Swift (5.1.9)
   - "UIViewController+Swizzled (1.4)"
+  - WoodPeckeriOS (1.3.3)
   - WZLBadge (1.2.6)
   - YYCategories (1.0.4):
     - YYCategories/no-arc (= 1.0.4)
@@ -154,6 +155,7 @@ DEPENDENCIES:
   - PooTools/Picker (from `https://github.com/crazypoo/PTools.git`)
   - SwiftLint
   - Swinject
+  - WoodPeckeriOS
 
 SPEC REPOS:
   trunk:
@@ -195,6 +197,7 @@ SPEC REPOS:
     - TZImagePickerController
     - UIColor_Hex_Swift
     - "UIViewController+Swizzled"
+    - WoodPeckeriOS
     - WZLBadge
     - YYCategories
     - YYText
@@ -206,7 +209,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   PooTools:
-    :commit: a02c4648538f59b460da5bc58f4503666ace0e99
+    :commit: d0a6671b39bbc9fc5d8e8b1856e8fcd10ad92daf
     :git: https://github.com/crazypoo/PTools.git
 
 SPEC CHECKSUMS:
@@ -249,11 +252,12 @@ SPEC CHECKSUMS:
   TZImagePickerController: e9909edbadf7381140efc5b5c9f5bdbfd630f7d4
   UIColor_Hex_Swift: 20cb4e8d51b63e168a9da6933bc5d39cd8fb4ab5
   "UIViewController+Swizzled": 1cd9397598ede6930f94fbcac4b43d63c7aa0dbb
+  WoodPeckeriOS: 6c067b9de7c2d4143ec1c66bac5aa2120327f759
   WZLBadge: 9ec779dcfd94c825518b395e8315fccaabff1bfa
   YYCategories: 6bcd4314c6661a561410dce4a793379ebd306abd
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
   ZXNavigationBar: a8ceb13fe37f9ca894cf6ae22d805cbdbb9ad6b1
 
-PODFILE CHECKSUM: f0d9ff9f09ca04f15aee7f8fde8aebc99ffdc4c1
+PODFILE CHECKSUM: 0e2b37b0a9c22d1db3e87795d60300f2e492923b
 
 COCOAPODS: 1.12.0

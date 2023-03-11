@@ -20,6 +20,7 @@ target 'PTChatGPT' do
   pod 'InAppViewDebugger', :configurations => ['Debug']
   pod 'LookinServer', :configurations => ['Debug']
   pod 'LifetimeTracker', :configurations => ['Debug']
+  pod 'WoodPeckeriOS', :configurations => ['Debug']
 
   pod 'PooTools/Core', :git => 'https://github.com/crazypoo/PTools.git'
   pod 'PooTools/Picker', :git => 'https://github.com/crazypoo/PTools.git'
