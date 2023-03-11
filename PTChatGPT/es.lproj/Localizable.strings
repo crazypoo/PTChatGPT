@@ -72,3 +72,5 @@
 "alert_Go_to_photo_setting" = "[Ir : Configuración - Privacidad y seguridad - Fotos - %@] Permitir que las aplicaciones accedan";
 "about_Delete_all_voice_file" = "Eliminar todo el archivo de voz";
 "alert_Can_not_send_voice" = "No está autorizado a utilizar la función de entrada de voz.";
+"about_Draw_image_size" = "Dibuja el tamaño de la imagen";
+"size_Wrong" = "Hay un error en el tamaño. Por favor, compruébalo e inténtalo de nuevo.Max 1024 X 1024";

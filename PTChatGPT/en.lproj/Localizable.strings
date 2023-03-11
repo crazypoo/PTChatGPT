@@ -72,3 +72,5 @@
 "alert_Go_to_photo_setting" = "[Go to: Settings - Privacy - Photos - %@] Allow apps to access";
 "about_Delete_all_voice_file" = "Delete all speech file";
 "alert_Can_not_send_voice" = "You are not authorized to use the voice input function.";
+"about_Draw_image_size" = "Draw image size";
+"size_Wrong" = "There is an error in Size. Please check it and try again.Max 1024 X 1024";

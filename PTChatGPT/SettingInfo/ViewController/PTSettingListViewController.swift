@@ -29,6 +29,7 @@ fileprivate extension String
     static let apiAIToken = PTLanguage.share.text(forKey: "about_APIAIToken")
     static let aiSmart = PTLanguage.share.text(forKey: "about_AI_smart")
     static let getAPIAIToken = PTLanguage.share.text(forKey: "about_GetAPIAIToken")
+    static let drawImageSize = PTLanguage.share.text(forKey: "about_Draw_image_size")
     //MARK: Other
     static let github = PTLanguage.share.text(forKey: "Github")
     static let forum = PTLanguage.share.text(forKey: "about_Forum")
@@ -64,7 +65,6 @@ class PTSettingListViewController: PTChatBaseViewController {
         }
         picker.numberOfComponents = 2
         picker.resultModelArrayBlock = { resultModel in
-            UserDefaults.standard.set(resultModel!.last!.value!,forKey: uAiModelType)
             AppDelegate.appDelegate()!.appConfig.aiModelType = resultModel!.last!.value!
         }
         picker.pickerStyle = PTAppConfig.gobal_BRPickerStyle()
@@ -155,6 +155,12 @@ class PTSettingListViewController: PTChatBaseViewController {
         let aiSmart = PTFunctionCellModel()
         aiSmart.name = .aiSmart
         aiSmart.nameColor = .gobalTextColor
+        
+        let drawSize = PTFunctionCellModel()
+        drawSize.name = .drawImageSize
+        drawSize.haveDisclosureIndicator = true
+        drawSize.nameColor = .gobalTextColor
+        drawSize.disclosureIndicatorImageName = disclosureIndicatorImageName
 
         let aiToken = PTFunctionCellModel()
         aiToken.name = .apiAIToken
@@ -168,7 +174,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         getApiToken.nameColor = .gobalTextColor
         getApiToken.disclosureIndicatorImageName = disclosureIndicatorImageName
 
-        apiMain.models = [aiType,aiSmart,aiToken,getApiToken]
+        apiMain.models = [aiType,aiSmart,drawSize,aiToken,getApiToken]
         
         let otherMain = PTSettingModels()
         otherMain.name = PTLanguage.share.text(forKey: "about_Main_Other")
@@ -334,7 +340,6 @@ class PTSettingListViewController: PTChatBaseViewController {
                             if let imageData = object.imageData,let image = UIImage(data: imageData)
                             {
                                 AppDelegate.appDelegate()!.appConfig.userIcon = imageData
-                                UserDefaults.standard.set(imageData, forKey: uUserIcon)
                                 PTLocalConsoleFunction.share.pNSLog(image)
                             }
                             else
@@ -407,7 +412,6 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
             cell.aiSlider.addSliderAction { sender in
                 let realSmart = (1 - sender.value)
                 AppDelegate.appDelegate()!.appConfig.aiSmart = Double(realSmart)
-                UserDefaults.standard.set(Double(realSmart), forKey: uAiSmart)
             }
             return cell
         }
@@ -451,7 +455,7 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
         {
             let textKey = PTLanguage.share.text(forKey: "alert_Input_token")
             let apiToken = AppDelegate.appDelegate()!.appConfig.apiToken
-            UIAlertController.base_textfiele_alertVC(title:textKey,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey], textFieldTexts: [apiToken], keyboardType: [.default],textFieldDelegate: self) { result in
+            UIAlertController.base_textfiele_alertVC(title:textKey,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey], textFieldTexts: [apiToken], keyboardType: [.default],textFieldDelegate: self) { result in
                 let newToken:String? = result[textKey]!
                 if (newToken ?? "").stringIsEmpty() || !(newToken ?? "").nsString.contains("sk-")
                 {
@@ -460,7 +464,6 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                 else
                 {
                     AppDelegate.appDelegate()!.appConfig.apiToken = newToken!
-                    UserDefaults.standard.set(newToken,forKey: uTokenKey)
                 }
             }
         }
@@ -501,7 +504,6 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
             self.languagePicker.show()
             self.languagePicker.resultModelBlock = { route in
                 AppDelegate.appDelegate()!.appConfig.language = OSSVoiceEnum.allCases[route!.index].rawValue
-                UserDefaults.standard.set(AppDelegate.appDelegate()!.appConfig.language, forKey: uLanguageKey)
             }
         }
         else if itemRow.title == .languageString
@@ -555,12 +557,46 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
             speechKit.delegate = self
             speechKit.deleteVoiceFolderItem(url: nil)
         }
+        else if itemRow.title == .drawImageSize
+        {
+            let wKey = "width"
+            let hKey = "height"
+            let title = PTLanguage.share.text(forKey: "about_Draw_image_size")
+            
+            let imageSize = AppDelegate.appDelegate()!.appConfig.aiDrawSize
+            
+            UIAlertController.base_textfiele_alertVC(title:title,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [wKey,hKey], textFieldTexts: [String(format: "%.0f", imageSize.width),String(format: "%.0f", imageSize.height)], keyboardType: [.numberPad,.numberPad],textFieldDelegate: self) { result in
+                let newWidth = result[wKey]!
+                let newHeight = result[hKey]!
+                
+                if ((newWidth.double() ?? 0) > 1024 || (newWidth.double() ?? 0) < 1) && ((newHeight.double() ?? 0) > 1024 || (newHeight.double() ?? 0) < 1)
+                {
+                    PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "size_Wrong"))
+                }
+                else if ((newWidth.double() ?? 0) > 1024 || (newWidth.double() ?? 0) < 1) && ((newHeight.double() ?? 0) < 1024 || (newHeight.double() ?? 0) > 1)
+                {
+                    PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "size_Wrong"))
+                }
+                else if ((newWidth.double() ?? 0) < 1024 || (newWidth.double() ?? 0) > 1) && ((newHeight.double() ?? 0) > 1024 || (newHeight.double() ?? 0) < 1)
+                {
+                    PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "size_Wrong"))
+                }
+                else
+                {
+                    let saveSize = CGSize(width: newWidth.double()!, height: newHeight.double()!)
+                    
+                    AppDelegate.appDelegate()!.appConfig.aiDrawSize = saveSize
+                }
+            }
+        }
     }
 }
 
 extension PTSettingListViewController:UITextFieldDelegate
 {
-    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        print("123123123123123")
+    }
 }
 
 extension PTSettingListViewController:UIImagePickerControllerDelegate,UINavigationControllerDelegate
@@ -573,7 +609,6 @@ extension PTSettingListViewController:UIImagePickerControllerDelegate,UINavigati
         let image:UIImage = info[UIImagePickerController.InfoKey.originalImage] as! UIImage
         let imageData = image.pngData()
         AppDelegate.appDelegate()!.appConfig.userIcon = imageData!
-        UserDefaults.standard.set(imageData, forKey: uUserIcon)
         PTLocalConsoleFunction.share.pNSLog(image)
     }
 }

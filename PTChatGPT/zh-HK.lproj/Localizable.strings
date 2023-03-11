@@ -72,3 +72,5 @@
 "alert_Go_to_photo_setting" = "[Go：設定-隱私和安全-照片-%@]允許應用程式訪問";
 "about_Delete_all_voice_file" = "刪除所有語音檔案";
 "alert_Can_not_send_voice" = "你沒有授權使用語音輸入功能";
+"about_Draw_image_size" = "AI繪畫Size";
+"size_Wrong" = "Size有誤,請檢查後再嘗試.最大1024 X 1024";

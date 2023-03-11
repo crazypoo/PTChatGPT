@@ -210,6 +210,7 @@ class PTChatViewController: MessagesViewController {
         if !AppDelegate.appDelegate()!.appConfig.apiToken.stringIsEmpty()
         {
             NotificationCenter.default.addObserver(self, selector: #selector(self.showURLNotifi(notifi:)), name: NSNotification.Name(rawValue: PLaunchAdDetailDisplayNotification), object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(self.adHide(notifi:)), name: NSNotification.Name(rawValue: PLaunchAdSkipNotification), object: nil)
         }
 
         self.configureMessageCollectionView()
@@ -243,20 +244,7 @@ class PTChatViewController: MessagesViewController {
             default:
                 self.voiceCanTap = false
             }
-        }
-        
-//        let chat: [ChatMessage] = [
-//            ChatMessage(role: .system, content: "Send me some emoji"),
-//        ]
-//
-//        self.openAI.sendChat(with: chat,maxTokens: 2048,temperature: AppDelegate.appDelegate()!.appConfig.aiSmart) { result in
-//            switch result {
-//            case .success(let success):
-//                print(">>>>>>>>>>>>>>>>>\(success.choices.first?.message.content ?? "Nothing")")
-//            case .failure(let failure):
-//                print(">>>>>>>>>>>>>>>>>\(failure.localizedDescription)")
-//            }
-//        }
+        }        
     }
         
     @objc func showURLNotifi(notifi:Notification)
@@ -265,6 +253,11 @@ class PTChatViewController: MessagesViewController {
         if let url = URL(string: urlString) {
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
+    }
+    
+    @objc func adHide(notifi:Notification)
+    {
+        messageInputBar.alpha = 1
     }
     
     @objc func loadMoreMessage()
@@ -291,6 +284,7 @@ class PTChatViewController: MessagesViewController {
     }
     
     func configureMessageInputBar() {
+        messageInputBar.alpha = 0
         messageInputBar.delegate = self
         messageInputBar.backgroundView.backgroundColor = .gobalBackgroundColor
         messageInputBar.inputTextView.textColor = .gobalTextColor
@@ -841,8 +835,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
     {
         Task{
             do{
-                //TODO: 这里设置图片大小
-                let result = try await self.openAI.getImages(with:str)
+                let result = try await self.openAI.getImages(with:str,imageSize: AppDelegate.appDelegate()!.appConfig.aiDrawSize)
                 await MainActor.run{
                     
                     let imageURL = result.data.first?.url ?? URL(string: "")

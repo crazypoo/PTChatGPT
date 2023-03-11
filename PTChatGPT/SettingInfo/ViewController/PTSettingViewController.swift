@@ -11,9 +11,6 @@ import SnapKit
 import SwifterSwift
 import BRPickerView
 
-let uTokenKey = "UserToken"
-let uLanguageKey = "UserLanguage"
-
 class PTSettingViewController: PTChatBaseViewController {
 
     var languageType:OSSVoiceEnum = .ChineseSimplified
@@ -41,7 +38,6 @@ class PTSettingViewController: PTChatBaseViewController {
                 self.currentSelectLanguage = OSSVoiceEnum.allCases[route!.index].rawValue
                 self.languageType = OSSVoiceEnum.allCases[route!.index]
                 AppDelegate.appDelegate()!.appConfig.language = self.languageType.rawValue
-                UserDefaults.standard.set(self.languageType.rawValue, forKey: uLanguageKey)
                 self.selectLanguage.setTitle(self.currentSelectLanguage, for: .normal)
             }
         }

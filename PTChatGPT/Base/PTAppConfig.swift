@@ -29,6 +29,10 @@ let uAiModelType = "uAiModelType"
 let uAiSmart = "uAiSmart"
 ///保存的用戶的頭像
 let uUserIcon = "uUserIcon"
+///保存的AI畫圖大小
+let uAiDrawSize = "uAiDrawSize"
+let uTokenKey = "UserToken"
+let uLanguageKey = "UserLanguage"
 
 let kSeparator = "[,]"
 
@@ -53,25 +57,92 @@ extension UIColor
     private(set) static var gobalScrollerBackgroundColor = PTDrakModeOption.colorLightDark(lightColor: PTAppBaseConfig.share.viewControllerBaseBackgroundColor, darkColor: UIColor.black)
     
     private(set) static var gobalCellBackgroundColor = PTDrakModeOption.colorLightDark(lightColor: .white, darkColor: .Black25PercentColor)
+}
 
+extension CGSize {
+    static func from(archivedData data: Data) throws -> CGSize {
+        var sizeObj = CGSize.zero
+        let unarchiver = try NSKeyedUnarchiver(forReadingFrom: data)
+        unarchiver.requiresSecureCoding = false
+        if let size = unarchiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as? NSValue
+        {
+            sizeObj =  size.cgSizeValue
+        }
+        unarchiver.finishDecoding()
+        return sizeObj
+    }
 }
 
 class PTAppConfig {
     static let share = PTAppConfig()
     
     var userIcon:Data = UserDefaults.standard.value(forKey: uUserIcon) == nil ? UIImage(named: "DemoImage")!.pngData()! : (UserDefaults.standard.value(forKey: uUserIcon) as! Data)
-    
+    {
+        didSet{
+            UserDefaults.standard.set(self.userIcon,forKey: uUserIcon)
+        }
+    }
+
     var userBubbleColor:UIColor = UserDefaults.standard.value(forKey: uUserBubbleColor) == nil ? .userBubbleColor : UIColor(hexString: UserDefaults.standard.value(forKey: uUserBubbleColor) as! String)!
+    {
+        didSet{
+            UserDefaults.standard.set(self.userBubbleColor,forKey: uUserBubbleColor)
+        }
+    }
     var botBubbleColor:UIColor = UserDefaults.standard.value(forKey: uBotBubbleColor) == nil ? .botBubbleColor : UIColor(hexString: UserDefaults.standard.value(forKey: uBotBubbleColor) as! String)!
+    {
+        didSet{
+            UserDefaults.standard.set(self.botBubbleColor,forKey: uBotBubbleColor)
+        }
+    }
     
     var userTextColor:UIColor = UserDefaults.standard.value(forKey: uUserTextColor) == nil ? .userTextColor : UIColor(hexString: UserDefaults.standard.value(forKey: uUserTextColor) as! String)!
+    {
+        didSet{
+            UserDefaults.standard.set(self.userTextColor,forKey: uUserTextColor)
+        }
+    }
     var botTextColor:UIColor = UserDefaults.standard.value(forKey: uBotTextColor) == nil ? .botTextColor : UIColor(hexString: UserDefaults.standard.value(forKey: uBotTextColor) as! String)!
+    {
+        didSet{
+            UserDefaults.standard.set(self.botTextColor,forKey: uBotTextColor)
+        }
+    }
 
     var aiModelType:String = UserDefaults.standard.value(forKey: uAiModelType) == nil ? "text-davinci-003" : UserDefaults.standard.value(forKey: uAiModelType) as! String
+    {
+        didSet{
+            UserDefaults.standard.set(self.aiModelType,forKey: uAiModelType)
+        }
+    }
     var apiToken:String = UserDefaults.standard.value(forKey: uTokenKey) == nil ? "" : UserDefaults.standard.value(forKey: uTokenKey) as! String
+    {
+        didSet{
+            UserDefaults.standard.set(self.apiToken,forKey: uTokenKey)
+        }
+    }
     var aiSmart:Double = UserDefaults.standard.value(forKey: uAiSmart) == nil ? 0.2 : UserDefaults.standard.value(forKey: uAiSmart) as! Double
-    
+    {
+        didSet{
+            UserDefaults.standard.set(self.aiSmart,forKey: uAiSmart)
+        }
+    }
+    var aiDrawSize:CGSize = UserDefaults.standard.value(forKey: uAiDrawSize) == nil ? CGSize(width: 1024, height: 1024) : (try? CGSize.from(archivedData: UserDefaults.standard.value(forKey: uAiDrawSize) as! Data))!
+    {
+        didSet
+        {
+            let data = try? NSKeyedArchiver.archivedData(withRootObject: self.aiDrawSize, requiringSecureCoding: false)
+            UserDefaults.standard.set(data, forKey: uAiDrawSize)
+        }
+    }
+        
     var language:String = UserDefaults.standard.value(forKey: uLanguageKey) == nil ? OSSVoiceEnum.ChineseSimplified.rawValue : UserDefaults.standard.value(forKey: uLanguageKey) as! String
+    {
+        didSet
+        {
+            UserDefaults.standard.set(self.language, forKey: uLanguageKey)
+        }
+    }
 
     lazy var languagePickerData:[String] = {
         var data = [String]()

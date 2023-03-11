@@ -182,12 +182,13 @@ extension PTDarkModeSettingViewController: UITableViewDelegate, UITableViewDataS
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         if indexPath.section == 0, indexPath.row == 2 {
+                        
             // 获取暗黑模式时间的区间，转为两个时间戳，取出当前的时间戳，看是否在区间内，在的话：黑色，否则白色
-            let timeIntervalValue = PTDrakModeOption.smartPeelingTimeIntervalValue.separatedByString(with: "~")
+            let timeIntervalValue = PTDrakModeOption.smartPeelingTimeIntervalValue.separatedByString(with: PTLanguage.share.text(forKey: "picker_And"))
             let darkModePickerView = DarkModePickerView(startTime: timeIntervalValue[0], endTime: timeIntervalValue[1]) {[weak self] (startTime, endTime) in
                 guard let weakSelf = self else { return }
                 PTDrakModeOption.setSmartPeelingTimeChange(startTime: startTime, endTime: endTime)
-                weakSelf.darkTime = startTime + "~" + endTime
+                weakSelf.darkTime = startTime + PTLanguage.share.text(forKey: "picker_And") + endTime
                 // 更新选择
                 weakSelf.topHeadView.updateSelected()
                 weakSelf.tableView.reloadData()

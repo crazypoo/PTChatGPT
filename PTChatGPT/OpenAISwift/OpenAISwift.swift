@@ -80,13 +80,14 @@ extension OpenAISwift {
         }
     }
     
-    public func getImages(with prompt:String) async throws -> OpenAIImageGeneration
+    public func getImages(with prompt:String,imageSize:CGSize) async throws -> OpenAIImageGeneration
     {
+        let sizeString = String(format: "%.0fx%.0f", imageSize.width,imageSize.height)
         let endpoint = Endpoint.generateImage
         let parameters: [String: Any] = [
             "prompt" : prompt,
             "n" : 1,
-            "size" : "1024x1024",
+            "size" : sizeString,
             "user" : UUID().uuidString
         ]
         

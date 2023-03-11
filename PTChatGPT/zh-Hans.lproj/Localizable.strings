@@ -72,3 +72,5 @@
 "alert_Go_to_photo_setting" = "[前往：设置 - 隐私 - 照片 - %@] 允许应用访问";
 "about_Delete_all_voice_file" = "删除所有语音文件";
 "alert_Can_not_send_voice" = "你没有授权使用语音输入功能";
+"about_Draw_image_size" = "AI绘画Size";
+"size_Wrong" = "Size有误,请检查后重试.最大1024 X 1024";

@@ -160,22 +160,18 @@ extension PTColorSettingViewController:ChromaColorPickerDelegate
         if handle == self.botBubbleHandle
         {
             AppDelegate.appDelegate()?.appConfig.botBubbleColor = color
-            UserDefaults.standard.set(color.toHexString, forKey: uBotBubbleColor)
         }
         else if handle == self.userBubbleHandle
         {
             AppDelegate.appDelegate()?.appConfig.userBubbleColor = color
-            UserDefaults.standard.set(color.toHexString, forKey: uUserBubbleColor)
         }
         else if handle == self.userTextHandle
         {
             AppDelegate.appDelegate()?.appConfig.userTextColor = color
-            UserDefaults.standard.set(color.toHexString, forKey: uUserTextColor)
         }
         else if handle == self.botTextHandle
         {
             AppDelegate.appDelegate()?.appConfig.botTextColor = color
-            UserDefaults.standard.set(color.toHexString, forKey: uBotTextColor)
         }
 
     }
