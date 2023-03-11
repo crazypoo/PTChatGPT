@@ -74,6 +74,8 @@ public enum OSSSpeechKitErrorType: Int {
     case invalidVoiceFilePath = -9
     /// Voice record file path can not delete
     case invalidDeleteVoiceFilePath = -10
+    /// Voice record file path can not transcription
+    case invalidTranscriptionFilePath = -11
 
     /// The OSSSpeechKit error message string.
     ///
@@ -100,6 +102,8 @@ public enum OSSSpeechKitErrorType: Int {
             return OSSSpeechUtility().getString(forLocalizedName: "OSSSpeechKitErrorType_messageInvalidVoiceFolePath", defaultValue: "The user voice file path can not create.")
         case .invalidDeleteVoiceFilePath:
             return OSSSpeechUtility().getString(forLocalizedName: "OSSSpeechKitErrorType_messageInvalidDeleteVoiceFilePath", defaultValue: "The user voice file path can not delete.")
+        case .invalidTranscriptionFilePath:
+            return OSSSpeechUtility().getString(forLocalizedName: "OSSSpeechKitErrorType_messageInvalidTranscriptionFilePath", defaultValue: "Voice record file path can not transcription.")
         }
     }
 
@@ -121,6 +125,8 @@ public enum OSSSpeechKitErrorType: Int {
             return OSSSpeechUtility().getString(forLocalizedName: "OSSSpeechKitErrorType_requestTypeInvalidSpeech", defaultValue: "Speech")
         case .invalidVoiceFilePath,.invalidDeleteVoiceFilePath:
             return OSSSpeechUtility().getString(forLocalizedName: "OSSSpeechKitErrorType_requestTypeInvalidFilePath", defaultValue: "File")
+        case .invalidTranscriptionFilePath:
+            return OSSSpeechUtility().getString(forLocalizedName: "OSSSpeechKitErrorType_requestTypeInvalidTranscriptionFilePath", defaultValue: "Transcription")
         }
     }
 
@@ -177,6 +183,8 @@ public protocol OSSSpeechDelegate: AnyObject {
     func didFailToProcessRequest(withError error: Error?)
     /// When delete some voice file,this delegate will be return success or not
     func deleteVoiceFile(withFinish finish: Bool ,withError error: Error?)
+    /// Get the content according to the path of the voice file
+    func voiceFilePathTranscription(withText text:String)
 }
 
 
@@ -597,13 +605,13 @@ public class OSSSpeech: NSObject {
     }
 
     /// Get documents directory
-    private func getDocumentsDirectory() -> URL {
+    public func getDocumentsDirectory() -> URL {
         let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         let documentsDirectory = paths[0]
         return documentsDirectory
     }
         
-    ///Delete one voice file(s)
+    /// Delete one voice file(s)
     public func deleteVoiceFolderItem(url:URL?) {
         
         let fileManager = FileManager.default
@@ -629,6 +637,31 @@ public class OSSSpeech: NSObject {
         } catch {
             delegate?.deleteVoiceFile(withFinish: false, withError: OSSSpeechKitErrorType.invalidDeleteVoiceFilePath.error)
         }
+    }
+    
+    /// Transcription voice file path
+    public func recognizeSpeech(filePath: URL,finalBlock:((_ text:String)->Void)? = nil) {
+        let identifier = voice?.voiceType.rawValue ?? OSSVoiceEnum.UnitedStatesEnglish.rawValue
+        speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: identifier))
+        guard let audioFile = try? AVAudioFile(forReading: filePath) else {
+            return
+        }
+        let request = SFSpeechURLRecognitionRequest(url: audioFile.url)
+        speechRecognizer!.recognitionTask(with: request, resultHandler: { (result, error) in
+            if let result = result {
+                if result.isFinal {
+                    let transcription = result.bestTranscription.formattedString
+                    if finalBlock != nil {
+                        finalBlock!(transcription)
+                    }
+                    else {
+                        self.delegate?.voiceFilePathTranscription(withText: transcription)
+                    }
+                }
+            } else if error != nil {
+                self.delegate?.didFailToProcessRequest(withError: OSSSpeechKitErrorType.invalidTranscriptionFilePath.error)
+            }
+        })
     }
 }
 

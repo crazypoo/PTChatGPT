@@ -82,34 +82,42 @@ class PTChatViewController: MessagesViewController {
         return view
     }()
     
+    var voiceCanTap:Bool = false
     lazy var voiceTypeButton:UIButton = {
         let view = UIButton(type: .custom)
         view.isSelected = false
         view.setImage(UIImage(systemName: "mic")?.withTintColor(.black, renderingMode: .automatic), for: .normal)
         view.setImage(UIImage(systemName: "mic.fill")?.withTintColor(.black, renderingMode: .automatic), for: .selected)
         view.addActionHandlers { sender in
-            sender.isSelected = !sender.isSelected
-            if sender.isSelected
+            if self.voiceCanTap
             {
-                if !self.messageInputBar.inputTextView.text.stringIsEmpty()
+                sender.isSelected = !sender.isSelected
+                if sender.isSelected
                 {
-                    self.tapVoiceSaveString = self.messageInputBar.inputTextView.text
-                    self.messageInputBar.inputTextView.text = ""
+                    if !self.messageInputBar.inputTextView.text.stringIsEmpty()
+                    {
+                        self.tapVoiceSaveString = self.messageInputBar.inputTextView.text
+                        self.messageInputBar.inputTextView.text = ""
+                    }
+                    self.messageInputBar.addSubview(self.voiceButton)
+                    self.voiceButton.snp.makeConstraints { make in
+                        make.left.right.equalTo(self.messageInputBar.inputTextView)
+                        make.height.bottom.equalTo(self.voiceTypeButton)
+                    }
                 }
-                self.messageInputBar.addSubview(self.voiceButton)
-                self.voiceButton.snp.makeConstraints { make in
-                    make.left.right.equalTo(self.messageInputBar.inputTextView)
-                    make.height.bottom.equalTo(self.voiceTypeButton)
+                else
+                {
+                    if !self.tapVoiceSaveString.stringIsEmpty()
+                    {
+                        self.messageInputBar.inputTextView.text = self.tapVoiceSaveString
+                    }
+                    self.tapVoiceSaveString = ""
+                    self.voiceButton.removeFromSuperview()
                 }
             }
             else
             {
-                if !self.tapVoiceSaveString.stringIsEmpty()
-                {
-                    self.messageInputBar.inputTextView.text = self.tapVoiceSaveString
-                }
-                self.tapVoiceSaveString = ""
-                self.voiceButton.removeFromSuperview()
+                PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Can_not_send_voice"))
             }
         }
         return view
@@ -137,7 +145,7 @@ class PTChatViewController: MessagesViewController {
             print(String(describing: models.questionDate))
             questionModel = PTMessageModel(text: models.question, user: PTChatData.share.user, messageId: UUID().uuidString, date: models.questionDate.toDate()!.date)
         default:
-            let voiceURL = URL(fileURLWithPath: models.questionVoiceURL)
+            let voiceURL = self.speechKit.getDocumentsDirectory().appendingPathComponent(models.questionVoiceURL)
             questionModel = PTMessageModel(audioURL: voiceURL, user: PTChatData.share.user, messageId: UUID().uuidString, date: models.questionDate.toDate()!.date)
         }
 //                    self.insertMessage(questionModel)
@@ -175,7 +183,7 @@ class PTChatViewController: MessagesViewController {
                         print(String(describing: models!.questionDate))
                         questionModel = PTMessageModel(text: models!.question, user: PTChatData.share.user, messageId: UUID().uuidString, date: models!.questionDate.toDate()!.date)
                     default:
-                        let voiceURL = URL(fileURLWithPath: models!.questionVoiceURL)
+                        let voiceURL = self.speechKit.getDocumentsDirectory().appendingPathComponent(models!.questionVoiceURL)
                         questionModel = PTMessageModel(audioURL: voiceURL, user: PTChatData.share.user, messageId: UUID().uuidString, date: models!.questionDate.toDate()!.date)
                     }
                     self.messageList.append(questionModel)
@@ -223,6 +231,17 @@ class PTChatViewController: MessagesViewController {
                 self.navigationController?.pushViewController(vc)
             }
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: logout)
+        }
+        
+        self.speechKit.srp.requestAuthorization { authStatus in
+            let status = OSSSpeechKitAuthorizationStatus(rawValue: authStatus.rawValue) ?? .notDetermined
+            switch status
+            {
+            case .authorized:
+                self.voiceCanTap = true
+            default:
+                self.voiceCanTap = false
+            }
         }
     }
         
@@ -655,7 +674,10 @@ extension PTChatViewController:MessageCellDelegate
                 switch userModel.kind {
                 case .audio(let item):
                     model.questionType = 1
-                    model.questionVoiceURL = item.url.absoluteString
+                    model.questionVoiceURL = item.url.lastPathComponent
+                    self.speechKit.recognizeSpeech(filePath: URL(fileURLWithPath: item.url.absoluteString.replacingOccurrences(of: "file://", with: ""))) { text in
+                        model.question = text
+                    }
                 case .text(let text):
                     model.questionType = 0
                     model.question = text
@@ -952,6 +974,10 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
 //MARK: OSSSpeechDelegate
 extension PTChatViewController:OSSSpeechDelegate
 {
+    func voiceFilePathTranscription(withText text: String) {
+        
+    }
+    
     func deleteVoiceFile(withFinish finish: Bool, withError error: Error?) {
         print("\(finish)  error:\(String(describing: error?.localizedDescription))")
     }
@@ -984,7 +1010,7 @@ extension PTChatViewController:OSSSpeechDelegate
         let saveModel = PTChatModel()
         saveModel.questionType = 1
         saveModel.question = text
-        saveModel.questionVoiceURL = voiceURL.absoluteString
+        saveModel.questionVoiceURL = voiceURL.lastPathComponent
         saveModel.questionDate = self.dateFormatter(date: date)
         if self.isSendVoice
         {

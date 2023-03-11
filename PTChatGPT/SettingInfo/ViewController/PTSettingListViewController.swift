@@ -580,6 +580,10 @@ extension PTSettingListViewController:UIImagePickerControllerDelegate,UINavigati
 
 extension PTSettingListViewController:OSSSpeechDelegate
 {
+    func voiceFilePathTranscription(withText text: String) {
+        
+    }
+    
     func deleteVoiceFile(withFinish finish: Bool, withError error: Error?) {
         if finish
         {

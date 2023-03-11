@@ -71,3 +71,4 @@
 "alert_No_photo_library" = "Due to system reasons, the album cannot be accessed.";
 "alert_Go_to_photo_setting" = "[Go to: Settings - Privacy - Photos - %@] Allow apps to access";
 "about_Delete_all_voice_file" = "Delete all speech file";
+"alert_Can_not_send_voice" = "You are not authorized to use the voice input function.";

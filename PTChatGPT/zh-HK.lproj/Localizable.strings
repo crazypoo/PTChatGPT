@@ -71,3 +71,4 @@
 "alert_No_photo_library" = "由於系統原因，無法訪問圖冊。";
 "alert_Go_to_photo_setting" = "[Go：設定-隱私和安全-照片-%@]允許應用程式訪問";
 "about_Delete_all_voice_file" = "刪除所有語音檔案";
+"alert_Can_not_send_voice" = "你沒有授權使用語音輸入功能";
