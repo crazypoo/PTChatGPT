@@ -67,3 +67,7 @@
 "color_Text_bot" = "Bot text color";
 "color_Text_user" = "User text color";
 "about_AI_smart" = "AI smart";
+"about_User_icon" = "User icon";
+"alert_No_photo_library" = "Due to system reasons, the album cannot be accessed.";
+"alert_Go_to_photo_setting" = "[Go to: Settings - Privacy - Photos - %@] Allow apps to access";
+"about_Delete_all_voice_file" = "Delete all speech file";

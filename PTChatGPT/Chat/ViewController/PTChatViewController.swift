@@ -949,6 +949,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
     }
 }
 
+//MARK: OSSSpeechDelegate
 extension PTChatViewController:OSSSpeechDelegate
 {
     func deleteVoiceFile(withFinish finish: Bool, withError error: Error?) {

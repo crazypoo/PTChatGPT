@@ -21,11 +21,13 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>20230310232651</string>
+	<string>20230311101359</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>To use commands, we need to access the microphone.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>To change theme,we need to access the phtot library</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Would you like to use voice commands?</string>
 	<key>UILaunchStoryboardName</key>

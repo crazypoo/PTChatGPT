@@ -27,7 +27,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-                
+                        
         PTDrakModeOption.defaultDark()
         PTAppBaseConfig.share.decorationBackgroundColor = .gobalCellBackgroundColor
 //        let filePath = NSTemporaryDirectory().appending("/demo.order")

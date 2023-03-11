@@ -67,3 +67,7 @@
 "color_Text_bot" = "Color del texto del bot";
 "color_Text_user" = "Color del texto del usuario";
 "about_AI_smart" = "AI inteligente";
+"about_User_icon" = "Icono de usuario";
+"alert_No_photo_library" = "Debido a razones del sistema, no se puede acceder al álbum.";
+"alert_Go_to_photo_setting" = "[Ir : Configuración - Privacidad y seguridad - Fotos - %@] Permitir que las aplicaciones accedan";
+"about_Delete_all_voice_file" = "Eliminar todo el archivo de voz";

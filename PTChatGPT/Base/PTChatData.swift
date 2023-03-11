@@ -27,9 +27,9 @@ final internal class PTChatData
         let initials = "\(firstName?.first ?? "A")\(lastName?.first ?? "A")"
         switch sender.senderId {
         case "000000":
-            return Avatar(image: #imageLiteral(resourceName: "DemoImage"), initials: initials)
+            return Avatar(image: UIImage(data: AppDelegate.appDelegate()!.appConfig.userIcon), initials: initials)
         default:
-            return Avatar(image: #imageLiteral(resourceName: "Applaunch"), initials: initials)
+            return Avatar(image: UIImage(named: "Applaunch"), initials: initials)
         }
     }
 }

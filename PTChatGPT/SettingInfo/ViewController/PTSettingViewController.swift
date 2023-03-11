@@ -30,7 +30,7 @@ class PTSettingViewController: PTChatBaseViewController {
     lazy var selectLanguage:UIButton = {
         let button = UIButton(type: .custom)
         button.setTitle(PTLanguage.share.text(forKey: "first_Select_speech_language"), for: .normal)
-        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(.gobalTextColor, for: .normal)
         button.addActionHandlers { sender in
             self.token.resignFirstResponder()
             
@@ -64,7 +64,7 @@ class PTSettingViewController: PTChatBaseViewController {
     lazy var getApiToken:UIButton = {
         let button = UIButton(type: .custom)
         button.setTitle(PTLanguage.share.text(forKey: "first_Go_get_api_token"), for: .normal)
-        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(.gobalTextColor, for: .normal)
         button.addActionHandlers { sender in
             self.token.resignFirstResponder()
             let url = URL(string: getApiUrl)!
@@ -76,7 +76,7 @@ class PTSettingViewController: PTChatBaseViewController {
     lazy var disclaimerButton:UIButton = {
         let button = UIButton(type: .custom)
         button.setTitle(PTLanguage.share.text(forKey: "first_Disclaimer"), for: .normal)
-        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(.gobalTextColor, for: .normal)
         button.addActionHandlers { sender in
             self.token.resignFirstResponder()
             let vc = PTDisclaimerViewController()
@@ -88,7 +88,7 @@ class PTSettingViewController: PTChatBaseViewController {
     lazy var gogogoButton:UIButton = {
         let button = UIButton(type: .custom)
         button.setTitle(PTLanguage.share.text(forKey: "first_Start"), for: .normal)
-        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(.gobalTextColor, for: .normal)
         button.addActionHandlers { sender in
             self.token.resignFirstResponder()
             self.checkTextField(textField: self.token)
@@ -110,7 +110,7 @@ class PTSettingViewController: PTChatBaseViewController {
 
         self.zx_navTitle = PTLanguage.share.text(forKey: "first_Title")
         
-        self.view.backgroundColor = .white
+        self.view.backgroundColor = .gobalBackgroundColor
         
         if AppDelegate.appDelegate()!.appConfig.apiToken.stringIsEmpty()
         {

@@ -9,6 +9,7 @@
 import UIKit
 import PooTools
 import BRPickerView
+import SwifterSwift
 
 ///用戶的BubbleColor key
 let uUserBubbleColor = "uUserBubbleColor"
@@ -26,6 +27,8 @@ let uSaveChat = "uSaveChat"
 let uAiModelType = "uAiModelType"
 ///保存的機器人智障程度
 let uAiSmart = "uAiSmart"
+///保存的用戶的頭像
+let uUserIcon = "uUserIcon"
 
 let kSeparator = "[,]"
 
@@ -55,6 +58,8 @@ extension UIColor
 
 class PTAppConfig {
     static let share = PTAppConfig()
+    
+    var userIcon:Data = UserDefaults.standard.value(forKey: uUserIcon) == nil ? UIImage(named: "DemoImage")!.pngData()! : (UserDefaults.standard.value(forKey: uUserIcon) as! Data)
     
     var userBubbleColor:UIColor = UserDefaults.standard.value(forKey: uUserBubbleColor) == nil ? .userBubbleColor : UIColor(hexString: UserDefaults.standard.value(forKey: uUserBubbleColor) as! String)!
     var botBubbleColor:UIColor = UserDefaults.standard.value(forKey: uBotBubbleColor) == nil ? .botBubbleColor : UIColor(hexString: UserDefaults.standard.value(forKey: uBotBubbleColor) as! String)!

@@ -67,3 +67,7 @@
 "color_Text_bot" = "AI文字颜色";
 "color_Text_user" = "用户文字颜色";
 "about_AI_smart" = "AI聪明度";
+"about_User_icon" = "用户头像";
+"alert_No_photo_library" = "由于系统原因, 无法访问相册";
+"alert_Go_to_photo_setting" = "[前往：设置 - 隐私 - 照片 - %@] 允许应用访问";
+"about_Delete_all_voice_file" = "删除所有语音文件";

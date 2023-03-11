@@ -9,16 +9,19 @@
 import UIKit
 import PooTools
 import BRPickerView
+import Photos
 
 fileprivate extension String
 {
     //MARK: 主題
     static let colorString = PTLanguage.share.text(forKey: "about_Color")
+    static let userIcon = PTLanguage.share.text(forKey: "about_User_icon")
     static let languageString = PTLanguage.share.text(forKey: "about_Language")
     static let themeString = PTLanguage.share.text(forKey: "about_Main_Theme")
     //MARK: 聊天相關
     static let savedChat = PTLanguage.share.text(forKey: "about_SavedChat")
     static let deleteAllChat = PTLanguage.share.text(forKey: "about_DeleteAllChat")
+    static let deleteAllVoiceFile = PTLanguage.share.text(forKey: "about_Delete_all_voice_file")
     //MARK: Speech
     static let speech = PTLanguage.share.text(forKey: "about_Main_Speech")
     //MARK: API
@@ -32,7 +35,6 @@ fileprivate extension String
     static let rate = PTLanguage.share.text(forKey: "about_Rate")
     static let share = PTLanguage.share.text(forKey: "about_Share")
     static let version = PTLanguage.share.text(forKey: "about_Version")
-
 }
 
 class PTSettingListViewController: PTChatBaseViewController {
@@ -96,7 +98,13 @@ class PTSettingListViewController: PTChatBaseViewController {
         theme.nameColor = .gobalTextColor
         theme.disclosureIndicatorImageName = disclosureIndicatorImageName
         
-        themeMain.models = [color,language,theme]
+        let userIcon = PTFunctionCellModel()
+        userIcon.name = .userIcon
+        userIcon.haveDisclosureIndicator = true
+        userIcon.nameColor = .gobalTextColor
+        userIcon.disclosureIndicatorImageName = disclosureIndicatorImageName
+
+        themeMain.models = [color,userIcon,language,theme]
         
         //MARK: Speech
         let speechMain = PTSettingModels()
@@ -126,7 +134,13 @@ class PTSettingListViewController: PTChatBaseViewController {
         deleteAllChat.nameColor = .gobalTextColor
         deleteAllChat.disclosureIndicatorImageName = disclosureIndicatorImageName
 
-        chatMain.models = [savedMessage,deleteAllChat]
+        let deleteAllVoiceFile = PTFunctionCellModel()
+        deleteAllVoiceFile.name = .deleteAllVoiceFile
+        deleteAllVoiceFile.haveDisclosureIndicator = true
+        deleteAllVoiceFile.nameColor = .gobalTextColor
+        deleteAllVoiceFile.disclosureIndicatorImageName = disclosureIndicatorImageName
+
+        chatMain.models = [savedMessage,deleteAllChat,deleteAllVoiceFile]
         
         let apiMain = PTSettingModels()
         apiMain.name = "API"
@@ -306,6 +320,45 @@ class PTSettingListViewController: PTChatBaseViewController {
         self.collectionView.pt_register(by: mSections)
         self.collectionView.reloadData()
     }
+    
+    //MARK: 進入相冊
+    func enterPhotos()
+    {
+        PTGCDManager.gcdAfter(time: 0.1) {
+            if #available(iOS 14.0, *)
+            {
+                Task{
+                    do{
+                        let object:PTAlbumObject = try await PTImagePicker.openAlbum()
+                        await MainActor.run{
+                            if let imageData = object.imageData,let image = UIImage(data: imageData)
+                            {
+                                AppDelegate.appDelegate()!.appConfig.userIcon = imageData
+                                UserDefaults.standard.set(imageData, forKey: uUserIcon)
+                                PTLocalConsoleFunction.share.pNSLog(image)
+                            }
+                            else
+                            {
+                                PTLocalConsoleFunction.share.pNSLog("獲取圖片出現錯誤")
+                            }
+                        }
+                    }
+                    catch let pickerError as PTImagePicker.PickerError
+                    {
+                        pickerError.outPutLog()
+                    }
+                }
+            }
+            else
+            {
+                let imagePicker = UIImagePickerController()
+                imagePicker.sourceType = .photoLibrary
+                imagePicker.delegate = self
+                imagePicker.modalPresentationStyle = .fullScreen
+                self.present(imagePicker, animated: true)
+            }
+        }
+    }
 }
 
 extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewDataSource
@@ -352,8 +405,9 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTAISmartCell
             cell.cellModel = (itemRow.dataModel as! PTFunctionCellModel)
             cell.aiSlider.addSliderAction { sender in
-                AppDelegate.appDelegate()!.appConfig.aiSmart = Double(sender.value)
-                UserDefaults.standard.set(Double(sender.value), forKey: uAiSmart)
+                let realSmart = (1 - sender.value)
+                AppDelegate.appDelegate()!.appConfig.aiSmart = Double(realSmart)
+                UserDefaults.standard.set(Double(realSmart), forKey: uAiSmart)
             }
             return cell
         }
@@ -428,7 +482,7 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
         else if itemRow.title == .share
         {
             let title = kAppName!
-            let content = "看看我的頁面"
+            let content = "Look at me!!!!!!!"
             let shareLink = projectGithubUrl
             let url = URL(string: shareLink)!
             let shareItem = PTShareItem(title: title, content: content, url: url)
@@ -467,6 +521,40 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
             let vc = PTDarkModeSettingViewController()
             self.navigationController?.pushViewController(vc)
         }
+        else if itemRow.title == .userIcon
+        {
+            let status = PHPhotoLibrary.authorizationStatus()
+            if status == .notDetermined
+            {
+                PHPhotoLibrary.requestAuthorization { blockStatus in
+                    if blockStatus == .authorized
+                    {
+                        PTGCDManager.gcdMain {
+                            self.enterPhotos()
+                        }
+                    }
+                }
+            }
+            else if status == .authorized
+            {
+                self.enterPhotos()
+            }
+            else if status == .denied
+            {
+                let messageString = String(format: PTLanguage.share.text(forKey: "alert_Go_to_photo_setting"), kAppName!)
+                PTBaseViewController.gobal_drop(title: messageString)
+            }
+            else
+            {
+                PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_No_photo_library"))
+            }
+        }
+        else if itemRow.title == .deleteAllVoiceFile
+        {
+            let speechKit = OSSSpeech.shared
+            speechKit.delegate = self
+            speechKit.deleteVoiceFolderItem(url: nil)
+        }
     }
 }
 
@@ -475,3 +563,53 @@ extension PTSettingListViewController:UITextFieldDelegate
     
 }
 
+extension PTSettingListViewController:UIImagePickerControllerDelegate,UINavigationControllerDelegate
+{
+    public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        self.returnFrontVC()
+    }
+    
+    public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        let image:UIImage = info[UIImagePickerController.InfoKey.originalImage] as! UIImage
+        let imageData = image.pngData()
+        AppDelegate.appDelegate()!.appConfig.userIcon = imageData!
+        UserDefaults.standard.set(imageData, forKey: uUserIcon)
+        PTLocalConsoleFunction.share.pNSLog(image)
+    }
+}
+
+extension PTSettingListViewController:OSSSpeechDelegate
+{
+    func deleteVoiceFile(withFinish finish: Bool, withError error: Error?) {
+        if finish
+        {
+            PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_done"))
+        }
+        else
+        {
+            PTBaseViewController.gobal_drop(title: error!.localizedDescription)
+        }
+    }
+    
+    func didFinishListening(withText text: String) {
+    }
+    
+    func authorizationToMicrophone(withAuthentication type: OSSSpeechKitAuthorizationStatus) {
+        
+    }
+    
+    func didFailToCommenceSpeechRecording() {
+        
+    }
+    
+    func didCompleteTranslation(withText text: String) {
+        
+    }
+    
+    func didFailToProcessRequest(withError error: Error?) {
+        
+    }
+    
+    func didFinishListening(withAudioFileURL url: URL, withText text: String) {
+    }
+}

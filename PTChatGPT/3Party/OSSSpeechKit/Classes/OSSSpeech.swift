@@ -622,7 +622,7 @@ public class OSSSpeech: NSObject {
                     delegate?.deleteVoiceFile(withFinish: true, withError: nil)
                 }
             }
-            guard let pathUrl = url else {
+            guard url != nil else {
                 delegate?.deleteVoiceFile(withFinish: true, withError: nil)
                 return
             }

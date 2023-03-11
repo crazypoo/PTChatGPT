@@ -24,7 +24,7 @@ class PTAISmartCell: PTBaseNormalCell {
         let slider = UISlider()
         slider.maximumValue = 1
         slider.minimumValue = 0.1
-        slider.value = Float(AppDelegate.appDelegate()!.appConfig.aiSmart)
+        slider.value = Float(1 - AppDelegate.appDelegate()!.appConfig.aiSmart)
         return slider
     }()
     
@@ -33,6 +33,7 @@ class PTAISmartCell: PTBaseNormalCell {
         didSet{
             self.nameTitle.text = self.cellModel!.name
             self.nameTitle.textColor = self.cellModel!.nameColor
+            self.nameTitle.font = self.cellModel!.cellFont
         }
     }
     
