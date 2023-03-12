@@ -11,5 +11,5 @@ import PooTools
 
 class PTSettingModels: PTBaseModel {
     var name:String = ""
-    var models:[PTFunctionCellModel] = [PTFunctionCellModel]()
+    var models:[PTFusionCellModel] = [PTFusionCellModel]()
 }

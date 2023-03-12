@@ -111,11 +111,11 @@ class PTSaveChatViewController: PTChatBaseViewController {
             var rows = [PTRows]()
             self.saveChatModel.enumerated().forEach { (index,value) in
                 let disclosureIndicatorImageName = UIImage(systemName: "chevron.right")!.withTintColor(.gobalTextColor,renderingMode: .alwaysOriginal)
-                let cellModel = PTFunctionCellModel()
+                let cellModel = PTFusionCellModel()
                 cellModel.name = value.question
                 cellModel.haveDisclosureIndicator = true
                 cellModel.nameColor = .gobalTextColor
-                cellModel.disclosureIndicatorImageName = disclosureIndicatorImageName
+                cellModel.disclosureIndicatorImage = disclosureIndicatorImageName
                 let row_List = PTRows.init(cls: PTFusionSwipeCell.self, ID: PTFusionSwipeCell.ID, dataModel: cellModel)
                 rows.append(row_List)
             }
@@ -173,7 +173,7 @@ extension PTSaveChatViewController:UICollectionViewDelegate,UICollectionViewData
         if itemRow.ID == PTFusionSwipeCell.ID
         {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTFusionSwipeCell
-            cell.cellModel = (itemRow.dataModel as! PTFunctionCellModel)
+            cell.cellModel = (itemRow.dataModel as! PTFusionCellModel)
             cell.dataContent.lineView.isHidden = indexPath.row == (itemSec.rows.count - 1) ? true : false
             cell.dataContent.topLineView.isHidden = true
             cell.delegate = self

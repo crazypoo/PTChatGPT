@@ -24,35 +24,30 @@ class PTColorSettingViewController: PTChatBaseViewController {
         let colorMain = PTSettingModels()
         colorMain.name = PTLanguage.share.text(forKey: "alert_Info")
         
-        let userBubbleInfo = PTFunctionCellModel()
+        let userBubbleInfo = PTFusionCellModel()
         userBubbleInfo.name = PTLanguage.share.text(forKey: "color_Bubble_user")
-        userBubbleInfo.haveDisclosureIndicator = true
         userBubbleInfo.nameColor = .gobalTextColor
-        userBubbleInfo.disclosureIndicatorImageName = UIImage(systemName: "bubble.left.fill")!.withRenderingMode(.automatic)
+        userBubbleInfo.leftImage = UIImage(systemName: "bubble.left.fill")!.withRenderingMode(.automatic)
         
-        let botBubbleInfo = PTFunctionCellModel()
+        let botBubbleInfo = PTFusionCellModel()
         botBubbleInfo.name = PTLanguage.share.text(forKey: "color_Bubble_bot")
-        botBubbleInfo.haveDisclosureIndicator = true
         botBubbleInfo.nameColor = .gobalTextColor
-        botBubbleInfo.disclosureIndicatorImageName = UIImage(systemName: "bubble.right.fill")!.withRenderingMode(.automatic)
-
-        let userTextInfo = PTFunctionCellModel()
+        botBubbleInfo.leftImage = UIImage(systemName: "bubble.right.fill")!.withRenderingMode(.automatic)
+        
+        let userTextInfo = PTFusionCellModel()
         userTextInfo.name = PTLanguage.share.text(forKey: "color_Text_user")
-        userTextInfo.haveDisclosureIndicator = true
         userTextInfo.nameColor = .gobalTextColor
-        userTextInfo.disclosureIndicatorImageName = UIImage(systemName: "plus.bubble.fill")!.withRenderingMode(.automatic)
-
-        let botTextInfo = PTFunctionCellModel()
+        userTextInfo.leftImage = UIImage(systemName: "plus.bubble.fill")!.withRenderingMode(.automatic)
+        
+        let botTextInfo = PTFusionCellModel()
         botTextInfo.name = PTLanguage.share.text(forKey: "color_Text_bot")
-        botTextInfo.haveDisclosureIndicator = true
         botTextInfo.nameColor = .gobalTextColor
-        botTextInfo.disclosureIndicatorImageName = UIImage(systemName: "text.bubble.fill")!.withRenderingMode(.automatic)
+        botTextInfo.leftImage = UIImage(systemName: "text.bubble.fill")!.withRenderingMode(.automatic)
 
-        let waveInfo = PTFunctionCellModel()
+        let waveInfo = PTFusionCellModel()
         waveInfo.name = PTLanguage.share.text(forKey: "color_Wave")
-        waveInfo.haveDisclosureIndicator = true
         waveInfo.nameColor = .gobalTextColor
-        waveInfo.disclosureIndicatorImageName = UIImage(systemName: "waveform")!.withRenderingMode(.automatic)
+        waveInfo.leftImage = UIImage(systemName: "waveform")!.withRenderingMode(.automatic)
 
         if self.user.senderId == PTChatData.share.bot.senderId
         {
@@ -93,7 +88,7 @@ class PTColorSettingViewController: PTChatBaseViewController {
         var groupH:CGFloat = 0
         sectionModel.rows.enumerated().forEach { (index,model) in
             var cellHeight:CGFloat = 44
-            if (model.dataModel as! PTFunctionCellModel).name == .aiSmart
+            if (model.dataModel as! PTFusionCellModel).name == .aiSmart
             {
                 cellHeight = 78
             }
@@ -365,7 +360,7 @@ extension PTColorSettingViewController:UICollectionViewDelegate,UICollectionView
         if itemRow.ID == PTFusionCell.ID
         {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTFusionCell
-            cell.cellModel = (itemRow.dataModel as! PTFunctionCellModel)
+            cell.cellModel = (itemRow.dataModel as! PTFusionCellModel)
             cell.dataContent.lineView.isHidden = indexPath.row == (itemSec.rows.count - 1) ? true : false
             cell.dataContent.topLineView.isHidden = true
             return cell

@@ -104,29 +104,29 @@ class PTSettingListViewController: PTChatBaseViewController {
         themeMain.name = PTLanguage.share.text(forKey: "about_Main_Theme")
         
         //MARK: 主題
-        let color = PTFunctionCellModel()
+        let color = PTFusionCellModel()
         color.name = .colorString
         color.haveDisclosureIndicator = true
         color.nameColor = .gobalTextColor
-        color.disclosureIndicatorImageName = disclosureIndicatorImageName
+        color.disclosureIndicatorImage = disclosureIndicatorImageName
 
-        let language = PTFunctionCellModel()
+        let language = PTFusionCellModel()
         language.name = .languageString
         language.haveDisclosureIndicator = true
         language.nameColor = .gobalTextColor
-        language.disclosureIndicatorImageName = disclosureIndicatorImageName
+        language.disclosureIndicatorImage = disclosureIndicatorImageName
 
-        let theme = PTFunctionCellModel()
+        let theme = PTFusionCellModel()
         theme.name = .themeString
         theme.haveDisclosureIndicator = true
         theme.nameColor = .gobalTextColor
-        theme.disclosureIndicatorImageName = disclosureIndicatorImageName
+        theme.disclosureIndicatorImage = disclosureIndicatorImageName
         
-        let userIcon = PTFunctionCellModel()
+        let userIcon = PTFusionCellModel()
         userIcon.name = .userIcon
         userIcon.haveDisclosureIndicator = true
         userIcon.nameColor = .gobalTextColor
-        userIcon.disclosureIndicatorImageName = disclosureIndicatorImageName
+        userIcon.disclosureIndicatorImage = disclosureIndicatorImageName
 
         if self.user.senderId == PTChatData.share.bot.senderId
         {
@@ -146,11 +146,11 @@ class PTSettingListViewController: PTChatBaseViewController {
         let speechMain = PTSettingModels()
         speechMain.name = PTLanguage.share.text(forKey: "about_Main_Speech")
 
-        let speechLanguage = PTFunctionCellModel()
+        let speechLanguage = PTFusionCellModel()
         speechLanguage.name = .speech
         speechLanguage.haveDisclosureIndicator = true
         speechLanguage.nameColor = .gobalTextColor
-        speechLanguage.disclosureIndicatorImageName = disclosureIndicatorImageName
+        speechLanguage.disclosureIndicatorImage = disclosureIndicatorImageName
 
         speechMain.models = [speechLanguage]
 
@@ -158,23 +158,23 @@ class PTSettingListViewController: PTChatBaseViewController {
         let chatMain = PTSettingModels()
         chatMain.name = "Chat"
 
-        let savedMessage = PTFunctionCellModel()
+        let savedMessage = PTFusionCellModel()
         savedMessage.name = .savedChat
         savedMessage.haveDisclosureIndicator = true
         savedMessage.nameColor = .gobalTextColor
-        savedMessage.disclosureIndicatorImageName = disclosureIndicatorImageName
+        savedMessage.disclosureIndicatorImage = disclosureIndicatorImageName
 
-        let deleteAllChat = PTFunctionCellModel()
+        let deleteAllChat = PTFusionCellModel()
         deleteAllChat.name = .deleteAllChat
         deleteAllChat.haveDisclosureIndicator = true
         deleteAllChat.nameColor = .gobalTextColor
-        deleteAllChat.disclosureIndicatorImageName = disclosureIndicatorImageName
+        deleteAllChat.disclosureIndicatorImage = disclosureIndicatorImageName
 
-        let deleteAllVoiceFile = PTFunctionCellModel()
+        let deleteAllVoiceFile = PTFusionCellModel()
         deleteAllVoiceFile.name = .deleteAllVoiceFile
         deleteAllVoiceFile.haveDisclosureIndicator = true
         deleteAllVoiceFile.nameColor = .gobalTextColor
-        deleteAllVoiceFile.disclosureIndicatorImageName = disclosureIndicatorImageName
+        deleteAllVoiceFile.disclosureIndicatorImage = disclosureIndicatorImageName
 
         chatMain.models = [savedMessage,deleteAllChat,deleteAllVoiceFile]
         
@@ -182,33 +182,33 @@ class PTSettingListViewController: PTChatBaseViewController {
         apiMain.name = "API"
 
         //MARK: API
-        let aiType = PTFunctionCellModel()
+        let aiType = PTFusionCellModel()
         aiType.name = .apiAIType
         aiType.haveDisclosureIndicator = true
         aiType.nameColor = .gobalTextColor
-        aiType.disclosureIndicatorImageName = disclosureIndicatorImageName
+        aiType.disclosureIndicatorImage = disclosureIndicatorImageName
         
-        let aiSmart = PTFunctionCellModel()
+        let aiSmart = PTFusionCellModel()
         aiSmart.name = .aiSmart
         aiSmart.nameColor = .gobalTextColor
         
-        let drawSize = PTFunctionCellModel()
+        let drawSize = PTFusionCellModel()
         drawSize.name = .drawImageSize
         drawSize.haveDisclosureIndicator = true
         drawSize.nameColor = .gobalTextColor
-        drawSize.disclosureIndicatorImageName = disclosureIndicatorImageName
+        drawSize.disclosureIndicatorImage = disclosureIndicatorImageName
 
-        let aiToken = PTFunctionCellModel()
+        let aiToken = PTFusionCellModel()
         aiToken.name = .apiAIToken
         aiToken.haveDisclosureIndicator = true
         aiToken.nameColor = .gobalTextColor
-        aiToken.disclosureIndicatorImageName = disclosureIndicatorImageName
+        aiToken.disclosureIndicatorImage = disclosureIndicatorImageName
 
-        let getApiToken = PTFunctionCellModel()
+        let getApiToken = PTFusionCellModel()
         getApiToken.name = .getAPIAIToken
         getApiToken.haveDisclosureIndicator = true
         getApiToken.nameColor = .gobalTextColor
-        getApiToken.disclosureIndicatorImageName = disclosureIndicatorImageName
+        getApiToken.disclosureIndicatorImage = disclosureIndicatorImageName
 
         if self.user.senderId == PTChatData.share.bot.senderId
         {
@@ -223,31 +223,31 @@ class PTSettingListViewController: PTChatBaseViewController {
         otherMain.name = PTLanguage.share.text(forKey: "about_Main_Other")
 
         //MARK: Other
-        let github = PTFunctionCellModel()
+        let github = PTFusionCellModel()
         github.name = .github
         github.haveDisclosureIndicator = true
         github.nameColor = .gobalTextColor
-        github.disclosureIndicatorImageName = disclosureIndicatorImageName
+        github.disclosureIndicatorImage = disclosureIndicatorImageName
 
-        let forum = PTFunctionCellModel()
+        let forum = PTFusionCellModel()
         forum.name = .forum
         forum.haveDisclosureIndicator = true
         forum.nameColor = .gobalTextColor
-        forum.disclosureIndicatorImageName = disclosureIndicatorImageName
+        forum.disclosureIndicatorImage = disclosureIndicatorImageName
 
-        let rate = PTFunctionCellModel()
+        let rate = PTFusionCellModel()
         rate.name = .rate
         rate.haveDisclosureIndicator = true
         rate.nameColor = .gobalTextColor
-        rate.disclosureIndicatorImageName = disclosureIndicatorImageName
+        rate.disclosureIndicatorImage = disclosureIndicatorImageName
 
-        let share = PTFunctionCellModel()
+        let share = PTFusionCellModel()
         share.name = .share
         share.haveDisclosureIndicator = true
         share.nameColor = .gobalTextColor
-        share.disclosureIndicatorImageName = disclosureIndicatorImageName
+        share.disclosureIndicatorImage = disclosureIndicatorImageName
 
-        let version = PTFunctionCellModel()
+        let version = PTFusionCellModel()
         version.name = .version
         version.haveDisclosureIndicator = false
         version.nameColor = .gobalTextColor
@@ -293,7 +293,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         var groupH:CGFloat = 0
         sectionModel.rows.enumerated().forEach { (index,model) in
             var cellHeight:CGFloat = 44
-            if (model.dataModel as! PTFunctionCellModel).name == .aiSmart
+            if (model.dataModel as! PTFusionCellModel).name == .aiSmart
             {
                 cellHeight = 78
             }
@@ -477,7 +477,7 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
         if itemRow.ID == PTFusionCell.ID
         {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTFusionCell
-            cell.cellModel = (itemRow.dataModel as! PTFunctionCellModel)
+            cell.cellModel = (itemRow.dataModel as! PTFusionCellModel)
             cell.dataContent.lineView.isHidden = indexPath.row == (itemSec.rows.count - 1) ? true : false
             cell.dataContent.topLineView.isHidden = true
             return cell
@@ -485,7 +485,7 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
         else if itemRow.ID == PTAISmartCell.ID
         {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTAISmartCell
-            cell.cellModel = (itemRow.dataModel as! PTFunctionCellModel)
+            cell.cellModel = (itemRow.dataModel as! PTFusionCellModel)
             cell.aiSlider.addSliderAction { sender in
                 let realSmart = (1 - sender.value)
                 AppDelegate.appDelegate()!.appConfig.aiSmart = Double(realSmart)

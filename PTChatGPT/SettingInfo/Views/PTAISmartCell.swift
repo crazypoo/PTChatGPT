@@ -28,7 +28,7 @@ class PTAISmartCell: PTBaseNormalCell {
         return slider
     }()
     
-    var cellModel:PTFunctionCellModel?
+    var cellModel:PTFusionCellModel?
     {
         didSet{
             self.nameTitle.text = self.cellModel!.name
