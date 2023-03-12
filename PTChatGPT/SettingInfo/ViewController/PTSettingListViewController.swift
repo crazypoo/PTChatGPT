@@ -284,7 +284,6 @@ class PTSettingListViewController: PTChatBaseViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        self.showDetail()
     }
 
     override func viewDidLoad() {
@@ -298,6 +297,8 @@ class PTSettingListViewController: PTChatBaseViewController {
             make.left.right.bottom.equalToSuperview()
             make.top.equalToSuperview().inset(CGFloat.kNavBarHeight_Total)
         }
+        
+        self.showDetail()
     }
     
     func showDetail()

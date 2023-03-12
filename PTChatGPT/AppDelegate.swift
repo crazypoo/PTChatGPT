@@ -30,6 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         
         PTDrakModeOption.defaultDark()
         PTAppBaseConfig.share.decorationBackgroundColor = .gobalCellBackgroundColor
+
 //        let filePath = NSTemporaryDirectory().appending("/demo.order")
 //        YCSymbolTracker.exportSymbols(filePath: filePath)
                         

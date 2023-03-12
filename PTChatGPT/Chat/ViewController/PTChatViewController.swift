@@ -300,6 +300,7 @@ class PTChatViewController: MessagesViewController {
         messageInputBar.sendButton.setTitleColor(
             .gobalTextColor.withAlphaComponent(0.3),
             for: .highlighted)
+                        
         messageInputBar.sendButton.snp.makeConstraints { make in
             make.right.equalToSuperview().inset(PTAppBaseConfig.share.defaultViewSpace)
             make.bottom.equalToSuperview().inset(CGFloat.kTabbarSaveAreaHeight + 10)
@@ -339,6 +340,11 @@ class PTChatViewController: MessagesViewController {
             }, completion: { [weak self] _ in
                 if self?.isLastSectionVisible() == true {
                     self?.messagesCollectionView.scrollToLastItem(animated: true)
+                }
+                
+                if self?.messageList.count == 1
+                {
+                    self?.messagesCollectionView.reloadData()
                 }
             })
         }
