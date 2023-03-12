@@ -44,7 +44,7 @@ class PTAISmartCell: PTBaseNormalCell {
         self.nameTitle.snp.makeConstraints { make in
             make.left.right.equalToSuperview().inset(10)
             make.top.equalToSuperview()
-            make.height.equalTo(34)
+            make.height.equalTo(CGFloat.ScaleW(w: 34))
         }
         
         self.lineView.snp.makeConstraints { make in

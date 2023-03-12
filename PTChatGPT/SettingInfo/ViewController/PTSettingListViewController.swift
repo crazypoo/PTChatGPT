@@ -292,10 +292,10 @@ class PTSettingListViewController: PTChatBaseViewController {
         var customers = [NSCollectionLayoutGroupCustomItem]()
         var groupH:CGFloat = 0
         sectionModel.rows.enumerated().forEach { (index,model) in
-            var cellHeight:CGFloat = 44
+            var cellHeight:CGFloat = CGFloat.ScaleW(w: 44)
             if (model.dataModel as! PTFusionCellModel).name == .aiSmart
             {
-                cellHeight = 78
+                cellHeight = CGFloat.ScaleW(w: 78)
             }
             let customItem = NSCollectionLayoutGroupCustomItem.init(frame: CGRect.init(x: PTAppBaseConfig.share.defaultViewSpace, y: groupH, width: CGFloat.kSCREEN_WIDTH - PTAppBaseConfig.share.defaultViewSpace * 2, height: cellHeight), zIndex: 1000+index)
             customers.append(customItem)
@@ -396,7 +396,7 @@ class PTSettingListViewController: PTChatBaseViewController {
                     rows.append(row_List)
                 }
             }
-            let cellSection = PTSection.init(headerTitle:value.name,headerCls:PTSettingHeader.self,headerID: PTSettingHeader.ID,headerHeight: 44,rows: rows)
+            let cellSection = PTSection.init(headerTitle:value.name,headerCls:PTSettingHeader.self,headerID: PTSettingHeader.ID,headerHeight: CGFloat.ScaleW(w: 44),rows: rows)
             mSections.append(cellSection)
         }
         

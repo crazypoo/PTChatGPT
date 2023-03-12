@@ -318,7 +318,15 @@ class PTChatViewController: MessagesViewController {
     }
     
     func configureMessageInputBar() {
-        messageInputBar.alpha = 0
+        if AppDelegate.appDelegate()!.appConfig.firstUseApp
+        {
+            AppDelegate.appDelegate()!.appConfig.firstUseApp = false
+            messageInputBar.alpha = 1
+        }
+        else
+        {
+            messageInputBar.alpha = 0
+        }
         messageInputBar.delegate = self
         messageInputBar.backgroundView.backgroundColor = .gobalBackgroundColor
         messageInputBar.inputTextView.textColor = .gobalTextColor

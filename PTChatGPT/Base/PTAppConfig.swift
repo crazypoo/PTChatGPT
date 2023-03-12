@@ -36,6 +36,8 @@ let uLanguageKey = "UserLanguage"
 ///语音的波纹颜色key
 let uWaveColor = "uWaveColor"
 
+let uAppFirstUse = "uAppFirstUse"
+
 let kSeparator = "[,]"
 
 let getApiUrl = "https://platform.openai.com/account/api-keys"
@@ -77,6 +79,13 @@ extension CGSize {
 
 class PTAppConfig {
     static let share = PTAppConfig()
+    
+    var firstUseApp:Bool = UserDefaults.standard.value(forKey: uAppFirstUse) == nil ? true : UserDefaults.standard.value(forKey: uAppFirstUse) as! Bool
+    {
+        didSet{
+            UserDefaults.standard.set(self.firstUseApp,forKey: uAppFirstUse)
+        }
+    }
     
     var userIcon:Data = UserDefaults.standard.value(forKey: uUserIcon) == nil ? UIImage(named: "DemoImage")!.pngData()! : (UserDefaults.standard.value(forKey: uUserIcon) as! Data)
     {
@@ -380,11 +389,15 @@ class PTAppConfig {
         style.pickerColor = .gobalBackgroundColor
         style.pickerTextColor = .gobalTextColor
         style.titleBarColor = .gobalBackgroundColor
+        style.cancelTextFont = .appfont(size: 15)
+        let cancelW = UIView.sizeFor(string: PTLanguage.share.text(forKey: "button_Cancel"), font: .appfont(size: 16), height: style.cancelBtnFrame.size.height, width: CGFloat(MAXFLOAT)).width + 10
         style.cancelBtnTitle = PTLanguage.share.text(forKey: "button_Cancel")
-        style.cancelTextFont = .appfont(size: 17)
+        style.cancelBtnFrame = CGRectMake(style.cancelBtnFrame.origin.x, style.cancelBtnFrame.origin.y, cancelW, style.cancelBtnFrame.size.height)
         style.cancelTextColor = .systemBlue
+        style.doneTextFont = .appfont(size: 15)
         style.doneBtnTitle = PTLanguage.share.text(forKey: "button_Confirm")
-        style.doneTextFont = .appfont(size: 17)
+        let doneW = UIView.sizeFor(string: PTLanguage.share.text(forKey: "button_Confirm"), font: .appfont(size: 16), height: style.doneBtnFrame.size.height, width: CGFloat(MAXFLOAT)).width + 10
+        style.doneBtnFrame = CGRectMake(CGFloat.kSCREEN_WIDTH - doneW, style.doneBtnFrame.origin.y, doneW, style.doneBtnFrame.size.height)
         style.doneTextColor = .systemBlue
         return style
     }
