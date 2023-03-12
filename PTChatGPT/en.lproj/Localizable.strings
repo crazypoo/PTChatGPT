@@ -76,3 +76,4 @@
 "size_Wrong" = "There is an error in Size. Please check it and try again.Max 1024 X 1024";
 "chat_Delete_all_voice_file" = "Are you sure to delete all voice files?";
 "chat_Empty" = "It's so lonely. Click me to start chatting with me.";
+"color_Wave" = "Wave color";

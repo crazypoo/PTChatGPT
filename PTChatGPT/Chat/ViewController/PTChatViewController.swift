@@ -28,6 +28,15 @@ enum PTChatCase
 
 class PTChatViewController: MessagesViewController {
     
+    lazy var visualizerView:PTSoundVisualizerView = {
+        let view = PTSoundVisualizerView()
+        view.backgroundColor = .gobalTextColor.withAlphaComponent(0.95)
+        view.lineColor = (AppDelegate.appDelegate()?.appConfig.waveColor)!
+        return view
+    }()
+    
+    var soundRecorder = PTSoundRecorder()
+    
     var chatCase:PTChatCase = .chat
     
     lazy var audioPlayer = PTAudioPlayer(messageCollectionView: messagesCollectionView)
@@ -89,6 +98,7 @@ class PTChatViewController: MessagesViewController {
         view.setImage(UIImage(systemName: "mic")?.withTintColor(.black, renderingMode: .automatic), for: .normal)
         view.setImage(UIImage(systemName: "mic.fill")?.withTintColor(.black, renderingMode: .automatic), for: .selected)
         view.addActionHandlers { sender in
+            self.messageInputBar.inputTextView.resignFirstResponder()
             if self.voiceCanTap
             {
                 sender.isSelected = !sender.isSelected
@@ -148,7 +158,6 @@ class PTChatViewController: MessagesViewController {
             let voiceURL = self.speechKit.getDocumentsDirectory().appendingPathComponent(models.questionVoiceURL)
             questionModel = PTMessageModel(audioURL: voiceURL, user: PTChatData.share.user, messageId: UUID().uuidString, date: models.questionDate.toDate()!.date)
         }
-//                    self.insertMessage(questionModel)
         self.messageList.append(questionModel)
         let answerModel:PTMessageModel
         switch models.answerType {
@@ -157,7 +166,6 @@ class PTChatViewController: MessagesViewController {
         default:
             answerModel = PTMessageModel(imageURL: URL(string: models.answerImageURL)!, user: PTChatData.share.bot, messageId: UUID().uuidString, date: models.answerDate.toDate()!.date)
         }
-//                    self.insertMessage(answerModel)
         self.messageList.append(answerModel)
     }
     
@@ -250,6 +258,20 @@ class PTChatViewController: MessagesViewController {
         self.showEmptyDataSet(currentScroller: self.messagesCollectionView)
         self.lxf_tapEmptyView(self.messagesCollectionView) { sender in
             self.messageInputBar.inputTextView.becomeFirstResponder()
+        }
+        
+        self.view.addSubview(self.visualizerView)
+        self.visualizerView.snp.makeConstraints { make in
+            make.width.height.equalTo(150)
+            make.centerX.centerY.equalToSuperview()
+        }
+        self.visualizerView.viewCorner(radius: 5)
+        
+        self.visualizerView.alpha = 0
+        self.soundRecorder.onUpdate = { soundSamples in
+            PTGCDManager.gcdMain {
+                self.visualizerView.updateSamples(soundSamples)
+            }
         }
     }
         
@@ -411,6 +433,10 @@ class PTChatViewController: MessagesViewController {
     //MARK: Voice action
     @objc func recordButtonPressed()
     {
+        self.messageInputBar.inputTextView.resignFirstResponder()
+        self.visualizerView.start()
+        self.soundRecorder.start()
+
         // 開始錄音
         self.isRecording = true
         PTLocalConsoleFunction.share.pNSLog("開始錄音")
@@ -421,6 +447,9 @@ class PTChatViewController: MessagesViewController {
         // 停止錄音
         self.isRecording = false
         PTLocalConsoleFunction.share.pNSLog("停止錄音")
+        self.soundRecorder.stop()
+        self.visualizerView.stop()
+        self.visualizerView.alpha = 0
     }
     
     @objc func longPress(_ sender: UILongPressGestureRecognizer) {
@@ -434,6 +463,9 @@ class PTChatViewController: MessagesViewController {
         case .began:
             // 開始錄音，顯示錄音的動畫和文字
             PTLocalConsoleFunction.share.pNSLog("開始錄音，顯示錄音的動畫和文字")
+            
+            self.visualizerView.alpha = 1
+            
         case .changed:
             let touchPoint = sender.location(in: self.voiceButton)
             if touchPoint.y < -100 {
@@ -458,7 +490,11 @@ class PTChatViewController: MessagesViewController {
             }
             self.isRecording = false
             self.speechKit.endVoiceRecording()
-
+            PTGCDManager.gcdMain {
+                self.soundRecorder.stop()
+                self.visualizerView.stop()
+                self.visualizerView.alpha = 0
+            }
         default:
             break
         }
@@ -1070,6 +1106,7 @@ extension PTChatViewController:OSSSpeechDelegate
     }
 }
 
+//MARK: LXFEmptyDataSetable
 extension PTChatViewController:LXFEmptyDataSetable
 {
     func showEmptyDataSet(currentScroller: UIScrollView) {

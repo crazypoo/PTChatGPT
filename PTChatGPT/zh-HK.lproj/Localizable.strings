@@ -76,3 +76,4 @@
 "size_Wrong" = "Size有誤,請檢查後再嘗試.最大1024 X 1024";
 "chat_Delete_all_voice_file" = "是否確認刪除全部語音文档?";
 "chat_Empty" = "好寂寞啊,點擊我就可以開始跟我聊天了";
+"color_Wave" = "波紋顏色";

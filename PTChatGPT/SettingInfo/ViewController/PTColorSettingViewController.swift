@@ -18,6 +18,7 @@ class PTColorSettingViewController: PTChatBaseViewController {
     var botBubbleHandle = ChromaColorHandle()
     var userTextHandle = ChromaColorHandle()
     var botTextHandle = ChromaColorHandle()
+    var waveHandle = ChromaColorHandle()
 
     lazy var userBubbleInfo:BKLayoutButton = {
         return self.createImageInfo(image: UIImage(systemName: "bubble.left.fill")!.withRenderingMode(.automatic), info: PTLanguage.share.text(forKey: "color_Bubble_user"))
@@ -34,7 +35,11 @@ class PTColorSettingViewController: PTChatBaseViewController {
     lazy var botTextInfo:BKLayoutButton = {
         return self.createImageInfo(image: UIImage(systemName: "text.bubble.fill")!.withRenderingMode(.automatic), info: PTLanguage.share.text(forKey: "color_Text_bot"))
     }()
-
+    
+    lazy var waveInfo:BKLayoutButton = {
+        return self.createImageInfo(image: UIImage(systemName: "waveform")!.withRenderingMode(.automatic), info: PTLanguage.share.text(forKey: "color_Wave"))
+    }()
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.fd_fullscreenPopGestureRecognizer.isEnabled = false
@@ -62,7 +67,7 @@ class PTColorSettingViewController: PTChatBaseViewController {
         }
         
         
-        self.view.addSubviews([self.colorPicker,self.brightnessSlider,self.userBubbleInfo,self.botBubbleInfo,self.userTextInfo,self.botTextInfo])
+        self.view.addSubviews([self.colorPicker,self.brightnessSlider,self.userBubbleInfo,self.botBubbleInfo,self.userTextInfo,self.botTextInfo,self.waveInfo])
         self.colorPicker.snp.makeConstraints { make in
             make.left.right.equalToSuperview().inset(20)
             make.height.equalTo(self.colorPicker.snp.width)
@@ -94,6 +99,10 @@ class PTColorSettingViewController: PTChatBaseViewController {
             make.top.equalTo(self.userTextInfo.snp.bottom).offset(10)
         }
 
+        self.waveInfo.snp.makeConstraints { make in
+            make.left.right.equalTo(self.brightnessSlider)
+            make.top.equalTo(self.botTextInfo.snp.bottom).offset(10)
+        }
     }
     
     func setupColorPicker()
@@ -137,6 +146,13 @@ class PTColorSettingViewController: PTChatBaseViewController {
         botTextImageView.tintColor = .white
         self.botTextHandle.accessoryView = botTextImageView
         self.botTextHandle.accessoryViewEdgeInsets = UIEdgeInsets(top: 0, left: 4, bottom: 4, right: 4)
+        
+        self.waveHandle = self.colorPicker.addHandle(at: AppDelegate.appDelegate()!.appConfig.waveColor)
+        let waveImageView = UIImageView(image: UIImage(systemName: "waveform")?.withRenderingMode(.alwaysTemplate))
+        waveImageView.contentMode = .scaleAspectFit
+        waveImageView.tintColor = .white
+        self.waveHandle.accessoryView = waveImageView
+        self.waveHandle.accessoryViewEdgeInsets = UIEdgeInsets(top: 0, left: 4, bottom: 4, right: 4)
     }
     
     func createImageInfo(image:UIImage,info:String)->BKLayoutButton
@@ -173,6 +189,9 @@ extension PTColorSettingViewController:ChromaColorPickerDelegate
         {
             AppDelegate.appDelegate()?.appConfig.botTextColor = color
         }
-
+        else if handle == self.waveHandle
+        {
+            AppDelegate.appDelegate()?.appConfig.waveColor = color
+        }
     }
 }

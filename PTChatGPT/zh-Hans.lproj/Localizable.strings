@@ -76,3 +76,4 @@
 "size_Wrong" = "Size有误,请检查后重试.最大1024 X 1024";
 "chat_Delete_all_voice_file" = "是否确认删除全部语音文件?";
 "chat_Empty" = "好寂寞啊,点击我就可以开始跟我聊天了";
+"color_Wave" = "波纹颜色";

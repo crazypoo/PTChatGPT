@@ -33,6 +33,8 @@ let uUserIcon = "uUserIcon"
 let uAiDrawSize = "uAiDrawSize"
 let uTokenKey = "UserToken"
 let uLanguageKey = "UserLanguage"
+///语音的波纹颜色key
+let uWaveColor = "uWaveColor"
 
 let kSeparator = "[,]"
 
@@ -86,28 +88,35 @@ class PTAppConfig {
     var userBubbleColor:UIColor = UserDefaults.standard.value(forKey: uUserBubbleColor) == nil ? .userBubbleColor : UIColor(hexString: UserDefaults.standard.value(forKey: uUserBubbleColor) as! String)!
     {
         didSet{
-            UserDefaults.standard.set(self.userBubbleColor,forKey: uUserBubbleColor)
+            UserDefaults.standard.set(self.userBubbleColor.hexString(),forKey: uUserBubbleColor)
         }
     }
     var botBubbleColor:UIColor = UserDefaults.standard.value(forKey: uBotBubbleColor) == nil ? .botBubbleColor : UIColor(hexString: UserDefaults.standard.value(forKey: uBotBubbleColor) as! String)!
     {
         didSet{
-            UserDefaults.standard.set(self.botBubbleColor,forKey: uBotBubbleColor)
+            UserDefaults.standard.set(self.botBubbleColor.hexString(),forKey: uBotBubbleColor)
         }
     }
     
     var userTextColor:UIColor = UserDefaults.standard.value(forKey: uUserTextColor) == nil ? .userTextColor : UIColor(hexString: UserDefaults.standard.value(forKey: uUserTextColor) as! String)!
     {
         didSet{
-            UserDefaults.standard.set(self.userTextColor,forKey: uUserTextColor)
+            UserDefaults.standard.set(self.userTextColor.hexString(),forKey: uUserTextColor)
         }
     }
     var botTextColor:UIColor = UserDefaults.standard.value(forKey: uBotTextColor) == nil ? .botTextColor : UIColor(hexString: UserDefaults.standard.value(forKey: uBotTextColor) as! String)!
     {
         didSet{
-            UserDefaults.standard.set(self.botTextColor,forKey: uBotTextColor)
+            UserDefaults.standard.set(self.botTextColor.hexString(),forKey: uBotTextColor)
         }
     }
+    var waveColor:UIColor = UserDefaults.standard.value(forKey: uWaveColor) == nil ? .red : UIColor(hexString: UserDefaults.standard.value(forKey: uWaveColor) as! String)!
+    {
+        didSet{
+            UserDefaults.standard.set(self.botTextColor.hexString(),forKey: uWaveColor)
+        }
+    }
+
 
     var aiModelType:String = UserDefaults.standard.value(forKey: uAiModelType) == nil ? "text-davinci-003" : UserDefaults.standard.value(forKey: uAiModelType) as! String
     {
