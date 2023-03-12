@@ -10,8 +10,9 @@ import UIKit
 import PooTools
 import BRPickerView
 import Photos
+import FloatingPanel
 
-fileprivate extension String
+extension String
 {
     //MARK: 主題
     static let colorString = PTLanguage.share.text(forKey: "about_Color")
@@ -36,6 +37,29 @@ fileprivate extension String
     static let rate = PTLanguage.share.text(forKey: "about_Rate")
     static let share = PTLanguage.share.text(forKey: "about_Share")
     static let version = PTLanguage.share.text(forKey: "about_Version")
+}
+
+class PTChatPanelLayout: FloatingPanelLayout {
+    
+    public var viewHeight:CGFloat = 18
+    
+    open var initialState: FloatingPanelState {
+        .full
+    }
+
+    open var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring]  {
+        [
+            .full: FloatingPanelLayoutAnchor(absoluteInset: CGFloat.kSCREEN_HEIGHT - viewHeight, edge: .top, referenceGuide: .superview)
+        ]
+    }
+
+    open var position: FloatingPanelPosition {
+        .bottom
+    }
+
+    open func backdropAlpha(for state: FloatingPanelState) -> CGFloat {
+        return 0.45
+    }
 }
 
 class PTSettingListViewController: PTChatBaseViewController {
@@ -72,7 +96,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         return picker
     }()
     
-    var aboutModels : [PTSettingModels] = {
+    lazy var aboutModels : [PTSettingModels] = {
         
         let disclosureIndicatorImageName = UIImage(systemName: "chevron.right")!.withTintColor(.gobalTextColor,renderingMode: .alwaysOriginal)
         
@@ -104,7 +128,19 @@ class PTSettingListViewController: PTChatBaseViewController {
         userIcon.nameColor = .gobalTextColor
         userIcon.disclosureIndicatorImageName = disclosureIndicatorImageName
 
-        themeMain.models = [color,userIcon,language,theme]
+        if self.user.senderId == PTChatData.share.bot.senderId
+        {
+            themeMain.models = [color]
+        }
+        else if self.user.senderId == PTChatData.share.user.senderId
+        {
+            themeMain.models = [color,userIcon]
+        }
+        else
+        {
+            themeMain.models = [color,userIcon,language,theme]
+
+        }
         
         //MARK: Speech
         let speechMain = PTSettingModels()
@@ -174,7 +210,14 @@ class PTSettingListViewController: PTChatBaseViewController {
         getApiToken.nameColor = .gobalTextColor
         getApiToken.disclosureIndicatorImageName = disclosureIndicatorImageName
 
-        apiMain.models = [aiType,aiSmart,drawSize,aiToken,getApiToken]
+        if self.user.senderId == PTChatData.share.bot.senderId
+        {
+            apiMain.models = [aiType,aiSmart,drawSize,aiToken]
+        }
+        else
+        {
+            apiMain.models = [aiType,aiSmart,drawSize,aiToken,getApiToken]
+        }
         
         let otherMain = PTSettingModels()
         otherMain.name = PTLanguage.share.text(forKey: "about_Main_Other")
@@ -212,7 +255,19 @@ class PTSettingListViewController: PTChatBaseViewController {
         version.contentTextColor = .gobalTextColor
         
         otherMain.models = [github,forum,rate,share,version]
-        return [themeMain,speechMain,chatMain,apiMain,otherMain]
+        
+        if self.user.senderId == PTChatData.share.bot.senderId
+        {
+            return [themeMain,apiMain]
+        }
+        else if self.user.senderId == PTChatData.share.user.senderId
+        {
+            return [themeMain,speechMain]
+        }
+        else
+        {
+            return [themeMain,speechMain,chatMain,apiMain,otherMain]
+        }
     }()
 
     var mSections = [PTSection]()
@@ -286,11 +341,32 @@ class PTSettingListViewController: PTChatBaseViewController {
         super.viewDidAppear(animated)
     }
 
+    init(user:PTChatUser) {
+        super.init(nibName: nil, bundle: nil)
+        self.user = user
+    }
+        
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.zx_navTitle = PTLanguage.share.text(forKey: "about_Setting")
+        if self.user.senderId == PTChatData.share.bot.senderId
+        {
+            self.zx_navTitle = "ZolaAi " + PTLanguage.share.text(forKey: "about_Setting")
+        }
+        else if self.user.senderId == PTChatData.share.user.senderId
+        {
+            self.zx_navTitle = PTLanguage.share.text(forKey: "chat_User") + " " + PTLanguage.share.text(forKey: "about_Setting")
+        }
+        else
+        {
+            self.zx_navTitle = PTLanguage.share.text(forKey: "about_Setting")
+        }
         self.view.backgroundColor = .gobalScrollerBackgroundColor
+        
         // Do any additional setup after loading the view.
         self.view.addSubviews([self.collectionView])
         self.collectionView.snp.makeConstraints { make in
@@ -429,7 +505,7 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
         let itemRow = itemSec.rows[indexPath.row]
         if itemRow.title == .colorString
         {
-            let vc = PTColorSettingViewController()
+            let vc = PTColorSettingViewController(user: self.user)
             let nav = PTNavController(rootViewController: vc)
             nav.modalPresentationStyle = .fullScreen
             self.navigationController?.present(nav, animated: true)
@@ -655,5 +731,14 @@ extension PTSettingListViewController:OSSSpeechDelegate
     }
     
     func didFinishListening(withAudioFileURL url: URL, withText text: String) {
+    }
+}
+
+extension PTSettingListViewController
+{
+    override public func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout {
+        let layout = PTChatPanelLayout()
+        layout.viewHeight = CGFloat.kTabbarSaveAreaHeight + CGFloat.ScaleW(w: 44) + CGFloat.ScaleW(w: 10) + CGFloat.ScaleW(w: 44) * 3 + CGFloat.ScaleW(w: 34) + CGFloat.ScaleW(w: 10) + CGFloat.ScaleW(w: 24) + CGFloat.ScaleW(w: 13)
+        return layout
     }
 }

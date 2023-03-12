@@ -10,6 +10,8 @@ import UIKit
 import PooTools
 
 class PTChatBaseViewController: PTBaseViewController {
+    
+    var user:PTChatUser = PTChatUser(senderId: "0", displayName: "0")
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

@@ -173,10 +173,28 @@ class PTChatViewController: MessagesViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        HSNavControl.GobalNavControl(nav: self.navigationController!,textColor: .gobalTextColor,navColor: .gobalBackgroundColor)
+        messagesCollectionView.contentInsetAdjustmentBehavior = .automatic
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        messagesCollectionView.contentInsetAdjustmentBehavior = .automatic
-        self.messageList.removeAll()
+        
+        self.messagesCollectionView.reloadData()
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        navigationItem.largeTitleDisplayMode = .never
+        
+        if !AppDelegate.appDelegate()!.appConfig.apiToken.stringIsEmpty()
+        {
+            NotificationCenter.default.addObserver(self, selector: #selector(self.showURLNotifi(notifi:)), name: NSNotification.Name(rawValue: PLaunchAdDetailDisplayNotification), object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(self.adHide(notifi:)), name: NSNotification.Name(rawValue: PLaunchAdSkipNotification), object: nil)
+        }
+
         if let userHistoryModelString :String = UserDefaults.standard.value(forKey: uChatHistory) as? String
         {
             if !userHistoryModelString.stringIsEmpty()
@@ -209,18 +227,6 @@ class PTChatViewController: MessagesViewController {
                 }
             }
         }
-        HSNavControl.GobalNavControl(nav: self.navigationController!,textColor: .gobalTextColor,navColor: .gobalBackgroundColor)
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        navigationItem.largeTitleDisplayMode = .never
-        
-        if !AppDelegate.appDelegate()!.appConfig.apiToken.stringIsEmpty()
-        {
-            NotificationCenter.default.addObserver(self, selector: #selector(self.showURLNotifi(notifi:)), name: NSNotification.Name(rawValue: PLaunchAdDetailDisplayNotification), object: nil)
-            NotificationCenter.default.addObserver(self, selector: #selector(self.adHide(notifi:)), name: NSNotification.Name(rawValue: PLaunchAdSkipNotification), object: nil)
-        }
 
         self.configureMessageCollectionView()
         if self.onlyShowSave
@@ -238,7 +244,7 @@ class PTChatViewController: MessagesViewController {
             let logout = UIButton(type: .custom)
             logout.setImage(UIImage(systemName: "gear")?.withTintColor(.black, renderingMode: .automatic), for: .normal)
             logout.addActionHandlers { sender in
-                let vc = PTSettingListViewController()
+                let vc = PTSettingListViewController(user: PTChatUser(senderId: "0", displayName: "0"))
                 self.navigationController?.pushViewController(vc)
             }
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: logout)
@@ -696,15 +702,16 @@ extension PTChatViewController:MessagesDataSource
 
 }
 
+//MARK: MessageCellDelegate
 extension PTChatViewController:MessageCellDelegate
 {
     func didTapBackground(in cell: MessageCollectionViewCell) {
         PTLocalConsoleFunction.share.pNSLog("didTapBackground")
         let indexPath = self.messagesCollectionView.indexPath(for: cell)
         let messageModel = self.messageList[indexPath!.section]
-        let userModel = self.messageList[indexPath!.section - 1]
         if messageModel.sender.senderId == PTChatData.share.bot.senderId
         {
+            let userModel = self.messageList[indexPath!.section - 1]
             UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "alert_Save_Q&A"),msgColor: .gobalTextColor,okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
                 
             } moreBtn: { index, title in
@@ -752,8 +759,20 @@ extension PTChatViewController:MessageCellDelegate
         }
     }
     
-    func didTapAvatar(in _: MessageCollectionViewCell) {
+    func didTapAvatar(in cell: MessageCollectionViewCell) {
         PTLocalConsoleFunction.share.pNSLog("Avatar tapped")
+        let indexPath = self.messagesCollectionView.indexPath(for: cell)
+        let messageModel = self.messageList[indexPath?.section ?? 0]
+        var vc:PTSettingListViewController!
+        if messageModel.sender.senderId == PTChatData.share.bot.senderId
+        {
+            vc = PTSettingListViewController(user: PTChatData.share.bot)
+        }
+        else
+        {
+            vc = PTSettingListViewController(user: PTChatData.share.user)
+        }
+        self.navigationController?.pushViewController(vc)
     }
 
     func didTapMessage(in cell: MessageCollectionViewCell) {
@@ -1123,5 +1142,12 @@ extension PTChatViewController:LXFEmptyDataSetable
     
     func buttonTitle(forEmptyDataSet scrollView: UIScrollView!, for state: UIControl.State) -> NSAttributedString! {
         return NSAttributedString()
+    }
+}
+
+extension PTChatViewController
+{
+    open func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        false
     }
 }
