@@ -453,14 +453,14 @@ class PTChatViewController: MessagesViewController {
 
         // 開始錄音
         self.isRecording = true
-        PTLocalConsoleFunction.share.pNSLog("開始錄音")
+        PTNSLogConsole("開始錄音")
     }
     
     @objc func recordButtonReleased()
     {
         // 停止錄音
         self.isRecording = false
-        PTLocalConsoleFunction.share.pNSLog("停止錄音")
+        PTNSLogConsole("停止錄音")
         self.soundRecorder.stop()
         self.visualizerView.stop()
         self.visualizerView.alpha = 0
@@ -476,19 +476,19 @@ class PTChatViewController: MessagesViewController {
         switch sender.state {
         case .began:
             // 開始錄音，顯示錄音的動畫和文字
-            PTLocalConsoleFunction.share.pNSLog("開始錄音，顯示錄音的動畫和文字")
+            PTNSLogConsole("開始錄音，顯示錄音的動畫和文字")
             
             self.visualizerView.alpha = 1
             
         case .changed:
             let touchPoint = sender.location(in: self.voiceButton)
             if touchPoint.y < -100 {
-                PTLocalConsoleFunction.share.pNSLog("超過閾值，顯示「向上取消」的提示")
+                PTNSLogConsole("超過閾值，顯示「向上取消」的提示")
                 self.voiceButton.setTitle(PTLanguage.share.text(forKey: "button_Long_tap_cancel"), for: .normal)
                 // 超過閾值，顯示「向上取消」的提示
             } else {
                 // 未超過閾值，顯示「鬆開發送」的提示
-                PTLocalConsoleFunction.share.pNSLog("未超過閾值，顯示「鬆開發送」的提示")
+                PTNSLogConsole("未超過閾值，顯示「鬆開發送」的提示")
                 self.voiceButton.setTitle(PTLanguage.share.text(forKey: "button_Long_tap_release"), for: .normal)
                 
             }
@@ -497,10 +497,10 @@ class PTChatViewController: MessagesViewController {
             let touchPoint = sender.location(in: self.voiceButton)
             if touchPoint.y < -100 {
                 self.isSendVoice = false
-                PTLocalConsoleFunction.share.pNSLog("取消錄音")
+                PTNSLogConsole("取消錄音")
             } else {
                 self.isSendVoice = true
-                PTLocalConsoleFunction.share.pNSLog("發送錄音")
+                PTNSLogConsole("發送錄音")
             }
             self.isRecording = false
             self.speechKit.endVoiceRecording()
@@ -714,7 +714,7 @@ extension PTChatViewController:MessagesDataSource
 extension PTChatViewController:MessageCellDelegate
 {
     func didTapBackground(in cell: MessageCollectionViewCell) {
-        PTLocalConsoleFunction.share.pNSLog("didTapBackground")
+        PTNSLogConsole("didTapBackground")
         let indexPath = self.messagesCollectionView.indexPath(for: cell)
         let messageModel = self.messageList[indexPath!.section]
         if messageModel.sender.senderId == PTChatData.share.bot.senderId
@@ -768,7 +768,7 @@ extension PTChatViewController:MessageCellDelegate
     }
     
     func didTapAvatar(in cell: MessageCollectionViewCell) {
-        PTLocalConsoleFunction.share.pNSLog("Avatar tapped")
+        PTNSLogConsole("Avatar tapped")
         let indexPath = self.messagesCollectionView.indexPath(for: cell)
         let messageModel = self.messageList[indexPath?.section ?? 0]
         var vc:PTSettingListViewController!
@@ -804,23 +804,23 @@ extension PTChatViewController:MessageCellDelegate
     }
 
     func didTapImage(in _: MessageCollectionViewCell) {
-        PTLocalConsoleFunction.share.pNSLog("Image tapped")
+        PTNSLogConsole("Image tapped")
     }
 
     func didTapCellTopLabel(in _: MessageCollectionViewCell) {
-        PTLocalConsoleFunction.share.pNSLog("Top cell label tapped")
+        PTNSLogConsole("Top cell label tapped")
     }
 
     func didTapCellBottomLabel(in _: MessageCollectionViewCell) {
-        PTLocalConsoleFunction.share.pNSLog("Bottom cell label tapped")
+        PTNSLogConsole("Bottom cell label tapped")
     }
 
     func didTapMessageTopLabel(in _: MessageCollectionViewCell) {
-        PTLocalConsoleFunction.share.pNSLog("Top message label tapped")
+        PTNSLogConsole("Top message label tapped")
     }
 
     func didTapMessageBottomLabel(in _: MessageCollectionViewCell) {
-        PTLocalConsoleFunction.share.pNSLog("Bottom label tapped")
+        PTNSLogConsole("Bottom label tapped")
     }
 
     func didTapPlayButton(in cell: AudioMessageCell) {
@@ -828,7 +828,7 @@ extension PTChatViewController:MessageCellDelegate
             let indexPath = messagesCollectionView.indexPath(for: cell),
             let message = messagesCollectionView.messagesDataSource?.messageForItem(at: indexPath, in: messagesCollectionView)
         else {
-            PTLocalConsoleFunction.share.pNSLog("Failed to identify message when audio cell receive tap gesture")
+            PTNSLogConsole("Failed to identify message when audio cell receive tap gesture")
             return
         }
         guard audioPlayer.state != .stopped else {
@@ -852,54 +852,54 @@ extension PTChatViewController:MessageCellDelegate
     }
 
     func didStartAudio(in _: AudioMessageCell) {
-        PTLocalConsoleFunction.share.pNSLog("Did start playing audio sound")
+        PTNSLogConsole("Did start playing audio sound")
     }
 
     func didPauseAudio(in _: AudioMessageCell) {
-        PTLocalConsoleFunction.share.pNSLog("Did pause audio sound")
+        PTNSLogConsole("Did pause audio sound")
     }
 
     func didStopAudio(in _: AudioMessageCell) {
-        PTLocalConsoleFunction.share.pNSLog("Did stop audio sound")
+        PTNSLogConsole("Did stop audio sound")
     }
 
     func didTapAccessoryView(in _: MessageCollectionViewCell) {
-        PTLocalConsoleFunction.share.pNSLog("Accessory view tapped")
+        PTNSLogConsole("Accessory view tapped")
     }
 
 }
 
 extension PTChatViewController: MessageLabelDelegate {
     func didSelectAddress(_ addressComponents: [String: String]) {
-        PTLocalConsoleFunction.share.pNSLog("Address Selected: \(addressComponents)")
+        PTNSLogConsole("Address Selected: \(addressComponents)")
     }
 
     func didSelectDate(_ date: Date) {
-        PTLocalConsoleFunction.share.pNSLog("Date Selected: \(date)")
+        PTNSLogConsole("Date Selected: \(date)")
     }
 
     func didSelectPhoneNumber(_ phoneNumber: String) {
-        PTLocalConsoleFunction.share.pNSLog("Phone Number Selected: \(phoneNumber)")
+        PTNSLogConsole("Phone Number Selected: \(phoneNumber)")
     }
 
     func didSelectURL(_ url: URL) {
-        PTLocalConsoleFunction.share.pNSLog("URL Selected: \(url)")
+        PTNSLogConsole("URL Selected: \(url)")
     }
 
     func didSelectTransitInformation(_ transitInformation: [String: String]) {
-        PTLocalConsoleFunction.share.pNSLog("TransitInformation Selected: \(transitInformation)")
+        PTNSLogConsole("TransitInformation Selected: \(transitInformation)")
     }
 
     func didSelectHashtag(_ hashtag: String) {
-        PTLocalConsoleFunction.share.pNSLog("Hashtag selected: \(hashtag)")
+        PTNSLogConsole("Hashtag selected: \(hashtag)")
     }
 
     func didSelectMention(_ mention: String) {
-        PTLocalConsoleFunction.share.pNSLog("Mention selected: \(mention)")
+        PTNSLogConsole("Mention selected: \(mention)")
     }
 
     func didSelectCustom(_ pattern: String, match _: String?) {
-        PTLocalConsoleFunction.share.pNSLog("Custom data detector patter selected: \(pattern)")
+        PTNSLogConsole("Custom data detector patter selected: \(pattern)")
     }
 }
 
@@ -924,7 +924,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
                     let message = PTMessageModel(imageURL: imageURL!, user: PTChatData.share.bot, messageId: UUID().uuidString, date: date)
                     self.insertMessage(message)
 
-                    PTLocalConsoleFunction.share.pNSLog(result.data.first?.url ?? "")
+                    PTNSLogConsole(result.data.first?.url ?? "")
                     self.title = .navTitle
                     self.chatModelToJsonString(model: saveModel)
                 }
@@ -950,7 +950,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
 
             let substring = attributedText.attributedSubstring(from: range)
             let context = substring.attribute(.autocompletedContext, at: 0, effectiveRange: nil)
-            PTLocalConsoleFunction.share.pNSLog("Autocompleted:\(substring) with context\(String(describing: context))")
+            PTNSLogConsole("Autocompleted:\(substring) with context\(String(describing: context))")
         }
 
         let components = inputBar.inputTextView.components
@@ -1109,7 +1109,7 @@ extension PTChatViewController:OSSSpeechDelegate
     }
     
     func didFinishListening(withAudioFileURL url: URL, withText text: String) {
-        PTLocalConsoleFunction.share.pNSLog("url:\(url) \ntext:\(text)")
+        PTNSLogConsole("url:\(url) \ntext:\(text)")
         let date = Date()
         let voiceURL = URL(fileURLWithPath: url.absoluteString.replacingOccurrences(of: "file://", with: ""))
         let voiceMessage = PTMessageModel(audioURL: voiceURL, user: PTChatData.share.user, messageId: UUID().uuidString, date: date)

@@ -34,7 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        let filePath = NSTemporaryDirectory().appending("/demo.order")
 //        YCSymbolTracker.exportSymbols(filePath: filePath)
                         
-        PTLocalConsoleFunction.share.pNSLog("\(self.appConfig.apiToken)")
+        PTNSLogConsole("\(self.appConfig.apiToken)")
         var viewC:UIViewController!
         if self.appConfig.apiToken.stringIsEmpty()
         {

@@ -56,7 +56,7 @@ open class PTAudioPlayer: NSObject {
             self.playingCell = audioCell
             self.playingMessage = message
             guard let player = try? AVAudioPlayer(contentsOf: item.url) else {
-                PTLocalConsoleFunction.share.pNSLog("Failed to create audio player for URL: \(item.url)")
+                PTNSLogConsole("Failed to create audio player for URL: \(item.url)")
                 return
             }
             self.audioPlayer = player
@@ -68,7 +68,7 @@ open class PTAudioPlayer: NSObject {
             self.startProgressTimer()
             audioCell.delegate?.didStartAudio(in: audioCell)
         default:
-            PTLocalConsoleFunction.share.pNSLog("BasicAudioPlayer failed play sound because given message kind is not Audio")
+            PTNSLogConsole("BasicAudioPlayer failed play sound because given message kind is not Audio")
         }
     }
     open func pauseSound(for message: MessageType, in audioCell: AudioMessageCell) {

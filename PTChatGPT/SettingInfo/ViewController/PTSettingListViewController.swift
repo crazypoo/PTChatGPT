@@ -417,11 +417,11 @@ class PTSettingListViewController: PTChatBaseViewController {
                             if let imageData = object.imageData,let image = UIImage(data: imageData)
                             {
                                 AppDelegate.appDelegate()!.appConfig.userIcon = imageData
-                                PTLocalConsoleFunction.share.pNSLog(image)
+                                PTNSLogConsole(image)
                             }
                             else
                             {
-                                PTLocalConsoleFunction.share.pNSLog("獲取圖片出現錯誤")
+                                PTNSLogConsole("獲取圖片出現錯誤")
                             }
                         }
                     }
@@ -690,7 +690,7 @@ extension PTSettingListViewController:UIImagePickerControllerDelegate,UINavigati
         let image:UIImage = info[UIImagePickerController.InfoKey.originalImage] as! UIImage
         let imageData = image.pngData()
         AppDelegate.appDelegate()!.appConfig.userIcon = imageData!
-        PTLocalConsoleFunction.share.pNSLog(image)
+        PTNSLogConsole(image)
     }
 }
 
