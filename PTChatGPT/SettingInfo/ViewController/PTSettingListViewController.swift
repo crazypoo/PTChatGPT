@@ -571,7 +571,7 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
         }
         else if itemRow.title == .rate
         {
-            PTAppStoreFunction.rateApp(appid: "")
+            PTAppStoreFunction.rateApp(appid: "6446197340")
         }
         else if itemRow.title == .speech
         {
