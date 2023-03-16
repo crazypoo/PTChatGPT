@@ -13,7 +13,7 @@
 [![GitHub release](https://img.shields.io/github/release/crazypoo/PTChatGPT?include_prereleases=&sort=semver&color=blue)](https://github.com/crazypoo/PTChatGPT/releases/)
 [![issues - yoddchatgpt](https://img.shields.io/github/issues/crazypoo/PTChatGPT)](https://github.com/crazypoo/PTChatGPT/issues)
 </div>
-# Chat走啦
+
 ChatGPT-iOS版,不是SwiftUI,SwiftUI,SwiftUI,(<-_<-)谁叫我不会.现在已经上架了
 <div align="center">
 
