@@ -35,6 +35,8 @@
 		5514B39729BB013600890161 /* PTDarkModeSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B39629BB013600890161 /* PTDarkModeSettingViewController.swift */; };
 		5514B39929BB024D00890161 /* HSNavControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B39829BB024D00890161 /* HSNavControl.swift */; };
 		5514B39C29BB127F00890161 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5514B39E29BB127F00890161 /* Localizable.strings */; };
+		5520905929C3587C009B30A1 /* PTBaseMaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5520905829C3587C009B30A1 /* PTBaseMaskView.swift */; };
+		5520905B29C35903009B30A1 /* PTVoiceActionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5520905A29C35903009B30A1 /* PTVoiceActionView.swift */; };
 		55278F3229BB7BF100615B0D /* PTAISmartCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55278F3129BB7BF100615B0D /* PTAISmartCell.swift */; };
 		555491DC29BC8014006A47C4 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555491DB29BC8014006A47C4 /* ChatMessage.swift */; };
 		55796A2229BD6DCE00574DD4 /* PTSoundRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55796A2129BD6DCE00574DD4 /* PTSoundRecorder.swift */; };
@@ -98,6 +100,8 @@
 		5514B3AD29BB139800890161 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Main.strings; sourceTree = "<group>"; };
 		5514B3AE29BB139800890161 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		5514B3AF29BB139800890161 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5520905829C3587C009B30A1 /* PTBaseMaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTBaseMaskView.swift; sourceTree = "<group>"; };
+		5520905A29C35903009B30A1 /* PTVoiceActionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTVoiceActionView.swift; sourceTree = "<group>"; };
 		55278F3129BB7BF100615B0D /* PTAISmartCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTAISmartCell.swift; sourceTree = "<group>"; };
 		555491DB29BC8014006A47C4 /* ChatMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
 		55796A2129BD6DCE00574DD4 /* PTSoundRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSoundRecorder.swift; sourceTree = "<group>"; };
@@ -186,7 +190,6 @@
 			children = (
 				5512AB7B29B470310059D840 /* PTAudioPlayer.swift */,
 				55796A2129BD6DCE00574DD4 /* PTSoundRecorder.swift */,
-				55796A2329BD6E2A00574DD4 /* PTSoundVisualizerView.swift */,
 			);
 			path = Function;
 			sourceTree = "<group>";
@@ -194,7 +197,9 @@
 		5514B36F29B9CBDD00890161 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				55796A2329BD6E2A00574DD4 /* PTSoundVisualizerView.swift */,
 				5514B37029B9CBFD00890161 /* PTChatCustomCell.swift */,
+				5520905A29C35903009B30A1 /* PTVoiceActionView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -233,6 +238,7 @@
 			children = (
 				5514B38829BAE7E400890161 /* SwipeCellOption.swift */,
 				5514B38629BAE76D00890161 /* PTShareItem.swift */,
+				5520905829C3587C009B30A1 /* PTBaseMaskView.swift */,
 			);
 			path = Tools;
 			sourceTree = "<group>";
@@ -526,6 +532,7 @@
 				55A5D7FE29B1EEF400DCA096 /* PTChatData.swift in Sources */,
 				55A5D71829B1D23D00DCA096 /* AppDelegate.swift in Sources */,
 				5514B38729BAE76E00890161 /* PTShareItem.swift in Sources */,
+				5520905B29C35903009B30A1 /* PTVoiceActionView.swift in Sources */,
 				5514B39229BB013000890161 /* SettingCustomViewCell.swift in Sources */,
 				5512AB7029B43D520059D840 /* OSSSpeech.swift in Sources */,
 				55A5D7F229B1D9A900DCA096 /* OpenAIEndpoint.swift in Sources */,
@@ -534,6 +541,7 @@
 				5514B38029BA112A00890161 /* PTSettingModels.swift in Sources */,
 				55796A2229BD6DCE00574DD4 /* PTSoundRecorder.swift in Sources */,
 				5512AB7C29B470310059D840 /* PTAudioPlayer.swift in Sources */,
+				5520905929C3587C009B30A1 /* PTBaseMaskView.swift in Sources */,
 				5514B37429B9D50D00890161 /* PTChatModel.swift in Sources */,
 				55A5D80129B1F29800DCA096 /* PTMessageModel.swift in Sources */,
 				5514B37829B9F87C00890161 /* PTSettingListViewController.swift in Sources */,
@@ -728,7 +736,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.zola.chat;
 				PRODUCT_NAME = "Chat走啦";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -765,7 +773,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.zola.chat;
 				PRODUCT_NAME = "Chat走啦";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

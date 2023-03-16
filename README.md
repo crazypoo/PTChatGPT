@@ -7,14 +7,14 @@
 ![Swift](https://img.shields.io/badge/iOS%20-13-blue)
 ![Swift](https://img.shields.io/static/v1?style=flat&message=Swift&color=F05138&logo=Swift&logoColor=FFFFFF&label=)
 
-[![crazypoo - PTChatGPT](https://img.shields.io/static/v1?label=crazypoo&message=PTChatGPT&color=red&logo=github)](https://github.com/crazypoo/PTChatGPT "Go to GitHub repo")
+[![crazypoo - PTChatGPT](https://img.shields.io/static/v1?label=crazypoo&message=PTChatGPT&color=red&logo=github)](https://github.com/crazypoo/PTChatGPT)
 [![stars - PTChatGPT](https://img.shields.io/github/stars/crazypoo/PTChatGPT?style=social)](https://github.com/crazypoo/PTChatGPT)
 [![forks - PTChatGPT](https://img.shields.io/github/forks/crazypoo/PTChatGPT?style=social)](https://github.com/crazypoo/PTChatGPT)
 [![GitHub release](https://img.shields.io/github/release/crazypoo/PTChatGPT?include_prereleases=&sort=semver&color=blue)](https://github.com/crazypoo/PTChatGPT/releases/)
 [![issues - yoddchatgpt](https://img.shields.io/github/issues/crazypoo/PTChatGPT)](https://github.com/crazypoo/PTChatGPT/issues)
 </div>
 
-ChatGPT-iOS版,不是SwiftUI,SwiftUI,SwiftUI,(<-_<-)谁叫我不会.现在已经上架了
+ChatGPT-iOS版,不是SwiftUI,SwiftUI,SwiftUI,😒谁叫我不会.现在已经上架了
 <div align="center">
 
 <h2> 下载 </h2>
@@ -31,7 +31,7 @@ ChatGPT-iOS版,不是SwiftUI,SwiftUI,SwiftUI,(<-_<-)谁叫我不会.现在已经
 
 現在支持ChatGPT和DallE
 
-代码完全开源
+代码完全开源🤪但是我还没有时间写注释
 
 App语言支持 🇨🇳 🇺🇸 🇭🇰 🇪🇸
 
@@ -62,11 +62,15 @@ AI的API我是使用了自己魔改版的[OpenAISwift](https://github.com/adamru
 #### Speech
 1.设置[OSSSpeechKit](https://github.com/crazypoo/OSSSpeechKit)所提供的语言选项来选择
 #### Chat
-1.精选Q&A记录,列表支持单个删除
+1.聊天界面支持类似当前最新微信的语音发送功能,AI回答支持文字结果或者图片结果
 
-2.删除所有对话记录
+2.聊天界面可以保存理想的结果和这个结果对应的问题
 
-3.删除语音输入的文件
+3.精选Q&A记录,列表支持单个删除
+
+4.删除所有对话记录
+
+5.删除语音输入的文件
 #### API
 1.更换AI的模型
 
