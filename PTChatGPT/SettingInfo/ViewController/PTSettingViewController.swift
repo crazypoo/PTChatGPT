@@ -48,6 +48,7 @@ class PTSettingViewController: PTChatBaseViewController {
         let view = UITextField()
         view.placeholder = PTLanguage.share.text(forKey: "first_Paste")
         view.delegate = self
+        view.text = AppDelegate.appDelegate()?.appConfig.apiToken
         return view
     }()
     

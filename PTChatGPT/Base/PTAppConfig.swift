@@ -87,78 +87,170 @@ class PTAppConfig {
         }
     }
     
-    var userIcon:Data = UserDefaults.standard.value(forKey: uUserIcon) == nil ? UIImage(named: "DemoImage")!.pngData()! : (UserDefaults.standard.value(forKey: uUserIcon) as! Data)
-    {
-        didSet{
-            UserDefaults.standard.set(self.userIcon,forKey: uUserIcon)
+    //MARK: 用户头像
+    ///用户头像
+    var userIcon:Data {
+        get {
+            if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uUserIcon) {
+                return value as! Data
+            } else {
+                return UIImage(named: "DemoImage")!.pngData()!
+            }
+        } set {
+            UserDefaults.standard.set(newValue,forKey: uUserIcon)
+            AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uUserIcon)
+            AppDelegate.appDelegate()?.cloudStore.synchronize()
         }
     }
 
-    var userBubbleColor:UIColor = UserDefaults.standard.value(forKey: uUserBubbleColor) == nil ? .userBubbleColor : UIColor(hexString: UserDefaults.standard.value(forKey: uUserBubbleColor) as! String)!
-    {
-        didSet{
-            UserDefaults.standard.set(self.userBubbleColor.hexString(),forKey: uUserBubbleColor)
+    //MARK: 聊天框颜色
+    ///用户聊天框颜色
+    var userBubbleColor:UIColor {
+        get {
+            if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uUserBubbleColor) {
+                return UIColor(hexString: value as! String)!
+            } else {
+                return .userBubbleColor
+            }
+        } set {
+            UserDefaults.standard.set(newValue,forKey: uUserBubbleColor)
+            AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uUserBubbleColor)
+            AppDelegate.appDelegate()?.cloudStore.synchronize()
         }
     }
-    var botBubbleColor:UIColor = UserDefaults.standard.value(forKey: uBotBubbleColor) == nil ? .botBubbleColor : UIColor(hexString: UserDefaults.standard.value(forKey: uBotBubbleColor) as! String)!
-    {
-        didSet{
-            UserDefaults.standard.set(self.botBubbleColor.hexString(),forKey: uBotBubbleColor)
+    ///机器人聊天框颜色
+    var botBubbleColor:UIColor {
+        get {
+            if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uBotBubbleColor) {
+                return UIColor(hexString: value as! String)!
+            } else {
+                return .botBubbleColor
+            }
+        } set {
+            UserDefaults.standard.set(newValue,forKey: uBotBubbleColor)
+            AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uBotBubbleColor)
+            AppDelegate.appDelegate()?.cloudStore.synchronize()
         }
     }
     
-    var userTextColor:UIColor = UserDefaults.standard.value(forKey: uUserTextColor) == nil ? .userTextColor : UIColor(hexString: UserDefaults.standard.value(forKey: uUserTextColor) as! String)!
-    {
-        didSet{
-            UserDefaults.standard.set(self.userTextColor.hexString(),forKey: uUserTextColor)
+    //MARK: 聊天框字体颜色
+    ///用户聊天框字体颜色
+    var userTextColor:UIColor {
+        get {
+            if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uUserTextColor) {
+                return UIColor(hexString: value as! String)!
+            } else {
+                return .userTextColor
+            }
+        } set {
+            UserDefaults.standard.set(newValue,forKey: uUserTextColor)
+            AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uUserTextColor)
+            AppDelegate.appDelegate()?.cloudStore.synchronize()
         }
     }
-    var botTextColor:UIColor = UserDefaults.standard.value(forKey: uBotTextColor) == nil ? .botTextColor : UIColor(hexString: UserDefaults.standard.value(forKey: uBotTextColor) as! String)!
-    {
-        didSet{
-            UserDefaults.standard.set(self.botTextColor.hexString(),forKey: uBotTextColor)
+    ///机器人聊天框字体颜色
+    var botTextColor:UIColor {
+        get {
+            if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uBotTextColor) {
+                return UIColor(hexString: value as! String)!
+            } else {
+                return .botTextColor
+            }
+        } set {
+            UserDefaults.standard.set(newValue,forKey: uBotTextColor)
+            AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uBotTextColor)
+            AppDelegate.appDelegate()?.cloudStore.synchronize()
         }
     }
-    var waveColor:UIColor = UserDefaults.standard.value(forKey: uWaveColor) == nil ? .red : UIColor(hexString: UserDefaults.standard.value(forKey: uWaveColor) as! String)!
-    {
-        didSet{
-            UserDefaults.standard.set(self.botTextColor.hexString(),forKey: uWaveColor)
+    
+    //MARK: 波纹颜色
+    ///波纹颜色
+    var waveColor:UIColor {
+        get {
+            if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uWaveColor) {
+                return UIColor(hexString: value as! String)!
+            } else {
+                return .red
+            }
+        } set {
+            UserDefaults.standard.set(newValue,forKey: uWaveColor)
+            AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uWaveColor)
+            AppDelegate.appDelegate()?.cloudStore.synchronize()
         }
     }
 
-
-    var aiModelType:String = UserDefaults.standard.value(forKey: uAiModelType) == nil ? "text-davinci-003" : UserDefaults.standard.value(forKey: uAiModelType) as! String
-    {
-        didSet{
-            UserDefaults.standard.set(self.aiModelType,forKey: uAiModelType)
+    //MARK: API相关
+    ///机器人类型
+    var aiModelType:String {
+        get {
+            if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uAiModelType) {
+                return value as! String
+            } else {
+                return "text-davinci-003"
+            }
+        } set {
+            UserDefaults.standard.set(newValue,forKey: uAiModelType)
+            AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uAiModelType)
+            AppDelegate.appDelegate()?.cloudStore.synchronize()
         }
     }
-    var apiToken:String = UserDefaults.standard.value(forKey: uTokenKey) == nil ? "" : UserDefaults.standard.value(forKey: uTokenKey) as! String
-    {
-        didSet{
-            UserDefaults.standard.set(self.apiToken,forKey: uTokenKey)
+    ///机器人Token
+    var apiToken:String {
+        get {
+            if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uTokenKey) {
+                return value as! String
+            } else {
+                return ""
+            }
+        } set {
+            UserDefaults.standard.set(newValue,forKey: uTokenKey)
+            AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uTokenKey)
+            AppDelegate.appDelegate()?.cloudStore.synchronize()
         }
     }
-    var aiSmart:Double = UserDefaults.standard.value(forKey: uAiSmart) == nil ? 0.2 : UserDefaults.standard.value(forKey: uAiSmart) as! Double
-    {
-        didSet{
-            UserDefaults.standard.set(self.aiSmart,forKey: uAiSmart)
+    ///机器人智障程度
+    var aiSmart:Double {
+        get {
+            if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uAiSmart) {
+                return value as! Double
+            } else {
+                return 0.2
+            }
+        } set {
+            UserDefaults.standard.set(newValue,forKey: uAiSmart)
+            AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uAiSmart)
+            AppDelegate.appDelegate()?.cloudStore.synchronize()
         }
     }
-    var aiDrawSize:CGSize = UserDefaults.standard.value(forKey: uAiDrawSize) == nil ? CGSize(width: 1024, height: 1024) : (try? CGSize.from(archivedData: UserDefaults.standard.value(forKey: uAiDrawSize) as! Data))!
-    {
-        didSet
-        {
-            let data = try? NSKeyedArchiver.archivedData(withRootObject: self.aiDrawSize, requiringSecureCoding: false)
-            UserDefaults.standard.set(data, forKey: uAiDrawSize)
+    ///机器人画画尺寸
+    var aiDrawSize:CGSize {
+        get {
+            if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uAiDrawSize) {
+                return (try? CGSize.from(archivedData: value as! Data))!
+            } else {
+                return CGSize(width: 1024, height: 1024)
+            }
+        } set {
+            let data = try? NSKeyedArchiver.archivedData(withRootObject: newValue, requiringSecureCoding: false)
+            UserDefaults.standard.set(data,forKey: uAiDrawSize)
+            AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uAiDrawSize)
+            AppDelegate.appDelegate()?.cloudStore.synchronize()
         }
     }
         
-    var language:String = UserDefaults.standard.value(forKey: uLanguageKey) == nil ? OSSVoiceEnum.ChineseSimplified.rawValue : UserDefaults.standard.value(forKey: uLanguageKey) as! String
-    {
-        didSet
-        {
-            UserDefaults.standard.set(self.language, forKey: uLanguageKey)
+    //MARK: 语音输入语言
+    ///语音输入语言
+    var language:String {
+        get {
+            if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uLanguageKey) {
+                return value as! String
+            } else {
+                return OSSVoiceEnum.ChineseSimplified.rawValue
+            }
+        } set {
+            UserDefaults.standard.set(newValue,forKey: uLanguageKey)
+            AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uLanguageKey)
+            AppDelegate.appDelegate()?.cloudStore.synchronize()
         }
     }
 

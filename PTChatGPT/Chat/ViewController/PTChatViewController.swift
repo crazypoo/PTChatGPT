@@ -871,7 +871,7 @@ extension PTChatViewController:MessageCellDelegate
 
         var titles:[String] = [String]()
         switch messageModel.kind {
-        case .text(let _):
+        case .text( _):
             if messageModel.sender.senderId == PTChatData.share.bot.senderId
             {
                 titles = [.copyString,.editString,.playString,.saveString]

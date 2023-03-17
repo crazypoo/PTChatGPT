@@ -24,12 +24,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var devFunction:PTDevFunction = PTDevFunction()
     
     let appConfig = PTAppConfig.share
-    
+    let cloudStore = NSUbiquitousKeyValueStore.default
+
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
                         
         PTDrakModeOption.defaultDark()
         PTAppBaseConfig.share.decorationBackgroundColor = .gobalCellBackgroundColor
+
+//        let value = self.cloudStore.object(forKey: uUserIcon)
+//        PTNSLogConsole(value as Any)
 
 //        let filePath = NSTemporaryDirectory().appending("/demo.order")
 //        YCSymbolTracker.exportSymbols(filePath: filePath)

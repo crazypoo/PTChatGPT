@@ -123,6 +123,7 @@
 		55A5D7FD29B1EEF400DCA096 /* PTChatData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTChatData.swift; sourceTree = "<group>"; };
 		55A5D80029B1F29800DCA096 /* PTMessageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTMessageModel.swift; sourceTree = "<group>"; };
 		55A5D80529B242CF00DCA096 /* PTSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSettingViewController.swift; sourceTree = "<group>"; };
+		55C6BCCE29C4602B00A6B668 /* PTChatGPT.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PTChatGPT.entitlements; sourceTree = "<group>"; };
 		7E66237D0C268E8EEFD172D0 /* Pods-PTChatGPT.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PTChatGPT.release.xcconfig"; path = "Target Support Files/Pods-PTChatGPT/Pods-PTChatGPT.release.xcconfig"; sourceTree = "<group>"; };
 		E708929BECBB7DC383FA473B /* Pods-PTChatGPT.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PTChatGPT.debug.xcconfig"; path = "Target Support Files/Pods-PTChatGPT/Pods-PTChatGPT.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -264,6 +265,7 @@
 		55A5D71629B1D23D00DCA096 /* PTChatGPT */ = {
 			isa = PBXGroup;
 			children = (
+				55C6BCCE29C4602B00A6B668 /* PTChatGPT.entitlements */,
 				5514B38529BAE76600890161 /* Tools */,
 				5512AB6429B43C2E0059D840 /* 3Party */,
 				55A5D80329B2429300DCA096 /* SettingInfo */,
@@ -717,6 +719,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = PTChatGPT/PTChatGPT.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SFU2CNYFPC;
@@ -754,6 +757,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = PTChatGPT/PTChatGPT.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SFU2CNYFPC;
