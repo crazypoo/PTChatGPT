@@ -34,6 +34,6 @@ class PTChatBaseViewController: PTBaseViewController {
         self.zx_navBar?.backgroundColor = .gobalBackgroundColor
         self.zx_navLeftBtn?.imageView?.contentMode = .scaleAspectFit
         self.zx_navLeftBtn?.setImage(UIImage(systemName: "chevron.left")!.withTintColor(.gobalTextColor, renderingMode: .automatic), for: .normal)
-        self.zx_navLeftBtn?.bounds = CGRect(x: 0, y: 0, width: 34, height: 34)
+        self.zx_navLeftBtn?.bounds = CGRect(x: 0, y: 0, width: 34, height: 34)        
     }
 }

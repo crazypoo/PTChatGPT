@@ -227,40 +227,7 @@ class PTChatViewController: MessagesViewController {
             NotificationCenter.default.addObserver(self, selector: #selector(self.showURLNotifi(notifi:)), name: NSNotification.Name(rawValue: PLaunchAdDetailDisplayNotification), object: nil)
             NotificationCenter.default.addObserver(self, selector: #selector(self.adHide(notifi:)), name: NSNotification.Name(rawValue: PLaunchAdSkipNotification), object: nil)
         }
-
-        if let userHistoryModelString :String = UserDefaults.standard.value(forKey: uChatHistory) as? String
-        {
-            if !userHistoryModelString.stringIsEmpty()
-            {
-                let userModelsStringArr = userHistoryModelString.components(separatedBy: kSeparator)
-                userModelsStringArr.enumerated().forEach { index,value in
-                    let models = PTChatModel.deserialize(from: value)
-                    
-                    let questionModel:PTMessageModel
-                    switch models!.questionType {
-                    case 0:
-                        print(String(describing: models!.questionDate))
-                        questionModel = PTMessageModel(text: models!.question, user: PTChatData.share.user, messageId: UUID().uuidString, date: models!.questionDate.toDate()!.date)
-                    default:
-                        let voiceURL = self.speechKit.getDocumentsDirectory().appendingPathComponent(models!.questionVoiceURL)
-                        questionModel = PTMessageModel(audioURL: voiceURL, user: PTChatData.share.user, messageId: UUID().uuidString, date: models!.questionDate.toDate()!.date)
-                    }
-                    self.messageList.append(questionModel)
-                    let answerModel:PTMessageModel
-                    switch models!.answerType {
-                    case 0:
-                        answerModel = PTMessageModel(text: models!.answer, user: PTChatData.share.bot, messageId: UUID().uuidString, date: models!.answerDate.toDate()!.date)
-                    default:
-                        answerModel = PTMessageModel(imageURL: URL(string: models!.answerImageURL)!, user: PTChatData.share.bot, messageId: UUID().uuidString, date: models!.answerDate.toDate()!.date)
-                    }
-                    self.messageList.append(answerModel)
-                    self.messagesCollectionView.reloadData {
-                        self.messagesCollectionView.scrollToLastItem()
-                    }
-                }
-            }
-        }
-
+        
         self.configureMessageCollectionView()
         if self.onlyShowSave
         {
@@ -268,9 +235,22 @@ class PTChatViewController: MessagesViewController {
             messageInputBar.delegate = nil
             messageInputBar.removeFromSuperview()
             messageInputBar.alpha = 0
+            
+            let back = UIButton(type: .custom)
+            back.imageView?.contentMode = .scaleAspectFit
+            back.setImage(UIImage(systemName: "chevron.left")!.withTintColor(.gobalTextColor, renderingMode: .automatic), for: .normal)
+            back.bounds = CGRect(x: 0, y: 0, width: 34, height: 34)
+            back.addActionHandlers { sender in
+                self.navigationController?.popViewController()
+            }
+            self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: back)
         }
         else
         {
+            NotificationCenter.default.addObserver(self, selector: #selector(self.refreshView), name: NSNotification.Name(rawValue: kRefreshController), object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(self.refreshViewAndLoadNewData), name: NSNotification.Name(rawValue: kRefreshControllerAndLoadNewData), object: nil)
+            self.refreshViewAndLoadNewData()
+
             self.configureMessageInputBar()
             self.title = .navTitle
             self.speechKit.delegate = self
@@ -307,6 +287,51 @@ class PTChatViewController: MessagesViewController {
         }
     }
         
+    @objc func refreshView()
+    {
+        self.messagesCollectionView.reloadData()
+    }
+    
+    @objc func refreshViewAndLoadNewData()
+    {
+        self.messageList.removeAll()
+        var userHistoryModelString = ""
+        if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+            userHistoryModelString = AppDelegate.appDelegate()?.cloudStore.object(forKey: uChatHistory) as! String
+        } else {
+            userHistoryModelString = UserDefaults.standard.value(forKey: uChatHistory) as! String
+        }
+        
+        if !userHistoryModelString.stringIsEmpty() {
+            let userModelsStringArr = userHistoryModelString.components(separatedBy: kSeparator)
+            userModelsStringArr.enumerated().forEach { index,value in
+                let models = PTChatModel.deserialize(from: value)
+                
+                let questionModel:PTMessageModel
+                switch models!.questionType {
+                case 0:
+                    print(String(describing: models!.questionDate))
+                    questionModel = PTMessageModel(text: models!.question, user: PTChatData.share.user, messageId: UUID().uuidString, date: models!.questionDate.toDate()!.date)
+                default:
+                    let voiceURL = self.speechKit.getDocumentsDirectory().appendingPathComponent(models!.questionVoiceURL)
+                    questionModel = PTMessageModel(audioURL: voiceURL, user: PTChatData.share.user, messageId: UUID().uuidString, date: models!.questionDate.toDate()!.date)
+                }
+                self.messageList.append(questionModel)
+                let answerModel:PTMessageModel
+                switch models!.answerType {
+                case 0:
+                    answerModel = PTMessageModel(text: models!.answer, user: PTChatData.share.bot, messageId: UUID().uuidString, date: models!.answerDate.toDate()!.date)
+                default:
+                    answerModel = PTMessageModel(imageURL: URL(string: models!.answerImageURL)!, user: PTChatData.share.bot, messageId: UUID().uuidString, date: models!.answerDate.toDate()!.date)
+                }
+                self.messageList.append(answerModel)
+                self.messagesCollectionView.reloadData {
+                    self.messagesCollectionView.scrollToLastItem()
+                }
+            }
+        }
+    }
+    
     @objc func showURLNotifi(notifi:Notification)
     {
         let urlString = (notifi.object as! [String:String])["URLS"]
@@ -440,10 +465,6 @@ class PTChatViewController: MessagesViewController {
     }()
 
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if scrollView == self.messagesCollectionView
-        {
-            self.messageInputBar.inputTextView.resignFirstResponder()
-        }
     }
         
     func sendVoiceMessage(text:String,saveModel:PTChatModel)
@@ -645,38 +666,51 @@ class PTChatViewController: MessagesViewController {
     }
     
     //MARK: 保存聊天記錄
-    func chatModelToJsonString(model:PTChatModel)
-    {
+    func chatModelToJsonString(model:PTChatModel) {
         self.saveHistory(jsonString: (model.toJSON()?.toJSON())!, key: uChatHistory)
     }
     
-    func saveChatModelToJsonString(model:PTChatModel)
-    {
+    func saveChatModelToJsonString(model:PTChatModel) {
         self.saveHistory(jsonString: (model.toJSON()?.toJSON())!, key: uSaveChat)
     }
     
     func saveHistory(jsonString:String,key:String)
     {
-        if let userHistoryModelString :String = UserDefaults.standard.value(forKey: key) as? String
-        {
-            if !userHistoryModelString.stringIsEmpty()
-            {
+        PTGCDManager.gcdMain {
+            var userHistoryModelString = ""
+            
+            switch key {
+            case uChatHistory:
+                userHistoryModelString = AppDelegate.appDelegate()!.appConfig.chatHistory
+            case uSaveChat:
+                userHistoryModelString = AppDelegate.appDelegate()!.appConfig.chatFavourtie
+            default:
+                break
+            }
+            if !userHistoryModelString.stringIsEmpty() {
                 var userModelsStringArr = userHistoryModelString.components(separatedBy: kSeparator)
                 userModelsStringArr.append(jsonString)
                 let saaveString = userModelsStringArr.joined(separator: kSeparator)
-                UserDefaults.standard.set(saaveString, forKey: key)
+                switch key {
+                case uChatHistory:
+                    AppDelegate.appDelegate()!.appConfig.chatHistory = saaveString
+                case uSaveChat:
+                    AppDelegate.appDelegate()!.appConfig.chatFavourtie = saaveString
+                default:
+                    break
+                }
                 print(saaveString)
-            }
-            else
-            {
-                UserDefaults.standard.set(jsonString, forKey: key)
+            } else {
+                switch key {
+                case uChatHistory:
+                    AppDelegate.appDelegate()!.appConfig.chatHistory = jsonString
+                case uSaveChat:
+                    AppDelegate.appDelegate()!.appConfig.chatFavourtie = jsonString
+                default:
+                    break
+                }
                 print(jsonString)
             }
-        }
-        else
-        {
-            UserDefaults.standard.set(jsonString, forKey: key)
-            print(jsonString)
         }
     }
 }
@@ -1004,7 +1038,7 @@ extension PTChatViewController:MessageCellDelegate
             viewerModel.imageShowType = .Normal
             let config = PTViewerConfig()
             config.actionType = .Save
-            config.closeViewerImage = UIImage(systemName: "chevron.left")!.withRenderingMode(.automatic)
+            config.closeViewerImage = UIImage(systemName: "chevron.left")!.withTintColor(.white, renderingMode: .automatic)
             config.moreActionImage = UIImage(systemName: "ellipsis")!.withRenderingMode(.automatic)
             config.mediaData = [viewerModel]
             let viewer = PTMediaViewer(viewConfig: config)

@@ -84,6 +84,8 @@ class PTSaveChatViewController: PTChatBaseViewController {
         self.zx_navTitle = PTLanguage.share.text(forKey: "selected_List")
         self.saveChatModel = AppDelegate.appDelegate()!.appConfig.getSaveChatData()
 
+        NotificationCenter.default.addObserver(self, selector: #selector(self.refreshViewAndLoadNewData), name: NSNotification.Name(rawValue: kRefreshControllerAndLoadNewData), object: nil)
+
         self.view.backgroundColor = .gobalScrollerBackgroundColor
         self.view.addSubviews([self.collectionView])
         self.collectionView.snp.makeConstraints { make in
@@ -102,6 +104,12 @@ class PTSaveChatViewController: PTChatBaseViewController {
         self.showDetail()
     }
     
+    @objc func refreshViewAndLoadNewData() {
+        self.saveChatModel.removeAll()
+        self.saveChatModel = AppDelegate.appDelegate()!.appConfig.getSaveChatData()
+        self.showDetail()
+    }
+
     func showDetail()
     {
         mSections.removeAll()
@@ -241,7 +249,9 @@ extension PTSaveChatViewController:SwipeCollectionViewCellDelegate
                            newArr.append((value.toJSON()?.toJSON())!)
                        }
                        let dataStrings = newArr.joined(separator: kSeparator)
-                       UserDefaults.standard.set(dataStrings, forKey: uSaveChat)
+                       PTGCDManager.gcdMain {
+                           AppDelegate.appDelegate()?.appConfig.chatFavourtie = dataStrings
+                       }
                        self.showDetail()
                        PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_done"))
                    }

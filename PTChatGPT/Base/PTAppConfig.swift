@@ -31,14 +31,23 @@ let uAiSmart = "uAiSmart"
 let uUserIcon = "uUserIcon"
 ///保存的AI畫圖大小
 let uAiDrawSize = "uAiDrawSize"
+///Token key
 let uTokenKey = "UserToken"
+///Speech key
 let uLanguageKey = "UserLanguage"
 ///语音的波纹颜色key
 let uWaveColor = "uWaveColor"
-
+///第一次使用App
 let uAppFirstUse = "uAppFirstUse"
+///第一次使用iCloud
+let uAppFirstiCloud = "uAppFirstiCloud"
+///使用iCloud
+let uUseiCloud = "uUseiCloud"
 
 let kSeparator = "[,]"
+
+let kRefreshController = "kRefreshController"
+let kRefreshControllerAndLoadNewData = "kRefreshControllerAndLoadNewData"
 
 let getApiUrl = "https://platform.openai.com/account/api-keys"
 let myGithubUrl = "https://github.com/crazypoo"
@@ -80,6 +89,12 @@ extension CGSize {
 class PTAppConfig {
     static let share = PTAppConfig()
     
+    var firstUseiCloud:Bool = UserDefaults.standard.value(forKey: uAppFirstiCloud) == nil ? true : UserDefaults.standard.value(forKey: uAppFirstiCloud) as! Bool {
+        didSet{
+            UserDefaults.standard.set(self.firstUseiCloud,forKey: uAppFirstiCloud)
+        }
+    }
+    
     var firstUseApp:Bool = UserDefaults.standard.value(forKey: uAppFirstUse) == nil ? true : UserDefaults.standard.value(forKey: uAppFirstUse) as! Bool
     {
         didSet{
@@ -87,19 +102,40 @@ class PTAppConfig {
         }
     }
     
+    var cloudSwitch:Bool = UserDefaults.standard.value(forKey: uUseiCloud) == nil ? true : UserDefaults.standard.value(forKey: uUseiCloud) as! Bool
+    {
+        didSet{
+            UserDefaults.standard.set(self.cloudSwitch,forKey: uUseiCloud)
+        }
+    }
+    
     //MARK: 用户头像
     ///用户头像
     var userIcon:Data {
         get {
-            if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uUserIcon) {
-                return value as! Data
-            } else {
-                return UIImage(named: "DemoImage")!.pngData()!
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch
+            {
+                if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uUserIcon) {
+                    return value as! Data
+                } else {
+                    return UIImage(named: "DemoImage")!.pngData()!
+                }
+            }
+            else
+            {
+                if let value = UserDefaults.standard.value(forKey: uUserIcon) {
+                    return value as! Data
+                } else {
+                    return UIImage(named: "DemoImage")!.pngData()!
+                }
             }
         } set {
-            UserDefaults.standard.set(newValue,forKey: uUserIcon)
-            AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uUserIcon)
-            AppDelegate.appDelegate()?.cloudStore.synchronize()
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uUserIcon)
+                AppDelegate.appDelegate()?.cloudStore.synchronize()
+            } else {
+                UserDefaults.standard.set(newValue, forKey: uUserIcon)
+            }
         }
     }
 
@@ -107,29 +143,51 @@ class PTAppConfig {
     ///用户聊天框颜色
     var userBubbleColor:UIColor {
         get {
-            if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uUserBubbleColor) {
-                return UIColor(hexString: value as! String)!
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uUserBubbleColor) {
+                    return UIColor(hexString: value as! String)!
+                } else {
+                    return .userBubbleColor
+                }
             } else {
-                return .userBubbleColor
+                if let value = UserDefaults.standard.value(forKey: uUserBubbleColor) {
+                    return UIColor(hexString: value as! String)!
+                } else {
+                    return .userBubbleColor
+                }
             }
         } set {
-            UserDefaults.standard.set(newValue,forKey: uUserBubbleColor)
-            AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uUserBubbleColor)
-            AppDelegate.appDelegate()?.cloudStore.synchronize()
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                AppDelegate.appDelegate()?.cloudStore.set(newValue.hexString(), forKey: uUserBubbleColor)
+                AppDelegate.appDelegate()?.cloudStore.synchronize()
+            } else {
+                UserDefaults.standard.set(newValue.hexString(), forKey: uUserBubbleColor)
+            }
         }
     }
     ///机器人聊天框颜色
     var botBubbleColor:UIColor {
         get {
-            if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uBotBubbleColor) {
-                return UIColor(hexString: value as! String)!
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uBotBubbleColor) {
+                    return UIColor(hexString: value as! String)!
+                } else {
+                    return .botBubbleColor
+                }
             } else {
-                return .botBubbleColor
+                if let value = UserDefaults.standard.value(forKey: uBotBubbleColor) {
+                    return UIColor(hexString: value as! String)!
+                } else {
+                    return .botBubbleColor
+                }
             }
         } set {
-            UserDefaults.standard.set(newValue,forKey: uBotBubbleColor)
-            AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uBotBubbleColor)
-            AppDelegate.appDelegate()?.cloudStore.synchronize()
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                AppDelegate.appDelegate()?.cloudStore.set(newValue.hexString(), forKey: uBotBubbleColor)
+                AppDelegate.appDelegate()?.cloudStore.synchronize()
+            } else {
+                UserDefaults.standard.set(newValue.hexString(), forKey: uBotBubbleColor)
+            }
         }
     }
     
@@ -137,29 +195,51 @@ class PTAppConfig {
     ///用户聊天框字体颜色
     var userTextColor:UIColor {
         get {
-            if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uUserTextColor) {
-                return UIColor(hexString: value as! String)!
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uUserTextColor) {
+                    return UIColor(hexString: value as! String)!
+                } else {
+                    return .userTextColor
+                }
             } else {
-                return .userTextColor
+                if let value = UserDefaults.standard.value(forKey: uUserTextColor) {
+                    return UIColor(hexString: value as! String)!
+                } else {
+                    return .userTextColor
+                }
             }
         } set {
-            UserDefaults.standard.set(newValue,forKey: uUserTextColor)
-            AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uUserTextColor)
-            AppDelegate.appDelegate()?.cloudStore.synchronize()
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                AppDelegate.appDelegate()?.cloudStore.set(newValue.hexString(), forKey: uUserTextColor)
+                AppDelegate.appDelegate()?.cloudStore.synchronize()
+            } else {
+                UserDefaults.standard.set(newValue.hexString(), forKey: uUserTextColor)
+            }
         }
     }
     ///机器人聊天框字体颜色
     var botTextColor:UIColor {
         get {
-            if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uBotTextColor) {
-                return UIColor(hexString: value as! String)!
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uBotTextColor) {
+                    return UIColor(hexString: value as! String)!
+                } else {
+                    return .botTextColor
+                }
             } else {
-                return .botTextColor
+                if let value = UserDefaults.standard.value(forKey: uBotTextColor) {
+                    return UIColor(hexString: value as! String)!
+                } else {
+                    return .botTextColor
+                }
             }
         } set {
-            UserDefaults.standard.set(newValue,forKey: uBotTextColor)
-            AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uBotTextColor)
-            AppDelegate.appDelegate()?.cloudStore.synchronize()
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                AppDelegate.appDelegate()?.cloudStore.set(newValue.hexString(), forKey: uBotTextColor)
+                AppDelegate.appDelegate()?.cloudStore.synchronize()
+            } else {
+                UserDefaults.standard.set(newValue.hexString(), forKey: uBotTextColor)
+            }
         }
     }
     
@@ -167,15 +247,26 @@ class PTAppConfig {
     ///波纹颜色
     var waveColor:UIColor {
         get {
-            if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uWaveColor) {
-                return UIColor(hexString: value as! String)!
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uWaveColor) {
+                    return UIColor(hexString: value as! String)!
+                } else {
+                    return .red
+                }
             } else {
-                return .red
+                if let value = UserDefaults.standard.value(forKey: uWaveColor) {
+                    return UIColor(hexString: value as! String)!
+                } else {
+                    return .red
+                }
             }
         } set {
-            UserDefaults.standard.set(newValue,forKey: uWaveColor)
-            AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uWaveColor)
-            AppDelegate.appDelegate()?.cloudStore.synchronize()
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                AppDelegate.appDelegate()?.cloudStore.set(newValue.hexString(), forKey: uWaveColor)
+                AppDelegate.appDelegate()?.cloudStore.synchronize()
+            } else {
+                UserDefaults.standard.set(newValue.hexString(), forKey: uWaveColor)
+            }
         }
     }
 
@@ -183,58 +274,102 @@ class PTAppConfig {
     ///机器人类型
     var aiModelType:String {
         get {
-            if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uAiModelType) {
-                return value as! String
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uAiModelType) {
+                    return value as! String
+                } else {
+                    return "text-davinci-003"
+                }
             } else {
-                return "text-davinci-003"
+                if let value = UserDefaults.standard.value(forKey: uAiModelType) {
+                    return value as! String
+                } else {
+                    return "text-davinci-003"
+                }
             }
         } set {
-            UserDefaults.standard.set(newValue,forKey: uAiModelType)
-            AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uAiModelType)
-            AppDelegate.appDelegate()?.cloudStore.synchronize()
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uAiModelType)
+                AppDelegate.appDelegate()?.cloudStore.synchronize()
+            } else {
+                UserDefaults.standard.set(newValue, forKey: uAiModelType)
+            }
         }
     }
     ///机器人Token
     var apiToken:String {
         get {
-            if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uTokenKey) {
-                return value as! String
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uTokenKey) {
+                    return value as! String
+                } else {
+                    return ""
+                }
             } else {
-                return ""
+                if let value = UserDefaults.standard.value(forKey: uTokenKey) {
+                    return value as! String
+                } else {
+                    return ""
+                }
             }
         } set {
-            UserDefaults.standard.set(newValue,forKey: uTokenKey)
-            AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uTokenKey)
-            AppDelegate.appDelegate()?.cloudStore.synchronize()
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uTokenKey)
+                AppDelegate.appDelegate()?.cloudStore.synchronize()
+            } else {
+                UserDefaults.standard.set(newValue, forKey: uTokenKey)
+            }
         }
     }
     ///机器人智障程度
     var aiSmart:Double {
         get {
-            if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uAiSmart) {
-                return value as! Double
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uAiSmart) {
+                    return value as! Double
+                } else {
+                    return 0.2
+                }
             } else {
-                return 0.2
+                if let value = UserDefaults.standard.value(forKey: uAiSmart) {
+                    return value as! Double
+                } else {
+                    return 0.2
+                }
             }
         } set {
-            UserDefaults.standard.set(newValue,forKey: uAiSmart)
-            AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uAiSmart)
-            AppDelegate.appDelegate()?.cloudStore.synchronize()
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uAiSmart)
+                AppDelegate.appDelegate()?.cloudStore.synchronize()
+            } else {
+                UserDefaults.standard.set(newValue, forKey: uAiSmart)
+            }
         }
     }
     ///机器人画画尺寸
     var aiDrawSize:CGSize {
         get {
-            if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uAiDrawSize) {
-                return (try? CGSize.from(archivedData: value as! Data))!
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uAiDrawSize) {
+                    return (try? CGSize.from(archivedData: value as! Data))!
+                } else {
+                    return CGSize(width: 1024, height: 1024)
+                }
             } else {
-                return CGSize(width: 1024, height: 1024)
+                if let value = UserDefaults.standard.value(forKey: uAiDrawSize) {
+                    return (try? CGSize.from(archivedData: value as! Data))!
+                } else {
+                    return CGSize(width: 1024, height: 1024)
+                }
             }
         } set {
             let data = try? NSKeyedArchiver.archivedData(withRootObject: newValue, requiringSecureCoding: false)
-            UserDefaults.standard.set(data,forKey: uAiDrawSize)
-            AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uAiDrawSize)
-            AppDelegate.appDelegate()?.cloudStore.synchronize()
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                AppDelegate.appDelegate()?.cloudStore.set(data, forKey: uAiDrawSize)
+                AppDelegate.appDelegate()?.cloudStore.synchronize()
+            } else {
+                UserDefaults.standard.set(data, forKey: uAiDrawSize)
+            }
         }
     }
         
@@ -242,16 +377,97 @@ class PTAppConfig {
     ///语音输入语言
     var language:String {
         get {
-            if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uLanguageKey) {
-                return value as! String
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uLanguageKey) {
+                    return value as! String
+                } else {
+                    return OSSVoiceEnum.ChineseSimplified.rawValue
+                }
             } else {
-                return OSSVoiceEnum.ChineseSimplified.rawValue
+                if let value = UserDefaults.standard.value(forKey: uLanguageKey) {
+                    return value as! String
+                } else {
+                    return OSSVoiceEnum.ChineseSimplified.rawValue
+                }
             }
         } set {
-            UserDefaults.standard.set(newValue,forKey: uLanguageKey)
-            AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uLanguageKey)
-            AppDelegate.appDelegate()?.cloudStore.synchronize()
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uLanguageKey)
+                AppDelegate.appDelegate()?.cloudStore.synchronize()
+            } else {
+                UserDefaults.standard.set(newValue, forKey: uLanguageKey)
+            }
         }
+    }
+    
+    //MARK: 聊天历史记录
+    ///聊天历史记录
+    var chatHistory:String {
+        get {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uChatHistory) {
+                    return value as! String
+                } else {
+                    return ""
+                }
+            } else {
+                if let value = UserDefaults.standard.value(forKey: uChatHistory) {
+                    return value as! String
+                } else {
+                    return ""
+                }
+            }
+        } set {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uChatHistory)
+                AppDelegate.appDelegate()?.cloudStore.synchronize()
+            } else {
+                UserDefaults.standard.set(newValue, forKey: uChatHistory)
+            }
+        }
+    }
+    
+    //MARK: 精选记录
+    ///精选记录
+    var chatFavourtie:String {
+        get {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uSaveChat) {
+                    return value as! String
+                } else {
+                    return ""
+                }
+            } else {
+                if let value = UserDefaults.standard.value(forKey: uSaveChat) {
+                    return value as! String
+                } else {
+                    return ""
+                }
+            }
+        } set {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uSaveChat)
+                AppDelegate.appDelegate()?.cloudStore.synchronize()
+            } else {
+                UserDefaults.standard.set(newValue, forKey: uSaveChat)
+            }
+        }
+    }
+    
+    func mobileDataSavePlaceChange() {
+        self.userIcon = self.userIcon
+        self.userBubbleColor = self.userBubbleColor
+        self.botBubbleColor = self.botBubbleColor
+        self.userTextColor = self.userTextColor
+        self.botTextColor = self.botTextColor
+        self.waveColor = self.waveColor
+        self.aiModelType = self.aiModelType
+        self.apiToken = self.apiToken
+        self.aiSmart = self.aiSmart
+        self.aiDrawSize = self.aiDrawSize
+        self.language = self.language
+        self.chatHistory = self.chatHistory
+        self.chatFavourtie = self.chatFavourtie
     }
 
     lazy var languagePickerData:[String] = {
@@ -456,18 +672,17 @@ class PTAppConfig {
         handle(modelArr,indexPath)
     }
     
+    //MARK: 精选数据
+    ///精选数据
     func getSaveChatData() -> [PTChatModel]
     {
         var saveChatModel = [PTChatModel]()
-        if let userHistoryModelString :String = UserDefaults.standard.value(forKey: uSaveChat) as? String
+        if !self.chatFavourtie.stringIsEmpty()
         {
-            if !userHistoryModelString.stringIsEmpty()
-            {
-                let userModelsStringArr = userHistoryModelString.components(separatedBy: kSeparator)
-                userModelsStringArr.enumerated().forEach { index,value in
-                    let models = PTChatModel.deserialize(from: value)
-                    saveChatModel.append(models!)
-                }
+            let userModelsStringArr = self.chatFavourtie.components(separatedBy: kSeparator)
+            userModelsStringArr.enumerated().forEach { index,value in
+                let models = PTChatModel.deserialize(from: value)
+                saveChatModel.append(models!)
             }
         }
         return saveChatModel

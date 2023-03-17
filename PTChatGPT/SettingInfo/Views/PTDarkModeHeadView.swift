@@ -45,7 +45,7 @@ class PTDarkModeHeadView: UIView {
     /// 深色图片
     lazy var darkImageView: UIImageView = {
         let imageView = UIImageView(frame: CGRect(x: CGFloat.kSCREEN_WIDTH / 2.0 + 18, y: 76, width: 80, height: 150))
-        imageView.image = UIColor.gobalTextColor.createImageWithColor()
+        imageView.image = UIColor.black.createImageWithColor()
         return imageView
     }()
     

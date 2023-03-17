@@ -36,8 +36,8 @@ class PTNavController: ZXNavigationBarNavigationController {
         
         if viewControllers.count > 0 {
             let backBtn = UIButton.init(type: .custom)
-            backBtn.setImage(UIImage(systemName: "chevron.left")!.withRenderingMode(.automatic), for: .normal)
-            backBtn.bounds = CGRect.init(x: 0, y: 0, width: 24, height: 24)
+            backBtn.setImage(UIImage(systemName: "chevron.left")!.withTintColor(.gobalTextColor, renderingMode: .automatic), for: .normal)
+            backBtn.bounds = CGRect.init(x: 0, y: 0, width: 34, height: 34)
             backBtn.addActionHandlers { seder in
                 self.back()
             }

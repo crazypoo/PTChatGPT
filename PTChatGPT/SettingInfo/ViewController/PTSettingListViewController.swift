@@ -15,6 +15,8 @@ import ZXNavigationBar
 
 extension String
 {
+    //MARK: iCloud
+    static let cloudString = "iCloud"
     //MARK: 主題
     static let colorString = PTLanguage.share.text(forKey: "about_Color")
     static let userIcon = PTLanguage.share.text(forKey: "about_User_icon")
@@ -101,6 +103,16 @@ class PTSettingListViewController: PTChatBaseViewController {
         
         let disclosureIndicatorImageName = UIImage(systemName: "chevron.right")!.withTintColor(.gobalTextColor,renderingMode: .alwaysOriginal)
         
+        let cloudMain = PTSettingModels()
+        cloudMain.name = "iCloud"
+        
+        let cloud = PTFusionCellModel()
+        cloud.name = .cloudString
+        cloud.haveSwitch = true
+        cloud.nameColor = .gobalTextColor
+
+        cloudMain.models = [cloud]
+
         let themeMain = PTSettingModels()
         themeMain.name = PTLanguage.share.text(forKey: "about_Main_Theme")
         
@@ -140,7 +152,6 @@ class PTSettingListViewController: PTChatBaseViewController {
         else
         {
             themeMain.models = [color,userIcon,language,theme]
-
         }
         
         //MARK: Speech
@@ -267,7 +278,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         }
         else
         {
-            return [themeMain,speechMain,chatMain,apiMain,otherMain]
+            return [cloudMain,themeMain,speechMain,chatMain,apiMain,otherMain]
         }
     }()
 
@@ -481,6 +492,15 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
             cell.cellModel = (itemRow.dataModel as! PTFusionCellModel)
             cell.dataContent.lineView.isHidden = indexPath.row == (itemSec.rows.count - 1) ? true : false
             cell.dataContent.topLineView.isHidden = true
+            if itemRow.title == .cloudString
+            {
+                cell.dataContent.valueSwitch.onTintColor = UIColor.orange
+                cell.dataContent.valueSwitch.isOn = AppDelegate.appDelegate()!.appConfig.cloudSwitch
+                cell.dataContent.valueSwitch.addSwitchAction { sender in
+                    AppDelegate.appDelegate()?.appConfig.cloudSwitch = sender.isOn
+                    AppDelegate.appDelegate()?.appConfig.mobileDataSavePlaceChange()
+                }
+            }
             return cell
         }
         else if itemRow.ID == PTAISmartCell.ID
