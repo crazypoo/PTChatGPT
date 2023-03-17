@@ -11,6 +11,7 @@ import PooTools
 import BRPickerView
 import Photos
 import FloatingPanel
+import ZXNavigationBar
 
 extension String
 {

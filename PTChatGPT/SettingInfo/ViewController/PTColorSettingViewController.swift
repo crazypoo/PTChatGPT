@@ -154,20 +154,6 @@ class PTColorSettingViewController: PTChatBaseViewController {
         self.setupBrightnessSlider()
         self.setupColorPickerHandles()
         
-        let backBtn = UIButton.init(type: .custom)
-        backBtn.setImage(UIImage(systemName: "chevron.left")!.withTintColor(.gobalTextColor, renderingMode: .automatic), for: .normal)
-        backBtn.bounds = CGRect.init(x: 0, y: 0, width: 24, height: 24)
-        backBtn.addActionHandlers { seder in
-            self.returnFrontVC()
-        }
-        self.zx_navBar?.addSubview(backBtn)
-        backBtn.snp.makeConstraints { make in
-            make.size.equalTo(34)
-            make.left.equalToSuperview().inset(PTAppBaseConfig.share.defaultViewSpace)
-            make.bottom.equalToSuperview()
-        }
-        
-        
         self.view.addSubviews([self.colorPicker,self.brightnessSlider,self.collectionView])
         self.colorPicker.snp.makeConstraints { make in
             make.left.right.equalToSuperview().inset(20)

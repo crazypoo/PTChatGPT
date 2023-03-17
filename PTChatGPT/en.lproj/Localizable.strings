@@ -77,3 +77,12 @@
 "chat_Delete_all_voice_file" = "Are you sure to delete all voice files?";
 "chat_Empty" = "It's so lonely. Click me to start chatting with me.";
 "color_Wave" = "Wave color";
+"chat_Copy" = "Copy";
+"chat_Edit_question" = "Corrected content";
+"chat_Speak_text" = "Turn into voice playback";
+"chat_Favourite" = "Selected";
+"alert_Option_title" = "Options";
+"alert_Select_option" = "Please select the functions you need.";
+"alert_Copy_done" = "Successful replication";
+"voice_Cancel_send" = "Cancel send";
+"voice_Change_to_text" = "Send it to text";

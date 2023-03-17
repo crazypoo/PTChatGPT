@@ -77,3 +77,12 @@
 "chat_Delete_all_voice_file" = "是否确认删除全部语音文件?";
 "chat_Empty" = "好寂寞啊,点击我就可以开始跟我聊天了";
 "color_Wave" = "波纹颜色";
+"chat_Copy" = "复制";
+"chat_Edit_question" = "更正内容";
+"chat_Speak_text" = "转成语音播放";
+"chat_Favourite" = "精选";
+"alert_Option_title" = "功能";
+"alert_Select_option" = "请选择你需要的功能";
+"alert_Copy_done" = "复制成功";
+"voice_Cancel_send" = "取消发送";
+"voice_Change_to_text" = "转成文字发送";

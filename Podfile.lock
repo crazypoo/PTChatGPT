@@ -85,6 +85,8 @@ PODS:
     - TZImagePickerController
   - PooTools/LanguageSetting (3.0.8):
     - PooTools/Core
+  - PooTools/MediaViewer (3.0.8):
+    - PooTools/Core
   - PooTools/Picker (3.0.8):
     - BRPickerView
     - PooTools/Core
@@ -152,6 +154,7 @@ DEPENDENCIES:
   - PooTools/DarkModeSetting (from `https://github.com/crazypoo/PTools.git`)
   - PooTools/ImagePicker (from `https://github.com/crazypoo/PTools.git`)
   - PooTools/LanguageSetting (from `https://github.com/crazypoo/PTools.git`)
+  - PooTools/MediaViewer (from `https://github.com/crazypoo/PTools.git`)
   - PooTools/Picker (from `https://github.com/crazypoo/PTools.git`)
   - SwiftLint
   - Swinject
@@ -209,7 +212,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   PooTools:
-    :commit: 8ac362c49e7d789d600ada500ca675f27e8f33fb
+    :commit: 4f5e22a728c6f11c19379eb9b9876db20e6b3f26
     :git: https://github.com/crazypoo/PTools.git
 
 SPEC CHECKSUMS:
@@ -258,6 +261,6 @@ SPEC CHECKSUMS:
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
   ZXNavigationBar: a8ceb13fe37f9ca894cf6ae22d805cbdbb9ad6b1
 
-PODFILE CHECKSUM: 0e2b37b0a9c22d1db3e87795d60300f2e492923b
+PODFILE CHECKSUM: 9aa7e66311d39ca5fe2a423e143d37103aba14d3
 
 COCOAPODS: 1.12.0

@@ -77,3 +77,12 @@
 "chat_Delete_all_voice_file" = "是否確認刪除全部語音文档?";
 "chat_Empty" = "好寂寞啊,點擊我就可以開始跟我聊天了";
 "color_Wave" = "波紋顏色";
+"chat_Copy" = "複製";
+"chat_Edit_question" = "更正內容";
+"chat_Speak_text" = "轉成語音播放";
+"chat_Favourite" = "精選";
+"alert_Option_title" = "功能";
+"alert_Select_option" = "請選擇你需要的功能";
+"alert_Copy_done" = "複製成功";
+"voice_Cancel_send" = "取消發送";
+"voice_Change_to_text" = "轉成文字發送";

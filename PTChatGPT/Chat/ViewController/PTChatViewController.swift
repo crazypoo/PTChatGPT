@@ -13,11 +13,17 @@ import MapKit
 import SDWebImage
 import AVFAudio
 import LXFProtocolTool
+import SwifterSwift
 
 fileprivate extension String{
     static let saveNavTitle = PTLanguage.share.text(forKey: "about_SavedChat")
     static let navTitle = kAppName
     static let loading = PTLanguage.share.text(forKey: "chat_Thinking")
+    
+    static let copyString = PTLanguage.share.text(forKey: "chat_Copy")
+    static let editString = PTLanguage.share.text(forKey: "chat_Edit_question")
+    static let playString = PTLanguage.share.text(forKey: "chat_Speak_text")
+    static let saveString = PTLanguage.share.text(forKey: "chat_Favourite")
 }
 
 enum PTChatCase
@@ -52,6 +58,22 @@ class PTChatViewController: MessagesViewController {
         let control = UIRefreshControl()
         control.addTarget(self, action: #selector(loadMoreMessage), for: .valueChanged)
         return control
+    }()
+    
+    lazy var closeEditButton:UIButton = {
+        let view = UIButton(type: .custom)
+        view.setImage(UIImage(systemName: "xmark.circle.fill")?.withRenderingMode(.automatic), for: .normal)
+        view.addActionHandlers { sender in
+            self.closeEditButton.isHidden = true
+            self.closeEditButton.isUserInteractionEnabled = false
+            self.voiceTypeButton.isHidden = false
+            self.voiceTypeButton.isUserInteractionEnabled = true
+            self.editMessage = false
+            self.messageInputBar.inputTextView.resignFirstResponder()
+            self.editString = ""
+            self.messageInputBar.inputTextView.placeholder = "Aa"
+        }
+        return view
     }()
     
     lazy var sendTypeButton:UIButton = {
@@ -353,7 +375,7 @@ class PTChatViewController: MessagesViewController {
             make.width.equalTo(senderW)
         }
         
-        self.messageInputBar.addSubviews([self.voiceTypeButton,self.sendTypeButton])
+        self.messageInputBar.addSubviews([self.voiceTypeButton,self.sendTypeButton,self.closeEditButton])
         self.sendTypeButton.snp.makeConstraints { make in
             make.right.equalTo(messageInputBar.sendButton.snp.left).offset(-10)
             make.bottom.equalTo(messageInputBar.sendButton)
@@ -370,6 +392,12 @@ class PTChatViewController: MessagesViewController {
             make.left.equalTo(self.voiceTypeButton.snp.right).offset(10)
             make.width.equalTo(CGFloat.kSCREEN_WIDTH - senderW - PTAppBaseConfig.share.defaultViewSpace * 2 - 10 * 2 - 34 * 2)
         }
+        
+        self.closeEditButton.snp.makeConstraints { make in
+            make.edges.equalTo(self.voiceTypeButton)
+        }
+        self.closeEditButton.isHidden = true
+        self.closeEditButton.isUserInteractionEnabled = false
     }
     
     // MARK: - Helpers
@@ -505,7 +533,7 @@ class PTChatViewController: MessagesViewController {
                         }
                         self.voiceButton.setTitle(PTLanguage.share.text(forKey: "button_Long_tap_cancel"), for: .normal)
                         self.maskView.actionInfoLabel.isHidden = false
-                        self.maskView.actionInfoLabel.text = "取消发送"
+                        self.maskView.actionInfoLabel.text = PTLanguage.share.text(forKey: "voice_Cancel_send")
                     }
                     else if abs(newX) <= 44
                     {
@@ -526,7 +554,7 @@ class PTChatViewController: MessagesViewController {
                         }
                         self.voiceButton.setTitle(PTLanguage.share.text(forKey: "button_Long_tap_cancel"), for: .normal)
                         self.maskView.actionInfoLabel.isHidden = false
-                        self.maskView.actionInfoLabel.text = "取消发送"
+                        self.maskView.actionInfoLabel.text = PTLanguage.share.text(forKey: "voice_Cancel_send")
                     }
                     PTNSLogConsole("在左边")
                     self.translateToText = false
@@ -540,7 +568,7 @@ class PTChatViewController: MessagesViewController {
                         make.width.equalTo(CGFloat.kSCREEN_WIDTH - 40)
                     }
                     self.maskView.actionInfoLabel.isHidden = false
-                    self.maskView.actionInfoLabel.text = "转文字发送"
+                    self.maskView.actionInfoLabel.text = PTLanguage.share.text(forKey: "voice_Change_to_text")
                 }
                 else
                 {
@@ -816,56 +844,6 @@ extension PTChatViewController:MessageCellDelegate
 {
     func didTapBackground(in cell: MessageCollectionViewCell) {
         PTNSLogConsole("didTapBackground")
-        let indexPath = self.messagesCollectionView.indexPath(for: cell)
-        let messageModel = self.messageList[indexPath!.section]
-        if messageModel.sender.senderId == PTChatData.share.bot.senderId
-        {
-            let userModel = self.messageList[indexPath!.section - 1]
-            UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "alert_Save_Q&A"),msgColor: .gobalTextColor,okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
-                
-            } moreBtn: { index, title in
-                
-                let saveChatArr = AppDelegate.appDelegate()!.appConfig.getSaveChatData()
-                for saveModel in saveChatArr
-                {
-                    if saveModel.questionDate == userModel.sentDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss") && saveModel.answerDate == messageModel.sentDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
-                    {
-                        PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Error_same"))
-                        return
-                    }
-                }
-                let model = PTChatModel()
-                
-                switch userModel.kind {
-                case .audio(let item):
-                    model.questionType = 1
-                    model.questionVoiceURL = item.url.lastPathComponent
-                    self.speechKit.recognizeSpeech(filePath: URL(fileURLWithPath: item.url.absoluteString.replacingOccurrences(of: "file://", with: ""))) { text in
-                        model.question = text
-                    }
-                case .text(let text):
-                    model.questionType = 0
-                    model.question = text
-                default:
-                    break
-                }
-                model.questionDate = userModel.sentDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
-                
-                switch messageModel.kind {
-                case .photo(let item):
-                    model.answerType = 1
-                    model.answerImageURL = item.url!.absoluteString
-                case .text(let text):
-                    model.answerType = 0
-                    model.answer = text
-                default:
-                    break
-                }
-                model.answerDate = messageModel.sentDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
-                self.saveChatModelToJsonString(model: model)
-                PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Save_success"))
-            }
-        }
     }
     
     func didTapAvatar(in cell: MessageCollectionViewCell) {
@@ -885,27 +863,166 @@ extension PTChatViewController:MessageCellDelegate
     }
 
     func didTapMessage(in cell: MessageCollectionViewCell) {
-        let type = AppDelegate.appDelegate()!.appConfig.getAIMpdelType(typeString: AppDelegate.appDelegate()!.appConfig.aiModelType)
-        switch type {
-        case .chat(.chatgpt),.chat(.chatgpt0301):
-            break
-        default:
-            let indexPath = self.messagesCollectionView.indexPath(for: cell)
-            let messageModel = self.messageList[indexPath!.section]
-            switch messageModel.kind {
-            case .text(let text):
-                self.editString = text
-                messageInputBar.inputTextView.placeholder = String(format: PTLanguage.share.text(forKey: "chat_Edit"), self.editString)
-            default: break
+        
+        self.messageInputBar.inputTextView.resignFirstResponder()
+        
+        let indexPath = self.messagesCollectionView.indexPath(for: cell)
+        let messageModel = self.messageList[indexPath!.section]
+
+        var titles:[String] = [String]()
+        switch messageModel.kind {
+        case .text(let _):
+            if messageModel.sender.senderId == PTChatData.share.bot.senderId
+            {
+                titles = [.copyString,.editString,.playString,.saveString]
             }
+            else
+            {
+                titles = [.copyString,.editString]
+            }
+        default:
+            break
+        }
+        
+        self.messageInputBar.alpha = 0
+        UIAlertController.baseActionSheet(title: PTLanguage.share.text(forKey: "alert_Option_title"), subTitle: PTLanguage.share.text(forKey: "alert_Select_option"),cancelButtonName: PTLanguage.share.text(forKey: "button_Cancel"), titles: titles) { sheet in
             
-            self.editMessage = true
-            messageInputBar.inputTextView.becomeFirstResponder()
+        } cancelBlock: { sheet in
+            self.messageInputBar.alpha = 1
+        } otherBlock: { sheet, index in
+            self.messageInputBar.alpha = 1
+            switch titles[index] {
+            case .copyString:
+                switch messageModel.kind {
+                case .text(let text):
+                    text.copyToPasteboard()
+                    PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Copy_done"))
+                default: break
+                }
+            case .editString:
+                
+                self.closeEditButton.isHidden = false
+                self.closeEditButton.isUserInteractionEnabled = true
+                self.voiceTypeButton.isHidden = true
+                self.voiceTypeButton.isUserInteractionEnabled = false
+
+                let type = AppDelegate.appDelegate()!.appConfig.getAIMpdelType(typeString: AppDelegate.appDelegate()!.appConfig.aiModelType)
+                switch type {
+                case .chat(.chatgpt),.chat(.chatgpt0301):
+                    break
+                default:
+                    switch messageModel.kind {
+                    case .text(let text):
+                        self.editString = text
+                        self.messageInputBar.inputTextView.placeholder = String(format: PTLanguage.share.text(forKey: "chat_Edit"), self.editString)
+                    default: break
+                    }
+
+                    self.editMessage = true
+                    self.messageInputBar.inputTextView.becomeFirstResponder()
+                }
+            case .playString:
+                switch messageModel.kind {
+                case .text(let text):
+                    if messageModel.sender.senderId == PTChatData.share.bot.senderId
+                    {
+                        self.speechKit.speakText(text)
+                    }
+                default: break
+                }
+            case .saveString:
+                PTGCDManager.gcdAfter(time: 0.5) {
+                    if messageModel.sender.senderId == PTChatData.share.bot.senderId
+                    {
+                        let userModel = self.messageList[indexPath!.section - 1]
+                        UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "alert_Save_Q&A"),msgColor: .gobalTextColor,okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
+                            
+                        } moreBtn: { index, title in
+                            
+                            let saveChatArr = AppDelegate.appDelegate()!.appConfig.getSaveChatData()
+                            for saveModel in saveChatArr
+                            {
+                                if saveModel.questionDate == userModel.sentDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss") && saveModel.answerDate == messageModel.sentDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+                                {
+                                    PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Error_same"))
+                                    return
+                                }
+                            }
+                            let model = PTChatModel()
+                            
+                            switch userModel.kind {
+                            case .audio(let item):
+                                model.questionType = 1
+                                model.questionVoiceURL = item.url.lastPathComponent
+                                self.speechKit.recognizeSpeech(filePath: URL(fileURLWithPath: item.url.absoluteString.replacingOccurrences(of: "file://", with: ""))) { text in
+                                    model.question = text
+                                }
+                            case .text(let text):
+                                model.questionType = 0
+                                model.question = text
+                            default:
+                                break
+                            }
+                            model.questionDate = userModel.sentDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+                            
+                            switch messageModel.kind {
+                            case .photo(let item):
+                                model.answerType = 1
+                                model.answerImageURL = item.url!.absoluteString
+                            case .text(let text):
+                                model.answerType = 0
+                                model.answer = text
+                            default:
+                                break
+                            }
+                            model.answerDate = messageModel.sentDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+                            self.saveChatModelToJsonString(model: model)
+                            PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Save_success"))
+                        }
+                    }
+                }
+            default:
+                break
+            }
+        } tapBackgroundBlock: { sheet in
+            self.messageInputBar.alpha = 1
         }
     }
 
-    func didTapImage(in _: MessageCollectionViewCell) {
+    func didTapImage(in cell: MessageCollectionViewCell) {
         PTNSLogConsole("Image tapped")
+        self.messageInputBar.inputTextView.resignFirstResponder()
+        
+        let indexPath = self.messagesCollectionView.indexPath(for: cell)
+        let messageModel = self.messageList[indexPath!.section]
+        switch messageModel.kind {
+        case .photo(let image):
+            PTNSLogConsole(image)
+            self.messageInputBar.alpha = 0
+            let viewerModel = PTViewerModel()
+            viewerModel.imageURL = image.url?.absoluteString
+            viewerModel.imageShowType = .Normal
+            let config = PTViewerConfig()
+            config.actionType = .Save
+            config.closeViewerImage = UIImage(systemName: "chevron.left")!.withRenderingMode(.automatic)
+            config.moreActionImage = UIImage(systemName: "ellipsis")!.withRenderingMode(.automatic)
+            config.mediaData = [viewerModel]
+            let viewer = PTMediaViewer(viewConfig: config)
+            viewer.showImageViewer()
+            viewer.viewSaveImageBlock = { finish in
+                if finish
+                {
+                    PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Save_success"))
+                }
+            }
+            viewer.viewerDismissBlock = {
+                self.messageInputBar.alpha = 1
+            }
+
+        default:
+            break
+        }
+
     }
 
     func didTapCellTopLabel(in _: MessageCollectionViewCell) {
@@ -967,7 +1084,6 @@ extension PTChatViewController:MessageCellDelegate
     func didTapAccessoryView(in _: MessageCollectionViewCell) {
         PTNSLogConsole("Accessory view tapped")
     }
-
 }
 
 extension PTChatViewController: MessageLabelDelegate {
