@@ -39,7 +39,7 @@ class PTDarkModeHeadView: UIView {
     /// 浅色图片
     lazy var lightImageView: UIImageView = {
         let imageView = UIImageView(frame: CGRect(x: CGFloat.kSCREEN_WIDTH / 2.0 - 18 - 80, y: 76, width: 80, height: 150))
-        imageView.image = UIColor.gobalBackgroundColor.createImageWithColor()
+        imageView.image = UIColor.white.createImageWithColor()
         return imageView
     }()
     /// 深色图片

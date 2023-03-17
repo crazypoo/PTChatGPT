@@ -56,7 +56,7 @@ extension UIColor
     static let botTextColor = UIColor.darkText
     /// 字體顏色
     private(set) static var gobalTextColor = PTDrakModeOption.colorLightDark(lightColor: .black, darkColor: UIColor.white)
-    private(set) static var gobalBackgroundColor = PTDrakModeOption.colorLightDark(lightColor: .white, darkColor: UIColor.black)
+    private(set) static var gobalBackgroundColor = PTDrakModeOption.colorLightDark(lightColor: PTAppBaseConfig.share.viewControllerBaseBackgroundColor, darkColor: UIColor.black)
     
     private(set) static var gobalScrollerBackgroundColor = PTDrakModeOption.colorLightDark(lightColor: PTAppBaseConfig.share.viewControllerBaseBackgroundColor, darkColor: UIColor.black)
     

@@ -40,7 +40,7 @@ class PTDarkModeSettingViewController: PTChatBaseViewController {
         super.viewDidLoad()
 
         self.title = PTLanguage.share.text(forKey: "theme_Title")
-        self.view.backgroundColor = .black
+        self.view.backgroundColor = .gobalBackgroundColor
         initUI()
         commonUI()
         updateTheme()

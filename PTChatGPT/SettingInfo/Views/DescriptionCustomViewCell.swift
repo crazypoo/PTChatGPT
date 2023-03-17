@@ -24,7 +24,7 @@ class DescriptionCustomViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         // self.selectionStyle = .none
-        self.contentView.backgroundColor = .clear
+        self.contentView.backgroundColor = .gobalBackgroundColor
         self.contentView.addSubview(contentLabel)
         contentLabel.snp.makeConstraints { (make) in
             make.edges.equalToSuperview().inset(UIEdgeInsets(top: 6, left: 15, bottom: 12, right: 15))
