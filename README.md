@@ -27,23 +27,23 @@ ChatGPT-iOS版,不是SwiftUI,SwiftUI,SwiftUI,😒谁叫我不会.现在已经上
 [<img alt="TestFlightLink" width="100px" src="https://user-images.githubusercontent.com/92546954/219945377-9b6c7f21-61f4-4cf9-bb8c-84cbac55f129.png" />](https://testflight.apple.com/join/6XpIFw9m)  
 </div>
 
-去openai api官網申請token就可以使用
+去openai api官网申请token就可以使用
 
-現在支持ChatGPT和DallE
+现在支持ChatGPT和DallE
 
 代码完全开源🤪但是我还没有时间写注释
 
-App语言支持 🇨🇳 🇺🇸 🇭🇰 🇪🇸
+App语言支持 🇨🇳 🇭🇰 🇺🇸 🇪🇸
 
 App主框架使用了自己的工具框架[PTools](https://github.com/crazypoo/PTools)
 
-里面包含类似微信发送语音的方式来进行提问,其中语音输入使用了[OSSSpeechKit](https://github.com/crazypoo/OSSSpeechKit) ,点解唔用距本身噶库?因为距本身噶库太少功能,我在里面帮距补全,但系距呢条佬又唔pull我噶更新,所以我就唔len用距噶,距支持咩语音识别,就支持咩语音识别
+里面包含类似微信发送语音的方式来进行提问,其中语音输入使用了[OSSSpeechKit](https://github.com/crazypoo/OSSSpeechKit) ,为什么不用他本身的库?因为他本身的库太少功能,我在里面帮他补全,但是他又不pull我的更新,所以我就不用他的,他支持什么语音识别,就支持什么语音识别
 
-聊天列表使用了3.8版本的[MessageKit](https://github.com/MessageKit/MessageKit) ,扑距街,最新版唔支持cocoapods
+聊天列表使用了3.8版本的[MessageKit](https://github.com/MessageKit/MessageKit) ,我的天,最新版不支持cocoapods
 
 对于聊天列表的设置,我用了[ChromaColorPicker](https://github.com/joncardasis/ChromaColorPicker) ,来进行颜色设置
 
-AI的API我是使用了自己魔改版的[OpenAISwift](https://github.com/adamrushy/OpenAISwift) ,因为条佬唔支持获取图片,然后真烦距唔支持cocoapods
+AI的API我是使用了自己魔改版的[OpenAISwift](https://github.com/adamrushy/OpenAISwift) ,因为他不支持获取图片,然后真烦他不支持cocoapods
 
 # 主要功能
 ### 聊天界面
