@@ -424,17 +424,10 @@ class PTSettingListViewController: PTChatBaseViewController {
             {
                 Task{
                     do{
-                        let object:PTAlbumObject = try await PTImagePicker.openAlbum()
+                        let object:UIImage = try await PTImagePicker.openAlbum()
                         await MainActor.run{
-                            if let imageData = object.imageData,let image = UIImage(data: imageData)
-                            {
-                                AppDelegate.appDelegate()!.appConfig.userIcon = imageData
-                                PTNSLogConsole(image)
-                            }
-                            else
-                            {
-                                PTNSLogConsole("獲取圖片出現錯誤")
-                            }
+                            AppDelegate.appDelegate()!.appConfig.userIcon = object.pngData()!
+                            PTNSLogConsole(object)
                         }
                     }
                     catch let pickerError as PTImagePicker.PickerError
