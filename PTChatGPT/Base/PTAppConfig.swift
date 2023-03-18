@@ -29,6 +29,7 @@ let uAiModelType = "uAiModelType"
 let uAiSmart = "uAiSmart"
 ///保存的用戶的頭像
 let uUserIcon = "uUserIcon"
+let uUserIconURL = "uUserIconURL"
 ///保存的AI畫圖大小
 let uAiDrawSize = "uAiDrawSize"
 ///Token key
@@ -111,15 +112,59 @@ class PTAppConfig {
     
     //MARK: 用户头像
     ///用户头像
+    var userIconURL:String {
+        get {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uUserIconURL) {
+                    return value as! String
+                } else {
+                    return ""
+                }
+            } else {
+                if let value = UserDefaults.standard.value(forKey: uUserIconURL) {
+                    return value as! String
+                } else {
+                    return ""
+                }
+            }
+        } set {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uUserIconURL)
+                AppDelegate.appDelegate()?.cloudStore.synchronize()
+            } else {
+                UserDefaults.standard.set(newValue, forKey: uUserIconURL)
+            }
+        }
+    }
     var userIcon:Data {
         get {
             if AppDelegate.appDelegate()!.appConfig.cloudSwitch
             {
-                if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uUserIcon) {
-                    return value as! Data
-                } else {
+                if let icloudURL = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents") {
+                    let imageURL = icloudURL.appendingPathComponent("userIcon.png")
+                    if let imageData = try? Data(contentsOf: imageURL) {
+                        return imageData
+                    } else {
+                        return UIImage(named: "DemoImage")!.pngData()!
+                    }
+//                    if let imageData = UIImage(named: "DemoImage")!.pngData() {
+//                        do {
+//                            try imageData.write(to: imageURL, options: .atomic)
+//                            PTNSLogConsole(">>>>>>>>>>>jobdone")
+//                        } catch let error {
+//                            PTNSLogConsole("Failed to write image data to iCloud: \(error.localizedDescription)")
+//                        }
+//                    }
+                }
+                else
+                {
                     return UIImage(named: "DemoImage")!.pngData()!
                 }
+//                if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uUserIcon) {
+//                    return value as! Data
+//                } else {
+//                    return UIImage(named: "DemoImage")!.pngData()!
+//                }
             }
             else
             {
@@ -131,8 +176,18 @@ class PTAppConfig {
             }
         } set {
             if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
-                AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uUserIcon)
-                AppDelegate.appDelegate()?.cloudStore.synchronize()
+//                AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uUserIcon)
+//                AppDelegate.appDelegate()?.cloudStore.synchronize()
+                if let icloudURL = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents") {
+                    let imageURL = icloudURL.appendingPathComponent("userIcon.png")
+                    do {
+                        try newValue.write(to: imageURL, options: .atomic)
+                        self.userIconURL = Date().toString()
+                        PTNSLogConsole(">>>>>>>>>>>jobdone")
+                    } catch let error {
+                        PTNSLogConsole("Failed to write image data to iCloud: \(error.localizedDescription)")
+                    }
+                }
             } else {
                 UserDefaults.standard.set(newValue, forKey: uUserIcon)
             }
@@ -468,6 +523,7 @@ class PTAppConfig {
         self.language = self.language
         self.chatHistory = self.chatHistory
         self.chatFavourtie = self.chatFavourtie
+        self.userIconURL = self.userIconURL
     }
 
     lazy var languagePickerData:[String] = {

@@ -25,15 +25,39 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     let appConfig = PTAppConfig.share
     let cloudStore = NSUbiquitousKeyValueStore.default
+    let query = NSMetadataQuery()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
                         
         PTDrakModeOption.defaultDark()
         PTAppBaseConfig.share.decorationBackgroundColor = .gobalCellBackgroundColor
+        
+        self.query.searchScopes = [NSMetadataQueryUbiquitousDocumentsScope]
+        self.query.predicate = NSPredicate(value: true)
 
         NotificationCenter.default.addObserver(self, selector: #selector(keyValueStoreDidChange(_:)), name: NSUbiquitousKeyValueStore.didChangeExternallyNotification, object: self.cloudStore)
 
+        NotificationCenter.default.addObserver(forName: NSNotification.Name.NSMetadataQueryDidFinishGathering, object: AppDelegate.appDelegate()?.query, queue: nil) { (notification) in
+            guard let query = notification.object as? NSMetadataQuery else {
+                return
+            }
+            query.disableUpdates()
+            let results = query.results
+            if let fileURL = (results.first as? NSMetadataItem)?.value(forAttribute: NSMetadataItemURLKey) as? URL {
+                if let imageData = try? Data(contentsOf: fileURL), let image = UIImage(data: imageData) {
+                    // 成功读取图片数据
+                    PTNSLogConsole("?>>>>????>>>>>\(image)")
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: kRefreshController), object: nil)
+                } else {
+                    PTNSLogConsole("Failed to read image data from iCloud")
+                }
+                PTNSLogConsole("刷新\(fileURL)")
+                // 文件存在，可以读取
+            }
+            query.stop()
+        }
+        
         if self.appConfig.firstUseiCloud {
             self.saveDataToCloud()
         }
@@ -174,6 +198,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 PTNSLogConsole(key)
                 PTGCDManager.gcdMain {
                     switch key {
+                    case uUserIconURL:
+                        if let conflictingValues = self.cloudStore.array(forKey: key) {
+                            let chosenValue = conflictingValues.first
+                            self.appConfig.userIconURL = chosenValue as! String
+                        } else {
+                            let value = AppDelegate.appDelegate()!.cloudStore.object(forKey: key)
+                            self.appConfig.userIconURL = value as! String
+                        }
+                        self.query.searchScopes = [NSMetadataQueryUbiquitousDocumentsScope]
+                        self.query.predicate = NSPredicate(format: "%K == %@", argumentArray: [NSMetadataItemFSNameKey, "userIcon.png"])
+                        self.query.start()
                     case uUserIcon:
                         if let conflictingValues = self.cloudStore.array(forKey: key) {
                             let chosenValue = conflictingValues.first

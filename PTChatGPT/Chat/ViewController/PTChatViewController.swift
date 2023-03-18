@@ -249,6 +249,7 @@ class PTChatViewController: MessagesViewController {
         {
             NotificationCenter.default.addObserver(self, selector: #selector(self.refreshView), name: NSNotification.Name(rawValue: kRefreshController), object: nil)
             NotificationCenter.default.addObserver(self, selector: #selector(self.refreshViewAndLoadNewData), name: NSNotification.Name(rawValue: kRefreshControllerAndLoadNewData), object: nil)
+            
             self.refreshViewAndLoadNewData()
 
             self.configureMessageInputBar()
@@ -291,7 +292,7 @@ class PTChatViewController: MessagesViewController {
     {
         self.messagesCollectionView.reloadData()
     }
-    
+        
     @objc func refreshViewAndLoadNewData()
     {
         self.messageList.removeAll()
@@ -716,7 +717,6 @@ class PTChatViewController: MessagesViewController {
 }
 
 // MARK: - MessagesDisplayDelegate
-
 extension PTChatViewController: MessagesDisplayDelegate {
     
     // MARK: - Text Messages
