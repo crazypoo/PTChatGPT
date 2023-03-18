@@ -29,6 +29,7 @@ target 'PTChatGPT' do
   pod 'PooTools/LanguageSetting', :git => 'https://github.com/crazypoo/PTools.git'
   pod 'PooTools/ImagePicker', :git => 'https://github.com/crazypoo/PTools.git'
   pod 'PooTools/MediaViewer', :git => 'https://github.com/crazypoo/PTools.git'
+  pod 'PooTools/Slider', :git => 'https://github.com/crazypoo/PTools.git'
 
   pod 'MessageKit'
   

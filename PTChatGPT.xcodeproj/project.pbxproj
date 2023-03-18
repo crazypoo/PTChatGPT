@@ -56,6 +56,7 @@
 		55A5D7FE29B1EEF400DCA096 /* PTChatData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A5D7FD29B1EEF400DCA096 /* PTChatData.swift */; };
 		55A5D80129B1F29800DCA096 /* PTMessageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A5D80029B1F29800DCA096 /* PTMessageModel.swift */; };
 		55A5D80629B242CF00DCA096 /* PTSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A5D80529B242CF00DCA096 /* PTSettingViewController.swift */; };
+		55BD5B7C29C613070023458A /* PTSettingFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BD5B7B29C613070023458A /* PTSettingFooter.swift */; };
 		EC91DE097C54ED7562DD3DCA /* Pods_PTChatGPT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 372877C61B4F76BA38F0C55D /* Pods_PTChatGPT.framework */; };
 /* End PBXBuildFile section */
 
@@ -123,6 +124,7 @@
 		55A5D7FD29B1EEF400DCA096 /* PTChatData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTChatData.swift; sourceTree = "<group>"; };
 		55A5D80029B1F29800DCA096 /* PTMessageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTMessageModel.swift; sourceTree = "<group>"; };
 		55A5D80529B242CF00DCA096 /* PTSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSettingViewController.swift; sourceTree = "<group>"; };
+		55BD5B7B29C613070023458A /* PTSettingFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSettingFooter.swift; sourceTree = "<group>"; };
 		55C6BCCE29C4602B00A6B668 /* PTChatGPT.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PTChatGPT.entitlements; sourceTree = "<group>"; };
 		7E66237D0C268E8EEFD172D0 /* Pods-PTChatGPT.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PTChatGPT.release.xcconfig"; path = "Target Support Files/Pods-PTChatGPT/Pods-PTChatGPT.release.xcconfig"; sourceTree = "<group>"; };
 		E708929BECBB7DC383FA473B /* Pods-PTChatGPT.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PTChatGPT.debug.xcconfig"; path = "Target Support Files/Pods-PTChatGPT/Pods-PTChatGPT.debug.xcconfig"; sourceTree = "<group>"; };
@@ -222,6 +224,7 @@
 				5514B38E29BB012F00890161 /* SettingCustomViewCell.swift */,
 				5514B37C29BA102400890161 /* PTSettingHeader.swift */,
 				55278F3129BB7BF100615B0D /* PTAISmartCell.swift */,
+				55BD5B7B29C613070023458A /* PTSettingFooter.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -513,6 +516,7 @@
 			files = (
 				55A5D7F029B1D9A900DCA096 /* Instruction.swift in Sources */,
 				5514B39529BB013000890161 /* DarkModePickerView.swift in Sources */,
+				55BD5B7C29C613070023458A /* PTSettingFooter.swift in Sources */,
 				5512AB7229B43D520059D840 /* OSSUtterance.swift in Sources */,
 				5512AB7429B43D520059D840 /* OSSSpeechUtility.swift in Sources */,
 				55796A2429BD6E2A00574DD4 /* PTSoundVisualizerView.swift in Sources */,

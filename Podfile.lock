@@ -90,7 +90,11 @@ PODS:
   - PooTools/Picker (3.0.8):
     - BRPickerView
     - PooTools/Core
+  - PooTools/Slider (3.0.8):
+    - PooTools/Core
+    - RangeSeekSlider
   - pop (1.0.12)
+  - RangeSeekSlider (1.8.0)
   - SDWebImage (5.15.5):
     - SDWebImage/Core (= 5.15.5)
   - SDWebImage/Core (5.15.5)
@@ -156,6 +160,7 @@ DEPENDENCIES:
   - PooTools/LanguageSetting (from `https://github.com/crazypoo/PTools.git`)
   - PooTools/MediaViewer (from `https://github.com/crazypoo/PTools.git`)
   - PooTools/Picker (from `https://github.com/crazypoo/PTools.git`)
+  - PooTools/Slider (from `https://github.com/crazypoo/PTools.git`)
   - SwiftLint
   - Swinject
   - WoodPeckeriOS
@@ -188,6 +193,7 @@ SPEC REPOS:
     - MJRefresh
     - NotificationBannerSwift
     - pop
+    - RangeSeekSlider
     - SDWebImage
     - SJAttributesStringMaker
     - SnapKit
@@ -243,6 +249,7 @@ SPEC CHECKSUMS:
   NotificationBannerSwift: 437e135298d297fcb03f3eec4466f45cdb128d3d
   PooTools: f7345815d62d90fb8ad55335c60a66e6fff6e154
   pop: d582054913807fd11fd50bfe6a539d91c7e1a55a
+  RangeSeekSlider: 650b11fa1edcb92e1e0ede797669d98622570fb5
   SDWebImage: fd7e1a22f00303e058058278639bf6196ee431fe
   SJAttributesStringMaker: 8b5f54c487cc88fa26d2f540166cd43dfceca816
   SnapKit: e01d52ebb8ddbc333eefe2132acf85c8227d9c25
@@ -261,6 +268,6 @@ SPEC CHECKSUMS:
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
   ZXNavigationBar: a8ceb13fe37f9ca894cf6ae22d805cbdbb9ad6b1
 
-PODFILE CHECKSUM: 9aa7e66311d39ca5fe2a423e143d37103aba14d3
+PODFILE CHECKSUM: 3d6f02f7ca94226d7519609671eb693a2864db54
 
 COCOAPODS: 1.12.0

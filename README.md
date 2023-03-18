@@ -79,3 +79,6 @@ AI的API我是使用了自己魔改版的[OpenAISwift](https://github.com/adamru
 3.更改用户需要AI画画的图片大小
 
 4.更改Token
+
+#### iCloud
+支持iCloud

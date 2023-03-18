@@ -153,7 +153,6 @@ extension PTDarkModeSettingViewController: UITableViewDelegate, UITableViewDataS
         sectionView.addSubview(label)
         
         let switchSetting = UISwitch(frame: CGRect(x: CGFloat.kSCREEN_WIDTH - 15 - 51, y: 0, width: 51, height: 55))
-//        switchSetting.jk.centerY = label.jk.centerY
         switchSetting.isOn = section == 0 ? PTDrakModeOption.isSmartPeeling : PTDrakModeOption.isFollowSystem
         switchSetting.tag = section == 0 ? 100 : 101
         if section == 0 {

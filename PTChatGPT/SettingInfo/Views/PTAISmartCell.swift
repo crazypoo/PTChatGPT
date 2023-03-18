@@ -19,9 +19,9 @@ class PTAISmartCell: PTBaseNormalCell {
         view.textAlignment = .left
         return view
     }()
-    
-    lazy var aiSlider:UISlider = {
-        let slider = UISlider()
+        
+    lazy var aiSlider:PTSlider = {
+        let slider = PTSlider(showTitle: true, titleIsValue: false)
         slider.maximumValue = 1
         slider.minimumValue = 0.1
         slider.value = Float(1 - AppDelegate.appDelegate()!.appConfig.aiSmart)
@@ -55,7 +55,7 @@ class PTAISmartCell: PTBaseNormalCell {
         }
         
         self.aiSlider.snp.makeConstraints { make in
-            make.left.right.equalTo(self.nameTitle)
+            make.left.right.equalToSuperview().inset(20)
             make.bottom.equalToSuperview()
             make.top.equalTo(self.nameTitle.snp.bottom)
         }

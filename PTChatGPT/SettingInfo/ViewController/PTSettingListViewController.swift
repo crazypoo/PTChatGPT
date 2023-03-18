@@ -12,6 +12,7 @@ import BRPickerView
 import Photos
 import FloatingPanel
 import ZXNavigationBar
+import FDFullscreenPopGesture
 
 extension String
 {
@@ -39,7 +40,6 @@ extension String
     static let forum = PTLanguage.share.text(forKey: "about_Forum")
     static let rate = PTLanguage.share.text(forKey: "about_Rate")
     static let share = PTLanguage.share.text(forKey: "about_Share")
-    static let version = PTLanguage.share.text(forKey: "about_Version")
 }
 
 class PTChatPanelLayout: FloatingPanelLayout {
@@ -258,15 +258,8 @@ class PTSettingListViewController: PTChatBaseViewController {
         share.haveDisclosureIndicator = true
         share.nameColor = .gobalTextColor
         share.disclosureIndicatorImage = disclosureIndicatorImageName
-
-        let version = PTFusionCellModel()
-        version.name = .version
-        version.haveDisclosureIndicator = false
-        version.nameColor = .gobalTextColor
-        version.content = "v" + kAppVersion!
-        version.contentTextColor = .gobalTextColor
         
-        otherMain.models = [github,forum,rate,share,version]
+        otherMain.models = [github,forum,rate,share]
         
         if self.user.senderId == PTChatData.share.bot.senderId
         {
@@ -307,7 +300,7 @@ class PTSettingListViewController: PTChatBaseViewController {
             var cellHeight:CGFloat = CGFloat.ScaleW(w: 44)
             if (model.dataModel as! PTFusionCellModel).name == .aiSmart
             {
-                cellHeight = CGFloat.ScaleW(w: 78)
+                cellHeight = CGFloat.ScaleW(w: 98)
             }
             let customItem = NSCollectionLayoutGroupCustomItem.init(frame: CGRect.init(x: PTAppBaseConfig.share.defaultViewSpace, y: groupH, width: CGFloat.kSCREEN_WIDTH - PTAppBaseConfig.share.defaultViewSpace * 2, height: cellHeight), zIndex: 1000+index)
             customers.append(customItem)
@@ -329,14 +322,17 @@ class PTSettingListViewController: PTChatBaseViewController {
         laySection.contentInsets = sectionInsets
 
         let headerSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(CGFloat.kSCREEN_WIDTH - PTAppBaseConfig.share.defaultViewSpace * 2), heightDimension: NSCollectionLayoutDimension.absolute(sectionModel.headerHeight ?? CGFloat.leastNormalMagnitude))
+        let footerSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(CGFloat.kSCREEN_WIDTH - PTAppBaseConfig.share.defaultViewSpace * 2), heightDimension: NSCollectionLayoutDimension.absolute(sectionModel.footerHeight ?? CGFloat.leastNormalMagnitude))
         let headerItem = NSCollectionLayoutBoundarySupplementaryItem.init(layoutSize: headerSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .topTrailing)
-        laySection.boundarySupplementaryItems = [headerItem]
-
-        let backItem = NSCollectionLayoutDecorationItem.background(elementKind: "background")
-        backItem.contentInsets = NSDirectionalEdgeInsets.init(top: 10, leading: PTAppBaseConfig.share.defaultViewSpace, bottom: 0, trailing: PTAppBaseConfig.share.defaultViewSpace)
-        laySection.decorationItems = [backItem]
-        
-        laySection.supplementariesFollowContentInsets = false
+        let footerItem = NSCollectionLayoutBoundarySupplementaryItem.init(layoutSize: footerSize, elementKind: UICollectionView.elementKindSectionFooter, alignment: .bottomTrailing)
+        if sectionModel.headerTitle == PTLanguage.share.text(forKey: "about_Main_Other")
+        {
+            laySection.boundarySupplementaryItems = [headerItem,footerItem]
+        }
+        else
+        {
+            laySection.boundarySupplementaryItems = [headerItem]
+        }
 
         return laySection
     }
@@ -348,6 +344,10 @@ class PTSettingListViewController: PTChatBaseViewController {
         view.dataSource = self
         return view
     }()
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+    }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -408,8 +408,17 @@ class PTSettingListViewController: PTChatBaseViewController {
                     rows.append(row_List)
                 }
             }
-            let cellSection = PTSection.init(headerTitle:value.name,headerCls:PTSettingHeader.self,headerID: PTSettingHeader.ID,headerHeight: CGFloat.ScaleW(w: 44),rows: rows)
-            mSections.append(cellSection)
+            
+            if value.name == PTLanguage.share.text(forKey: "about_Main_Other")
+            {
+                let cellSection = PTSection.init(headerTitle:value.name,headerCls:PTSettingHeader.self,headerID: PTSettingHeader.ID,footerCls:PTSettingFooter.self,footerID:PTSettingFooter.ID,footerHeight:CGFloat.kTabbarHeight_Total,headerHeight: CGFloat.ScaleW(w: 44),rows: rows)
+                mSections.append(cellSection)
+            }
+            else
+            {
+                let cellSection = PTSection.init(headerTitle:value.name,headerCls:PTSettingHeader.self,headerID: PTSettingHeader.ID,headerHeight: CGFloat.ScaleW(w: 44),rows: rows)
+                mSections.append(cellSection)
+            }
         }
         
         self.collectionView.pt_register(by: mSections)
@@ -470,6 +479,15 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
             }
             return UICollectionReusableView()
         }
+        else if kind == UICollectionView.elementKindSectionFooter
+        {
+            if itemSec.footerID == PTSettingFooter.ID
+            {
+                let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: itemSec.footerID!, for: indexPath) as! PTSettingFooter
+                return footer
+            }
+            return UICollectionReusableView()
+        }
         else
         {
             return UICollectionReusableView()
@@ -482,6 +500,7 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
         if itemRow.ID == PTFusionCell.ID
         {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTFusionCell
+            cell.dataContent.backgroundColor = .gobalCellBackgroundColor
             cell.cellModel = (itemRow.dataModel as! PTFusionCellModel)
             cell.dataContent.lineView.isHidden = indexPath.row == (itemSec.rows.count - 1) ? true : false
             cell.dataContent.topLineView.isHidden = true
@@ -494,11 +513,27 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                     AppDelegate.appDelegate()?.appConfig.mobileDataSavePlaceChange()
                 }
             }
+            
+            if itemSec.rows.count == 1 {
+                PTGCDManager.gcdMain {
+                    cell.dataContent.viewCornerRectCorner(cornerRadii:5,corner:.allCorners)
+                }
+            } else {
+                if indexPath.row == 0 {
+                    PTGCDManager.gcdMain {
+                        cell.dataContent.viewCornerRectCorner(cornerRadii: 5,corner:[.topLeft,.topRight])
+                    }
+                } else if indexPath.row == (itemSec.rows.count - 1) {
+                    PTGCDManager.gcdMain {
+                        cell.dataContent.viewCornerRectCorner(cornerRadii: 5,corner:[.bottomLeft,.bottomRight])
+                    }
+                }
+            }
             return cell
         }
-        else if itemRow.ID == PTAISmartCell.ID
-        {
+        else if itemRow.ID == PTAISmartCell.ID {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTAISmartCell
+            cell.contentView.backgroundColor = .gobalCellBackgroundColor
             cell.cellModel = (itemRow.dataModel as! PTFusionCellModel)
             cell.aiSlider.addSliderAction { sender in
                 let realSmart = (1 - sender.value)
