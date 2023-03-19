@@ -90,3 +90,5 @@
 "alert_Input_error" = "输入内容有误";
 "alert_Delete_error" = "删除失败";
 "chat_Resend" = "重新发送";
+"alert_Save_error" = "保存失败";
+"alert_AI_Set" = "AI人设";

@@ -13,6 +13,7 @@ import SwipeCellKit
 class PTPopoverControl: PTChatBaseViewController {
 
     let popoverWidth:CGFloat = CGFloat.kSCREEN_WIDTH - 30
+    let popoverCellBaseHeight:CGFloat = 44
     fileprivate var isSwipeRightEnabled = false
 
     var currentHistoryModel = PTSegHistoryModel()
@@ -53,7 +54,7 @@ class PTPopoverControl: PTChatBaseViewController {
         var customers = [NSCollectionLayoutGroupCustomItem]()
         var groupH:CGFloat = 0
         sectionModel.rows.enumerated().forEach { (index,model) in
-            let cellHeight:CGFloat = 44
+            let cellHeight:CGFloat = self.popoverCellBaseHeight
             let customItem = NSCollectionLayoutGroupCustomItem.init(frame: CGRect.init(x: 0, y: groupH, width: self.popoverWidth, height: cellHeight), zIndex: 1000+index)
             customers.append(customItem)
             groupH += cellHeight

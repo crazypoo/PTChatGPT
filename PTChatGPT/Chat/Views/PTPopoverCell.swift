@@ -14,7 +14,15 @@ class PTPopoverCell: PTBaseSwipeCell {
     
     var cellModel:PTSegHistoryModel? {
         didSet {
-            self.nameLabel.text = self.cellModel!.keyName
+            if !self.cellModel!.systemContent.stringIsEmpty() {
+                let att = NSMutableAttributedString.sj.makeText { make in
+                    make.append(self.cellModel!.keyName).font(.appfont(size: 14)).textColor(.gobalTextColor).alignment(.left).lineSpacing(5)
+                    make.append("\n\(self.cellModel!.systemContent)").font(.appfont(size: 12)).textColor(.lightGray).alignment(.left)
+                }
+                self.nameLabel.attributedText = att
+            } else {
+                self.nameLabel.text = self.cellModel!.keyName
+            }
         }
     }
     
@@ -33,6 +41,7 @@ class PTPopoverCell: PTBaseSwipeCell {
         view.textAlignment = .left
         view.font = .appfont(size: 14)
         view.textColor = .gobalTextColor
+        view.numberOfLines = 0
         return view
     }()
     

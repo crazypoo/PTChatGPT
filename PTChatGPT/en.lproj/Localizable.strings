@@ -90,3 +90,5 @@
 "alert_Input_error" = "The input content is wrong.";
 "alert_Delete_error" = "Deletion failed";
 "chat_Resend" = "Resend";
+"alert_Save_error" = "Failed to save";
+"alert_AI_Set" = "AI person setting";

@@ -67,6 +67,8 @@ class PTChatPanelLayout: FloatingPanelLayout {
 
 class PTSettingListViewController: PTChatBaseViewController {
 
+    var currentChatModel:PTSegHistoryModel?
+    
     lazy var pickerData : [String] = {
         return ["中文(简体)/中文(簡體)/Chinese(Simplified)/Chine(Simplificado)","中文(繁体)/中文(簡體)/Chinese(Hong Kong)/Chino(Hong Kong)","英语/英語/English/Inglés","西班牙语/西班牙語/Spanish/Español"]
     }()
@@ -86,7 +88,7 @@ class PTSettingListViewController: PTChatBaseViewController {
 
     lazy var AIModelPicker:BRStringPickerView = {
         let picker = BRStringPickerView(pickerMode: .componentLinkage)
-        AppDelegate.appDelegate()!.appConfig.getAiModelPickerDate(currentAi: AppDelegate.appDelegate()!.appConfig.aiModelType) { result, selectIndex in
+        AppDelegate.appDelegate()!.appConfig.getAiModelPickerDate(currentAi: AppDelegate.appDelegate()!.appConfig.aiModelType,currentChatModel: self.currentChatModel) { result, selectIndex in
             picker.dataSourceArr = result
             picker.selectIndexs = selectIndex
         }

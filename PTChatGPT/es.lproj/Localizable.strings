@@ -90,3 +90,5 @@
 "alert_Input_error" = "El contenido de entrada es incorrecto.";
 "alert_Delete_error" = "Error en la eliminación";
 "chat_Resend" = "Reenviar";
+"alert_Save_error" = "No se pudo guardar";
+"alert_AI_Set" = "Configuración de la persona de IA";
