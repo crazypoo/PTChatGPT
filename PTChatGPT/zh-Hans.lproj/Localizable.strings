@@ -86,3 +86,5 @@
 "alert_Copy_done" = "复制成功";
 "voice_Cancel_send" = "取消发送";
 "voice_Change_to_text" = "转成文字发送";
+"alert_Tag_set" = "请输入你想创建的标签";
+"alert_Input_error" = "输入内容有误";

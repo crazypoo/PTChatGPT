@@ -181,17 +181,15 @@ class PTSettingViewController: PTChatBaseViewController {
     
     func checkTextField(textField:UITextField)
     {
-        if (textField.text ?? "").stringIsEmpty() || !(textField.text ?? "").nsString.contains("sk-")
-        {
+        if (textField.text ?? "").stringIsEmpty() || !(textField.text ?? "").nsString.contains("sk-") {
             PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Token_error"))
-        }
-        else
-        {
-            let vc = PTChatViewController(token: textField.text!,language: self.languageType)
+        } else {
+            AppDelegate.appDelegate()!.appConfig.apiToken = textField.text!
+            AppDelegate.appDelegate()!.appConfig.language = self.languageType.rawValue
+            let vc = PTChatViewController(historyModel: PTSegHistoryModel())
             let nav = PTNavController(rootViewController: vc)
             AppDelegate.appDelegate()!.window!.rootViewController = nav
             AppDelegate.appDelegate()!.window!.makeKeyAndVisible()            
-            UserDefaults.standard.set(textField.text, forKey: uTokenKey)
         }
     }
 }

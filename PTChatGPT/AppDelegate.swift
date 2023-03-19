@@ -72,7 +72,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         else
         {
-            viewC = PTChatViewController(token: self.appConfig.apiToken,language: OSSVoiceEnum(rawValue: self.appConfig.language)!)
+            PTNSLogConsole(self.appConfig.segChatHistory)
+            viewC = PTChatViewController(historyModel: PTSegHistoryModel())//PTChatViewController(token: self.appConfig.apiToken,language: OSSVoiceEnum(rawValue: self.appConfig.language)!)
         }
         let nav = PTNavController(rootViewController: viewC)
         self.window = UIWindow.init(frame: UIScreen.main.bounds)
@@ -198,6 +199,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 PTNSLogConsole(key)
                 PTGCDManager.gcdMain {
                     switch key {
+                    case uSegChatHistory:
+                        if let conflictingValues = self.cloudStore.array(forKey: key) {
+                            let chosenValue = conflictingValues.first
+                            self.appConfig.segChatHistory = chosenValue as! String
+                        } else {
+                            let value = AppDelegate.appDelegate()!.cloudStore.object(forKey: key)
+                            self.appConfig.segChatHistory = value as! String
+                        }
+                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: kRefreshCurrentTagData), object: nil)
                     case uUserIconURL:
                         if let conflictingValues = self.cloudStore.array(forKey: key) {
                             let chosenValue = conflictingValues.first

@@ -14,16 +14,16 @@ import SDWebImage
 import AVFAudio
 import LXFProtocolTool
 import SwifterSwift
+import JXPagingView
 
 fileprivate extension String{
     static let saveNavTitle = PTLanguage.share.text(forKey: "about_SavedChat")
-    static let navTitle = kAppName
-    static let loading = PTLanguage.share.text(forKey: "chat_Thinking")
     
     static let copyString = PTLanguage.share.text(forKey: "chat_Copy")
     static let editString = PTLanguage.share.text(forKey: "chat_Edit_question")
     static let playString = PTLanguage.share.text(forKey: "chat_Speak_text")
     static let saveString = PTLanguage.share.text(forKey: "chat_Favourite")
+    static let thinking = PTLanguage.share.text(forKey: "chat_Thinking")
 }
 
 enum PTChatCase
@@ -33,7 +33,38 @@ enum PTChatCase
 }
 
 class PTChatViewController: MessagesViewController {
-    
+            
+    lazy var titleButton:BKLayoutButton = {
+        let view = BKLayoutButton()
+        view.titleLabel?.font = .appfont(size: 24,bold: true)
+        view.setTitleColor(.gobalTextColor, for: .normal)
+        view.layoutStyle = .leftTitleRightImage
+        view.setImage(UIImage(systemName: "chevron.up.chevron.down")!.withRenderingMode(.automatic), for: .normal)
+        view.setMidSpacing(5)
+        view.addActionHandlers { sender in
+            
+            let popover = PTPopoverControl(currentSelect: self.historyModel!)
+            popover.view.backgroundColor = .gobalBackgroundColor.withAlphaComponent(0.45)
+            self.popover(popoverVC: popover, popoverSize: CGSize(width: popover.popoverWidth, height: CGFloat(44 * self.segDataArr.count)), sender: sender, arrowDirections: .up)
+            popover.selectedBlock = { model in
+                self.historyModel = model
+                self.setTitleViewFrame(text: self.historyModel!.keyName)
+            }
+        }
+        return view
+    }()
+        
+    var segDataArr:[PTSegHistoryModel] = {
+        var arr = [PTSegHistoryModel]()
+        let dataString = AppDelegate.appDelegate()?.appConfig.segChatHistory
+        let dataArr = dataString!.components(separatedBy: kSeparatorSeg)
+        dataArr.enumerated().forEach { index,value in
+            let model = PTSegHistoryModel.deserialize(from: value)
+            arr.append(model!)
+        }
+        return arr
+    }()
+
     lazy var maskView:PTVoiceActionView = {
         let view = PTVoiceActionView()
         view.backgroundColor = .black.withAlphaComponent(0.65)
@@ -50,7 +81,7 @@ class PTChatViewController: MessagesViewController {
 
     var editMessage:Bool = false
     var editString:String = ""
-    var openAI:OpenAISwift!
+    var openAI:OpenAISwift = OpenAISwift(authToken: AppDelegate.appDelegate()!.appConfig.apiToken)
     lazy var messageList:[PTMessageModel] = []
     let speechKit = OSSSpeech.shared
         
@@ -158,11 +189,19 @@ class PTChatViewController: MessagesViewController {
 
     var onlyShowSave:Bool = false
     
+    var historyModel:PTSegHistoryModel? {
+        didSet {
+            self.refreshViewAndLoadNewData()
+        }
+    }
+    
+    init(historyModel:PTSegHistoryModel) {
+        super.init(nibName: nil, bundle: nil)
+        self.historyModel = historyModel
+    }
+    
     init(token:String,language:OSSVoiceEnum) {
         super.init(nibName: nil, bundle: nil)
-        speechKit.voice = OSSVoice(quality: .enhanced, language: language)
-        speechKit.utterance?.rate = 0.45
-        self.openAI = OpenAISwift(authToken: token)
     }
     
     init(saveModel:PTChatModel)
@@ -204,6 +243,7 @@ class PTChatViewController: MessagesViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        self.messageInputBar.inputTextView.resignFirstResponder()
         self.maskView.removeFromSuperview()
     }
     
@@ -211,13 +251,12 @@ class PTChatViewController: MessagesViewController {
         super.viewDidAppear(animated)
         
         self.messagesCollectionView.reloadData()
-        
         AppDelegate.appDelegate()?.window?.addSubview(self.maskView)
         self.maskView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
     }
-    
+            
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.largeTitleDisplayMode = .never
@@ -249,19 +288,68 @@ class PTChatViewController: MessagesViewController {
         {
             NotificationCenter.default.addObserver(self, selector: #selector(self.refreshView), name: NSNotification.Name(rawValue: kRefreshController), object: nil)
             NotificationCenter.default.addObserver(self, selector: #selector(self.refreshViewAndLoadNewData), name: NSNotification.Name(rawValue: kRefreshControllerAndLoadNewData), object: nil)
-            
-            self.refreshViewAndLoadNewData()
+            NotificationCenter.default.addObserver(self, selector: #selector(self.refreshCurrentTagData), name: NSNotification.Name(rawValue: kRefreshCurrentTagData), object: nil)
 
-            self.configureMessageInputBar()
-            self.title = .navTitle
-            self.speechKit.delegate = self
             let logout = UIButton(type: .custom)
+            logout.imageView?.contentMode = .scaleAspectFit
             logout.setImage(UIImage(systemName: "gear")?.withTintColor(.black, renderingMode: .automatic), for: .normal)
             logout.addActionHandlers { sender in
                 let vc = PTSettingListViewController(user: PTChatUser(senderId: "0", displayName: "0"))
                 self.navigationController?.pushViewController(vc)
             }
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: logout)
+            
+            let addChat = UIButton(type: .custom)
+            addChat.imageView?.contentMode = .scaleAspectFit
+            addChat.setImage(UIImage(systemName: "plus.circle")?.withTintColor(.black, renderingMode: .automatic), for: .normal)
+            addChat.addActionHandlers { sender in
+                let textKey = PTLanguage.share.text(forKey: "alert_Tag_set")
+                UIAlertController.base_textfiele_alertVC(title:textKey,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey], textFieldTexts: [""], keyboardType: [.default],textFieldDelegate: self) { result in
+                    let newKey:String? = result[textKey]!
+                    if !(newKey ?? "").stringIsEmpty()
+                    {
+                        let newTag = PTSegHistoryModel()
+                        newTag.keyName = newKey!
+                        newTag.historyJson = ""
+                        self.segDataArr.append(newTag)
+                        var jsonArr = [String]()
+                        self.segDataArr.enumerated().forEach { index,value in
+                            jsonArr.append(value.toJSON()!.toJSON()!)
+                        }
+                        AppDelegate.appDelegate()?.appConfig.segChatHistory = jsonArr.joined(separator: kSeparatorSeg)
+                        self.historyModel = newTag
+                    }
+                    else
+                    {
+                        PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Input_error"))
+                    }
+                }
+            }
+            self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: addChat)
+            
+            self.navigationItem.titleView = self.titleButton
+            
+            speechKit.voice = OSSVoice(quality: .enhanced, language: OSSVoiceEnum(rawValue: AppDelegate.appDelegate()!.appConfig.language)!)
+            speechKit.utterance?.rate = 0.45
+
+            var arr = [PTSegHistoryModel]()
+            if let dataString = AppDelegate.appDelegate()?.appConfig.segChatHistory {
+                let dataArr = dataString.components(separatedBy: kSeparatorSeg)
+                dataArr.enumerated().forEach { index,value in
+                    let model = PTSegHistoryModel.deserialize(from: value)
+                    arr.append(model!)
+                }
+                self.historyModel = arr.first!
+                self.setTitleViewFrame(text: self.historyModel!.keyName)
+            }
+            
+            self.soundRecorder.onUpdate = { soundSamples in
+                PTGCDManager.gcdMain {
+                    self.maskView.visualizerView.updateSamples(soundSamples)
+                }
+            }
+            self.configureMessageInputBar()
+            self.speechKit.delegate = self
         }
         
         self.speechKit.srp.requestAuthorization { authStatus in
@@ -281,28 +369,40 @@ class PTChatViewController: MessagesViewController {
         }
                         
         self.maskView.alpha = 0
-        self.soundRecorder.onUpdate = { soundSamples in
-            PTGCDManager.gcdMain {
-                self.maskView.visualizerView.updateSamples(soundSamples)
-            }
-        }
     }
         
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    }
+
     @objc func refreshView()
     {
         self.messagesCollectionView.reloadData()
     }
         
+    @objc func refreshCurrentTagData()
+    {
+        var arr = [PTSegHistoryModel]()
+        if let dataString = AppDelegate.appDelegate()?.appConfig.segChatHistory {
+            let dataArr = dataString.components(separatedBy: kSeparatorSeg)
+            dataArr.enumerated().forEach { index,value in
+                let model = PTSegHistoryModel.deserialize(from: value)
+                arr.append(model!)
+            }
+            
+            for (value) in arr {
+                if value.keyName == self.historyModel!.keyName
+                {
+                    self.historyModel = value
+                    break
+                }
+            }
+        }
+    }
+    
     @objc func refreshViewAndLoadNewData()
     {
         self.messageList.removeAll()
-        var userHistoryModelString = ""
-        if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
-            userHistoryModelString = AppDelegate.appDelegate()?.cloudStore.object(forKey: uChatHistory) as! String
-        } else {
-            userHistoryModelString = UserDefaults.standard.value(forKey: uChatHistory) as! String
-        }
-        
+        let userHistoryModelString = self.historyModel!.historyJson
         if !userHistoryModelString.stringIsEmpty() {
             let userModelsStringArr = userHistoryModelString.components(separatedBy: kSeparator)
             userModelsStringArr.enumerated().forEach { index,value in
@@ -330,6 +430,10 @@ class PTChatViewController: MessagesViewController {
                     self.messagesCollectionView.scrollToLastItem()
                 }
             }
+        } else {
+            self.messagesCollectionView.reloadData {
+                self.messagesCollectionView.scrollToLastItem()
+            }
         }
     }
     
@@ -343,9 +447,39 @@ class PTChatViewController: MessagesViewController {
     
     @objc func adHide(notifi:Notification)
     {
+        PTNSLogConsole("广告隐藏")
         messageInputBar.alpha = 1
     }
     
+    func setTitleViewFrame(text:String) {
+        
+        if text == "Base" {
+            self.titleButton.setTitle(kAppName!, for: .normal)
+        } else {
+            self.titleButton.setTitle(text, for: .normal)
+        }
+        
+        if text == .thinking {
+            var buttonW = self.titleButton.sizeFor(size: CGSize(width: CGFloat.kSCREEN_WIDTH - 108, height: 34)).width + 10
+            let titleViewSapce = (CGFloat.kSCREEN_WIDTH - 34 - PTAppBaseConfig.share.defaultViewSpace * 2 - 20)
+            if buttonW >= titleViewSapce {
+                buttonW = titleViewSapce
+            }
+            self.titleButton.setImage(nil, for: .normal)
+            self.titleButton.frame = CGRect(x: 0, y: 0, width: buttonW, height: 34)
+            self.titleButton.isUserInteractionEnabled = false
+        } else {
+            var buttonW = self.titleButton.sizeFor(size: CGSize(width: CGFloat.kSCREEN_WIDTH - 108, height: 34)).width + 24 + 5 + 10
+            let titleViewSapce = (CGFloat.kSCREEN_WIDTH - 34 - PTAppBaseConfig.share.defaultViewSpace * 2 - 20)
+            if buttonW >= titleViewSapce {
+                buttonW = titleViewSapce
+            }
+            self.titleButton.frame = CGRect(x: 0, y: 0, width: buttonW, height: 34)
+            self.titleButton.isUserInteractionEnabled = true
+            self.titleButton.setImage(UIImage(systemName: "chevron.up.chevron.down")!.withRenderingMode(.automatic), for: .normal)
+        }
+    }
+
     @objc func loadMoreMessage()
     {
         DispatchQueue.global(qos:.userInitiated).asyncAfter(deadline: .now() + 1) {
@@ -388,7 +522,7 @@ class PTChatViewController: MessagesViewController {
         messageInputBar.sendButton.setTitleColor(
             .gobalTextColor.withAlphaComponent(0.3),
             for: .highlighted)
-              
+        
         self.setInputBarFrame()
     }
         
@@ -465,12 +599,9 @@ class PTChatViewController: MessagesViewController {
         return formatter
     }()
 
-    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-    }
-        
     func sendVoiceMessage(text:String,saveModel:PTChatModel)
     {
-        self.title = .loading
+        self.setTitleViewFrame(text: .thinking)
         switch self.chatCase {
         case .chat:
             self.openAI.sendEdits(with: text, input: self.editString) { result in
@@ -484,13 +615,12 @@ class PTChatViewController: MessagesViewController {
                     let botMessage = PTMessageModel(text: success.choices.first?.text ?? "", user: PTChatData.share.bot, messageId: UUID().uuidString, date: date)
                     self.insertMessage(botMessage)
                     PTGCDManager.gcdMain {
-                        self.title = .navTitle
+                        self.setTitleViewFrame(text: self.historyModel!.keyName)
                     }
-                    
                     self.chatModelToJsonString(model: saveModel)
                 case .failure(let failure):
                     PTGCDManager.gcdMain {
-                        self.title = .navTitle
+                        self.setTitleViewFrame(text: self.historyModel!.keyName)
                         PTBaseViewController.gobal_drop(title: failure.localizedDescription)
                     }
                 }
@@ -679,38 +809,46 @@ class PTChatViewController: MessagesViewController {
     {
         PTGCDManager.gcdMain {
             var userHistoryModelString = ""
-            
             switch key {
             case uChatHistory:
-                userHistoryModelString = AppDelegate.appDelegate()!.appConfig.chatHistory
+                var arr = [PTSegHistoryModel]()
+                userHistoryModelString = AppDelegate.appDelegate()!.appConfig.segChatHistory
+                let historyArr = userHistoryModelString.components(separatedBy: kSeparatorSeg)
+                historyArr.enumerated().forEach { index,value in
+                    let model = PTSegHistoryModel.deserialize(from: value)
+                    arr.append(model!)
+                }
+                arr.enumerated().forEach { index,value in
+                    if value.keyName == self.historyModel!.keyName {
+                        arr[index].historyJson = jsonString
+                    }
+                }
+                var newJsonArr = [String]()
+                arr.enumerated().forEach { index,value in
+                    newJsonArr.append(value.toJSON()!.toJSON()!)
+                }
+                AppDelegate.appDelegate()!.appConfig.segChatHistory = newJsonArr.joined(separator: kSeparatorSeg)
             case uSaveChat:
                 userHistoryModelString = AppDelegate.appDelegate()!.appConfig.chatFavourtie
+                if !userHistoryModelString.stringIsEmpty() {
+                    var userModelsStringArr = userHistoryModelString.components(separatedBy: kSeparator)
+                    userModelsStringArr.append(jsonString)
+                    let saaveString = userModelsStringArr.joined(separator: kSeparator)
+                    switch key {
+                    case uChatHistory:
+                        AppDelegate.appDelegate()!.appConfig.chatHistory = saaveString
+                    case uSaveChat:
+                        AppDelegate.appDelegate()!.appConfig.chatFavourtie = saaveString
+                    default:
+                        break
+                    }
+                    print(saaveString)
+                } else {
+                    AppDelegate.appDelegate()!.appConfig.chatFavourtie = jsonString
+                    print(jsonString)
+                }
             default:
                 break
-            }
-            if !userHistoryModelString.stringIsEmpty() {
-                var userModelsStringArr = userHistoryModelString.components(separatedBy: kSeparator)
-                userModelsStringArr.append(jsonString)
-                let saaveString = userModelsStringArr.joined(separator: kSeparator)
-                switch key {
-                case uChatHistory:
-                    AppDelegate.appDelegate()!.appConfig.chatHistory = saaveString
-                case uSaveChat:
-                    AppDelegate.appDelegate()!.appConfig.chatFavourtie = saaveString
-                default:
-                    break
-                }
-                print(saaveString)
-            } else {
-                switch key {
-                case uChatHistory:
-                    AppDelegate.appDelegate()!.appConfig.chatHistory = jsonString
-                case uSaveChat:
-                    AppDelegate.appDelegate()!.appConfig.chatFavourtie = jsonString
-                default:
-                    break
-                }
-                print(jsonString)
             }
         }
     }
@@ -796,7 +934,7 @@ extension PTChatViewController: MessagesDisplayDelegate {
     }
 }
 
-
+//MARK: MessagesLayoutDelegate
 extension PTChatViewController:MessagesLayoutDelegate
 {
     func cellTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
@@ -816,6 +954,7 @@ extension PTChatViewController:MessagesLayoutDelegate
     }
 }
 
+//MARK: MessagesDataSource
 extension PTChatViewController:MessagesDataSource
 {
     func currentSender() -> MessageKit.SenderType {
@@ -1176,13 +1315,13 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
                     self.insertMessage(message)
 
                     PTNSLogConsole(result.data.first?.url ?? "")
-                    self.title = .navTitle
+                    self.setTitleViewFrame(text: self.historyModel!.keyName)
                     self.chatModelToJsonString(model: saveModel)
                 }
             }catch{
                 PTGCDManager.gcdMain {
                     PTBaseViewController.gobal_drop(title: error.localizedDescription)
-                    self.title = .navTitle
+                    self.setTitleViewFrame(text: self.historyModel!.keyName)
                 }
             }
         }
@@ -1238,7 +1377,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
 
                 let message = PTMessageModel(text: str, user: user, messageId: UUID().uuidString, date: date)
                 insertMessage(message)
-                self.title = .loading
+                self.setTitleViewFrame(text: .thinking)
                 switch self.chatCase {
                 case .chat:
                     if self.editMessage
@@ -1258,12 +1397,12 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
                                 PTGCDManager.gcdMain {
                                     self.editString = ""
                                     self.editMessage = false
-                                    self.title = .navTitle
+                                    self.setTitleViewFrame(text: .thinking)
                                 }
                                 self.chatModelToJsonString(model: saveModel)
                             case .failure(let failure):
                                 PTGCDManager.gcdMain {
-                                    self.title = .navTitle
+                                    self.setTitleViewFrame(text: self.historyModel!.keyName)
                                     PTBaseViewController.gobal_drop(title: failure.localizedDescription)
                                 }
                             }
@@ -1283,7 +1422,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
                                     self.saveQAndAText(question: success.choices.first?.message.content ?? "", saveModel: saveModel)
                                 case .failure(let failure):
                                     PTGCDManager.gcdMain {
-                                        self.title = .navTitle
+                                        self.setTitleViewFrame(text: self.historyModel!.keyName)
                                         PTBaseViewController.gobal_drop(title: failure.localizedDescription)
                                     }
                                 }
@@ -1296,7 +1435,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
                                     self.saveQAndAText(question: success.choices.first?.text ?? "", saveModel: saveModel)
                                 case .failure(let failure):
                                     PTGCDManager.gcdMain {
-                                        self.title = .navTitle
+                                        self.setTitleViewFrame(text: self.historyModel!.keyName)
                                         PTBaseViewController.gobal_drop(title: failure.localizedDescription)
                                     }
                                 }
@@ -1323,7 +1462,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
         let botMessage = PTMessageModel(text: question, user: PTChatData.share.bot, messageId: UUID().uuidString, date: botDate)
         self.insertMessage(botMessage)
         PTGCDManager.gcdMain {
-            self.title = .navTitle
+            self.setTitleViewFrame(text: self.historyModel!.keyName)
         }
         self.chatModelToJsonString(model: saveModel)
     }
@@ -1451,3 +1590,5 @@ extension PTChatViewController
         false
     }
 }
+
+extension PTChatViewController:UITextFieldDelegate {}

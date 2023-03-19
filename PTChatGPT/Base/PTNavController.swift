@@ -33,7 +33,7 @@ class PTNavController: ZXNavigationBarNavigationController {
     
     /// 修改导航栏返回按钮
     override func pushViewController(_ viewController: UIViewController, animated: Bool) {
-        
+ 
         if viewControllers.count > 0 {
             let backBtn = UIButton.init(type: .custom)
             backBtn.setImage(UIImage(systemName: "chevron.left")!.withTintColor(.gobalTextColor, renderingMode: .automatic), for: .normal)

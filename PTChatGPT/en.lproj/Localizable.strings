@@ -86,3 +86,5 @@
 "alert_Copy_done" = "Successful replication";
 "voice_Cancel_send" = "Cancel send";
 "voice_Change_to_text" = "Send it to text";
+"alert_Tag_set" = "Please enter the label you want to create.";
+"alert_Input_error" = "The input content is wrong.";

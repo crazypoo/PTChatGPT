@@ -21,6 +21,8 @@ let uUserTextColor = "uUserTextColor"
 let uBotTextColor = "uBotTextColor"
 ///歷史記錄 key
 let uChatHistory = "ChatHistory"
+///Seg控制器的历史记录Key
+let uSegChatHistory = "uSegChatHistory"
 ///保存記錄 key
 let uSaveChat = "uSaveChat"
 ///保存的機器人類型
@@ -46,9 +48,11 @@ let uAppFirstiCloud = "uAppFirstiCloud"
 let uUseiCloud = "uUseiCloud"
 
 let kSeparator = "[,]"
+let kSeparatorSeg = "[::]"
 
 let kRefreshController = "kRefreshController"
 let kRefreshControllerAndLoadNewData = "kRefreshControllerAndLoadNewData"
+let kRefreshCurrentTagData = "kRefreshCurrentTagData"
 
 let getApiUrl = "https://platform.openai.com/account/api-keys"
 let myGithubUrl = "https://github.com/crazypoo"
@@ -456,6 +460,55 @@ class PTAppConfig {
     }
     
     //MARK: 聊天历史记录
+    var segChatHistory:String {
+        get {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uSegChatHistory) {
+                    return value as! String
+                } else {
+                    let baseSub = PTSegHistoryModel()
+                    baseSub.keyName = "Base"
+                    baseSub.historyJson = self.chatHistory
+                    let jsonArr = [baseSub.toJSON()!.toJSON()!]
+                    let dataString = jsonArr.joined(separator: kSeparatorSeg)
+                    return dataString
+                }
+            } else {
+                if let value = UserDefaults.standard.value(forKey: uSegChatHistory) {
+                    return value as! String
+                } else {
+                    let baseSub = PTSegHistoryModel()
+                    baseSub.keyName = "Base"
+                    baseSub.historyJson = self.chatHistory
+                    let jsonArr = [baseSub.toJSON()!.toJSON()!]
+                    let dataString = jsonArr.joined(separator: kSeparatorSeg)
+                    PTNSLogConsole(">>>>>>>>>>>>>>>>>>>>>>\(dataString)")
+                    return dataString
+                }
+            }
+        } set {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uSegChatHistory)
+                AppDelegate.appDelegate()?.cloudStore.synchronize()
+            } else {
+                UserDefaults.standard.set(newValue, forKey: uSegChatHistory)
+            }
+        }
+    }
+    
+    var tagDataArr:[PTSegHistoryModel] = {
+        var arr = [PTSegHistoryModel]()
+        if let dataString = AppDelegate.appDelegate()?.appConfig.segChatHistory {
+            let dataArr = dataString.components(separatedBy: kSeparatorSeg)
+            dataArr.enumerated().forEach { index,value in
+                let model = PTSegHistoryModel.deserialize(from: value)
+                arr.append(model!)
+            }
+            return arr
+        }
+        return arr
+    }()
+
     ///聊天历史记录
     var chatHistory:String {
         get {

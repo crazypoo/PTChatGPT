@@ -86,3 +86,5 @@
 "alert_Copy_done" = "複製成功";
 "voice_Cancel_send" = "取消發送";
 "voice_Change_to_text" = "轉成文字發送";
+"alert_Tag_set" = "請輸入你想創建的標籤";
+"alert_Input_error" = "輸入內容有誤";
