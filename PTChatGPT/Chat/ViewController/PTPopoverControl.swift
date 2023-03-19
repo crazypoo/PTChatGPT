@@ -8,15 +8,18 @@
 
 import UIKit
 import PooTools
+import SwipeCellKit
 
 class PTPopoverControl: PTChatBaseViewController {
 
     let popoverWidth:CGFloat = CGFloat.kSCREEN_WIDTH - 30
-    
+    fileprivate var isSwipeRightEnabled = false
+
     var currentHistoryModel = PTSegHistoryModel()
     
     var selectedBlock:((_ selectedModel:PTSegHistoryModel)->Void)?
-    
+    var refreshTagArr:(()->Void)?
+
     var segDataArr:[PTSegHistoryModel] = {
         var arr = [PTSegHistoryModel]()
         let dataString = AppDelegate.appDelegate()?.appConfig.segChatHistory
@@ -55,7 +58,7 @@ class PTPopoverControl: PTChatBaseViewController {
             customers.append(customItem)
             groupH += cellHeight
         }
-        bannerGroupSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(CGFloat.kSCREEN_WIDTH), heightDimension: NSCollectionLayoutDimension.absolute(groupH))
+        bannerGroupSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(self.popoverWidth - 20), heightDimension: NSCollectionLayoutDimension.absolute(groupH))
         group = NSCollectionLayoutGroup.custom(layoutSize: bannerGroupSize, itemProvider: { layoutEnvironment in
             customers
         })
@@ -144,6 +147,7 @@ extension PTPopoverControl:UICollectionViewDelegate,UICollectionViewDataSource
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTPopoverCell
             cell.cellModel = (itemRow.dataModel as! PTSegHistoryModel)
             cell.bottomLine.isHidden = indexPath.row == (self.segDataArr.count - 1) ? true : false
+            cell.delegate = self
             return cell
         }
         else
@@ -161,4 +165,87 @@ extension PTPopoverControl:UICollectionViewDelegate,UICollectionViewDataSource
         }
         self.returnFrontVC()
     }
+}
+
+extension PTPopoverControl:SwipeCollectionViewCellDelegate
+{
+    func swipe_cell_configure(action: SwipeAction, with descriptor: ActionDescriptor,buttonDisplayMode: ButtonDisplayMode? = PTSaveChatViewController.swipe_cell_buttonDisplayMode(),buttonStyle: ButtonStyle? = PTSaveChatViewController.swipe_cell_buttonStyle()) {
+       action.title = descriptor.title(forDisplayMode: buttonDisplayMode!)
+       action.image = descriptor.image(forStyle: buttonStyle!, displayMode: buttonDisplayMode!)
+       action.hidesWhenSelected = true
+       
+       switch buttonStyle! {
+       case .backgroundColor:
+           action.backgroundColor = descriptor.color(forStyle: buttonStyle!)
+       case .circular:
+           action.backgroundColor = .clear
+           action.textColor = descriptor.color(forStyle: buttonStyle!)
+           action.font = UIFont.appfont(size: 13)
+           action.transitionDelegate = ScaleTransition.default
+       }
+   }
+
+   
+   func collectionView(_ collectionView: UICollectionView, editActionsOptionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
+       var options = SwipeOptions()
+       options.expansionStyle = orientation == .left ? .selection : .destructive(automaticallyDelete: false)
+       options.transitionStyle = .border
+       switch PTSaveChatViewController.swipe_cell_buttonStyle() {
+       case .backgroundColor:
+           options.buttonSpacing = 4
+       case .circular:
+           options.buttonSpacing = 4
+           options.backgroundColor = .clear
+       }
+       return options
+   }
+   
+   func collectionView(_ collectionView: UICollectionView, editActionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
+       if orientation == .right {
+           
+           let delete = SwipeAction(style: .destructive, title: PTLanguage.share.text(forKey: "cell_Delete")) { action, indexPath in
+               PTGCDManager.gcdMain {
+                   if self.segDataArr[indexPath.row].keyName == "Base"
+                   {
+                       PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_error"))
+                       self.showDetail()
+                   } else if self.segDataArr[indexPath.row].keyName == self.currentHistoryModel.keyName && self.segDataArr[indexPath.row].keyName != "Base" {
+                       self.segDataArr.remove(at: indexPath.row)
+                       if self.selectedBlock != nil {
+                           self.selectedBlock!(self.segDataArr.first!)
+                       }
+                       
+                       PTAppConfig.refreshTagData(segDataArr: self.segDataArr)
+
+                       self.returnFrontVC()
+                   } else {
+                       self.segDataArr.remove(at: indexPath.row)
+                       PTAppConfig.refreshTagData(segDataArr: self.segDataArr)
+                       self.showDetail()
+                       if self.refreshTagArr != nil {
+                           self.refreshTagArr!()
+                       }
+                   }
+               }
+           }
+           delete.font = .appfont(size: 14)
+           delete.backgroundColor = .red
+           delete.fulfill(with: .delete)
+           self.swipe_cell_configure(action: delete, with: .trash)
+           return  [delete]
+       }
+       else
+       {
+           guard isSwipeRightEnabled else { return nil }
+
+           let read = SwipeAction(style: .default, title: nil) { action, indexPath in
+           }
+
+           read.hidesWhenSelected = true
+
+           let descriptor: ActionDescriptor = .unread
+           self.swipe_cell_configure(action: read, with: descriptor)
+           return [read]
+       }
+   }
 }

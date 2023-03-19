@@ -88,3 +88,5 @@
 "voice_Change_to_text" = "Envíalo a un mensaje de texto";
 "alert_Tag_set" = "Introduzca la etiqueta que desea crear.";
 "alert_Input_error" = "El contenido de entrada es incorrecto.";
+"alert_Delete_error" = "Error en la eliminación";
+"chat_Resend" = "Reenviar";

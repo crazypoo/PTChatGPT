@@ -88,3 +88,5 @@
 "voice_Change_to_text" = "转成文字发送";
 "alert_Tag_set" = "请输入你想创建的标签";
 "alert_Input_error" = "输入内容有误";
+"alert_Delete_error" = "删除失败";
+"chat_Resend" = "重新发送";

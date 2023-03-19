@@ -14,7 +14,6 @@ import SDWebImage
 import AVFAudio
 import LXFProtocolTool
 import SwifterSwift
-import JXPagingView
 
 fileprivate extension String{
     static let saveNavTitle = PTLanguage.share.text(forKey: "about_SavedChat")
@@ -24,6 +23,7 @@ fileprivate extension String{
     static let playString = PTLanguage.share.text(forKey: "chat_Speak_text")
     static let saveString = PTLanguage.share.text(forKey: "chat_Favourite")
     static let thinking = PTLanguage.share.text(forKey: "chat_Thinking")
+    static let resend = PTLanguage.share.text(forKey: "chat_Resend")
 }
 
 enum PTChatCase
@@ -42,13 +42,16 @@ class PTChatViewController: MessagesViewController {
         view.setImage(UIImage(systemName: "chevron.up.chevron.down")!.withRenderingMode(.automatic), for: .normal)
         view.setMidSpacing(5)
         view.addActionHandlers { sender in
-            
             let popover = PTPopoverControl(currentSelect: self.historyModel!)
             popover.view.backgroundColor = .gobalBackgroundColor.withAlphaComponent(0.45)
             self.popover(popoverVC: popover, popoverSize: CGSize(width: popover.popoverWidth, height: CGFloat(44 * self.segDataArr.count)), sender: sender, arrowDirections: .up)
             popover.selectedBlock = { model in
                 self.historyModel = model
                 self.setTitleViewFrame(text: self.historyModel!.keyName)
+                self.segDataArr = AppDelegate.appDelegate()!.appConfig.tagDataArr
+            }
+            popover.refreshTagArr = {
+                self.segDataArr = AppDelegate.appDelegate()!.appConfig.tagDataArr
             }
         }
         return view
@@ -318,9 +321,8 @@ class PTChatViewController: MessagesViewController {
                         }
                         AppDelegate.appDelegate()?.appConfig.segChatHistory = jsonArr.joined(separator: kSeparatorSeg)
                         self.historyModel = newTag
-                    }
-                    else
-                    {
+                        self.setTitleViewFrame(text: newKey!)
+                    } else {
                         PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Input_error"))
                     }
                 }
@@ -1051,7 +1053,7 @@ extension PTChatViewController:MessageCellDelegate
             }
             else
             {
-                titles = [.copyString,.editString]
+                titles = [.copyString,.editString,.resend]
             }
         default:
             break
@@ -1065,6 +1067,12 @@ extension PTChatViewController:MessageCellDelegate
         } otherBlock: { sheet, index in
             self.messageInputBar.alpha = 1
             switch titles[index] {
+            case .resend:
+                switch messageModel.kind {
+                case .text(let text):
+                    self.insertMessages([text])
+                default: break
+                }
             case .copyString:
                 switch messageModel.kind {
                 case .text(let text):
@@ -1081,7 +1089,7 @@ extension PTChatViewController:MessageCellDelegate
 
                 let type = AppDelegate.appDelegate()!.appConfig.getAIMpdelType(typeString: AppDelegate.appDelegate()!.appConfig.aiModelType)
                 switch type {
-                case .chat(.chatgpt),.chat(.chatgpt0301):
+                case .chat(.chatgpt),.chat(.chatgpt0301),.chat(.chatgpt4),.chat(.chatgpt40314),.chat(.chatgpt432k),.chat(.chatgpt432k0314):
                     break
                 default:
                     switch messageModel.kind {
@@ -1412,7 +1420,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
                     {
                         let type = AppDelegate.appDelegate()!.appConfig.getAIMpdelType(typeString: AppDelegate.appDelegate()!.appConfig.aiModelType)
                         switch type {
-                        case .chat(.chatgpt),.chat(.chatgpt0301):
+                        case .chat(.chatgpt),.chat(.chatgpt0301),.chat(.chatgpt4),.chat(.chatgpt40314),.chat(.chatgpt432k),.chat(.chatgpt432k0314):
                             let chat: [ChatMessage] = [
                                 ChatMessage(role: .system, content: str),
                             ]

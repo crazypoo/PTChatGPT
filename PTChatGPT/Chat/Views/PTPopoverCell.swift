@@ -9,7 +9,7 @@
 import UIKit
 import PooTools
 
-class PTPopoverCell: PTBaseNormalCell {
+class PTPopoverCell: PTBaseSwipeCell {
     static let ID = "PTPopoverCell"
     
     var cellModel:PTSegHistoryModel? {

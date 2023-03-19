@@ -589,44 +589,33 @@ class PTAppConfig {
     
     func getAIMpdelType(typeString:String) -> OpenAIModelType
     {
-        if typeString == "text-davinci-003"
-        {
+        if typeString == "text-davinci-003" {
             return OpenAIModelType.gpt3(.davinci)
-        }
-        else if typeString == "text-curie-001"
-        {
+        } else if typeString == "text-curie-001" {
             return OpenAIModelType.gpt3(.curie)
-        }
-        else if typeString == "text-babbage-001"
-        {
+        } else if typeString == "text-babbage-001" {
             return OpenAIModelType.gpt3(.babbage)
-        }
-        else if typeString == "text-ada-001"
-        {
+        } else if typeString == "text-ada-001" {
             return OpenAIModelType.gpt3(.ada)
-        }
-        else if typeString == "code-davinci-002"
-        {
+        } else if typeString == "code-davinci-002" {
             return OpenAIModelType.codex(.davinci)
-        }
-        else if typeString == "code-cushman-001"
-        {
+        } else if typeString == "code-cushman-001" {
             return OpenAIModelType.codex(.cushman)
-        }
-        else if typeString == "text-davinci-edit-001"
-        {
+        } else if typeString == "text-davinci-edit-001" {
             return OpenAIModelType.feature(.davinci)
-        }
-        else if typeString == "gpt-3.5-turbo"
-        {
+        } else if typeString == "gpt-3.5-turbo" {
             return OpenAIModelType.chat(.chatgpt)
-        }
-        else if typeString == "gpt-3.5-turbo-0301"
-        {
+        } else if typeString == "gpt-3.5-turbo-0301" {
             return OpenAIModelType.chat(.chatgpt0301)
-        }
-        else
-        {
+        } else if typeString == "gpt-4" {
+            return OpenAIModelType.chat(.chatgpt4)
+        } else if typeString == "gpt-4-0314" {
+            return OpenAIModelType.chat(.chatgpt40314)
+        } else if typeString == "gpt-4-32k" {
+            return OpenAIModelType.chat(.chatgpt432k)
+        } else if typeString == "gpt-4-32k-0314" {
+            return OpenAIModelType.chat(.chatgpt432k0314)
+        } else {
             return OpenAIModelType.gpt3(.davinci)
         }
     }
@@ -726,54 +715,75 @@ class PTAppConfig {
         gptThreePointFive0301Model.value = OpenAIModelType.chat(.chatgpt0301).modelName
         modelArr.append(gptThreePointFive0301Model)
 
+        let gptFourModel = BRResultModel()
+        gptFourModel.parentKey = "GPTX"
+        gptFourModel.parentValue = OpenAIModelType.chat(.chatgpt4).modelName
+        gptFourModel.key = "3"
+        gptFourModel.value = OpenAIModelType.chat(.chatgpt4).modelName
+        modelArr.append(gptFourModel)
+
+        let gptFour0314Model = BRResultModel()
+        gptFour0314Model.parentKey = "GPTX"
+        gptFour0314Model.parentValue = OpenAIModelType.chat(.chatgpt40314).modelName
+        gptFour0314Model.key = "4"
+        gptFour0314Model.value = OpenAIModelType.chat(.chatgpt40314).modelName
+        modelArr.append(gptFour0314Model)
+
+        let gptFour32kModel = BRResultModel()
+        gptFour32kModel.parentKey = "GPTX"
+        gptFour32kModel.parentValue = OpenAIModelType.chat(.chatgpt432k).modelName
+        gptFour32kModel.key = "5"
+        gptFour32kModel.value = OpenAIModelType.chat(.chatgpt432k).modelName
+        modelArr.append(gptFour32kModel)
+
+        let gptFour32k0314Model = BRResultModel()
+        gptFour32k0314Model.parentKey = "GPTX"
+        gptFour32k0314Model.parentValue = OpenAIModelType.chat(.chatgpt432k0314).modelName
+        gptFour32k0314Model.key = "6"
+        gptFour32k0314Model.value = OpenAIModelType.chat(.chatgpt432k0314).modelName
+        modelArr.append(gptFour32k0314Model)
+
         var indexPath = [NSNumber]()
-        if currentAi == "text-davinci-003"
-        {
+        if currentAi == "text-davinci-003" {
             indexPath.append(NSNumber(value: 0))
             indexPath.append(NSNumber(value: 0))
-        }
-        else if currentAi == "text-curie-001"
-        {
+        } else if currentAi == "text-curie-001" {
             indexPath.append(NSNumber(value: 0))
             indexPath.append(NSNumber(value: 1))
-        }
-        else if currentAi == "text-babbage-001"
-        {
+        } else if currentAi == "text-babbage-001" {
             indexPath.append(NSNumber(value: 0))
             indexPath.append(NSNumber(value: 2))
-        }
-        else if currentAi == "text-ada-001"
-        {
+        } else if currentAi == "text-ada-001" {
             indexPath.append(NSNumber(value: 0))
             indexPath.append(NSNumber(value: 3))
-        }
-        else if currentAi == "code-davinci-002"
-        {
+        } else if currentAi == "code-davinci-002" {
             indexPath.append(NSNumber(value: 1))
             indexPath.append(NSNumber(value: 0))
-        }
-        else if currentAi == "code-cushman-001"
-        {
+        } else if currentAi == "code-cushman-001" {
             indexPath.append(NSNumber(value: 1))
             indexPath.append(NSNumber(value: 1))
-        }
-        else if currentAi == "text-davinci-edit-001"
-        {
+        } else if currentAi == "text-davinci-edit-001" {
             indexPath.append(NSNumber(value: 2))
             indexPath.append(NSNumber(value: 0))
-        }
-        else if currentAi == "gpt-3.5-turbo"
-        {
+        } else if currentAi == "gpt-3.5-turbo" {
             indexPath.append(NSNumber(value: 3))
             indexPath.append(NSNumber(value: 0))
-        }
-        else if currentAi == "gpt-3.5-turbo-0301"
-        {
+        } else if currentAi == "gpt-3.5-turbo-0301" {
             indexPath.append(NSNumber(value: 3))
             indexPath.append(NSNumber(value: 1))
-        }
-        else
-        {
+        } else if currentAi == "gpt-4" {
+            indexPath.append(NSNumber(value: 3))
+            indexPath.append(NSNumber(value: 2))
+        } else if currentAi == "gpt-4-0314" {
+            indexPath.append(NSNumber(value: 3))
+            indexPath.append(NSNumber(value: 3))
+        } else if currentAi == "gpt-4-32k" {
+            indexPath.append(NSNumber(value: 3))
+            indexPath.append(NSNumber(value: 4))
+        } else if currentAi == "gpt-4-32k-0314" {
+            indexPath.append(NSNumber(value: 3))
+            indexPath.append(NSNumber(value: 5))
+        } else {
             indexPath.append(NSNumber(value: 0))
             indexPath.append(NSNumber(value: 0))
         }
@@ -818,4 +828,12 @@ class PTAppConfig {
         return style
     }
 
+    class func refreshTagData(segDataArr:[PTSegHistoryModel])
+    {
+        var stringArr = [String]()
+        segDataArr.enumerated().forEach { index,value in
+            stringArr.append(value.toJSON()!.toJSON()!)
+        }
+        AppDelegate.appDelegate()!.appConfig.segChatHistory = stringArr.joined(separator: kSeparatorSeg)
+    }
 }

@@ -85,5 +85,10 @@ public enum OpenAIModelType {
         /// Snapshot of gpt-3.5-turbo from March 1st 2023. Unlike gpt-3.5-turbo, this model will not receive updates, and will only be supported for a three month period ending on June 1st 2023.
         /// > Model Name: gpt-3.5-turbo-0301
         case chatgpt0301 = "gpt-3.5-turbo-0301"
+        
+        case chatgpt4 = "gpt-4"
+        case chatgpt40314 = "gpt-4-0314"
+        case chatgpt432k = "gpt-4-32k"
+        case chatgpt432k0314 = "gpt-4-32k-0314"
     }
 }
