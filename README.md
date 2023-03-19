@@ -72,7 +72,7 @@ AI的API我是使用了自己魔改版的[OpenAISwift](https://github.com/adamru
 
 5.删除语音输入的文件
 #### API
-1.更换AI的模型
+1.更换AI的模型,已经支持GPT4x的模型
 
 2.更换AI的聪明程度
 
@@ -81,4 +81,4 @@ AI的API我是使用了自己魔改版的[OpenAISwift](https://github.com/adamru
 4.更改Token
 
 #### iCloud
-支持iCloud
+支持iCloud备份同步
