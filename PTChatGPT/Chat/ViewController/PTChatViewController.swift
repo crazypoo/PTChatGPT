@@ -1422,7 +1422,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
                         switch type {
                         case .chat(.chatgpt),.chat(.chatgpt0301),.chat(.chatgpt4),.chat(.chatgpt40314),.chat(.chatgpt432k),.chat(.chatgpt432k0314):
                             let chat: [ChatMessage] = [
-                                ChatMessage(role: .system, content: str),
+                                ChatMessage(role: .user, content: str),
                             ]
                             self.openAI.sendChat(with: chat,model: type,maxTokens: 2048,temperature: AppDelegate.appDelegate()!.appConfig.aiSmart) { result in
                                 switch result {
