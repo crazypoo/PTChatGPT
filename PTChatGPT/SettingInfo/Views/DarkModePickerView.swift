@@ -24,7 +24,7 @@ class DarkModePickerView: UIView {
     /// 时间选择器
     lazy var leftTimePickerView: UIPickerView = {
         let pickerView = UIPickerView(frame: CGRect(x: 0, y: 44, width: UIScreen.main.bounds.width / 2.0, height: 200))
-        pickerView.backgroundColor = UIColor.white
+        pickerView.backgroundColor = .gobalBackgroundColor
         pickerView.delegate = self
         pickerView.dataSource = self
         pickerView.autoresizingMask = .flexibleWidth
@@ -36,7 +36,7 @@ class DarkModePickerView: UIView {
     /// 时间选择器
     lazy var rightTimePickerView: UIPickerView = {
         let pickerView = UIPickerView(frame: CGRect(x: UIScreen.main.bounds.width / 2.0, y: 44, width: UIScreen.main.bounds.width / 2.0, height: 200))
-        pickerView.backgroundColor = UIColor.white
+        pickerView.backgroundColor = .gobalBackgroundColor
         pickerView.delegate = self
         pickerView.dataSource = self
         pickerView.autoresizingMask = .flexibleWidth
@@ -47,7 +47,7 @@ class DarkModePickerView: UIView {
     /// 至
     lazy var middeleLabel: UILabel = {
         let label = UILabel(frame: CGRect(x: UIScreen.main.bounds.width / 2.0 - 20, y: 44 + 200 / 2.0 - 20, width: 40, height: 40))
-        label.text = PTLanguage.share.text(forKey: "picker_And")
+        label.text = "~"
         label.textAlignment = .center
         return label
     }()

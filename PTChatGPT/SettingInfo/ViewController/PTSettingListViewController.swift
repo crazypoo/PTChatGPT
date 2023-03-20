@@ -647,7 +647,7 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
         }
         else if itemRow.title == .themeString
         {
-            let vc = PTDarkModeSettingViewController()
+            let vc = PTDarkModeControl()
             self.navigationController?.pushViewController(vc)
         }
         else if itemRow.title == .userIcon

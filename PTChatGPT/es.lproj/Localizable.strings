@@ -100,3 +100,4 @@
 "appUseInfo_Setting" = "Haga clic aquí para configurar más configuraciones para la aplicación.";
 "appUseInfo_Next" = "Siguiente";
 "appUseInfo_Finish" = "Conclusión";
+"alert_Time_set_error" = "La hora de inicio debe ser menor que la hora de finalización";

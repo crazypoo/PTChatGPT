@@ -100,3 +100,4 @@
 "appUseInfo_Setting" = "Click here to set up more settings for the App.";
 "appUseInfo_Next" = "Next";
 "appUseInfo_Finish" = "Finish";
+"alert_Time_set_error" = "The start time must be less than the end time";

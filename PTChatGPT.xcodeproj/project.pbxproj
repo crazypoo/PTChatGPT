@@ -28,11 +28,7 @@
 		5514B38929BAE7E400890161 /* SwipeCellOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B38829BAE7E400890161 /* SwipeCellOption.swift */; };
 		5514B38B29BAF5E900890161 /* PTNavController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B38A29BAF5E900890161 /* PTNavController.swift */; };
 		5514B38D29BAFA6A00890161 /* PTDisclaimerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B38C29BAFA6A00890161 /* PTDisclaimerViewController.swift */; };
-		5514B39229BB013000890161 /* SettingCustomViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B38E29BB012F00890161 /* SettingCustomViewCell.swift */; };
-		5514B39329BB013000890161 /* PTDarkModeHeadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B38F29BB012F00890161 /* PTDarkModeHeadView.swift */; };
-		5514B39429BB013000890161 /* DescriptionCustomViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B39029BB013000890161 /* DescriptionCustomViewCell.swift */; };
 		5514B39529BB013000890161 /* DarkModePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B39129BB013000890161 /* DarkModePickerView.swift */; };
-		5514B39729BB013600890161 /* PTDarkModeSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B39629BB013600890161 /* PTDarkModeSettingViewController.swift */; };
 		5514B39929BB024D00890161 /* HSNavControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B39829BB024D00890161 /* HSNavControl.swift */; };
 		5514B39C29BB127F00890161 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5514B39E29BB127F00890161 /* Localizable.strings */; };
 		5520905929C3587C009B30A1 /* PTBaseMaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5520905829C3587C009B30A1 /* PTBaseMaskView.swift */; };
@@ -62,6 +58,10 @@
 		55BD5B9029C708BF0023458A /* PTPopoverCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BD5B8F29C708BF0023458A /* PTPopoverCell.swift */; };
 		55BD5B9229C7E4110023458A /* PTPopoverMenuControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BD5B9129C7E4110023458A /* PTPopoverMenuControl.swift */; };
 		55BD5B9929C801700023458A /* PTCoachModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BD5B9829C801700023458A /* PTCoachModel.swift */; };
+		55BD5B9B29C8424A0023458A /* PTDarkModeControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BD5B9A29C8424A0023458A /* PTDarkModeControl.swift */; };
+		55BD5B9D29C843EA0023458A /* PTDarkModeHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BD5B9C29C843EA0023458A /* PTDarkModeHeader.swift */; };
+		55BD5B9F29C850AC0023458A /* PTDarkSmartFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BD5B9E29C850AC0023458A /* PTDarkSmartFooter.swift */; };
+		55BD5BA129C85F9E0023458A /* PTDarkFollowSystemFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BD5BA029C85F9E0023458A /* PTDarkFollowSystemFooter.swift */; };
 		EC91DE097C54ED7562DD3DCA /* Pods_PTChatGPT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 372877C61B4F76BA38F0C55D /* Pods_PTChatGPT.framework */; };
 /* End PBXBuildFile section */
 
@@ -88,11 +88,7 @@
 		5514B38829BAE7E400890161 /* SwipeCellOption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwipeCellOption.swift; sourceTree = "<group>"; };
 		5514B38A29BAF5E900890161 /* PTNavController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PTNavController.swift; sourceTree = "<group>"; };
 		5514B38C29BAFA6A00890161 /* PTDisclaimerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTDisclaimerViewController.swift; sourceTree = "<group>"; };
-		5514B38E29BB012F00890161 /* SettingCustomViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingCustomViewCell.swift; sourceTree = "<group>"; };
-		5514B38F29BB012F00890161 /* PTDarkModeHeadView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PTDarkModeHeadView.swift; sourceTree = "<group>"; };
-		5514B39029BB013000890161 /* DescriptionCustomViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DescriptionCustomViewCell.swift; sourceTree = "<group>"; };
 		5514B39129BB013000890161 /* DarkModePickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DarkModePickerView.swift; sourceTree = "<group>"; };
-		5514B39629BB013600890161 /* PTDarkModeSettingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PTDarkModeSettingViewController.swift; sourceTree = "<group>"; };
 		5514B39829BB024D00890161 /* HSNavControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HSNavControl.swift; sourceTree = "<group>"; };
 		5514B3A429BB136900890161 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
 		5514B3A529BB136900890161 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
@@ -135,6 +131,10 @@
 		55BD5B8F29C708BF0023458A /* PTPopoverCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTPopoverCell.swift; sourceTree = "<group>"; };
 		55BD5B9129C7E4110023458A /* PTPopoverMenuControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTPopoverMenuControl.swift; sourceTree = "<group>"; };
 		55BD5B9829C801700023458A /* PTCoachModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTCoachModel.swift; sourceTree = "<group>"; };
+		55BD5B9A29C8424A0023458A /* PTDarkModeControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTDarkModeControl.swift; sourceTree = "<group>"; };
+		55BD5B9C29C843EA0023458A /* PTDarkModeHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTDarkModeHeader.swift; sourceTree = "<group>"; };
+		55BD5B9E29C850AC0023458A /* PTDarkSmartFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTDarkSmartFooter.swift; sourceTree = "<group>"; };
+		55BD5BA029C85F9E0023458A /* PTDarkFollowSystemFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTDarkFollowSystemFooter.swift; sourceTree = "<group>"; };
 		55C6BCCE29C4602B00A6B668 /* PTChatGPT.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PTChatGPT.entitlements; sourceTree = "<group>"; };
 		7E66237D0C268E8EEFD172D0 /* Pods-PTChatGPT.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PTChatGPT.release.xcconfig"; path = "Target Support Files/Pods-PTChatGPT/Pods-PTChatGPT.release.xcconfig"; sourceTree = "<group>"; };
 		E708929BECBB7DC383FA473B /* Pods-PTChatGPT.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PTChatGPT.debug.xcconfig"; path = "Target Support Files/Pods-PTChatGPT/Pods-PTChatGPT.debug.xcconfig"; sourceTree = "<group>"; };
@@ -232,12 +232,12 @@
 			isa = PBXGroup;
 			children = (
 				5514B39129BB013000890161 /* DarkModePickerView.swift */,
-				5514B39029BB013000890161 /* DescriptionCustomViewCell.swift */,
-				5514B38F29BB012F00890161 /* PTDarkModeHeadView.swift */,
-				5514B38E29BB012F00890161 /* SettingCustomViewCell.swift */,
-				5514B37C29BA102400890161 /* PTSettingHeader.swift */,
 				55278F3129BB7BF100615B0D /* PTAISmartCell.swift */,
+				55BD5BA029C85F9E0023458A /* PTDarkFollowSystemFooter.swift */,
+				55BD5B9C29C843EA0023458A /* PTDarkModeHeader.swift */,
+				55BD5B9E29C850AC0023458A /* PTDarkSmartFooter.swift */,
 				55BD5B7B29C613070023458A /* PTSettingFooter.swift */,
+				5514B37C29BA102400890161 /* PTSettingHeader.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -369,11 +369,11 @@
 			isa = PBXGroup;
 			children = (
 				5514B38129BA14C400890161 /* PTColorSettingViewController.swift */,
-				5514B39629BB013600890161 /* PTDarkModeSettingViewController.swift */,
 				5514B38C29BAFA6A00890161 /* PTDisclaimerViewController.swift */,
 				5514B38329BA233A00890161 /* PTSaveChatViewController.swift */,
 				5514B37729B9F87C00890161 /* PTSettingListViewController.swift */,
 				55A5D80529B242CF00DCA096 /* PTSettingViewController.swift */,
+				55BD5B9A29C8424A0023458A /* PTDarkModeControl.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -532,12 +532,14 @@
 				55BD5B9929C801700023458A /* PTCoachModel.swift in Sources */,
 				55A5D7F029B1D9A900DCA096 /* Instruction.swift in Sources */,
 				5514B39529BB013000890161 /* DarkModePickerView.swift in Sources */,
+				55BD5B9D29C843EA0023458A /* PTDarkModeHeader.swift in Sources */,
 				55BD5B7C29C613070023458A /* PTSettingFooter.swift in Sources */,
 				5512AB7229B43D520059D840 /* OSSUtterance.swift in Sources */,
 				5512AB7429B43D520059D840 /* OSSSpeechUtility.swift in Sources */,
 				55BD5B8A29C6AE2C0023458A /* PTSegHistoryModel.swift in Sources */,
 				55796A2429BD6E2A00574DD4 /* PTSoundVisualizerView.swift in Sources */,
-				5514B39729BB013600890161 /* PTDarkModeSettingViewController.swift in Sources */,
+				55BD5B9F29C850AC0023458A /* PTDarkSmartFooter.swift in Sources */,
+				55BD5BA129C85F9E0023458A /* PTDarkFollowSystemFooter.swift in Sources */,
 				5514B38429BA233A00890161 /* PTSaveChatViewController.swift in Sources */,
 				5514B38B29BAF5E900890161 /* PTNavController.swift in Sources */,
 				55A5D7F329B1D9A900DCA096 /* OpenAISwift.swift in Sources */,
@@ -549,19 +551,17 @@
 				55A5D7EF29B1D9A900DCA096 /* OpenAI.swift in Sources */,
 				55A5D80629B242CF00DCA096 /* PTSettingViewController.swift in Sources */,
 				555491DC29BC8014006A47C4 /* ChatMessage.swift in Sources */,
-				5514B39429BB013000890161 /* DescriptionCustomViewCell.swift in Sources */,
-				5514B39329BB013000890161 /* PTDarkModeHeadView.swift in Sources */,
 				5514B37D29BA102400890161 /* PTSettingHeader.swift in Sources */,
 				55A5D7FE29B1EEF400DCA096 /* PTChatData.swift in Sources */,
 				55A5D71829B1D23D00DCA096 /* AppDelegate.swift in Sources */,
 				5514B38729BAE76E00890161 /* PTShareItem.swift in Sources */,
 				5520905B29C35903009B30A1 /* PTVoiceActionView.swift in Sources */,
 				55BD5B9229C7E4110023458A /* PTPopoverMenuControl.swift in Sources */,
-				5514B39229BB013000890161 /* SettingCustomViewCell.swift in Sources */,
 				5512AB7029B43D520059D840 /* OSSSpeech.swift in Sources */,
 				55A5D7F229B1D9A900DCA096 /* OpenAIEndpoint.swift in Sources */,
 				55A5D7F129B1D9A900DCA096 /* Command.swift in Sources */,
 				5514B38929BAE7E400890161 /* SwipeCellOption.swift in Sources */,
+				55BD5B9B29C8424A0023458A /* PTDarkModeControl.swift in Sources */,
 				5514B38029BA112A00890161 /* PTSettingModels.swift in Sources */,
 				55796A2229BD6DCE00574DD4 /* PTSoundRecorder.swift in Sources */,
 				5512AB7C29B470310059D840 /* PTAudioPlayer.swift in Sources */,
