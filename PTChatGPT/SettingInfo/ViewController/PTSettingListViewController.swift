@@ -224,12 +224,9 @@ class PTSettingListViewController: PTChatBaseViewController {
         getApiToken.nameColor = .gobalTextColor
         getApiToken.disclosureIndicatorImage = disclosureIndicatorImageName
 
-        if self.user.senderId == PTChatData.share.bot.senderId
-        {
+        if self.user.senderId == PTChatData.share.bot.senderId {
             apiMain.models = [aiType,aiSmart,drawSize,aiToken]
-        }
-        else
-        {
+        } else {
             apiMain.models = [aiType,aiSmart,drawSize,aiToken,getApiToken]
         }
         
@@ -263,16 +260,11 @@ class PTSettingListViewController: PTChatBaseViewController {
         
         otherMain.models = [github,forum,rate,share]
         
-        if self.user.senderId == PTChatData.share.bot.senderId
-        {
+        if self.user.senderId == PTChatData.share.bot.senderId {
             return [themeMain,apiMain]
-        }
-        else if self.user.senderId == PTChatData.share.user.senderId
-        {
+        } else if self.user.senderId == PTChatData.share.user.senderId {
             return [themeMain,speechMain]
-        }
-        else
-        {
+        } else {
             return [cloudMain,themeMain,speechMain,chatMain,apiMain,otherMain]
         }
     }()
@@ -571,7 +563,14 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
             UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "chat_Delete_all_chat"),msgColor: .gobalTextColor,okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
                 
             } moreBtn: { index, title in
-                UserDefaults.standard.set("", forKey: uChatHistory)
+                
+                let baseSub = PTSegHistoryModel()
+                baseSub.keyName = "Base"
+                baseSub.historyJson = ""
+                let jsonArr = [baseSub.toJSON()!.toJSON()!]
+                let dataString = jsonArr.joined(separator: kSeparatorSeg)
+                AppDelegate.appDelegate()?.appConfig.segChatHistory = dataString
+                
                 PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_done"))
             }
         }

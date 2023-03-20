@@ -75,7 +75,7 @@
 "about_Draw_image_size" = "Draw image size";
 "size_Wrong" = "There is an error in Size. Please check it and try again.Max 1024 X 1024";
 "chat_Delete_all_voice_file" = "Are you sure to delete all voice files?";
-"chat_Empty" = "It's so lonely. Click me to start chatting with me.";
+"chat_Empty" = "There is no dialogue record for the time being. Click here to start.";
 "color_Wave" = "Wave color";
 "chat_Copy" = "Copy";
 "chat_Edit_question" = "Corrected content";
@@ -92,3 +92,6 @@
 "chat_Resend" = "Resend";
 "alert_Save_error" = "Failed to save";
 "alert_AI_Set" = "AI person setting";
+"alert_Add_tag" = "Add tag";
+"alert_Delete_current_history" = "Clear the current record";
+"alert_Ask_clean_current_chat_record" = "Do you want to clear the current record?";

@@ -151,27 +151,10 @@ class PTAppConfig {
                     } else {
                         return UIImage(named: "DemoImage")!.pngData()!
                     }
-//                    if let imageData = UIImage(named: "DemoImage")!.pngData() {
-//                        do {
-//                            try imageData.write(to: imageURL, options: .atomic)
-//                            PTNSLogConsole(">>>>>>>>>>>jobdone")
-//                        } catch let error {
-//                            PTNSLogConsole("Failed to write image data to iCloud: \(error.localizedDescription)")
-//                        }
-//                    }
-                }
-                else
-                {
+                } else {
                     return UIImage(named: "DemoImage")!.pngData()!
                 }
-//                if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uUserIcon) {
-//                    return value as! Data
-//                } else {
-//                    return UIImage(named: "DemoImage")!.pngData()!
-//                }
-            }
-            else
-            {
+            } else {
                 if let value = UserDefaults.standard.value(forKey: uUserIcon) {
                     return value as! Data
                 } else {
@@ -180,8 +163,6 @@ class PTAppConfig {
             }
         } set {
             if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
-//                AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uUserIcon)
-//                AppDelegate.appDelegate()?.cloudStore.synchronize()
                 if let icloudURL = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents") {
                     let imageURL = icloudURL.appendingPathComponent("userIcon.png")
                     do {

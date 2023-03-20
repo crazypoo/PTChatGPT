@@ -32,6 +32,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         
         PTDrakModeOption.defaultDark()
         PTAppBaseConfig.share.decorationBackgroundColor = .gobalCellBackgroundColor
+        StatusBarManager.shared.isHidden = false
+        StatusBarManager.shared.style = PTDrakModeOption.isLight ? .darkContent : .lightContent
         
         self.query.searchScopes = [NSMetadataQueryUbiquitousDocumentsScope]
         self.query.predicate = NSPredicate(value: true)

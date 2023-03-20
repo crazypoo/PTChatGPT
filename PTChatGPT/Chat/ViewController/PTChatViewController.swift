@@ -239,10 +239,21 @@ class PTChatViewController: MessagesViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return StatusBarManager.shared.style
+    }
+    
+    override var prefersStatusBarHidden: Bool {
+        return StatusBarManager.shared.isHidden
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         HSNavControl.GobalNavControl(nav: self.navigationController!,textColor: .gobalTextColor,navColor: .gobalBackgroundColor)
         messagesCollectionView.contentInsetAdjustmentBehavior = .automatic
+        
+        StatusBarManager.shared.style = PTDrakModeOption.isLight ? .lightContent : .darkContent
+        setNeedsStatusBarAppearanceUpdate()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -305,33 +316,76 @@ class PTChatViewController: MessagesViewController {
             
             let addChat = UIButton(type: .custom)
             addChat.imageView?.contentMode = .scaleAspectFit
-            addChat.setImage(UIImage(systemName: "plus.circle")?.withTintColor(.black, renderingMode: .automatic), for: .normal)
+            addChat.setImage(UIImage(systemName: "ellipsis.circle.fill")?.withTintColor(.black, renderingMode: .automatic), for: .normal)
             addChat.addActionHandlers { sender in
-                let textKey = PTLanguage.share.text(forKey: "alert_Tag_set")
-                let aiKey = PTLanguage.share.text(forKey: "alert_AI_Set")
-                UIAlertController.base_textfiele_alertVC(title:textKey,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey,aiKey], textFieldTexts: ["",""], keyboardType: [.default,.default],textFieldDelegate: self) { result in
-                    let newKey:String? = result[textKey]!
-                    let newAiKey:String? = result[aiKey]
-                    if !(newKey ?? "").stringIsEmpty()
-                    {
-                        if self.segDataArr.contains(where: {$0.keyName == newKey}) {
-                            PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Save_error"))
-                        } else {
-                            let newTag = PTSegHistoryModel()
-                            newTag.keyName = newKey!
-                            newTag.systemContent = newAiKey ?? ""
-                            newTag.historyJson = ""
-                            self.segDataArr.append(newTag)
-                            var jsonArr = [String]()
-                            self.segDataArr.enumerated().forEach { index,value in
-                                jsonArr.append(value.toJSON()!.toJSON()!)
+                let popover = PTPopoverMenuControl()
+                popover.view.backgroundColor = .gobalBackgroundColor.withAlphaComponent(0.45)
+                self.popover(popoverVC: popover, popoverSize: CGSize(width: popover.popoverWidth, height: CGFloat(popover.cellModels.count) * popover.popoverCellBaseHeight), sender: sender, arrowDirections: .up)
+                popover.selectActionBlock = { string in
+                    switch string {
+                    case .addTag:
+                        PTGCDManager.gcdAfter(time: 0.35) {
+                            let textKey = PTLanguage.share.text(forKey: "alert_Tag_set")
+                            let aiKey = PTLanguage.share.text(forKey: "alert_AI_Set")
+                            UIAlertController.base_textfiele_alertVC(title:textKey,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey,aiKey], textFieldTexts: ["",""], keyboardType: [.default,.default],textFieldDelegate: self) { result in
+                                let newKey:String? = result[textKey]!
+                                let newAiKey:String? = result[aiKey]
+                                if !(newKey ?? "").stringIsEmpty()
+                                {
+                                    if self.segDataArr.contains(where: {$0.keyName == newKey}) {
+                                        PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Save_error"))
+                                    } else {
+                                        let newTag = PTSegHistoryModel()
+                                        newTag.keyName = newKey!
+                                        newTag.systemContent = newAiKey ?? ""
+                                        newTag.historyJson = ""
+                                        self.segDataArr.append(newTag)
+                                        var jsonArr = [String]()
+                                        self.segDataArr.enumerated().forEach { index,value in
+                                            jsonArr.append(value.toJSON()!.toJSON()!)
+                                        }
+                                        AppDelegate.appDelegate()?.appConfig.segChatHistory = jsonArr.joined(separator: kSeparatorSeg)
+                                        self.historyModel = newTag
+                                        self.setTitleViewFrame(withModel: self.historyModel!)
+                                    }
+                                } else {
+                                    PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Input_error"))
+                                }
                             }
-                            AppDelegate.appDelegate()?.appConfig.segChatHistory = jsonArr.joined(separator: kSeparatorSeg)
-                            self.historyModel = newTag
-                            self.setTitleViewFrame(withModel: self.historyModel!)
                         }
-                    } else {
-                        PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Input_error"))
+                    case .deleteHistory:
+                        PTGCDManager.gcdAfter(time: 0.35) {
+                            UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "alert_Ask_clean_current_chat_record"),msgColor: .gobalTextColor,okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
+                                
+                            } moreBtn: { index, title in
+                                                                
+                                var arr = [PTSegHistoryModel]()
+                                if let dataArr = AppDelegate.appDelegate()?.appConfig.segChatHistory.components(separatedBy: kSeparatorSeg) {
+                                    self.historyModel?.historyJson = ""
+
+                                    dataArr.enumerated().forEach { index,value in
+                                        let model = PTSegHistoryModel.deserialize(from: value)
+                                        arr.append(model!)
+                                    }
+                                    for (index,value) in arr.enumerated() {
+                                        if value.keyName == self.historyModel?.keyName {
+                                            arr[index] = self.historyModel!
+                                            break
+                                        }
+                                    }
+                                    var newJsonArr = [String]()
+                                    arr.enumerated().forEach { index,value in
+                                        newJsonArr.append(value.toJSON()!.toJSON()!)
+                                    }
+                                    AppDelegate.appDelegate()!.appConfig.segChatHistory = newJsonArr.joined(separator: kSeparatorSeg)
+                                    PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_done"))
+                                    self.refreshCurrentTagData()
+                                } else {
+                                    PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_error"))
+                                }
+                            }
+                        }
+                    default:break
                     }
                 }
             }
@@ -884,6 +938,14 @@ class PTChatViewController: MessagesViewController {
             default:
                 break
             }
+        }
+    }
+    
+    open override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        if traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
+            StatusBarManager.shared.style = UITraitCollection.current.userInterfaceStyle == .dark ? .lightContent : .darkContent
+            setNeedsStatusBarAppearanceUpdate()
         }
     }
 }

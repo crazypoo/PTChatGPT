@@ -75,7 +75,7 @@
 "about_Draw_image_size" = "AI繪畫Size";
 "size_Wrong" = "Size有誤,請檢查後再嘗試.最大1024 X 1024";
 "chat_Delete_all_voice_file" = "是否確認刪除全部語音文档?";
-"chat_Empty" = "好寂寞啊,點擊我就可以開始跟我聊天了";
+"chat_Empty" = "暫時沒有對話記錄,點擊這裏開始.";
 "color_Wave" = "波紋顏色";
 "chat_Copy" = "複製";
 "chat_Edit_question" = "更正內容";
@@ -92,3 +92,6 @@
 "chat_Resend" = "重新發送";
 "alert_Save_error" = "保存失敗";
 "alert_AI_Set" = "AI人設";
+"alert_Add_tag" = "添加標籤";
+"alert_Delete_current_history" = "清空當前記錄";
+"alert_Ask_clean_current_chat_record" = "是否清空當前記錄?";

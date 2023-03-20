@@ -33,8 +33,7 @@ class PTPopoverControl: PTChatBaseViewController {
     }()
 
     var mSections = [PTSection]()
-    func comboLayout()->UICollectionViewCompositionalLayout
-    {
+    func comboLayout()->UICollectionViewCompositionalLayout {
         let layout = UICollectionViewCompositionalLayout.init { section, environment in
             self.generateSection(section: section)
         }
@@ -43,8 +42,7 @@ class PTPopoverControl: PTChatBaseViewController {
         return layout
     }
     
-    func generateSection(section:NSInteger)->NSCollectionLayoutSection
-    {
+    func generateSection(section:NSInteger)->NSCollectionLayoutSection {
         let sectionModel = mSections[section]
 
         var group : NSCollectionLayoutGroup
@@ -101,19 +99,16 @@ class PTPopoverControl: PTChatBaseViewController {
         
         self.showDetail()
         
-        
         var indexPath = IndexPath()
         self.segDataArr.enumerated().forEach { index,value in
-            if value.keyName == self.currentHistoryModel.keyName
-            {
+            if value.keyName == self.currentHistoryModel.keyName {
                 indexPath = IndexPath.init(row: index, section: 0)
             }
         }
         self.collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .top)
     }
     
-    func showDetail()
-    {
+    func showDetail() {
         mSections.removeAll()
 
         var rows = [PTRows]()
@@ -127,7 +122,6 @@ class PTPopoverControl: PTChatBaseViewController {
         self.collectionView.pt_register(by: mSections)
         self.collectionView.reloadData()
     }
-
 }
 
 extension PTPopoverControl:UICollectionViewDelegate,UICollectionViewDataSource
@@ -143,16 +137,13 @@ extension PTPopoverControl:UICollectionViewDelegate,UICollectionViewDataSource
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let itemSec = mSections[indexPath.section]
         let itemRow = itemSec.rows[indexPath.row]
-        if itemRow.ID == PTPopoverCell.ID
-        {
+        if itemRow.ID == PTPopoverCell.ID {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTPopoverCell
             cell.cellModel = (itemRow.dataModel as! PTSegHistoryModel)
             cell.bottomLine.isHidden = indexPath.row == (self.segDataArr.count - 1) ? true : false
             cell.delegate = self
             return cell
-        }
-        else
-        {
+        } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CELL", for: indexPath)
             cell.backgroundColor = .random
             return cell
@@ -160,8 +151,7 @@ extension PTPopoverControl:UICollectionViewDelegate,UICollectionViewDataSource
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if self.selectedBlock != nil
-        {
+        if self.selectedBlock != nil {
             self.selectedBlock!(self.segDataArr[indexPath.row])
         }
         self.returnFrontVC()
@@ -206,8 +196,7 @@ extension PTPopoverControl:SwipeCollectionViewCellDelegate
            
            let delete = SwipeAction(style: .destructive, title: PTLanguage.share.text(forKey: "cell_Delete")) { action, indexPath in
                PTGCDManager.gcdMain {
-                   if self.segDataArr[indexPath.row].keyName == "Base"
-                   {
+                   if self.segDataArr[indexPath.row].keyName == "Base" {
                        PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_error"))
                        self.showDetail()
                    } else if self.segDataArr[indexPath.row].keyName == self.currentHistoryModel.keyName && self.segDataArr[indexPath.row].keyName != "Base" {
@@ -233,10 +222,8 @@ extension PTPopoverControl:SwipeCollectionViewCellDelegate
            delete.backgroundColor = .red
            delete.fulfill(with: .delete)
            self.swipe_cell_configure(action: delete, with: .trash)
-           return  [delete]
-       }
-       else
-       {
+           return [delete]
+       } else {
            guard isSwipeRightEnabled else { return nil }
 
            let read = SwipeAction(style: .default, title: nil) { action, indexPath in
