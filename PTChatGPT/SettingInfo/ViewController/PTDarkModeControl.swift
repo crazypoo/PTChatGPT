@@ -218,9 +218,11 @@ extension PTDarkModeControl:UICollectionViewDelegate,UICollectionViewDataSource
             cell.dataContent.valueSwitch.onTintColor = .orange
             if cellModel.name == PTLanguage.share.text(forKey: "theme_Smart") {
                 cell.dataContent.valueSwitch.isOn = PTDrakModeOption.isSmartPeeling
+                PTGCDManager.gcdMain {
+                    cell.contentView.viewCornerRectCorner(cornerRadii: 0, corner: .allCorners)
+                }
             } else if cellModel.name == PTLanguage.share.text(forKey: "theme_FollowSystem") {
                 cell.dataContent.valueSwitch.isOn = PTDrakModeOption.isFollowSystem
-                
                 PTGCDManager.gcdMain {
                     cell.contentView.viewCornerRectCorner(cornerRadii: 5, corner: [.bottomLeft,.bottomRight])
                 }
