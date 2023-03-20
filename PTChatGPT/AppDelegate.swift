@@ -8,6 +8,7 @@
 import UIKit
 import PooTools
 #if DEBUG
+import YCSymbolTracker
 #if canImport(FLEX)
 import FLEX
 #endif
@@ -15,7 +16,7 @@ import FLEX
 import InAppViewDebugger
 #endif
 #endif
-import YCSymbolTracker
+import Bugly
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -29,7 +30,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-                        
+                
+        var debugDevice = false
+        let buglyConfig = BuglyConfig()
+//        buglyConfig.delegate = self
+        #if DEBUG
+        debugDevice = true
+        buglyConfig.debugMode = true
+        #endif
+        buglyConfig.channel = "iOS"
+        buglyConfig.blockMonitorEnable = true
+        buglyConfig.blockMonitorTimeout = 2
+        buglyConfig.consolelogEnable = false
+        buglyConfig.viewControllerTrackingEnable = false
+        Bugly.start(withAppId: "2553484f4b",
+                    developmentDevice: debugDevice,
+                    config: buglyConfig)
+
         PTDrakModeOption.defaultDark()
         PTAppBaseConfig.share.decorationBackgroundColor = .gobalCellBackgroundColor
         StatusBarManager.shared.isHidden = false
@@ -63,8 +80,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if self.appConfig.firstUseiCloud {
             self.saveDataToCloud()
         }
+        
+        #if DEBUG
         let filePath = NSTemporaryDirectory().appending("/demo.order")
         YCSymbolTracker.exportSymbols(filePath: filePath)
+        #endif
                         
         PTNSLogConsole("\(self.appConfig.apiToken)")
         var viewC:UIViewController!

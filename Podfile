@@ -21,6 +21,7 @@ target 'PTChatGPT' do
   pod 'LookinServer', :configurations => ['Debug']
   pod 'LifetimeTracker', :configurations => ['Debug']
   pod 'WoodPeckeriOS', :configurations => ['Debug']
+  pod 'Bugly'
 
   pod 'PooTools/Core', :git => 'https://github.com/crazypoo/PTools.git'
   pod 'PooTools/Picker', :git => 'https://github.com/crazypoo/PTools.git'

@@ -12,6 +12,7 @@ PODS:
     - BRPickerView/Base
   - BRPickerView/StringPickerView (2.8.0):
     - BRPickerView/Base
+  - Bugly (2.5.93)
   - ChromaColorPicker (2.0.2)
   - CocoaLumberjack/Core (3.8.0)
   - CocoaLumberjack/Swift (3.8.0):
@@ -154,6 +155,7 @@ PODS:
   - ZXNavigationBar (1.4.1)
 
 DEPENDENCIES:
+  - Bugly
   - FLEX
   - InAppViewDebugger
   - LifetimeTracker
@@ -178,6 +180,7 @@ SPEC REPOS:
   trunk:
     - Alamofire
     - BRPickerView
+    - Bugly
     - ChromaColorPicker
     - CocoaLumberjack
     - DeviceKit
@@ -236,6 +239,7 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   Alamofire: 4e95d97098eacb88856099c4fc79b526a299e48c
   BRPickerView: a0ff460bf092bc069db5a54153395b1f7e8f5300
+  Bugly: b8715e6ec4004b7f7fbffab0643ba80545aee3da
   ChromaColorPicker: 307585f2dc23d4d72f24cad320c1e08825cb5c09
   CocoaLumberjack: 78abfb691154e2a9df8ded4350d504ee19d90732
   DeviceKit: 0fd016a2cb67aca17c33dc23171cac270131eb88
@@ -283,6 +287,6 @@ SPEC CHECKSUMS:
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
   ZXNavigationBar: a8ceb13fe37f9ca894cf6ae22d805cbdbb9ad6b1
 
-PODFILE CHECKSUM: e462ac4d2b726ded5fc2edee67b9a91e297f0221
+PODFILE CHECKSUM: 7fc0dd4adf3ca7b2fa2d58965419681ff4b18b45
 
 COCOAPODS: 1.12.0
