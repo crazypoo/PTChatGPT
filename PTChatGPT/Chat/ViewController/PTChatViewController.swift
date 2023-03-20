@@ -376,6 +376,9 @@ class PTChatViewController: MessagesViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
+        StatusBarManager.shared.style = PTDrakModeOption.isLight ? .lightContent : .darkContent
+        setNeedsStatusBarAppearanceUpdate()
+
         self.messagesCollectionView.reloadData()
         AppDelegate.appDelegate()?.window?.addSubview(self.maskView)
         self.maskView.snp.makeConstraints { make in
@@ -416,6 +419,11 @@ class PTChatViewController: MessagesViewController {
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: self.settingButton)
             self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: self.optionButton)
             self.navigationItem.titleView = self.titleButton
+            
+#if DEBUG
+                UserDefaults.standard.removeObject(forKey: "LatestAppVersionPresented")
+                UserDefaults.standard.synchronize()
+#endif
 
             speechKit.voice = OSSVoice(quality: .enhanced, language: OSSVoiceEnum(rawValue: AppDelegate.appDelegate()!.appConfig.language)!)
             speechKit.utterance?.rate = 0.45
@@ -570,6 +578,9 @@ class PTChatViewController: MessagesViewController {
                 UserDefaults.standard.removeObject(forKey: "LatestAppVersionPresented")
                 UserDefaults.standard.synchronize()
 #endif
+                StatusBarManager.shared.style = PTDrakModeOption.isLight ? .lightContent : .darkContent
+                self.setNeedsStatusBarAppearanceUpdate()
+
                 self.messageInputBar.alpha = 1
                 self.messageInputBar.isHidden = false
                 self.view.addSubview(self.messageInputBar)
