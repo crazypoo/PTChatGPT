@@ -95,3 +95,8 @@
 "alert_Add_tag" = "添加标签";
 "alert_Delete_current_history" = "清空当前记录";
 "alert_Ask_clean_current_chat_record" = "是否清空当前记录?";
+"appUseInfo_Title_view" = "点击这里可以更换你设置的聊天主题";
+"appUseInfo_Option" = "点击这里可以获得更多功能";
+"appUseInfo_Setting" = "点击这里可以对App进行更多设置";
+"appUseInfo_Next" = "下一步";
+"appUseInfo_Finish" = "完成";

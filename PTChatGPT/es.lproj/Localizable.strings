@@ -95,3 +95,8 @@
 "alert_Add_tag" = "Añadir etiqueta";
 "alert_Delete_current_history" = "Borrar el registro actual";
 "alert_Ask_clean_current_chat_record" = "¿Quieres borrar el registro actual?";
+"appUseInfo_Title_view" = "Haz clic aquí para cambiar el tema de chat que establezcas.";
+"appUseInfo_Option" = "Haga clic aquí para obtener más funciones.";
+"appUseInfo_Setting" = "Haga clic aquí para configurar más configuraciones para la aplicación.";
+"appUseInfo_Next" = "Siguiente";
+"appUseInfo_Finish" = "Conclusión";

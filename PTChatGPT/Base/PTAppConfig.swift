@@ -46,6 +46,8 @@ let uAppFirstUse = "uAppFirstUse"
 let uAppFirstiCloud = "uAppFirstiCloud"
 ///使用iCloud
 let uUseiCloud = "uUseiCloud"
+///第一次使用App提示
+let uFirstCoach = "uFirstCoach"
 
 let kSeparator = "[,]"
 let kSeparatorSeg = "[::]"
@@ -93,6 +95,12 @@ extension CGSize {
 
 class PTAppConfig {
     static let share = PTAppConfig()
+    
+    var firstCoach:Bool = UserDefaults.standard.value(forKey: uFirstCoach) == nil ? true : UserDefaults.standard.value(forKey: uFirstCoach) as! Bool {
+        didSet{
+            UserDefaults.standard.set(self.firstCoach,forKey: uFirstCoach)
+        }
+    }
     
     var firstUseiCloud:Bool = UserDefaults.standard.value(forKey: uAppFirstiCloud) == nil ? true : UserDefaults.standard.value(forKey: uAppFirstiCloud) as! Bool {
         didSet{

@@ -14,6 +14,7 @@ import SDWebImage
 import AVFAudio
 import LXFProtocolTool
 import SwifterSwift
+import Instructions
 
 fileprivate extension String{
     static let saveNavTitle = PTLanguage.share.text(forKey: "about_SavedChat")
@@ -34,6 +35,115 @@ enum PTChatCase
 
 class PTChatViewController: MessagesViewController {
             
+    let coachMarkController = CoachMarksController()
+    
+    lazy var coachArray:[PTCoachModel] = {
+        
+        let option = PTCoachModel()
+        option.info = PTLanguage.share.text(forKey: "appUseInfo_Title_view")
+        option.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
+        
+        let tags = PTCoachModel()
+        tags.info = PTLanguage.share.text(forKey: "appUseInfo_Option")
+        tags.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
+        
+        let setting = PTCoachModel()
+        setting.info = PTLanguage.share.text(forKey: "appUseInfo_Setting")
+        setting.next = PTLanguage.share.text(forKey: "appUseInfo_Finish")
+
+        return [option,tags,setting]
+    }()
+        
+    lazy var settingButton:UIButton = {
+        let view = UIButton(type: .custom)
+        view.imageView?.contentMode = .scaleAspectFit
+        view.setImage(UIImage(systemName: "gear")?.withTintColor(.black, renderingMode: .automatic), for: .normal)
+        view.addActionHandlers { sender in
+            let vc = PTSettingListViewController(user: PTChatUser(senderId: "0", displayName: "0"))
+            self.navigationController?.pushViewController(vc)
+        }
+        return view
+    }()
+    
+    lazy var optionButton:UIButton = {
+        let addChat = UIButton(type: .custom)
+        addChat.imageView?.contentMode = .scaleAspectFit
+        addChat.setImage(UIImage(systemName: "ellipsis.circle.fill")?.withTintColor(.black, renderingMode: .automatic), for: .normal)
+        addChat.addActionHandlers { sender in
+            let popover = PTPopoverMenuControl()
+            popover.view.backgroundColor = .gobalBackgroundColor.withAlphaComponent(0.45)
+            self.popover(popoverVC: popover, popoverSize: CGSize(width: popover.popoverWidth, height: CGFloat(popover.cellModels.count) * popover.popoverCellBaseHeight), sender: sender, arrowDirections: .up)
+            popover.selectActionBlock = { string in
+                switch string {
+                case .addTag:
+                    PTGCDManager.gcdAfter(time: 0.35) {
+                        let textKey = PTLanguage.share.text(forKey: "alert_Tag_set")
+                        let aiKey = PTLanguage.share.text(forKey: "alert_AI_Set")
+                        UIAlertController.base_textfiele_alertVC(title:textKey,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey,aiKey], textFieldTexts: ["",""], keyboardType: [.default,.default],textFieldDelegate: self) { result in
+                            let newKey:String? = result[textKey]!
+                            let newAiKey:String? = result[aiKey]
+                            if !(newKey ?? "").stringIsEmpty()
+                            {
+                                if self.segDataArr.contains(where: {$0.keyName == newKey}) {
+                                    PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Save_error"))
+                                } else {
+                                    let newTag = PTSegHistoryModel()
+                                    newTag.keyName = newKey!
+                                    newTag.systemContent = newAiKey ?? ""
+                                    newTag.historyJson = ""
+                                    self.segDataArr.append(newTag)
+                                    var jsonArr = [String]()
+                                    self.segDataArr.enumerated().forEach { index,value in
+                                        jsonArr.append(value.toJSON()!.toJSON()!)
+                                    }
+                                    AppDelegate.appDelegate()?.appConfig.segChatHistory = jsonArr.joined(separator: kSeparatorSeg)
+                                    self.historyModel = newTag
+                                    self.setTitleViewFrame(withModel: self.historyModel!)
+                                }
+                            } else {
+                                PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Input_error"))
+                            }
+                        }
+                    }
+                case .deleteHistory:
+                    PTGCDManager.gcdAfter(time: 0.35) {
+                        UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "alert_Ask_clean_current_chat_record"),msgColor: .gobalTextColor,okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
+                            
+                        } moreBtn: { index, title in
+                                                            
+                            var arr = [PTSegHistoryModel]()
+                            if let dataArr = AppDelegate.appDelegate()?.appConfig.segChatHistory.components(separatedBy: kSeparatorSeg) {
+                                self.historyModel?.historyJson = ""
+
+                                dataArr.enumerated().forEach { index,value in
+                                    let model = PTSegHistoryModel.deserialize(from: value)
+                                    arr.append(model!)
+                                }
+                                for (index,value) in arr.enumerated() {
+                                    if value.keyName == self.historyModel?.keyName {
+                                        arr[index] = self.historyModel!
+                                        break
+                                    }
+                                }
+                                var newJsonArr = [String]()
+                                arr.enumerated().forEach { index,value in
+                                    newJsonArr.append(value.toJSON()!.toJSON()!)
+                                }
+                                AppDelegate.appDelegate()!.appConfig.segChatHistory = newJsonArr.joined(separator: kSeparatorSeg)
+                                PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_done"))
+                                self.refreshCurrentTagData()
+                            } else {
+                                PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_error"))
+                            }
+                        }
+                    }
+                default:break
+                }
+            }
+        }
+        return addChat
+    }()
+    
     lazy var titleButton:BKLayoutButton = {
         let view = BKLayoutButton()
         view.titleLabel?.numberOfLines = 0
@@ -283,8 +393,7 @@ class PTChatViewController: MessagesViewController {
         }
         
         self.configureMessageCollectionView()
-        if self.onlyShowSave
-        {
+        if self.onlyShowSave {
             self.title = .saveNavTitle
             messageInputBar.delegate = nil
             messageInputBar.removeFromSuperview()
@@ -298,99 +407,13 @@ class PTChatViewController: MessagesViewController {
                 self.navigationController?.popViewController()
             }
             self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: back)
-        }
-        else
-        {
+        } else {
             NotificationCenter.default.addObserver(self, selector: #selector(self.refreshView), name: NSNotification.Name(rawValue: kRefreshController), object: nil)
             NotificationCenter.default.addObserver(self, selector: #selector(self.refreshViewAndLoadNewData), name: NSNotification.Name(rawValue: kRefreshControllerAndLoadNewData), object: nil)
             NotificationCenter.default.addObserver(self, selector: #selector(self.refreshCurrentTagData), name: NSNotification.Name(rawValue: kRefreshCurrentTagData), object: nil)
 
-            let logout = UIButton(type: .custom)
-            logout.imageView?.contentMode = .scaleAspectFit
-            logout.setImage(UIImage(systemName: "gear")?.withTintColor(.black, renderingMode: .automatic), for: .normal)
-            logout.addActionHandlers { sender in
-                let vc = PTSettingListViewController(user: PTChatUser(senderId: "0", displayName: "0"))
-                self.navigationController?.pushViewController(vc)
-            }
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: logout)
-            
-            let addChat = UIButton(type: .custom)
-            addChat.imageView?.contentMode = .scaleAspectFit
-            addChat.setImage(UIImage(systemName: "ellipsis.circle.fill")?.withTintColor(.black, renderingMode: .automatic), for: .normal)
-            addChat.addActionHandlers { sender in
-                let popover = PTPopoverMenuControl()
-                popover.view.backgroundColor = .gobalBackgroundColor.withAlphaComponent(0.45)
-                self.popover(popoverVC: popover, popoverSize: CGSize(width: popover.popoverWidth, height: CGFloat(popover.cellModels.count) * popover.popoverCellBaseHeight), sender: sender, arrowDirections: .up)
-                popover.selectActionBlock = { string in
-                    switch string {
-                    case .addTag:
-                        PTGCDManager.gcdAfter(time: 0.35) {
-                            let textKey = PTLanguage.share.text(forKey: "alert_Tag_set")
-                            let aiKey = PTLanguage.share.text(forKey: "alert_AI_Set")
-                            UIAlertController.base_textfiele_alertVC(title:textKey,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey,aiKey], textFieldTexts: ["",""], keyboardType: [.default,.default],textFieldDelegate: self) { result in
-                                let newKey:String? = result[textKey]!
-                                let newAiKey:String? = result[aiKey]
-                                if !(newKey ?? "").stringIsEmpty()
-                                {
-                                    if self.segDataArr.contains(where: {$0.keyName == newKey}) {
-                                        PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Save_error"))
-                                    } else {
-                                        let newTag = PTSegHistoryModel()
-                                        newTag.keyName = newKey!
-                                        newTag.systemContent = newAiKey ?? ""
-                                        newTag.historyJson = ""
-                                        self.segDataArr.append(newTag)
-                                        var jsonArr = [String]()
-                                        self.segDataArr.enumerated().forEach { index,value in
-                                            jsonArr.append(value.toJSON()!.toJSON()!)
-                                        }
-                                        AppDelegate.appDelegate()?.appConfig.segChatHistory = jsonArr.joined(separator: kSeparatorSeg)
-                                        self.historyModel = newTag
-                                        self.setTitleViewFrame(withModel: self.historyModel!)
-                                    }
-                                } else {
-                                    PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Input_error"))
-                                }
-                            }
-                        }
-                    case .deleteHistory:
-                        PTGCDManager.gcdAfter(time: 0.35) {
-                            UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "alert_Ask_clean_current_chat_record"),msgColor: .gobalTextColor,okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
-                                
-                            } moreBtn: { index, title in
-                                                                
-                                var arr = [PTSegHistoryModel]()
-                                if let dataArr = AppDelegate.appDelegate()?.appConfig.segChatHistory.components(separatedBy: kSeparatorSeg) {
-                                    self.historyModel?.historyJson = ""
-
-                                    dataArr.enumerated().forEach { index,value in
-                                        let model = PTSegHistoryModel.deserialize(from: value)
-                                        arr.append(model!)
-                                    }
-                                    for (index,value) in arr.enumerated() {
-                                        if value.keyName == self.historyModel?.keyName {
-                                            arr[index] = self.historyModel!
-                                            break
-                                        }
-                                    }
-                                    var newJsonArr = [String]()
-                                    arr.enumerated().forEach { index,value in
-                                        newJsonArr.append(value.toJSON()!.toJSON()!)
-                                    }
-                                    AppDelegate.appDelegate()!.appConfig.segChatHistory = newJsonArr.joined(separator: kSeparatorSeg)
-                                    PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_done"))
-                                    self.refreshCurrentTagData()
-                                } else {
-                                    PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_error"))
-                                }
-                            }
-                        }
-                    default:break
-                    }
-                }
-            }
-            self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: addChat)
-            
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: self.settingButton)
+            self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: self.optionButton)
             self.navigationItem.titleView = self.titleButton
             
             speechKit.voice = OSSVoice(quality: .enhanced, language: OSSVoiceEnum(rawValue: AppDelegate.appDelegate()!.appConfig.language)!)
@@ -414,12 +437,13 @@ class PTChatViewController: MessagesViewController {
             }
             self.configureMessageInputBar()
             self.speechKit.delegate = self
+            
+            self.createHolderView()
         }
         
         self.speechKit.srp.requestAuthorization { authStatus in
             let status = OSSSpeechKitAuthorizationStatus(rawValue: authStatus.rawValue) ?? .notDetermined
-            switch status
-            {
+            switch status {
             case .authorized:
                 self.voiceCanTap = true
             default:
@@ -438,13 +462,11 @@ class PTChatViewController: MessagesViewController {
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
     }
 
-    @objc func refreshView()
-    {
+    @objc func refreshView() {
         self.messagesCollectionView.reloadData()
     }
         
-    @objc func refreshCurrentTagData()
-    {
+    @objc func refreshCurrentTagData() {
         var arr = [PTSegHistoryModel]()
         if let dataString = AppDelegate.appDelegate()?.appConfig.segChatHistory {
             let dataArr = dataString.components(separatedBy: kSeparatorSeg)
@@ -463,8 +485,7 @@ class PTChatViewController: MessagesViewController {
         }
     }
     
-    @objc func refreshViewAndLoadNewData()
-    {
+    @objc func refreshViewAndLoadNewData() {
         self.messageList.removeAll()
         let userHistoryModelString = self.historyModel!.historyJson
         if !userHistoryModelString.stringIsEmpty() {
@@ -513,8 +534,23 @@ class PTChatViewController: MessagesViewController {
     {
         PTNSLogConsole("广告隐藏")
         messageInputBar.alpha = 1
+        
+        self.createHolderView()
     }
     
+    //MARK: 第一次使用的提示
+    ///第一次使用的提示
+    func createHolderView() {
+        if AppDelegate.appDelegate()!.appConfig.firstCoach {
+            self.coachMarkController.overlay.isUserInteractionEnabled = true
+            self.coachMarkController.delegate = self
+            self.coachMarkController.dataSource = self
+            self.coachMarkController.animationDelegate = self
+            self.coachMarkController.start(in: .window(over: self))
+        }
+    }
+    
+    //MARK: 设置TitleView
     func setTitleViewFrame(withModel model:PTSegHistoryModel) {
         if model.systemContent.stringIsEmpty() {
             self.setTitleViewFrame(text: model.keyName)
@@ -1716,3 +1752,92 @@ extension PTChatViewController
 }
 
 extension PTChatViewController:UITextFieldDelegate {}
+
+extension PTChatViewController: CoachMarksControllerDataSource {
+    func coachMarksController(_ coachMarksController: CoachMarksController, coachMarkViewsAt index: Int, madeFrom coachMark: CoachMark) -> (bodyView: UIView & CoachMarkBodyView, arrowView: (UIView & CoachMarkArrowView)?) {
+        let coachViews = coachMarksController.helper.makeDefaultCoachViews(
+            withArrow: true,
+            arrowOrientation: coachMark.arrowOrientation
+        )
+
+        coachViews.bodyView.hintLabel.font = .appfont(size: 16)
+        coachViews.bodyView.hintLabel.text = self.coachArray[index].info
+        coachViews.bodyView.nextLabel.font = .appfont(size: 16)
+        coachViews.bodyView.nextLabel.text = self.coachArray[index].next
+
+        return (bodyView: coachViews.bodyView, arrowView: coachViews.arrowView)
+    }
+    
+    func numberOfCoachMarks(for coachMarksController: CoachMarksController) -> Int {
+        return self.coachArray.count
+    }
+    
+    func coachMarksController(_ coachMarksController: CoachMarksController, coachMarkAt index: Int) -> CoachMark {
+        switch index {
+        case 0:
+            return coachMarksController.helper.makeCoachMark(for: self.titleButton)
+        case 1:
+            return coachMarksController.helper.makeCoachMark(for: self.optionButton)
+        case 2:
+            return coachMarksController.helper.makeCoachMark(for: self.settingButton)
+        default:
+            return coachMarksController.helper.makeCoachMark()
+        }
+    }
+}
+
+extension PTChatViewController: CoachMarksControllerAnimationDelegate {
+    public func coachMarksController(_ coachMarksController: CoachMarksController,
+                              fetchAppearanceTransitionOfCoachMark coachMarkView: UIView,
+                              at index: Int,
+                              using manager: CoachMarkTransitionManager) {
+        manager.parameters.options = [.beginFromCurrentState]
+        manager.animate(.regular, animations: { _ in
+            coachMarkView.transform = .identity
+            coachMarkView.alpha = 1
+        }, fromInitialState: {
+            coachMarkView.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+            coachMarkView.alpha = 0
+        })
+    }
+
+    public func coachMarksController(_ coachMarksController: CoachMarksController,
+                              fetchDisappearanceTransitionOfCoachMark coachMarkView: UIView,
+                              at index: Int,
+                              using manager: CoachMarkTransitionManager) {
+        manager.parameters.keyframeOptions = [.beginFromCurrentState]
+        manager.animate(.keyframe, animations: { _ in
+            UIView.addKeyframe(withRelativeStartTime: 0.0, relativeDuration: 1.0, animations: {
+                coachMarkView.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+            })
+
+            UIView.addKeyframe(withRelativeStartTime: 0.5, relativeDuration: 0.5, animations: {
+                coachMarkView.alpha = 0
+            })
+        })
+    }
+
+    public func coachMarksController(_ coachMarksController: CoachMarksController,
+                              fetchIdleAnimationOfCoachMark coachMarkView: UIView,
+                              at index: Int,
+                              using manager: CoachMarkAnimationManager) {
+        manager.parameters.options = [.repeat, .autoreverse, .allowUserInteraction]
+        manager.parameters.duration = 0.7
+
+        manager.animate(.regular, animations: { context in
+            let offset: CGFloat = context.coachMark.arrowOrientation == .top ? 10 : -10
+            coachMarkView.transform = CGAffineTransform(translationX: 0, y: offset)
+        })
+    }
+}
+
+extension PTChatViewController : CoachMarksControllerDelegate
+{
+    func coachMarksController(_ coachMarksController: CoachMarksController, didHide coachMark: CoachMark, at index: Int) {
+        AppDelegate.appDelegate()?.appConfig.firstCoach = false
+    }
+    
+    func coachMarksController(_ coachMarksController: CoachMarksController, didEndShowingBySkipping skipped: Bool) {
+        
+    }
+}

@@ -28,6 +28,7 @@ PODS:
   - InputBarAccessoryView (5.5.0):
     - InputBarAccessoryView/Core (= 5.5.0)
   - InputBarAccessoryView/Core (5.5.0)
+  - Instructions (2.2.0)
   - IQKeyboardManager (6.5.11)
   - KakaJSON (1.1.2)
   - LifetimeTracker (1.8.1)
@@ -83,6 +84,9 @@ PODS:
   - PooTools/ImagePicker (3.0.9):
     - PooTools/Core
     - TZImagePickerController
+  - PooTools/Instructions (3.0.9):
+    - Instructions
+    - PooTools/Core
   - PooTools/LanguageSetting (3.0.9):
     - PooTools/Core
   - PooTools/MediaViewer (3.0.9):
@@ -157,6 +161,7 @@ DEPENDENCIES:
   - PooTools/Core (from `https://github.com/crazypoo/PTools.git`)
   - PooTools/DarkModeSetting (from `https://github.com/crazypoo/PTools.git`)
   - PooTools/ImagePicker (from `https://github.com/crazypoo/PTools.git`)
+  - PooTools/Instructions (from `https://github.com/crazypoo/PTools.git`)
   - PooTools/LanguageSetting (from `https://github.com/crazypoo/PTools.git`)
   - PooTools/MediaViewer (from `https://github.com/crazypoo/PTools.git`)
   - PooTools/Picker (from `https://github.com/crazypoo/PTools.git`)
@@ -181,6 +186,7 @@ SPEC REPOS:
     - HandyJSON
     - InAppViewDebugger
     - InputBarAccessoryView
+    - Instructions
     - IQKeyboardManager
     - KakaJSON
     - LifetimeTracker
@@ -218,7 +224,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   PooTools:
-    :commit: 6e29725e3fe061e999e47a139f32611e500c95f7
+    :commit: 7f7500478c46508f89a6fd1fc039127d55a76200
     :git: https://github.com/crazypoo/PTools.git
 
 SPEC CHECKSUMS:
@@ -236,6 +242,7 @@ SPEC CHECKSUMS:
   HandyJSON: 9e4e236f5d2dbefad5155a77417bbea438201c03
   InAppViewDebugger: 5f1cd0189d348679f153502da1343ba513b5cbae
   InputBarAccessoryView: 1d7b0a672b36e370f01f264b3907ef39d03328e3
+  Instructions: 07052901a398b42eb1d83de9755b8a0bac3e2f7d
   IQKeyboardManager: ef43ce1ba1e5aaf4adf222c0a46f39761f246879
   KakaJSON: cc5ff50a8c1cfbb09413db8496cb709a209e6137
   LifetimeTracker: be33b0d89357dd2f381eb8aca636d184b538d5e9
@@ -268,6 +275,6 @@ SPEC CHECKSUMS:
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
   ZXNavigationBar: a8ceb13fe37f9ca894cf6ae22d805cbdbb9ad6b1
 
-PODFILE CHECKSUM: 0643d49ee5a4c1b3e7561ffc5204d79a649055d9
+PODFILE CHECKSUM: c18e77af74066da24f4a0db23e18a61b7038bbb8
 
 COCOAPODS: 1.12.0
