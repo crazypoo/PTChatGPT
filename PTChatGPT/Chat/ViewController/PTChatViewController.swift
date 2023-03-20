@@ -15,6 +15,7 @@ import AVFAudio
 import LXFProtocolTool
 import SwifterSwift
 import Instructions
+import WhatsNew
 
 fileprivate extension String{
     static let saveNavTitle = PTLanguage.share.text(forKey: "about_SavedChat")
@@ -415,7 +416,7 @@ class PTChatViewController: MessagesViewController {
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: self.settingButton)
             self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: self.optionButton)
             self.navigationItem.titleView = self.titleButton
-            
+
             speechKit.voice = OSSVoice(quality: .enhanced, language: OSSVoiceEnum(rawValue: AppDelegate.appDelegate()!.appConfig.language)!)
             speechKit.utterance?.rate = 0.45
 
@@ -547,6 +548,35 @@ class PTChatViewController: MessagesViewController {
             self.coachMarkController.dataSource = self
             self.coachMarkController.animationDelegate = self
             self.coachMarkController.start(in: .window(over: self))
+        } else {
+            self.whatNews()
+        }
+    }
+    
+    func whatNews() {
+        if WhatsNew.shouldPresent()
+        {
+            let whatsNew = WhatsNewViewController(items: [
+                WhatsNewItem.text(title: "模型", subtitle: "添加了对GPT4模型的支持"),
+                WhatsNewItem.text(title: "聊天", subtitle: "添加对聊天内容设标签的功能,并且可以删除标签\n添加对当前聊天标签内容清理的功能"),
+                WhatsNewItem.text(title: "其他", subtitle: "修复了一些昆虫")
+                ])
+            whatsNew.titleText = "What's New"
+            whatsNew.itemSubtitleColor = .lightGray
+            whatsNew.buttonText = "Continue"
+            present(whatsNew, animated: true, completion: nil)
+            whatsNew.onDismissal = {
+#if DEBUG
+                UserDefaults.standard.removeObject(forKey: "LatestAppVersionPresented")
+                UserDefaults.standard.synchronize()
+#endif
+                self.messageInputBar.alpha = 1
+                self.messageInputBar.isHidden = false
+                self.view.addSubview(self.messageInputBar)
+                self.messageInputBar.snp.makeConstraints { make in
+                    make.left.right.bottom.equalToSuperview()
+                }
+            }
         }
     }
     
@@ -628,13 +658,10 @@ class PTChatViewController: MessagesViewController {
     }
     
     func configureMessageInputBar() {
-        if AppDelegate.appDelegate()!.appConfig.firstUseApp
-        {
+        if AppDelegate.appDelegate()!.appConfig.firstUseApp {
             AppDelegate.appDelegate()!.appConfig.firstUseApp = false
             messageInputBar.alpha = 1
-        }
-        else
-        {
+        } else {
             messageInputBar.alpha = 0
         }
         messageInputBar.delegate = self
@@ -1835,6 +1862,7 @@ extension PTChatViewController : CoachMarksControllerDelegate
 {
     func coachMarksController(_ coachMarksController: CoachMarksController, didHide coachMark: CoachMark, at index: Int) {
         AppDelegate.appDelegate()?.appConfig.firstCoach = false
+        self.whatNews()
     }
     
     func coachMarksController(_ coachMarksController: CoachMarksController, didEndShowingBySkipping skipped: Bool) {

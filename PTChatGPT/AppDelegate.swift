@@ -15,7 +15,7 @@ import FLEX
 import InAppViewDebugger
 #endif
 #endif
-//import YCSymbolTracker
+import YCSymbolTracker
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -63,8 +63,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if self.appConfig.firstUseiCloud {
             self.saveDataToCloud()
         }
-//        let filePath = NSTemporaryDirectory().appending("/demo.order")
-//        YCSymbolTracker.exportSymbols(filePath: filePath)
+        let filePath = NSTemporaryDirectory().appending("/demo.order")
+        YCSymbolTracker.exportSymbols(filePath: filePath)
                         
         PTNSLogConsole("\(self.appConfig.apiToken)")
         var viewC:UIViewController!

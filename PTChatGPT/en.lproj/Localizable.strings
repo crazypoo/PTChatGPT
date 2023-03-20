@@ -95,7 +95,7 @@
 "alert_Add_tag" = "Add tag";
 "alert_Delete_current_history" = "Clear the current record";
 "alert_Ask_clean_current_chat_record" = "Do you want to clear the current record?";
-"appUseInfo_Title_view" = "Click here to change the chat theme you set.";
+"appUseInfo_Title_view" = "Click here to change the chat theme you set. Click to expand and swipe left to delete a certain label.";
 "appUseInfo_Option" = "Click here to get more functions.";
 "appUseInfo_Setting" = "Click here to set up more settings for the App.";
 "appUseInfo_Next" = "Next";
