@@ -100,7 +100,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         picker.title = PTLanguage.share.text(forKey: "about_APIAIType")
         return picker
     }()
-    
+        
     lazy var aboutModels : [PTSettingModels] = {
         
         let disclosureIndicatorImageName = UIImage(systemName: "chevron.right")!.withTintColor(.gobalTextColor,renderingMode: .alwaysOriginal)

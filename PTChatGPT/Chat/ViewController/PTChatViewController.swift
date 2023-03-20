@@ -390,13 +390,14 @@ class PTChatViewController: MessagesViewController {
         super.viewDidLoad()
         navigationItem.largeTitleDisplayMode = .never
         
-        if !AppDelegate.appDelegate()!.appConfig.apiToken.stringIsEmpty()
-        {
+        if !AppDelegate.appDelegate()!.appConfig.apiToken.stringIsEmpty() {
             NotificationCenter.default.addObserver(self, selector: #selector(self.showURLNotifi(notifi:)), name: NSNotification.Name(rawValue: PLaunchAdDetailDisplayNotification), object: nil)
             NotificationCenter.default.addObserver(self, selector: #selector(self.adHide(notifi:)), name: NSNotification.Name(rawValue: PLaunchAdSkipNotification), object: nil)
         }
         
         self.configureMessageCollectionView()
+        speechKit.voice = OSSVoice(quality: .enhanced, language: OSSVoiceEnum(rawValue: AppDelegate.appDelegate()!.appConfig.language)!)
+        speechKit.utterance?.rate = 0.45
         if self.onlyShowSave {
             self.title = .saveNavTitle
             messageInputBar.delegate = nil
@@ -424,9 +425,6 @@ class PTChatViewController: MessagesViewController {
                 UserDefaults.standard.removeObject(forKey: "LatestAppVersionPresented")
                 UserDefaults.standard.synchronize()
 #endif
-
-            speechKit.voice = OSSVoice(quality: .enhanced, language: OSSVoiceEnum(rawValue: AppDelegate.appDelegate()!.appConfig.language)!)
-            speechKit.utterance?.rate = 0.45
 
             var arr = [PTSegHistoryModel]()
             if let dataString = AppDelegate.appDelegate()?.appConfig.segChatHistory {
@@ -982,7 +980,24 @@ class PTChatViewController: MessagesViewController {
                 }
                 arr.enumerated().forEach { index,value in
                     if value.keyName == self.historyModel!.keyName {
-                        arr[index].historyJson = jsonString
+                        let oldModels = arr[index].historyJson.components(separatedBy: kSeparator)
+                        var oldModelArrs = [PTChatModel]()
+                        oldModels.enumerated().forEach { index,value in
+                            if let oldSubModel = PTChatModel.deserialize(from: value) {
+                                oldModelArrs.append(oldSubModel)
+                            }
+                        }
+                        
+                        if let newModel = PTChatModel.deserialize(from: jsonString) {
+                            oldModelArrs.append(newModel)
+                        }
+                        
+                        var newHistoryStringArray = [String]()
+                        oldModelArrs.enumerated().forEach { index,value in
+                            newHistoryStringArray.append(value.toJSON()!.toJSON()!)
+                        }
+                        let newHistoryString = newHistoryStringArray.joined(separator: kSeparator)
+                        arr[index].historyJson = newHistoryString
                     }
                 }
                 var newJsonArr = [String]()
@@ -1191,19 +1206,18 @@ extension PTChatViewController:MessageCellDelegate
     
     func didTapAvatar(in cell: MessageCollectionViewCell) {
         PTNSLogConsole("Avatar tapped")
-        let indexPath = self.messagesCollectionView.indexPath(for: cell)
-        let messageModel = self.messageList[indexPath?.section ?? 0]
-        var vc:PTSettingListViewController!
-        if messageModel.sender.senderId == PTChatData.share.bot.senderId
-        {
-            vc = PTSettingListViewController(user: PTChatData.share.bot)
-            vc.currentChatModel = self.historyModel
+        if !self.onlyShowSave {
+            let indexPath = self.messagesCollectionView.indexPath(for: cell)
+            let messageModel = self.messageList[indexPath?.section ?? 0]
+            var vc:PTSettingListViewController!
+            if messageModel.sender.senderId == PTChatData.share.bot.senderId {
+                vc = PTSettingListViewController(user: PTChatData.share.bot)
+                vc.currentChatModel = self.historyModel
+            } else {
+                vc = PTSettingListViewController(user: PTChatData.share.user)
+            }
+            self.navigationController?.pushViewController(vc)
         }
-        else
-        {
-            vc = PTSettingListViewController(user: PTChatData.share.user)
-        }
-        self.navigationController?.pushViewController(vc)
     }
 
     func didTapMessage(in cell: MessageCollectionViewCell) {
@@ -1218,124 +1232,132 @@ extension PTChatViewController:MessageCellDelegate
         case .text( _):
             if messageModel.sender.senderId == PTChatData.share.bot.senderId
             {
-                titles = [.copyString,.editString,.playString,.saveString]
+                if self.onlyShowSave {
+                    titles = [.copyString,.playString]
+                } else {
+                    titles = [.copyString,.editString,.playString,.saveString]
+                }
+            } else {
+                if self.onlyShowSave {
+                    titles = [.copyString]
+                } else {
+                    titles = [.copyString,.editString,.resend]
+                }
             }
-            else
-            {
-                titles = [.copyString,.editString,.resend]
+            
+            self.messageInputBar.alpha = 0
+            UIAlertController.baseActionSheet(title: PTLanguage.share.text(forKey: "alert_Option_title"), subTitle: PTLanguage.share.text(forKey: "alert_Select_option"),cancelButtonName: PTLanguage.share.text(forKey: "button_Cancel"), titles: titles) { sheet in
+                
+            } cancelBlock: { sheet in
+                if !self.onlyShowSave {
+                    self.messageInputBar.alpha = 1
+                }
+            } otherBlock: { sheet, index in
+                if !self.onlyShowSave {
+                    self.messageInputBar.alpha = 1
+                }
+                switch titles[index] {
+                case .resend:
+                    switch messageModel.kind {
+                    case .text(let text):
+                        self.insertMessages([text])
+                    default: break
+                    }
+                case .copyString:
+                    switch messageModel.kind {
+                    case .text(let text):
+                        text.copyToPasteboard()
+                        PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Copy_done"))
+                    default: break
+                    }
+                case .editString:
+                    
+                    self.closeEditButton.isHidden = false
+                    self.closeEditButton.isUserInteractionEnabled = true
+                    self.voiceTypeButton.isHidden = true
+                    self.voiceTypeButton.isUserInteractionEnabled = false
+
+                    let type = AppDelegate.appDelegate()!.appConfig.getAIMpdelType(typeString: AppDelegate.appDelegate()!.appConfig.aiModelType)
+                    switch type {
+                    case .chat(.chatgpt),.chat(.chatgpt0301),.chat(.chatgpt4),.chat(.chatgpt40314),.chat(.chatgpt432k),.chat(.chatgpt432k0314):
+                        break
+                    default:
+                        switch messageModel.kind {
+                        case .text(let text):
+                            self.editString = text
+                            self.messageInputBar.inputTextView.placeholder = String(format: PTLanguage.share.text(forKey: "chat_Edit"), self.editString)
+                        default: break
+                        }
+
+                        self.editMessage = true
+                        self.messageInputBar.inputTextView.becomeFirstResponder()
+                    }
+                case .playString:
+                    switch messageModel.kind {
+                    case .text(let text):
+                        if messageModel.sender.senderId == PTChatData.share.bot.senderId {
+                            self.speechKit.speakText(text)
+                        }
+                    default: break
+                    }
+                case .saveString:
+                    PTGCDManager.gcdAfter(time: 0.5) {
+                        if messageModel.sender.senderId == PTChatData.share.bot.senderId {
+                            let userModel = self.messageList[indexPath!.section - 1]
+                            UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "alert_Save_Q&A"),msgColor: .gobalTextColor,okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
+                                
+                            } moreBtn: { index, title in
+                                
+                                let saveChatArr = AppDelegate.appDelegate()!.appConfig.getSaveChatData()
+                                for saveModel in saveChatArr {
+                                    if saveModel.questionDate == userModel.sentDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss") && saveModel.answerDate == messageModel.sentDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss") {
+                                        PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Error_same"))
+                                        return
+                                    }
+                                }
+                                let model = PTChatModel()
+                                
+                                switch userModel.kind {
+                                case .audio(let item):
+                                    model.questionType = 1
+                                    model.questionVoiceURL = item.url.lastPathComponent
+                                    self.speechKit.recognizeSpeech(filePath: URL(fileURLWithPath: item.url.absoluteString.replacingOccurrences(of: "file://", with: ""))) { text in
+                                        model.question = text
+                                    }
+                                case .text(let text):
+                                    model.questionType = 0
+                                    model.question = text
+                                default:
+                                    break
+                                }
+                                model.questionDate = userModel.sentDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+                                
+                                switch messageModel.kind {
+                                case .photo(let item):
+                                    model.answerType = 1
+                                    model.answerImageURL = item.url!.absoluteString
+                                case .text(let text):
+                                    model.answerType = 0
+                                    model.answer = text
+                                default:
+                                    break
+                                }
+                                model.answerDate = messageModel.sentDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+                                self.saveChatModelToJsonString(model: model)
+                                PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Save_success"))
+                            }
+                        }
+                    }
+                default:
+                    break
+                }
+            } tapBackgroundBlock: { sheet in
+                if !self.onlyShowSave {
+                    self.messageInputBar.alpha = 1
+                }
             }
         default:
             break
-        }
-        
-        self.messageInputBar.alpha = 0
-        UIAlertController.baseActionSheet(title: PTLanguage.share.text(forKey: "alert_Option_title"), subTitle: PTLanguage.share.text(forKey: "alert_Select_option"),cancelButtonName: PTLanguage.share.text(forKey: "button_Cancel"), titles: titles) { sheet in
-            
-        } cancelBlock: { sheet in
-            self.messageInputBar.alpha = 1
-        } otherBlock: { sheet, index in
-            self.messageInputBar.alpha = 1
-            switch titles[index] {
-            case .resend:
-                switch messageModel.kind {
-                case .text(let text):
-                    self.insertMessages([text])
-                default: break
-                }
-            case .copyString:
-                switch messageModel.kind {
-                case .text(let text):
-                    text.copyToPasteboard()
-                    PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Copy_done"))
-                default: break
-                }
-            case .editString:
-                
-                self.closeEditButton.isHidden = false
-                self.closeEditButton.isUserInteractionEnabled = true
-                self.voiceTypeButton.isHidden = true
-                self.voiceTypeButton.isUserInteractionEnabled = false
-
-                let type = AppDelegate.appDelegate()!.appConfig.getAIMpdelType(typeString: AppDelegate.appDelegate()!.appConfig.aiModelType)
-                switch type {
-                case .chat(.chatgpt),.chat(.chatgpt0301),.chat(.chatgpt4),.chat(.chatgpt40314),.chat(.chatgpt432k),.chat(.chatgpt432k0314):
-                    break
-                default:
-                    switch messageModel.kind {
-                    case .text(let text):
-                        self.editString = text
-                        self.messageInputBar.inputTextView.placeholder = String(format: PTLanguage.share.text(forKey: "chat_Edit"), self.editString)
-                    default: break
-                    }
-
-                    self.editMessage = true
-                    self.messageInputBar.inputTextView.becomeFirstResponder()
-                }
-            case .playString:
-                switch messageModel.kind {
-                case .text(let text):
-                    if messageModel.sender.senderId == PTChatData.share.bot.senderId
-                    {
-                        self.speechKit.speakText(text)
-                    }
-                default: break
-                }
-            case .saveString:
-                PTGCDManager.gcdAfter(time: 0.5) {
-                    if messageModel.sender.senderId == PTChatData.share.bot.senderId
-                    {
-                        let userModel = self.messageList[indexPath!.section - 1]
-                        UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "alert_Save_Q&A"),msgColor: .gobalTextColor,okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
-                            
-                        } moreBtn: { index, title in
-                            
-                            let saveChatArr = AppDelegate.appDelegate()!.appConfig.getSaveChatData()
-                            for saveModel in saveChatArr
-                            {
-                                if saveModel.questionDate == userModel.sentDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss") && saveModel.answerDate == messageModel.sentDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
-                                {
-                                    PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Error_same"))
-                                    return
-                                }
-                            }
-                            let model = PTChatModel()
-                            
-                            switch userModel.kind {
-                            case .audio(let item):
-                                model.questionType = 1
-                                model.questionVoiceURL = item.url.lastPathComponent
-                                self.speechKit.recognizeSpeech(filePath: URL(fileURLWithPath: item.url.absoluteString.replacingOccurrences(of: "file://", with: ""))) { text in
-                                    model.question = text
-                                }
-                            case .text(let text):
-                                model.questionType = 0
-                                model.question = text
-                            default:
-                                break
-                            }
-                            model.questionDate = userModel.sentDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
-                            
-                            switch messageModel.kind {
-                            case .photo(let item):
-                                model.answerType = 1
-                                model.answerImageURL = item.url!.absoluteString
-                            case .text(let text):
-                                model.answerType = 0
-                                model.answer = text
-                            default:
-                                break
-                            }
-                            model.answerDate = messageModel.sentDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
-                            self.saveChatModelToJsonString(model: model)
-                            PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Save_success"))
-                        }
-                    }
-                }
-            default:
-                break
-            }
-        } tapBackgroundBlock: { sheet in
-            self.messageInputBar.alpha = 1
         }
     }
 
@@ -1372,7 +1394,6 @@ extension PTChatViewController:MessageCellDelegate
         default:
             break
         }
-
     }
 
     func didTapCellTopLabel(in _: MessageCollectionViewCell) {
@@ -1406,14 +1427,10 @@ extension PTChatViewController:MessageCellDelegate
         if self.audioPlayer.playingMessage?.messageId == message.messageId {
             if self.audioPlayer.state == .playing {
                 self.audioPlayer.pauseSound(for: message, in: cell)
-            }
-            else
-            {
+            } else {
                 self.audioPlayer.resumeSound()
             }
-        }
-        else
-        {
+        } else {
             self.audioPlayer.stopAnyOngoingPlaying()
             self.audioPlayer.playSound(for: message, in: cell)
         }
