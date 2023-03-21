@@ -31,6 +31,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
                 
+        if self.appConfig.firstDataChange {
+            let baseSub = PTSegHistoryModel()
+            baseSub.keyName = "Base"
+            let jsonArr = [baseSub.toJSON()!.toJSON()!]
+            let dataString = jsonArr.joined(separator: kSeparatorSeg)
+            self.appConfig.segChatHistory = dataString
+            
+            self.appConfig.firstDataChange = false
+        }
+        
         var debugDevice = false
         let buglyConfig = BuglyConfig()
 //        buglyConfig.delegate = self
@@ -150,12 +160,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         {
             self.appConfig.chatFavourtie = chatFavourite
         }
-        
-        if let chatHistory:String = UserDefaults.standard.value(forKey: uChatHistory) as? String
-        {
-            self.appConfig.chatHistory = chatHistory
-        }
-        
+                
         if let language:String = UserDefaults.standard.value(forKey: uLanguageKey) as? String
         {
             self.appConfig.language = language
@@ -334,15 +339,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                             let value = AppDelegate.appDelegate()!.cloudStore.object(forKey: key)
                             self.appConfig.language = value as! String
                         }
-                    case uChatHistory:
-                        if let conflictingValues = self.cloudStore.array(forKey: key) {
-                            let chosenValue = conflictingValues.first
-                            self.appConfig.chatHistory = chosenValue as! String
-                        } else {
-                            let value = AppDelegate.appDelegate()!.cloudStore.object(forKey: key)
-                            self.appConfig.chatHistory = value as! String
-                        }
-                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: kRefreshControllerAndLoadNewData), object: nil)
                     case uSaveChat:
                         if let conflictingValues = self.cloudStore.array(forKey: key) {
                             let chosenValue = conflictingValues.first

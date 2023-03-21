@@ -200,6 +200,12 @@ public class OSSSpeech: NSObject {
     /// User can save audio record or not defult true
     public var saveRecord:Bool = true
     
+    private var soundSamples = [Float]()
+    
+    private var levelTimer:Timer?
+
+    public var onUpdate: (([Float]) -> Void)?
+
     /// An object that produces synthesized speech from text utterances and provides controls for monitoring or controlling ongoing speech.
     private var speechSynthesizer: AVSpeechSynthesizer!
 
@@ -460,6 +466,7 @@ public class OSSSpeech: NSObject {
         node.removeTap(onBus: 0)
         
         audioRecorder?.stop()
+        stopVisualizerTimer()
         
         if node.inputFormat(forBus: 0).channelCount == 0 {
             node.reset()
@@ -597,13 +604,39 @@ public class OSSSpeech: NSObject {
         
         do {
             audioRecorder = try AVAudioRecorder(url: self.audioFileURL!, settings: audioSettings)
+            audioRecorder?.isMeteringEnabled = true
             audioRecorder?.delegate = self
+            audioRecorder?.prepareToRecord()
             audioRecorder?.record()
+            soundSamples.removeAll()
+            visualizerTimer()
         } catch {
             delegate?.didFailToProcessRequest(withError: OSSSpeechKitErrorType.invalidRecordVoice.error)
         }
     }
 
+    private func visualizerTimer() {
+        let interval:Double = 0.01
+        audioRecorder?.record(forDuration: interval)
+        
+        levelTimer = Timer(timeInterval: interval, repeats: true, block: { [weak self] _ in
+            self?.audioRecorder?.updateMeters()
+            let decibels = self?.audioRecorder?.averagePower(forChannel: 0) ?? -160
+            let normalizedValue = pow(10, decibels / 20)
+            self?.soundSamples.append(normalizedValue)
+            self?.onUpdate?(self?.soundSamples ?? [])
+            self?.audioRecorder?.record(forDuration: interval)
+        })
+        
+        RunLoop.current.add(levelTimer!, forMode: .default)
+    }
+    
+    private func stopVisualizerTimer() {
+        onUpdate?(soundSamples)
+        soundSamples.removeAll()
+        levelTimer?.invalidate()
+    }
+        
     /// Get documents directory
     public func getDocumentsDirectory() -> URL {
         let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
@@ -705,6 +738,7 @@ extension OSSSpeech: AVAudioRecorderDelegate {
     public func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
         if flag {
             audioRecorder?.stop()
+            stopVisualizerTimer()
         }
     }
 }

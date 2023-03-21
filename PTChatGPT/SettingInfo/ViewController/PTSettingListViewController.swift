@@ -69,6 +69,8 @@ class PTSettingListViewController: PTChatBaseViewController {
 
     var currentChatModel:PTSegHistoryModel?
     
+    var cleanChatListBlock:(()->Void)?
+    
     lazy var pickerData : [String] = {
         return ["中文(简体)/中文(簡體)/Chinese(Simplified)/Chine(Simplificado)","中文(繁体)/中文(簡體)/Chinese(Hong Kong)/Chino(Hong Kong)","英语/英語/English/Inglés","西班牙语/西班牙語/Spanish/Español"]
     }()
@@ -564,13 +566,27 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                 
             } moreBtn: { index, title in
                 
-                let baseSub = PTSegHistoryModel()
-                baseSub.keyName = "Base"
-                let jsonArr = [baseSub.toJSON()!.toJSON()!]
-                let dataString = jsonArr.joined(separator: kSeparatorSeg)
-                AppDelegate.appDelegate()?.appConfig.segChatHistory = dataString
-                
-                PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_done"))
+                var arr = [PTSegHistoryModel]()
+                if let dataString = AppDelegate.appDelegate()?.appConfig.segChatHistory {
+                    let dataArr = dataString.components(separatedBy: kSeparatorSeg)
+                    dataArr.enumerated().forEach { index,value in
+                        let model = PTSegHistoryModel.deserialize(from: value)
+                        arr.append(model!)
+                    }
+                    for (index,_) in arr.enumerated() {
+                        arr[index].historyModel = [PTChatModel]()
+                    }
+                    
+                    var newJsonArr = [String]()
+                    arr.enumerated().forEach { index,value in
+                        newJsonArr.append(value.toJSON()!.toJSON()!)
+                    }
+                    AppDelegate.appDelegate()!.appConfig.segChatHistory = newJsonArr.joined(separator: kSeparatorSeg)
+                    PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_done"))
+                    if self.cleanChatListBlock != nil {
+                        self.cleanChatListBlock!()
+                    }
+                }
             }
         }
         else if itemRow.title == .apiAIType

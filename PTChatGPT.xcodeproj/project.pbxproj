@@ -283,7 +283,6 @@
 		55A5D71629B1D23D00DCA096 /* PTChatGPT */ = {
 			isa = PBXGroup;
 			children = (
-				55BD5BA529C9D6580023458A /* Permission */,
 				55C6BCCE29C4602B00A6B668 /* PTChatGPT.entitlements */,
 				5514B38529BAE76600890161 /* Tools */,
 				5512AB6429B43C2E0059D840 /* 3Party */,
@@ -379,13 +378,6 @@
 				55BD5B9A29C8424A0023458A /* PTDarkModeControl.swift */,
 			);
 			path = ViewController;
-			sourceTree = "<group>";
-		};
-		55BD5BA529C9D6580023458A /* Permission */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Permission;
 			sourceTree = "<group>";
 		};
 		98AAC1E7648563A53AAC739A /* Pods */ = {

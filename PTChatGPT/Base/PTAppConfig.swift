@@ -19,8 +19,6 @@ let uBotBubbleColor = "uBotBubbleColor"
 let uUserTextColor = "uUserTextColor"
 ///機器人的TextColor key
 let uBotTextColor = "uBotTextColor"
-///歷史記錄 key
-let uChatHistory = "ChatHistory"
 ///Seg控制器的历史记录Key
 let uSegChatHistory = "uSegChatHistory"
 ///保存記錄 key
@@ -48,6 +46,8 @@ let uAppFirstiCloud = "uAppFirstiCloud"
 let uUseiCloud = "uUseiCloud"
 ///第一次使用App提示
 let uFirstCoach = "uFirstCoach"
+
+let uFirstDataChange = "uFirstDataChange"
 
 let kSeparator = "[,]"
 let kSeparatorSeg = "[::]"
@@ -96,6 +96,12 @@ extension CGSize {
 class PTAppConfig {
     static let share = PTAppConfig()
     
+    var firstDataChange:Bool = UserDefaults.standard.value(forKey: uFirstDataChange) == nil ? true : UserDefaults.standard.value(forKey: uFirstDataChange) as! Bool {
+        didSet{
+            UserDefaults.standard.set(self.firstDataChange,forKey: uFirstDataChange)
+        }
+    }
+
     var firstCoach:Bool = UserDefaults.standard.value(forKey: uFirstCoach) == nil ? true : UserDefaults.standard.value(forKey: uFirstCoach) as! Bool {
         didSet{
             UserDefaults.standard.set(self.firstCoach,forKey: uFirstCoach)
@@ -494,32 +500,6 @@ class PTAppConfig {
         }
         return arr
     }()
-
-    ///聊天历史记录
-    var chatHistory:String {
-        get {
-            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
-                if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uChatHistory) {
-                    return value as! String
-                } else {
-                    return ""
-                }
-            } else {
-                if let value = UserDefaults.standard.value(forKey: uChatHistory) {
-                    return value as! String
-                } else {
-                    return ""
-                }
-            }
-        } set {
-            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
-                AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uChatHistory)
-                AppDelegate.appDelegate()?.cloudStore.synchronize()
-            } else {
-                UserDefaults.standard.set(newValue, forKey: uChatHistory)
-            }
-        }
-    }
     
     //MARK: 精选记录
     ///精选记录
@@ -560,9 +540,9 @@ class PTAppConfig {
         self.aiSmart = self.aiSmart
         self.aiDrawSize = self.aiDrawSize
         self.language = self.language
-        self.chatHistory = self.chatHistory
         self.chatFavourtie = self.chatFavourtie
         self.userIconURL = self.userIconURL
+        self.segChatHistory = self.segChatHistory
     }
 
     lazy var languagePickerData:[String] = {

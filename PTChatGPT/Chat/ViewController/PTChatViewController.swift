@@ -56,12 +56,16 @@ class PTChatViewController: MessagesViewController {
         return [option,tags,setting]
     }()
         
+    var iWillRefresh:Bool = false
     lazy var settingButton:UIButton = {
         let view = UIButton(type: .custom)
         view.imageView?.contentMode = .scaleAspectFit
         view.setImage(UIImage(systemName: "gear")?.withTintColor(.black, renderingMode: .automatic), for: .normal)
         view.addActionHandlers { sender in
             let vc = PTSettingListViewController(user: PTChatUser(senderId: "0", displayName: "0"))
+            vc.cleanChatListBlock = {
+                self.iWillRefresh = true
+            }
             self.navigationController?.pushViewController(vc)
         }
         return view
@@ -259,7 +263,7 @@ class PTChatViewController: MessagesViewController {
         view.setImage(UIImage(systemName: "mic.fill")?.withTintColor(.black, renderingMode: .automatic), for: .selected)
         view.addActionHandlers { sender in
             self.messageInputBar.inputTextView.resignFirstResponder()
-            if self.voiceCanTap {
+            if self.avCaptureDeviceAuthorize(avMediaType: .audio) {
                 sender.isSelected = !sender.isSelected
                 if sender.isSelected {
                     if !self.messageInputBar.inputTextView.text.stringIsEmpty() {
@@ -353,6 +357,10 @@ class PTChatViewController: MessagesViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.messageInputBar.inputTextView.resignFirstResponder()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
         self.maskView.removeFromSuperview()
     }
     
@@ -366,6 +374,11 @@ class PTChatViewController: MessagesViewController {
         AppDelegate.appDelegate()?.window?.addSubview(self.maskView)
         self.maskView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
+        }
+        
+        if self.iWillRefresh {
+            self.refreshCurrentTagData()
+            self.iWillRefresh = false
         }
     }
             
@@ -427,17 +440,19 @@ class PTChatViewController: MessagesViewController {
                 self.setTitleViewFrame(withModel: self.historyModel!)
             }
             
-            self.soundRecorder.onUpdate = { soundSamples in
+            self.speechKit.onUpdate = { soundSamples in
+                PTNSLogConsole(">>>>>>>>>>>>>>\(soundSamples)")
                 PTGCDManager.gcdMain {
                     self.maskView.visualizerView.updateSamples(soundSamples)
                 }
             }
+            
             self.configureMessageInputBar()
             self.speechKit.delegate = self
             
             self.createHolderView()
         }
-        
+                
         self.speechKit.srp.requestAuthorization { authStatus in
             let status = OSSSpeechKitAuthorizationStatus(rawValue: authStatus.rawValue) ?? .notDetermined
             switch status {
@@ -471,7 +486,6 @@ class PTChatViewController: MessagesViewController {
                 let model = PTSegHistoryModel.deserialize(from: value)
                 arr.append(model!)
             }
-            
             for (value) in arr {
                 if value.keyName == self.historyModel!.keyName
                 {
@@ -825,213 +839,160 @@ class PTChatViewController: MessagesViewController {
         return formatter
     }()
 
-    func sendVoiceMessage(text:String,saveModel:PTChatModel)
-    {
-        self.setTitleViewFrame(text: .thinking)
-        switch self.chatCase {
-        case .chat:
-            self.openAI.sendEdits(with: text, input: self.editString) { result in
-                switch result {
-                case .success(let success):
-                    let date = Date()
-                    
-                    saveModel.messageSendSuccess = true
-                    self.chatModels.append(saveModel)
-                    
-                    let botChatModel = PTChatModel()
-                    botChatModel.messageDateString = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
-                    botChatModel.messageType = 0
-                    botChatModel.messageText = success.choices.first?.text ?? ""
-                    botChatModel.outgoing = false
-                    self.chatModels.append(botChatModel)
-                    
-                    let botMessage = PTMessageModel(text: success.choices.first?.text ?? "", user: PTChatData.share.bot, messageId: UUID().uuidString, date: date)
-                    self.insertMessage(botMessage)
-                    PTGCDManager.gcdMain {
-                        self.setTitleViewFrame(withModel: self.historyModel!)
-                    }
-                    self.historyModel?.historyModel = self.chatModels
-                    self.packChatData()
-                case .failure(let failure):
-                    PTGCDManager.gcdMain {
-                        saveModel.messageSendSuccess = false
-                        self.chatModels.append(saveModel)
-                        self.historyModel?.historyModel = self.chatModels
-                        self.packChatData()
-                        self.setTitleViewFrame(withModel: self.historyModel!)
-                        PTBaseViewController.gobal_drop(title: failure.localizedDescription)
-                        self.refreshViewAndLoadNewData()
-                    }
-                }
-            }
-        default:
-            self.drawImage(str: text,saveModel: saveModel,indexSection: (self.messageList.count - 1))
-        }
-    }
-
-    //MARK: Voice action
+    //MARK: 语音发送操作
     @objc func recordButtonPressed()
     {
-        self.messageInputBar.inputTextView.resignFirstResponder()
-        self.maskView.visualizerView.start()
-        self.soundRecorder.start()
+        if self.avCaptureDeviceAuthorize(avMediaType: .audio) {
+            self.messageInputBar.inputTextView.resignFirstResponder()
+            self.maskView.visualizerView.start()
+            self.soundRecorder.start()
 
-        // 開始錄音
-        self.isRecording = true
-        PTNSLogConsole("開始錄音")
+            // 開始錄音
+            self.isRecording = true
+            PTNSLogConsole("開始錄音")
+        }
     }
     
     @objc func recordButtonReleased()
     {
-        // 停止錄音
-        self.isRecording = false
-        PTNSLogConsole("停止錄音")
-        self.soundRecorder.stop()
-        self.maskView.visualizerView.stop()
-        self.maskView.alpha = 0
+        if self.avCaptureDeviceAuthorize(avMediaType: .audio) {
+            // 停止錄音
+            self.isRecording = false
+            PTNSLogConsole("停止錄音")
+            self.speechKit.endVoiceRecording()
+            self.soundRecorder.stop()
+            self.maskView.visualizerView.stop()
+            self.maskView.alpha = 0
+        }
     }
     
     @objc func longPress(_ sender: UILongPressGestureRecognizer) {
-        self.voiceButton.setTitle(PTLanguage.share.text(forKey: "button_Long_tap_end"), for: .normal)
-        if self.isRecording
-        {
-            self.speechKit.recordVoice()
-            self.isRecording = false
-        }
-        switch sender.state {
-        case .began:
-            // 開始錄音，顯示錄音的動畫和文字
-            PTNSLogConsole("開始錄音，顯示錄音的動畫和文字")
-            
-            self.maskView.alpha = 1
-            
-        case .changed:
-            let touchPoint = sender.location(in: self.voiceButton)
-            if touchPoint.y < -(CGFloat.kTabbarHeight_Total + 34) {
-                PTNSLogConsole("超過閾值，顯示「向上取消」的提示")
-                let screenCenterX = (CGFloat.kSCREEN_WIDTH / 2)
-                let centerX = (screenCenterX - 44)
-                if touchPoint.x < centerX
-                {
-                    let newX = (touchPoint.x - centerX)
-                    PTNSLogConsole(newX)
-                    if abs(newX) >= (screenCenterX / 2)
-                    {
-                        self.maskView.visualizerView.backgroundColor = .red
-                        self.maskView.visualizerView.snp.updateConstraints { make in
-                            make.width.equalTo(150)
-                            make.centerX.equalToSuperview().offset(-(screenCenterX / 2))
+        if self.avCaptureDeviceAuthorize(avMediaType: .audio) {
+            self.voiceButton.setTitle(PTLanguage.share.text(forKey: "button_Long_tap_end"), for: .normal)
+            if self.isRecording {
+                self.speechKit.recordVoice()
+                self.isRecording = false
+            }
+            self.maskView.actionInfoLabel.isHidden = true
+            self.maskView.actionInfoLabel.text = ""
+            switch sender.state {
+            case .began:
+                // 開始錄音，顯示錄音的動畫和文字
+                PTNSLogConsole("開始錄音，顯示錄音的動畫和文字")
+                
+                self.maskView.alpha = 1
+                
+            case .changed:
+                let touchPoint = sender.location(in: self.voiceButton)
+                if touchPoint.y < -(CGFloat.kTabbarHeight_Total + 34) {
+                    PTNSLogConsole("超過閾值，顯示「向上取消」的提示")
+                    let screenCenterX = (CGFloat.kSCREEN_WIDTH / 2)
+                    let centerX = (screenCenterX - 44)
+                    if touchPoint.x < centerX {
+                        let newX = (touchPoint.x - centerX)
+                        PTNSLogConsole(newX)
+                        if abs(newX) >= (screenCenterX / 2) {
+                            self.maskView.visualizerView.backgroundColor = .red
+                            self.maskView.visualizerView.snp.updateConstraints { make in
+                                make.width.equalTo(150)
+                                make.centerX.equalToSuperview().offset(-(screenCenterX / 2))
+                            }
+                            self.voiceButton.setTitle(PTLanguage.share.text(forKey: "button_Long_tap_cancel"), for: .normal)
+                            self.maskView.actionInfoLabel.isHidden = false
+                            self.maskView.actionInfoLabel.text = PTLanguage.share.text(forKey: "voice_Cancel_send")
+                        } else if abs(newX) <= 44 {
+                            self.maskView.visualizerView.backgroundColor = self.maskView.visualizerViewBaseBackgroundColor
+                            self.maskView.visualizerView.snp.updateConstraints { make in
+                                make.centerX.equalToSuperview().offset(0)
+                                make.width.equalTo(150)
+                            }
+                            self.voiceButton.setTitle(PTLanguage.share.text(forKey: "button_Long_tap_release"), for: .normal)
+                            self.maskView.actionInfoLabel.isHidden = true
+                            self.maskView.actionInfoLabel.text = ""
+                        } else {
+                            self.maskView.visualizerView.backgroundColor = .red
+                            self.maskView.visualizerView.snp.updateConstraints { make in
+                                make.centerX.equalToSuperview().offset(newX)
+                                make.width.equalTo(150)
+                            }
+                            self.voiceButton.setTitle(PTLanguage.share.text(forKey: "button_Long_tap_cancel"), for: .normal)
+                            self.maskView.actionInfoLabel.isHidden = false
+                            self.maskView.actionInfoLabel.text = PTLanguage.share.text(forKey: "voice_Cancel_send")
                         }
-                        self.voiceButton.setTitle(PTLanguage.share.text(forKey: "button_Long_tap_cancel"), for: .normal)
+                        PTNSLogConsole("在左边")
+                        self.translateToText = false
+                    } else if touchPoint.x > (screenCenterX + 44) {
+                        self.translateToText = true
+                        self.sendTranslateText = true
+                        PTNSLogConsole("在右边")
+                        self.maskView.visualizerView.snp.updateConstraints { make in
+                            make.width.equalTo(CGFloat.kSCREEN_WIDTH - 40)
+                        }
                         self.maskView.actionInfoLabel.isHidden = false
-                        self.maskView.actionInfoLabel.text = PTLanguage.share.text(forKey: "voice_Cancel_send")
-                    }
-                    else if abs(newX) <= 44
-                    {
-                        self.maskView.visualizerView.backgroundColor = self.maskView.visualizerViewBaseBackgroundColor
+                        self.maskView.actionInfoLabel.text = PTLanguage.share.text(forKey: "voice_Change_to_text")
+                    } else {
+                        self.translateToText = false
+                        PTNSLogConsole("在中间")
                         self.maskView.visualizerView.snp.updateConstraints { make in
                             make.centerX.equalToSuperview().offset(0)
                             make.width.equalTo(150)
                         }
                         self.voiceButton.setTitle(PTLanguage.share.text(forKey: "button_Long_tap_release"), for: .normal)
                         self.maskView.actionInfoLabel.isHidden = true
+                        self.maskView.actionInfoLabel.text = ""
                     }
-                    else
-                    {
-                        self.maskView.visualizerView.backgroundColor = .red
-                        self.maskView.visualizerView.snp.updateConstraints { make in
-                            make.centerX.equalToSuperview().offset(newX)
-                            make.width.equalTo(150)
-                        }
-                        self.voiceButton.setTitle(PTLanguage.share.text(forKey: "button_Long_tap_cancel"), for: .normal)
-                        self.maskView.actionInfoLabel.isHidden = false
-                        self.maskView.actionInfoLabel.text = PTLanguage.share.text(forKey: "voice_Cancel_send")
-                    }
-                    PTNSLogConsole("在左边")
+                    // 超過閾值，顯示「向上取消」的提示
+                } else {
+                    // 未超過閾值，顯示「鬆開發送」的提示
                     self.translateToText = false
-                }
-                else if touchPoint.x > (screenCenterX + 44)
-                {
-                    self.translateToText = true
-                    self.sendTranslateText = true
-                    PTNSLogConsole("在右边")
+                    PTNSLogConsole("未超過閾值，顯示「鬆開發送」的提示")
                     self.maskView.visualizerView.snp.updateConstraints { make in
-                        make.width.equalTo(CGFloat.kSCREEN_WIDTH - 40)
+                        make.centerX.equalToSuperview().offset(0)
                     }
-                    self.maskView.actionInfoLabel.isHidden = false
-                    self.maskView.actionInfoLabel.text = PTLanguage.share.text(forKey: "voice_Change_to_text")
+                    self.voiceButton.setTitle(PTLanguage.share.text(forKey: "button_Long_tap_release"), for: .normal)
                 }
-                else
-                {
+            case .ended:
+                self.voiceButton.setTitle(PTLanguage.share.text(forKey: "button_Long_tap"), for: .normal)
+                let touchPoint = sender.location(in: self.voiceButton)
+                if touchPoint.y < -(CGFloat.kTabbarHeight_Total + 34) {
+                    let screenCenterX = (CGFloat.kSCREEN_WIDTH / 2)
+                    let centerX = (screenCenterX - 44)
+                    if touchPoint.x < centerX {
+                        let newX = (touchPoint.x - centerX)
+                        PTNSLogConsole(newX)
+                        if abs(newX) >= (screenCenterX / 2) {
+                            self.isSendVoice = false
+                        } else if abs(newX) <= 44 {
+                            self.isSendVoice = true
+                        } else {
+                            self.isSendVoice = false
+                        }
+                        PTNSLogConsole("在左边")
+                    } else if touchPoint.x > (screenCenterX + 44) {
+                        self.isSendVoice = true
+                    } else {
+                        self.isSendVoice = true
+                    }
+                } else {
+                    self.isSendVoice = true
+                }
+                self.isRecording = false
+                PTGCDManager.gcdMain {
+                    self.speechKit.endVoiceRecording()
                     self.translateToText = false
-                    PTNSLogConsole("在中间")
+                    self.soundRecorder.stop()
+                    self.maskView.visualizerView.stop()
+                    self.maskView.alpha = 0
+                    self.maskView.visualizerView.backgroundColor = self.maskView.visualizerViewBaseBackgroundColor
                     self.maskView.visualizerView.snp.updateConstraints { make in
                         make.centerX.equalToSuperview().offset(0)
                         make.width.equalTo(150)
                     }
-                    self.voiceButton.setTitle(PTLanguage.share.text(forKey: "button_Long_tap_release"), for: .normal)
-                    self.maskView.actionInfoLabel.isHidden = true
                 }
-                // 超過閾值，顯示「向上取消」的提示
-            } else {
-                // 未超過閾值，顯示「鬆開發送」的提示
-                self.translateToText = false
-                PTNSLogConsole("未超過閾值，顯示「鬆開發送」的提示")
-                self.maskView.visualizerView.snp.updateConstraints { make in
-                    make.centerX.equalToSuperview().offset(0)
-                }
-                self.voiceButton.setTitle(PTLanguage.share.text(forKey: "button_Long_tap_release"), for: .normal)
+            default:
+                break
             }
-        case .ended:
-            self.voiceButton.setTitle(PTLanguage.share.text(forKey: "button_Long_tap"), for: .normal)
-            let touchPoint = sender.location(in: self.voiceButton)
-            if touchPoint.y < -(CGFloat.kTabbarHeight_Total + 34) {
-                let screenCenterX = (CGFloat.kSCREEN_WIDTH / 2)
-                let centerX = (screenCenterX - 44)
-                if touchPoint.x < centerX
-                {
-                    let newX = (touchPoint.x - centerX)
-                    PTNSLogConsole(newX)
-                    if abs(newX) >= (screenCenterX / 2)
-                    {
-                        self.isSendVoice = false
-                    }
-                    else if abs(newX) <= 44
-                    {
-                        self.isSendVoice = true
-                    }
-                    else
-                    {
-                        self.isSendVoice = false
-                    }
-                    PTNSLogConsole("在左边")
-                }
-                else if touchPoint.x > (screenCenterX + 44)
-                {
-                    self.isSendVoice = true
-                }
-                else
-                {
-                    self.isSendVoice = true
-                }
-            } else {
-                self.isSendVoice = true
-            }
-            self.isRecording = false
-            self.speechKit.endVoiceRecording()
-            PTGCDManager.gcdMain {
-                self.translateToText = false
-                self.soundRecorder.stop()
-                self.maskView.visualizerView.stop()
-                self.maskView.alpha = 0
-                self.maskView.visualizerView.backgroundColor = self.maskView.visualizerViewBaseBackgroundColor
-                self.maskView.visualizerView.snp.updateConstraints { make in
-                    make.centerX.equalToSuperview().offset(0)
-                    make.width.equalTo(150)
-                }
-            }
-        default:
-            break
+
         }
     }
     
@@ -1528,37 +1489,36 @@ extension PTChatViewController:MessageCellDelegate
         let indexPath = self.messagesCollectionView.indexPath(for: cell)
         var messageModel = self.messageList[indexPath!.section]
         
-        switch messageModel.kind {
-        case .text(let text):
-            for ( _ ,value) in self.chatModels.enumerated() {
-                if value.messageDateString == messageModel.sentDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss") {
-                    self.setTypingIndicatorViewHidden(false)
-                    PTGCDManager.gcdMain {
-                        
-                        let date = Date()
-                        
-                        let saveModel = value
-                        saveModel.messageDateString = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
-                        messageModel.sending = true
-                        messageModel.sendSuccess = false
-                        messageModel.sentDate = date
-                        self.messageList.remove(at: indexPath!.section)
-                        self.messageList.append(messageModel)
-                        self.chatModels.remove(at: indexPath!.section)
-                        self.chatModels.append(saveModel)
-                        self.historyModel?.historyModel = self.chatModels
-                        self.messageList[self.messageList.count - 1].sending = true
-                        self.messageList[self.messageList.count - 1].sendSuccess = false
-                        self.messagesCollectionView.reloadData {
-                            self.messagesCollectionView.scrollToLastItem()
-                            self.sendTextFunction(str: text, saveModel: saveModel, sectionIndex: (self.messageList.count - 1),resend: true)
-                        }
+        for ( _ ,value) in self.chatModels.enumerated() {
+            if value.messageDateString == messageModel.sentDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss") {
+                self.setTypingIndicatorViewHidden(false)
+                let date = Date()
+                let saveModel = value
+                saveModel.messageDateString = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+                messageModel.sending = true
+                messageModel.sendSuccess = false
+                messageModel.sentDate = date
+                self.messageList.remove(at: indexPath!.section)
+                self.messageList.append(messageModel)
+                self.chatModels.remove(at: indexPath!.section)
+                self.chatModels.append(saveModel)
+                self.historyModel?.historyModel = self.chatModels
+                self.messageList[self.messageList.count - 1].sending = true
+                self.messageList[self.messageList.count - 1].sendSuccess = false
+                self.messagesCollectionView.reloadData {
+                    self.messagesCollectionView.scrollToLastItem()
+                    switch messageModel.kind {
+                    case .text(let text):
+                        self.sendTextFunction(str: text, saveModel: saveModel, sectionIndex: (self.messageList.count - 1),resend: true)
+                    case .audio(_):
+                        self.sendTextFunction(str: saveModel.messageText, saveModel: saveModel, sectionIndex: self.messageList.count - 1)
+                    default:
+                        break
                     }
-                    return
                 }
+                return
             }
-        default:
-            break
+
         }
     }
 }
@@ -2029,8 +1989,8 @@ extension PTChatViewController:OSSSpeechDelegate
         PTNSLogConsole("url:\(url) \ntext:\(text)")
         let date = Date()
         let voiceURL = URL(fileURLWithPath: url.absoluteString.replacingOccurrences(of: "file://", with: ""))
-        let voiceMessage = PTMessageModel(audioURL: voiceURL, user: PTChatData.share.user, messageId: UUID().uuidString, date: date,sendSuccess: false)
-        
+        var voiceMessage = PTMessageModel(audioURL: voiceURL, user: PTChatData.share.user, messageId: UUID().uuidString, date: date,sendSuccess: false)
+        voiceMessage.sending = true
         let saveModel = PTChatModel()
         if self.sendTranslateText
         {
@@ -2054,8 +2014,8 @@ extension PTChatViewController:OSSSpeechDelegate
             }
             else
             {
-                self.sendVoiceMessage(text: text,saveModel: saveModel)
                 self.insertMessage(voiceMessage)
+                self.sendTextFunction(str: text, saveModel: saveModel, sectionIndex: self.messageList.count - 1)
             }
             self.messagesCollectionView.scrollToLastItem(animated: true)
             self.sendTranslateText = false
