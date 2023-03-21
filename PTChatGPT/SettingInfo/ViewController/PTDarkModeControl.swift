@@ -28,8 +28,7 @@ class PTDarkModeControl: PTChatBaseViewController {
     }()
     
     var mSections = [PTSection]()
-    func comboLayout()->UICollectionViewCompositionalLayout
-    {
+    func comboLayout()->UICollectionViewCompositionalLayout {
         let layout = UICollectionViewCompositionalLayout.init { section, environment in
             self.generateSection(section: section)
         }
@@ -38,8 +37,7 @@ class PTDarkModeControl: PTChatBaseViewController {
         return layout
     }
     
-    func generateSection(section:NSInteger)->NSCollectionLayoutSection
-    {
+    func generateSection(section:NSInteger)->NSCollectionLayoutSection {
         let sectionModel = mSections[section]
 
         var group : NSCollectionLayoutGroup
@@ -157,10 +155,8 @@ extension PTDarkModeControl:UICollectionViewDelegate,UICollectionViewDataSource
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let itemSec = mSections[indexPath.section]
-        if kind == UICollectionView.elementKindSectionHeader
-        {
-            if itemSec.headerID == PTDarkModeHeader.ID
-            {
+        if kind == UICollectionView.elementKindSectionHeader {
+            if itemSec.headerID == PTDarkModeHeader.ID {
                 let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: itemSec.headerID!, for: indexPath) as! PTDarkModeHeader
                 header.currentMode = PTDrakModeOption.isLight ? .light : .dark
                 header.selectModeBlock = { mode in
@@ -170,11 +166,8 @@ extension PTDarkModeControl:UICollectionViewDelegate,UICollectionViewDataSource
                 return header
             }
             return UICollectionReusableView()
-        }
-        else if kind == UICollectionView.elementKindSectionFooter
-        {
-            if itemSec.footerID == PTDarkSmartFooter.ID
-            {
+        } else if kind == UICollectionView.elementKindSectionFooter {
+            if itemSec.footerID == PTDarkSmartFooter.ID {
                 let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: itemSec.footerID!, for: indexPath) as! PTDarkSmartFooter
                 footer.themeTimeButton.setTitle(darkTime, for: .normal)
                 footer.themeTimeButton.addActionHandlers { sender in
@@ -197,9 +190,7 @@ extension PTDarkModeControl:UICollectionViewDelegate,UICollectionViewDataSource
                 return footer
             }
             return UICollectionReusableView()
-        }
-        else
-        {
+        } else {
             return UICollectionReusableView()
         }
     }
@@ -207,8 +198,7 @@ extension PTDarkModeControl:UICollectionViewDelegate,UICollectionViewDataSource
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let itemSec = mSections[indexPath.section]
         let itemRow = itemSec.rows[indexPath.row]
-        if itemRow.ID == PTFusionCell.ID
-        {
+        if itemRow.ID == PTFusionCell.ID {
             let cellModel = (itemRow.dataModel as! PTFusionCellModel)
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTFusionCell
             cell.cellModel = cellModel
@@ -238,9 +228,7 @@ extension PTDarkModeControl:UICollectionViewDelegate,UICollectionViewDataSource
             }
             
             return cell
-        }
-        else
-        {
+        } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CELL", for: indexPath)
             cell.backgroundColor = .random
             return cell

@@ -11,11 +11,13 @@ import PooTools
 import SwipeCellKit
 
 class PTPopoverControl: PTChatBaseViewController {
-
+    
     let popoverWidth:CGFloat = CGFloat.kSCREEN_WIDTH - 30
     let popoverCellBaseHeight:CGFloat = 44
+    let footerHeight:CGFloat = 44
     fileprivate var isSwipeRightEnabled = false
 
+    var deleteAllTagBlock:(()->Void)?
     var currentHistoryModel = PTSegHistoryModel()
     
     var selectedBlock:((_ selectedModel:PTSegHistoryModel)->Void)?
@@ -67,6 +69,13 @@ class PTPopoverControl: PTChatBaseViewController {
         laySection.orthogonalScrollingBehavior = behavior
         laySection.contentInsets = sectionInsets
 
+        if sectionModel.rows.count > 1 {
+            let footerSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(self.popoverWidth - 20), heightDimension: NSCollectionLayoutDimension.absolute(sectionModel.footerHeight ?? CGFloat.leastNormalMagnitude))
+            let footerItem = NSCollectionLayoutBoundarySupplementaryItem.init(layoutSize: footerSize, elementKind: UICollectionView.elementKindSectionFooter, alignment: .bottomTrailing)
+
+            laySection.boundarySupplementaryItems = [footerItem]
+        }
+
         return laySection
     }
 
@@ -116,8 +125,14 @@ class PTPopoverControl: PTChatBaseViewController {
             let row_List = PTRows.init(cls: PTPopoverCell.self, ID: PTPopoverCell.ID, dataModel: value)
             rows.append(row_List)
         }
-        let cellSection = PTSection.init(rows: rows)
-        mSections.append(cellSection)
+        
+        var sections:PTSection
+        if self.segDataArr.count > 1 {
+            sections = PTSection.init(footerCls:PTPopoverFooter.self,footerID: PTPopoverFooter.ID,footerHeight: self.footerHeight,rows: rows)
+        } else {
+            sections = PTSection.init(rows: rows)
+        }
+        mSections.append(sections)
 
         self.collectionView.pt_register(by: mSections)
         self.collectionView.reloadData()
@@ -134,6 +149,25 @@ extension PTPopoverControl:UICollectionViewDelegate,UICollectionViewDataSource
         return self.mSections[section].rows.count
     }
     
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        let itemSec = mSections[indexPath.section]
+        if kind == UICollectionView.elementKindSectionFooter {
+            if itemSec.footerID == PTPopoverFooter.ID {
+                let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: itemSec.footerID!, for: indexPath) as! PTPopoverFooter
+                footer.deleteButton.addActionHandlers { sender in
+                    if self.deleteAllTagBlock != nil {
+                        self.deleteAllTagBlock!()
+                    }
+                    self.returnFrontVC()
+                }
+                return footer
+            }
+            return UICollectionReusableView()
+        } else {
+            return UICollectionReusableView()
+        }
+    }
+
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let itemSec = mSections[indexPath.section]
         let itemRow = itemSec.rows[indexPath.row]
@@ -175,7 +209,6 @@ extension PTPopoverControl:SwipeCollectionViewCellDelegate
            action.transitionDelegate = ScaleTransition.default
        }
    }
-
    
    func collectionView(_ collectionView: UICollectionView, editActionsOptionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
        var options = SwipeOptions()
@@ -204,14 +237,23 @@ extension PTPopoverControl:SwipeCollectionViewCellDelegate
                        if self.selectedBlock != nil {
                            self.selectedBlock!(self.segDataArr.first!)
                        }
-                       
                        PTAppConfig.refreshTagData(segDataArr: self.segDataArr)
-
-                       self.returnFrontVC()
+                       self.preferredContentSize = CGSize(width: self.popoverWidth, height: CGFloat(self.segDataArr.count) * self.popoverCellBaseHeight + (self.segDataArr.count > 1 ? self.footerHeight : 0))
+                       self.collectionView.selectItem(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .top)
+//                       self.returnFrontVC()
                    } else {
                        self.segDataArr.remove(at: indexPath.row)
                        PTAppConfig.refreshTagData(segDataArr: self.segDataArr)
                        self.showDetail()
+                       self.preferredContentSize = CGSize(width: self.popoverWidth, height: CGFloat(self.segDataArr.count) * self.popoverCellBaseHeight + (self.segDataArr.count > 1 ? self.footerHeight : 0))
+
+                       for (index,value) in self.segDataArr.enumerated() {
+                           if value.keyName == self.currentHistoryModel.keyName {
+                               self.collectionView.selectItem(at: IndexPath(row: index, section: 0), animated: false, scrollPosition: .top)
+                               break
+                           }
+                       }
+                       
                        if self.refreshTagArr != nil {
                            self.refreshTagArr!()
                        }

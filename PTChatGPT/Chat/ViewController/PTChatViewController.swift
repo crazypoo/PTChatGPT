@@ -146,21 +146,43 @@ class PTChatViewController: MessagesViewController {
         view.layoutStyle = .leftTitleRightImage
         view.setImage(UIImage(systemName: "chevron.up.chevron.down")!.withRenderingMode(.automatic), for: .normal)
         view.setMidSpacing(5)
-        view.addActionHandlers { sender in            
+        view.addActionHandlers { sender in
             let popover = PTPopoverControl(currentSelect: self.historyModel!)
             popover.view.backgroundColor = .gobalBackgroundColor.withAlphaComponent(0.45)
-            self.popover(popoverVC: popover, popoverSize: CGSize(width: popover.popoverWidth, height: CGFloat(self.segDataArr.count) * popover.popoverCellBaseHeight), sender: sender, arrowDirections: .up)
+            self.popover(popoverVC: popover, popoverSize: CGSize(width: popover.popoverWidth, height: CGFloat(popover.segDataArr.count) * popover.popoverCellBaseHeight + (popover.segDataArr.count > 1 ? popover.footerHeight : 0)), sender: sender, arrowDirections: .up)
             popover.selectedBlock = { model in
                 self.messageList.removeAll()
                 self.chatModels.removeAll()
                 self.messagesCollectionView.reloadData {
                     self.historyModel = model
                     self.setTitleViewFrame(withModel: self.historyModel!)
-                    self.segDataArr = AppDelegate.appDelegate()!.appConfig.tagDataArr
+                    self.segDataArr = AppDelegate.appDelegate()!.appConfig.tagDataArr()
                 }
             }
             popover.refreshTagArr = {
-                self.segDataArr = AppDelegate.appDelegate()!.appConfig.tagDataArr
+                self.segDataArr = AppDelegate.appDelegate()!.appConfig.tagDataArr()
+            }
+            popover.deleteAllTagBlock = {
+                PTGCDManager.gcdAfter(time: 0.5) {
+                    var arr = AppDelegate.appDelegate()?.appConfig.tagDataArr()
+                    arr?.removeAll(where: {$0.keyName != "Base"})
+
+                    if arr?.count == 0 {
+                        let baseSub = PTSegHistoryModel()
+                        baseSub.keyName = "Base"
+                        AppDelegate.appDelegate()!.appConfig.segChatHistory = baseSub.toJSON()!.toJSON()!
+                        self.historyModel = baseSub
+                    } else {
+                        var newJsonArr = [String]()
+                        arr!.enumerated().forEach { index,value in
+                            newJsonArr.append(value.toJSON()!.toJSON()!)
+                        }
+                        AppDelegate.appDelegate()!.appConfig.segChatHistory = newJsonArr.joined(separator: kSeparatorSeg)
+                        self.historyModel = arr!.first
+                    }
+                    self.setTitleViewFrame(withModel: self.historyModel!)
+                    PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_done"))
+                }
             }
         }
         return view

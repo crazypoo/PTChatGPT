@@ -63,6 +63,7 @@
 		55BD5B9F29C850AC0023458A /* PTDarkSmartFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BD5B9E29C850AC0023458A /* PTDarkSmartFooter.swift */; };
 		55BD5BA129C85F9E0023458A /* PTDarkFollowSystemFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BD5BA029C85F9E0023458A /* PTDarkFollowSystemFooter.swift */; };
 		55BD5BA429C8C5570023458A /* MessageKit in Frameworks */ = {isa = PBXBuildFile; productRef = 55BD5BA329C8C5570023458A /* MessageKit */; };
+		55BD5BAF29CA13BA0023458A /* PTPopoverFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BD5BAE29CA13BA0023458A /* PTPopoverFooter.swift */; };
 		EC91DE097C54ED7562DD3DCA /* Pods_PTChatGPT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 372877C61B4F76BA38F0C55D /* Pods_PTChatGPT.framework */; };
 /* End PBXBuildFile section */
 
@@ -136,6 +137,7 @@
 		55BD5B9C29C843EA0023458A /* PTDarkModeHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTDarkModeHeader.swift; sourceTree = "<group>"; };
 		55BD5B9E29C850AC0023458A /* PTDarkSmartFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTDarkSmartFooter.swift; sourceTree = "<group>"; };
 		55BD5BA029C85F9E0023458A /* PTDarkFollowSystemFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTDarkFollowSystemFooter.swift; sourceTree = "<group>"; };
+		55BD5BAE29CA13BA0023458A /* PTPopoverFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTPopoverFooter.swift; sourceTree = "<group>"; };
 		55C6BCCE29C4602B00A6B668 /* PTChatGPT.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PTChatGPT.entitlements; sourceTree = "<group>"; };
 		7E66237D0C268E8EEFD172D0 /* Pods-PTChatGPT.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PTChatGPT.release.xcconfig"; path = "Target Support Files/Pods-PTChatGPT/Pods-PTChatGPT.release.xcconfig"; sourceTree = "<group>"; };
 		E708929BECBB7DC383FA473B /* Pods-PTChatGPT.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PTChatGPT.debug.xcconfig"; path = "Target Support Files/Pods-PTChatGPT/Pods-PTChatGPT.debug.xcconfig"; sourceTree = "<group>"; };
@@ -216,6 +218,7 @@
 				5514B37029B9CBFD00890161 /* PTChatCustomCell.swift */,
 				5520905A29C35903009B30A1 /* PTVoiceActionView.swift */,
 				55BD5B8F29C708BF0023458A /* PTPopoverCell.swift */,
+				55BD5BAE29CA13BA0023458A /* PTPopoverFooter.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -371,11 +374,11 @@
 			isa = PBXGroup;
 			children = (
 				5514B38129BA14C400890161 /* PTColorSettingViewController.swift */,
+				55BD5B9A29C8424A0023458A /* PTDarkModeControl.swift */,
 				5514B38C29BAFA6A00890161 /* PTDisclaimerViewController.swift */,
 				5514B38329BA233A00890161 /* PTSaveChatViewController.swift */,
 				5514B37729B9F87C00890161 /* PTSettingListViewController.swift */,
 				55A5D80529B242CF00DCA096 /* PTSettingViewController.swift */,
-				55BD5B9A29C8424A0023458A /* PTDarkModeControl.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -547,6 +550,7 @@
 				55BD5B8A29C6AE2C0023458A /* PTSegHistoryModel.swift in Sources */,
 				55796A2429BD6E2A00574DD4 /* PTSoundVisualizerView.swift in Sources */,
 				55BD5B9F29C850AC0023458A /* PTDarkSmartFooter.swift in Sources */,
+				55BD5BAF29CA13BA0023458A /* PTPopoverFooter.swift in Sources */,
 				55BD5BA129C85F9E0023458A /* PTDarkFollowSystemFooter.swift in Sources */,
 				5514B38429BA233A00890161 /* PTSaveChatViewController.swift in Sources */,
 				5514B38B29BAF5E900890161 /* PTNavController.swift in Sources */,

@@ -488,7 +488,7 @@ class PTAppConfig {
         }
     }
     
-    var tagDataArr:[PTSegHistoryModel] = {
+    func tagDataArr() -> [PTSegHistoryModel] {
         var arr = [PTSegHistoryModel]()
         if let dataString = AppDelegate.appDelegate()?.appConfig.segChatHistory {
             let dataArr = dataString.components(separatedBy: kSeparatorSeg)
@@ -499,7 +499,7 @@ class PTAppConfig {
             return arr
         }
         return arr
-    }()
+    }
     
     //MARK: 精选记录
     ///精选记录
