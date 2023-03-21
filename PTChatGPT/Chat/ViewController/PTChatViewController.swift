@@ -17,7 +17,7 @@ import SwifterSwift
 import Instructions
 import WhatsNew
 
-fileprivate extension String{
+fileprivate extension String {
     static let saveNavTitle = PTLanguage.share.text(forKey: "about_SavedChat")
     
     static let copyString = PTLanguage.share.text(forKey: "chat_Copy")
@@ -28,15 +28,16 @@ fileprivate extension String{
     static let resend = PTLanguage.share.text(forKey: "chat_Resend")
 }
 
-enum PTChatCase
-{
+enum PTChatCase {
     case draw
     case chat
 }
 
 class PTChatViewController: MessagesViewController {
-            
+                
     let coachMarkController = CoachMarksController()
+    
+    var chatModels = [PTChatModel]()
     
     lazy var coachArray:[PTCoachModel] = {
         
@@ -77,7 +78,7 @@ class PTChatViewController: MessagesViewController {
             popover.selectActionBlock = { string in
                 switch string {
                 case .addTag:
-                    PTGCDManager.gcdAfter(time: 0.35) {
+                    PTGCDManager.gcdAfter(time: 0.5) {
                         let textKey = PTLanguage.share.text(forKey: "alert_Tag_set")
                         let aiKey = PTLanguage.share.text(forKey: "alert_AI_Set")
                         UIAlertController.base_textfiele_alertVC(title:textKey,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey,aiKey], textFieldTexts: ["",""], keyboardType: [.default,.default],textFieldDelegate: self) { result in
@@ -91,15 +92,18 @@ class PTChatViewController: MessagesViewController {
                                     let newTag = PTSegHistoryModel()
                                     newTag.keyName = newKey!
                                     newTag.systemContent = newAiKey ?? ""
-                                    newTag.historyJson = ""
                                     self.segDataArr.append(newTag)
                                     var jsonArr = [String]()
                                     self.segDataArr.enumerated().forEach { index,value in
                                         jsonArr.append(value.toJSON()!.toJSON()!)
                                     }
                                     AppDelegate.appDelegate()?.appConfig.segChatHistory = jsonArr.joined(separator: kSeparatorSeg)
-                                    self.historyModel = newTag
-                                    self.setTitleViewFrame(withModel: self.historyModel!)
+                                    self.messageList.removeAll()
+                                    self.chatModels.removeAll()
+                                    self.messagesCollectionView.reloadData {
+                                        self.historyModel = newTag
+                                        self.setTitleViewFrame(withModel: self.historyModel!)
+                                    }
                                 }
                             } else {
                                 PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Input_error"))
@@ -114,23 +118,8 @@ class PTChatViewController: MessagesViewController {
                                                             
                             var arr = [PTSegHistoryModel]()
                             if let dataArr = AppDelegate.appDelegate()?.appConfig.segChatHistory.components(separatedBy: kSeparatorSeg) {
-                                self.historyModel?.historyJson = ""
-
-                                dataArr.enumerated().forEach { index,value in
-                                    let model = PTSegHistoryModel.deserialize(from: value)
-                                    arr.append(model!)
-                                }
-                                for (index,value) in arr.enumerated() {
-                                    if value.keyName == self.historyModel?.keyName {
-                                        arr[index] = self.historyModel!
-                                        break
-                                    }
-                                }
-                                var newJsonArr = [String]()
-                                arr.enumerated().forEach { index,value in
-                                    newJsonArr.append(value.toJSON()!.toJSON()!)
-                                }
-                                AppDelegate.appDelegate()!.appConfig.segChatHistory = newJsonArr.joined(separator: kSeparatorSeg)
+                                self.historyModel?.historyModel = []
+                                self.packChatData()
                                 PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_done"))
                                 self.refreshCurrentTagData()
                             } else {
@@ -158,9 +147,13 @@ class PTChatViewController: MessagesViewController {
             popover.view.backgroundColor = .gobalBackgroundColor.withAlphaComponent(0.45)
             self.popover(popoverVC: popover, popoverSize: CGSize(width: popover.popoverWidth, height: CGFloat(self.segDataArr.count) * popover.popoverCellBaseHeight), sender: sender, arrowDirections: .up)
             popover.selectedBlock = { model in
-                self.historyModel = model
-                self.setTitleViewFrame(withModel: self.historyModel!)
-                self.segDataArr = AppDelegate.appDelegate()!.appConfig.tagDataArr
+                self.messageList.removeAll()
+                self.chatModels.removeAll()
+                self.messagesCollectionView.reloadData {
+                    self.historyModel = model
+                    self.setTitleViewFrame(withModel: self.historyModel!)
+                    self.segDataArr = AppDelegate.appDelegate()!.appConfig.tagDataArr
+                }
             }
             popover.refreshTagArr = {
                 self.segDataArr = AppDelegate.appDelegate()!.appConfig.tagDataArr
@@ -173,9 +166,10 @@ class PTChatViewController: MessagesViewController {
         var arr = [PTSegHistoryModel]()
         let dataString = AppDelegate.appDelegate()?.appConfig.segChatHistory
         let dataArr = dataString!.components(separatedBy: kSeparatorSeg)
-        dataArr.enumerated().forEach { index,value in
-            let model = PTSegHistoryModel.deserialize(from: value)
-            arr.append(model!)
+        dataArr.enumerated().forEach { index,vlaue in
+            if let models = PTSegHistoryModel.deserialize(from: vlaue) {
+                arr.append(models)
+            }
         }
         return arr
     }()
@@ -188,7 +182,7 @@ class PTChatViewController: MessagesViewController {
         
     var sendTranslateText:Bool = false
     var translateToText:Bool = false
-    var soundRecorder = PTSoundRecorder()
+    lazy var soundRecorder = PTSoundRecorder()
     
     var chatCase:PTChatCase = .chat
     
@@ -229,12 +223,9 @@ class PTChatViewController: MessagesViewController {
         view.setImage(UIImage(systemName: "paintbrush.fill")?.withTintColor(.black, renderingMode: .automatic), for: .selected)
         view.addActionHandlers { sender in
             sender.isSelected = !sender.isSelected
-            if sender.isSelected
-            {
+            if sender.isSelected {
                 self.chatCase = .draw
-            }
-            else
-            {
+            } else {
                 self.chatCase = .chat
             }
         }
@@ -268,13 +259,10 @@ class PTChatViewController: MessagesViewController {
         view.setImage(UIImage(systemName: "mic.fill")?.withTintColor(.black, renderingMode: .automatic), for: .selected)
         view.addActionHandlers { sender in
             self.messageInputBar.inputTextView.resignFirstResponder()
-            if self.voiceCanTap
-            {
+            if self.voiceCanTap {
                 sender.isSelected = !sender.isSelected
-                if sender.isSelected
-                {
-                    if !self.messageInputBar.inputTextView.text.stringIsEmpty()
-                    {
+                if sender.isSelected {
+                    if !self.messageInputBar.inputTextView.text.stringIsEmpty() {
                         self.tapVoiceSaveString = self.messageInputBar.inputTextView.text
                         self.messageInputBar.inputTextView.text = ""
                     }
@@ -283,19 +271,14 @@ class PTChatViewController: MessagesViewController {
                         make.left.right.equalTo(self.messageInputBar.inputTextView)
                         make.height.bottom.equalTo(self.voiceTypeButton)
                     }
-                }
-                else
-                {
-                    if !self.tapVoiceSaveString.stringIsEmpty()
-                    {
+                } else {
+                    if !self.tapVoiceSaveString.stringIsEmpty() {
                         self.messageInputBar.inputTextView.text = self.tapVoiceSaveString
                     }
                     self.tapVoiceSaveString = ""
                     self.voiceButton.removeFromSuperview()
                 }
-            }
-            else
-            {
+            } else {
                 PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Can_not_send_voice"))
             }
         }
@@ -319,31 +302,31 @@ class PTChatViewController: MessagesViewController {
         super.init(nibName: nil, bundle: nil)
     }
     
-    init(saveModel:PTChatModel)
+    init(saveModel:[PTChatModel])
     {
         super.init(nibName: nil, bundle: nil)
         self.onlyShowSave = true
-        
-        let models = saveModel
-        
-        let questionModel:PTMessageModel
-        switch models.questionType {
-        case 0:
-            print(String(describing: models.questionDate))
-            questionModel = PTMessageModel(text: models.question, user: PTChatData.share.user, messageId: UUID().uuidString, date: models.questionDate.toDate()!.date)
-        default:
-            let voiceURL = self.speechKit.getDocumentsDirectory().appendingPathComponent(models.questionVoiceURL)
-            questionModel = PTMessageModel(audioURL: voiceURL, user: PTChatData.share.user, messageId: UUID().uuidString, date: models.questionDate.toDate()!.date)
+                
+        saveModel.enumerated().forEach { index,value in
+            switch value.messageType {
+            case 0:
+                let messageSender = value.outgoing ? PTChatData.share.user : PTChatData.share.bot
+                let messageModel = PTMessageModel(text: value.messageText, user: messageSender, messageId: UUID().uuidString, date: value.messageDateString.toDate()!.date,sendSuccess: value.messageSendSuccess)
+                self.messageList.append(messageModel)
+            case 1:
+                let voiceURL = self.speechKit.getDocumentsDirectory().appendingPathComponent(value.messageMediaURL)
+                let messageModel = PTMessageModel(audioURL: voiceURL, user: PTChatData.share.user, messageId: UUID().uuidString, date: value.messageDateString.toDate()!.date, sendSuccess: value.messageSendSuccess)
+                self.messageList.append(messageModel)
+            case 2:
+                let messageModel = PTMessageModel(imageURL: URL(string: value.messageMediaURL)!, user: PTChatData.share.bot, messageId: UUID().uuidString, date: value.messageDateString.toDate()!.date)
+                self.messageList.append(messageModel)
+            default:break
+            }
+            
+            self.messagesCollectionView.reloadData {
+                self.messagesCollectionView.scrollToLastItem()
+            }
         }
-        self.messageList.append(questionModel)
-        let answerModel:PTMessageModel
-        switch models.answerType {
-        case 0:
-            answerModel = PTMessageModel(text: models.answer, user: PTChatData.share.bot, messageId: UUID().uuidString, date: models.answerDate.toDate()!.date)
-        default:
-            answerModel = PTMessageModel(imageURL: URL(string: models.answerImageURL)!, user: PTChatData.share.bot, messageId: UUID().uuidString, date: models.answerDate.toDate()!.date)
-        }
-        self.messageList.append(answerModel)
     }
     
     required init?(coder: NSCoder) {
@@ -424,14 +407,21 @@ class PTChatViewController: MessagesViewController {
 #if DEBUG
                 UserDefaults.standard.removeObject(forKey: "LatestAppVersionPresented")
                 UserDefaults.standard.synchronize()
+            
+//            let baseSub = PTSegHistoryModel()
+//            baseSub.keyName = "Base"
+//            let jsonArr = [baseSub.toJSON()!.toJSON()!]
+//            let dataString = jsonArr.joined(separator: kSeparatorSeg)
+//            AppDelegate.appDelegate()?.appConfig.segChatHistory = dataString
 #endif
 
             var arr = [PTSegHistoryModel]()
             if let dataString = AppDelegate.appDelegate()?.appConfig.segChatHistory {
                 let dataArr = dataString.components(separatedBy: kSeparatorSeg)
-                dataArr.enumerated().forEach { index,value in
-                    let model = PTSegHistoryModel.deserialize(from: value)
-                    arr.append(model!)
+                dataArr.enumerated().forEach { index,vlaue in
+                    if let models = PTSegHistoryModel.deserialize(from: vlaue) {
+                        arr.append(models)
+                    }
                 }
                 self.historyModel = arr.first!
                 self.setTitleViewFrame(withModel: self.historyModel!)
@@ -493,38 +483,29 @@ class PTChatViewController: MessagesViewController {
     }
     
     @objc func refreshViewAndLoadNewData() {
+        self.chatModels.removeAll()
         self.messageList.removeAll()
-        let userHistoryModelString = self.historyModel!.historyJson
-        if !userHistoryModelString.stringIsEmpty() {
-            let userModelsStringArr = userHistoryModelString.components(separatedBy: kSeparator)
-            userModelsStringArr.enumerated().forEach { index,value in
-                let models = PTChatModel.deserialize(from: value)
-                
-                let questionModel:PTMessageModel
-                switch models!.questionType {
+        if self.historyModel!.historyModel.count > 0 {
+            self.historyModel!.historyModel.enumerated().forEach { index,value in
+                self.chatModels.append(value)
+                switch value.messageType {
                 case 0:
-                    print(String(describing: models!.questionDate))
-                    questionModel = PTMessageModel(text: models!.question, user: PTChatData.share.user, messageId: UUID().uuidString, date: models!.questionDate.toDate()!.date)
-                default:
-                    let voiceURL = self.speechKit.getDocumentsDirectory().appendingPathComponent(models!.questionVoiceURL)
-                    questionModel = PTMessageModel(audioURL: voiceURL, user: PTChatData.share.user, messageId: UUID().uuidString, date: models!.questionDate.toDate()!.date)
+                    let messageSender = value.outgoing ? PTChatData.share.user : PTChatData.share.bot
+                    let messageModel = PTMessageModel(text: value.messageText, user: messageSender, messageId: UUID().uuidString, date: value.messageDateString.toDate()!.date,sendSuccess: value.messageSendSuccess)
+                    self.messageList.append(messageModel)
+                case 1:
+                    let voiceURL = self.speechKit.getDocumentsDirectory().appendingPathComponent(value.messageMediaURL)
+                    let messageModel = PTMessageModel(audioURL: voiceURL, user: PTChatData.share.user, messageId: UUID().uuidString, date: value.messageDateString.toDate()!.date, sendSuccess: value.messageSendSuccess)
+                    self.messageList.append(messageModel)
+                case 2:
+                    let messageModel = PTMessageModel(imageURL: URL(string: value.messageMediaURL)!, user: PTChatData.share.bot, messageId: UUID().uuidString, date: value.messageDateString.toDate()!.date)
+                    self.messageList.append(messageModel)
+                default:break
                 }
-                self.messageList.append(questionModel)
-                let answerModel:PTMessageModel
-                switch models!.answerType {
-                case 0:
-                    answerModel = PTMessageModel(text: models!.answer, user: PTChatData.share.bot, messageId: UUID().uuidString, date: models!.answerDate.toDate()!.date)
-                default:
-                    answerModel = PTMessageModel(imageURL: URL(string: models!.answerImageURL)!, user: PTChatData.share.bot, messageId: UUID().uuidString, date: models!.answerDate.toDate()!.date)
-                }
-                self.messageList.append(answerModel)
+
                 self.messagesCollectionView.reloadData {
                     self.messagesCollectionView.scrollToLastItem()
                 }
-            }
-        } else {
-            self.messagesCollectionView.reloadData {
-                self.messagesCollectionView.scrollToLastItem()
             }
         }
     }
@@ -645,6 +626,7 @@ class PTChatViewController: MessagesViewController {
 
     @objc func loadMoreMessage()
     {
+        self.refreshViewAndLoadNewData()
         DispatchQueue.global(qos:.userInitiated).asyncAfter(deadline: .now() + 1) {
             DispatchQueue.main.async {
                 self.messagesCollectionView.reloadDataAndKeepOffset()
@@ -654,7 +636,11 @@ class PTChatViewController: MessagesViewController {
     }
     
     func configureMessageCollectionView() {
-        messagesCollectionView.register(PTChatCustomCell.self)
+//        messagesCollectionView.register(PTChatCustomCell.self)
+        let layout = messagesCollectionView.collectionViewLayout as? MessagesCollectionViewFlowLayout
+        layout?.setMessageOutgoingAccessoryViewSize(CGSize(width: 30, height: 30))
+        layout?.setMessageOutgoingAccessoryViewPadding(HorizontalEdgeInsets(left: 0, right: 8))
+
         messagesCollectionView.messagesDataSource = self
         messagesCollectionView.messageCellDelegate = self
         messagesCollectionView.backgroundColor = .gobalBackgroundColor
@@ -666,7 +652,7 @@ class PTChatViewController: MessagesViewController {
         messagesCollectionView.messagesDisplayDelegate = self
     }
     
-    func configureMessageInputBar() {
+    func baseInputBar() {
         if AppDelegate.appDelegate()!.appConfig.firstUseApp {
             AppDelegate.appDelegate()!.appConfig.firstUseApp = false
             messageInputBar.alpha = 1
@@ -675,17 +661,89 @@ class PTChatViewController: MessagesViewController {
         }
         messageInputBar.delegate = self
         messageInputBar.backgroundView.backgroundColor = .gobalBackgroundColor
+    }
+    
+    func configureMessageInputBar() {
+        self.baseInputBar()
         messageInputBar.inputTextView.textColor = .gobalTextColor
         messageInputBar.inputTextView.tintColor = .gobalTextColor
+        messageInputBar.sendButton.spacing = .fixed(10)
+        messageInputBar.sendButton.setSize(CGSize(width: 52, height: 34), animated: true)
         messageInputBar.sendButton.setTitle(PTLanguage.share.text(forKey: "chat_Send"), for: .normal)
         messageInputBar.sendButton.setTitleColor( .gobalTextColor, for: .normal)
         messageInputBar.sendButton.setTitleColor(
             .gobalTextColor.withAlphaComponent(0.3),
             for: .highlighted)
         
-        self.setInputBarFrame()
+        self.setInputOtherItem()
+    }
+    
+    func setSendVoiceInputBar() {
+        self.baseInputBar()
+        self.setInputOtherItem()
+//        self.messageInputBar.setMiddleContentView(self.voiceButton, animated: false)
+    }
+    
+    func setInputOtherItem() {
+        self.messageInputBar.setStackViewItems([self.leftInputStackButton()], forStack: .left, animated: false)
+        self.messageInputBar.setLeftStackViewWidthConstant(to: 34, animated: false)
+        self.messageInputBar.setStackViewItems([self.rightInputStackButton(),.flexibleSpace,self.messageInputBar.sendButton,], forStack: .right, animated: false)
+        self.messageInputBar.setRightStackViewWidthConstant(to: 96, animated: false)
     }
         
+    private func leftInputStackButton() -> InputBarButtonItem {
+        let view = InputBarButtonItem()
+        view.spacing = .fixed(10)
+        view.setSize(CGSize(width: 34, height: 34), animated: true)
+        view.isSelected = false
+        view.setImage(UIImage(systemName: "mic")?.withTintColor(.black, renderingMode: .automatic), for: .normal)
+        view.setImage(UIImage(systemName: "mic.fill")?.withTintColor(.black, renderingMode: .automatic), for: .selected)
+        view.addActionHandlers { sender in
+            self.messageInputBar.inputTextView.resignFirstResponder()
+            if self.voiceCanTap
+            {
+                sender.isSelected = !sender.isSelected
+                if sender.isSelected {
+                    if !self.messageInputBar.inputTextView.text.stringIsEmpty() {
+                        self.tapVoiceSaveString = self.messageInputBar.inputTextView.text
+                        self.messageInputBar.inputTextView.text = ""
+                    }
+                    self.messageInputBar.addSubview(self.voiceButton)
+                    self.voiceButton.snp.makeConstraints { make in
+                        make.left.right.centerY.top.bottom.equalTo(self.messageInputBar.inputTextView)
+                    }
+                } else {
+                    if !self.tapVoiceSaveString.stringIsEmpty() {
+                        self.messageInputBar.inputTextView.text = self.tapVoiceSaveString
+                    }
+                    self.tapVoiceSaveString = ""
+                    self.voiceButton.removeFromSuperview()
+                }
+            } else {
+                PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Can_not_send_voice"))
+            }
+        }
+        return view
+    }
+    
+    private func rightInputStackButton() -> InputBarButtonItem {
+        let view = InputBarButtonItem()
+        view.spacing = .fixed(10)
+        view.setSize(CGSize(width: 34, height: 34), animated: true)
+        view.isSelected = false
+        view.setImage(UIImage(systemName: "character.bubble.fill")?.withTintColor(.black, renderingMode: .automatic), for: .normal)
+        view.setImage(UIImage(systemName: "paintbrush.fill")?.withTintColor(.black, renderingMode: .automatic), for: .selected)
+        view.addActionHandlers { sender in
+            sender.isSelected = !sender.isSelected
+            if sender.isSelected {
+                self.chatCase = .draw
+            } else {
+                self.chatCase = .chat
+            }
+        }
+        return view
+    }
+    
     func setInputBarFrame()
     {
         let senderW = messageInputBar.sendButton.sizeFor(size: CGSize(width: CGFloat(MAXFLOAT), height: 44)).width + 10
@@ -742,6 +800,14 @@ class PTChatViewController: MessagesViewController {
             })
         }
     }
+    
+    func setTypingIndicatorViewHidden(_ isHidden: Bool, performUpdates updates: (() -> Void)? = nil) {
+        setTypingIndicatorViewHidden(isHidden, animated: true, whilePerforming: updates) { [weak self] success in
+            if success, self?.isLastSectionVisible() == true {
+                self?.messagesCollectionView.scrollToLastItem(animated: true)
+            }
+      }
+    }
 
     func isLastSectionVisible() -> Bool {
       guard !messageList.isEmpty else { return false }
@@ -768,25 +834,38 @@ class PTChatViewController: MessagesViewController {
                 switch result {
                 case .success(let success):
                     let date = Date()
-                    saveModel.answerDate = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
-                    saveModel.answerType = 0
-                    saveModel.answer = success.choices.first?.text ?? ""
-
+                    
+                    saveModel.messageSendSuccess = true
+                    self.chatModels.append(saveModel)
+                    
+                    let botChatModel = PTChatModel()
+                    botChatModel.messageDateString = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+                    botChatModel.messageType = 0
+                    botChatModel.messageText = success.choices.first?.text ?? ""
+                    botChatModel.outgoing = false
+                    self.chatModels.append(botChatModel)
+                    
                     let botMessage = PTMessageModel(text: success.choices.first?.text ?? "", user: PTChatData.share.bot, messageId: UUID().uuidString, date: date)
                     self.insertMessage(botMessage)
                     PTGCDManager.gcdMain {
                         self.setTitleViewFrame(withModel: self.historyModel!)
                     }
-                    self.chatModelToJsonString(model: saveModel)
+                    self.historyModel?.historyModel = self.chatModels
+                    self.packChatData()
                 case .failure(let failure):
                     PTGCDManager.gcdMain {
+                        saveModel.messageSendSuccess = false
+                        self.chatModels.append(saveModel)
+                        self.historyModel?.historyModel = self.chatModels
+                        self.packChatData()
                         self.setTitleViewFrame(withModel: self.historyModel!)
                         PTBaseViewController.gobal_drop(title: failure.localizedDescription)
+                        self.refreshViewAndLoadNewData()
                     }
                 }
             }
         default:
-            self.drawImage(str: text,saveModel: saveModel)
+            self.drawImage(str: text,saveModel: saveModel,indexSection: (self.messageList.count - 1))
         }
     }
 
@@ -957,77 +1036,40 @@ class PTChatViewController: MessagesViewController {
     }
     
     //MARK: 保存聊天記錄
-    func chatModelToJsonString(model:PTChatModel) {
-        self.saveHistory(jsonString: (model.toJSON()?.toJSON())!, key: uChatHistory)
-    }
-    
-    func saveChatModelToJsonString(model:PTChatModel) {
-        self.saveHistory(jsonString: (model.toJSON()?.toJSON())!, key: uSaveChat)
-    }
-    
-    func saveHistory(jsonString:String,key:String)
-    {
-        PTGCDManager.gcdMain {
-            var userHistoryModelString = ""
-            switch key {
-            case uChatHistory:
-                var arr = [PTSegHistoryModel]()
-                userHistoryModelString = AppDelegate.appDelegate()!.appConfig.segChatHistory
-                let historyArr = userHistoryModelString.components(separatedBy: kSeparatorSeg)
-                historyArr.enumerated().forEach { index,value in
-                    let model = PTSegHistoryModel.deserialize(from: value)
-                    arr.append(model!)
-                }
-                arr.enumerated().forEach { index,value in
-                    if value.keyName == self.historyModel!.keyName {
-                        let oldModels = arr[index].historyJson.components(separatedBy: kSeparator)
-                        var oldModelArrs = [PTChatModel]()
-                        oldModels.enumerated().forEach { index,value in
-                            if let oldSubModel = PTChatModel.deserialize(from: value) {
-                                oldModelArrs.append(oldSubModel)
-                            }
-                        }
-                        
-                        if let newModel = PTChatModel.deserialize(from: jsonString) {
-                            oldModelArrs.append(newModel)
-                        }
-                        
-                        var newHistoryStringArray = [String]()
-                        oldModelArrs.enumerated().forEach { index,value in
-                            newHistoryStringArray.append(value.toJSON()!.toJSON()!)
-                        }
-                        let newHistoryString = newHistoryStringArray.joined(separator: kSeparator)
-                        arr[index].historyJson = newHistoryString
-                    }
-                }
-                var newJsonArr = [String]()
-                arr.enumerated().forEach { index,value in
-                    newJsonArr.append(value.toJSON()!.toJSON()!)
-                }
-                AppDelegate.appDelegate()!.appConfig.segChatHistory = newJsonArr.joined(separator: kSeparatorSeg)
-            case uSaveChat:
-                userHistoryModelString = AppDelegate.appDelegate()!.appConfig.chatFavourtie
-                if !userHistoryModelString.stringIsEmpty() {
-                    var userModelsStringArr = userHistoryModelString.components(separatedBy: kSeparator)
-                    userModelsStringArr.append(jsonString)
-                    let saaveString = userModelsStringArr.joined(separator: kSeparator)
-                    switch key {
-                    case uChatHistory:
-                        AppDelegate.appDelegate()!.appConfig.chatHistory = saaveString
-                    case uSaveChat:
-                        AppDelegate.appDelegate()!.appConfig.chatFavourtie = saaveString
-                    default:
-                        break
-                    }
-                    print(saaveString)
-                } else {
-                    AppDelegate.appDelegate()!.appConfig.chatFavourtie = jsonString
-                    print(jsonString)
-                }
-            default:
+    func packChatData() {
+        var arr = [PTSegHistoryModel]()
+        let userHistoryModelString = AppDelegate.appDelegate()!.appConfig.segChatHistory
+        let historyArr = userHistoryModelString.components(separatedBy: kSeparatorSeg)
+        historyArr.enumerated().forEach { index,value in
+            let model = PTSegHistoryModel.deserialize(from: value)
+            arr.append(model!)
+        }
+        for (index,value) in arr.enumerated() {
+            if value.keyName == self.historyModel!.keyName {
+                arr[index] = self.historyModel!
                 break
             }
         }
+        var newJsonArr = [String]()
+        arr.enumerated().forEach { index,value in
+            newJsonArr.append(value.toJSON()!.toJSON()!)
+        }
+        AppDelegate.appDelegate()!.appConfig.segChatHistory = newJsonArr.joined(separator: kSeparatorSeg)
+    }
+        
+    func saveChatModelToJsonString(model:PTFavouriteModel) {
+        let userHistoryModelString = AppDelegate.appDelegate()!.appConfig.chatFavourtie
+        if !userHistoryModelString.stringIsEmpty() {
+            var userModelsStringArr = userHistoryModelString.components(separatedBy: kSeparator)
+            userModelsStringArr.append(model.toJSON()!.toJSON()!)
+            let saaveString = userModelsStringArr.joined(separator: kSeparator)
+            AppDelegate.appDelegate()!.appConfig.chatFavourtie = saaveString
+            print(saaveString)
+        } else {
+            AppDelegate.appDelegate()!.appConfig.chatFavourtie = model.toJSON()!.toJSON()!
+            print(model.toJSON()!.toJSON()!)
+        }
+
     }
     
     open override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -1082,6 +1124,29 @@ extension PTChatViewController: MessagesDisplayDelegate {
         } else {
 //            imageView.kf.cancelDownloadTask()
         }
+    }
+    
+    func configureAccessoryView(_ accessoryView: UIView, for _: MessageType, at indexPath: IndexPath, in _: MessagesCollectionView) {
+      // Cells are reused, so only add a button here once. For real use you would need to
+      // ensure any subviews are removed if not needed
+      accessoryView.subviews.forEach { $0.removeFromSuperview() }
+      accessoryView.backgroundColor = .clear
+        
+      let cellModel = self.messageList[indexPath.section]
+      if cellModel.sending! {
+          return
+      }
+    
+      if cellModel.sendSuccess {
+            return
+      }
+      let button = UIButton(type: .infoLight)
+      button.tintColor = .red
+      accessoryView.addSubview(button)
+      button.frame = accessoryView.bounds
+      button.isUserInteractionEnabled = false // respond to accessoryView tap through `MessageCellDelegate`
+      accessoryView.layer.cornerRadius = accessoryView.frame.height / 2
+      accessoryView.backgroundColor = UIColor.lightGray.withAlphaComponent(0.3)
     }
     
     // MARK: - Location Messages
@@ -1142,10 +1207,10 @@ extension PTChatViewController:MessagesLayoutDelegate
 //MARK: MessagesDataSource
 extension PTChatViewController:MessagesDataSource
 {
-    func currentSender() -> MessageKit.SenderType {
-        PTChatData.share.user
+    var currentSender: MessageKit.SenderType {
+        return PTChatData.share.user
     }
-    
+        
     func numberOfSections(in _: MessagesCollectionView) -> Int {
       messageList.count
     }
@@ -1166,9 +1231,18 @@ extension PTChatViewController:MessagesDataSource
       return nil
     }
 
-    func cellBottomLabelAttributedText(for _: MessageType, at _: IndexPath) -> NSAttributedString? {
-      NSAttributedString(
-        string: PTLanguage.share.text(forKey: "chat_Read"),
+    func cellBottomLabelAttributedText(for _: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
+      let cellModel = self.messageList[indexPath.section]
+
+        var sendString = ""
+        if cellModel.sending! {
+            sendString = PTLanguage.share.text(forKey: "chat_Sending")
+        } else {
+            sendString = cellModel.sendSuccess ? PTLanguage.share.text(forKey: "chat_Read") : PTLanguage.share.text(forKey: "chat_Send_error")
+        }
+        
+      return NSAttributedString(
+        string: sendString ,
         attributes: [
           NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10),
           NSAttributedString.Key.foregroundColor: UIColor.darkGray,
@@ -1241,7 +1315,7 @@ extension PTChatViewController:MessageCellDelegate
                 if self.onlyShowSave {
                     titles = [.copyString]
                 } else {
-                    titles = [.copyString,.editString,.resend]
+                    titles = [.copyString,.editString]
                 }
             }
             
@@ -1284,8 +1358,10 @@ extension PTChatViewController:MessageCellDelegate
                     default:
                         switch messageModel.kind {
                         case .text(let text):
-                            self.editString = text
-                            self.messageInputBar.inputTextView.placeholder = String(format: PTLanguage.share.text(forKey: "chat_Edit"), self.editString)
+                            PTGCDManager.gcdAfter(time: 1) {
+                                self.editString = text
+                                self.messageInputBar.inputTextView.placeholder = String(format: PTLanguage.share.text(forKey: "chat_Edit"), self.editString)
+                            }
                         default: break
                         }
 
@@ -1307,43 +1383,40 @@ extension PTChatViewController:MessageCellDelegate
                             UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "alert_Save_Q&A"),msgColor: .gobalTextColor,okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
                                 
                             } moreBtn: { index, title in
-                                
-                                let saveChatArr = AppDelegate.appDelegate()!.appConfig.getSaveChatData()
-                                for saveModel in saveChatArr {
-                                    if saveModel.questionDate == userModel.sentDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss") && saveModel.answerDate == messageModel.sentDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss") {
-                                        PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Error_same"))
-                                        return
-                                    }
-                                }
                                 let model = PTChatModel()
                                 
                                 switch userModel.kind {
                                 case .audio(let item):
-                                    model.questionType = 1
-                                    model.questionVoiceURL = item.url.lastPathComponent
+                                    model.messageType = 1
+                                    model.messageMediaURL = item.url.lastPathComponent
                                     self.speechKit.recognizeSpeech(filePath: URL(fileURLWithPath: item.url.absoluteString.replacingOccurrences(of: "file://", with: ""))) { text in
-                                        model.question = text
+                                        model.messageText = text
                                     }
                                 case .text(let text):
-                                    model.questionType = 0
-                                    model.question = text
+                                    model.messageType = 0
+                                    model.messageText = text
                                 default:
                                     break
                                 }
-                                model.questionDate = userModel.sentDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+                                model.messageDateString = userModel.sentDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
                                 
+                                let botMessage = PTChatModel()
                                 switch messageModel.kind {
                                 case .photo(let item):
-                                    model.answerType = 1
-                                    model.answerImageURL = item.url!.absoluteString
+                                    botMessage.messageType = 1
+                                    botMessage.messageMediaURL = item.url!.absoluteString
                                 case .text(let text):
-                                    model.answerType = 0
-                                    model.answer = text
+                                    botMessage.messageType = 0
+                                    botMessage.messageText = text
+                                    botMessage.outgoing = false
+                                    botMessage.messageDateString = messageModel.sentDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
                                 default:
                                     break
                                 }
-                                model.answerDate = messageModel.sentDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
-                                self.saveChatModelToJsonString(model: model)
+                                let favouriteModel = PTFavouriteModel()
+                                favouriteModel.chatContent = model.messageText.stringIsEmpty() ? "Voice" : model.messageText
+                                favouriteModel.chats = [model,botMessage]
+                                self.saveChatModelToJsonString(model: favouriteModel)
                                 PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Save_success"))
                             }
                         }
@@ -1448,8 +1521,45 @@ extension PTChatViewController:MessageCellDelegate
         PTNSLogConsole("Did stop audio sound")
     }
 
-    func didTapAccessoryView(in _: MessageCollectionViewCell) {
+    func didTapAccessoryView(in cell: MessageCollectionViewCell) {
         PTNSLogConsole("Accessory view tapped")
+        self.messageInputBar.inputTextView.resignFirstResponder()
+        
+        let indexPath = self.messagesCollectionView.indexPath(for: cell)
+        var messageModel = self.messageList[indexPath!.section]
+        
+        switch messageModel.kind {
+        case .text(let text):
+            for ( _ ,value) in self.chatModels.enumerated() {
+                if value.messageDateString == messageModel.sentDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss") {
+                    self.setTypingIndicatorViewHidden(false)
+                    PTGCDManager.gcdMain {
+                        
+                        let date = Date()
+                        
+                        let saveModel = value
+                        saveModel.messageDateString = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+                        messageModel.sending = true
+                        messageModel.sendSuccess = false
+                        messageModel.sentDate = date
+                        self.messageList.remove(at: indexPath!.section)
+                        self.messageList.append(messageModel)
+                        self.chatModels.remove(at: indexPath!.section)
+                        self.chatModels.append(saveModel)
+                        self.historyModel?.historyModel = self.chatModels
+                        self.messageList[self.messageList.count - 1].sending = true
+                        self.messageList[self.messageList.count - 1].sendSuccess = false
+                        self.messagesCollectionView.reloadData {
+                            self.messagesCollectionView.scrollToLastItem()
+                            self.sendTextFunction(str: text, saveModel: saveModel, sectionIndex: (self.messageList.count - 1),resend: true)
+                        }
+                    }
+                    return
+                }
+            }
+        default:
+            break
+        }
     }
 }
 
@@ -1490,35 +1600,95 @@ extension PTChatViewController: MessageLabelDelegate {
 
 extension PTChatViewController: InputBarAccessoryViewDelegate
 {
-    func drawImage(str:String,saveModel:PTChatModel)
+    func drawImage(str:String,saveModel:PTChatModel,indexSection:Int)
     {
-        Task{
-            do{
-                let result = try await self.openAI.getImages(with:str,imageSize: AppDelegate.appDelegate()!.appConfig.aiDrawSize)
-                await MainActor.run{
-                    
-                    let imageURL = result.data.first?.url ?? URL(string: "")
-
+        self.setTypingIndicatorViewHidden(false)
+        self.openAI.getImages(with: str, imageSize: AppDelegate.appDelegate()!.appConfig.aiDrawSize) { result in
+            PTGCDManager.gcdBackground {
+                PTGCDManager.gcdMain {
+                    self.setTypingIndicatorViewHidden(true)
+                }
+            }
+            switch result {
+            case .success(let success):
+                self.messageList[self.messageList.count - 1].sending = false
+                self.messageList[self.messageList.count - 1].sendSuccess = true
+                self.messagesCollectionView.reloadData {
+                    let imageURL = success.data.first?.url ?? URL(string: "")
+                    self.chatModels.append(saveModel)
                     let date = Date()
 
-                    saveModel.answerDate = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
-                    saveModel.answerType = 1
-                    saveModel.answerImageURL = imageURL?.absoluteString ?? ""
-
+                    let botMessage = PTChatModel()
+                    botMessage.messageDateString = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+                    botMessage.messageType = 2
+                    botMessage.messageMediaURL = imageURL?.absoluteString ?? ""
+                    botMessage.outgoing = false
+                    self.chatModels.append(botMessage)
                     let message = PTMessageModel(imageURL: imageURL!, user: PTChatData.share.bot, messageId: UUID().uuidString, date: date)
                     self.insertMessage(message)
 
-                    PTNSLogConsole(result.data.first?.url ?? "")
+                    PTNSLogConsole(success.data.first?.url ?? "")
                     self.setTitleViewFrame(withModel: self.historyModel!)
-                    self.chatModelToJsonString(model: saveModel)
+                    self.historyModel?.historyModel = self.chatModels
+                    self.packChatData()
                 }
-            }catch{
+
+            case .failure(let failure):
                 PTGCDManager.gcdMain {
-                    PTBaseViewController.gobal_drop(title: error.localizedDescription)
+                    saveModel.messageSendSuccess = false
+                    self.chatModels.append(saveModel)
+                    self.historyModel?.historyModel = self.chatModels
+                    self.packChatData()
                     self.setTitleViewFrame(withModel: self.historyModel!)
+                    self.messageList[self.messageList.count - 1].sending = false
+                    self.messageList[self.messageList.count - 1].sendSuccess = false
+                    self.messagesCollectionView.reloadData()
+                    PTBaseViewController.gobal_drop(title: failure.localizedDescription)
                 }
             }
         }
+        
+//        Task {
+//            do {
+//                let result = try await self.openAI.getImages(with: str, imageSize: (AppDelegate.appDelegate()?.appConfig.aiDrawSize)!)
+//                await MainActor.run {
+////                    self.messageList[self.messageList.count - 1].sending = false
+////                    self.messageList[self.messageList.count - 1].sendSuccess = true
+//                    self.messagesCollectionView.reloadData {
+//                        let imageURL = result.data.first?.url ?? URL(string: "")
+//                        PTNSLogConsole("12312312\(String(describing: imageURL))")
+//                        self.chatModels.append(saveModel)
+//                        let date = Date()
+//
+//                        let botMessage = PTChatModel()
+//                        botMessage.messageDateString = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+//                        botMessage.messageType = 2
+//                        botMessage.messageMediaURL = imageURL?.absoluteString ?? ""
+//                        botMessage.outgoing = false
+//                        self.chatModels.append(botMessage)
+//                        let message = PTMessageModel(imageURL: imageURL!, user: PTChatData.share.bot, messageId: UUID().uuidString, date: date)
+//                        self.insertMessage(message)
+//
+//                        self.setTitleViewFrame(withModel: self.historyModel!)
+//                        self.historyModel?.historyModel = self.chatModels
+//                        self.packChatData()
+//                    }
+//
+//                }
+//            } catch {
+//                PTGCDManager.gcdMain {
+//                    saveModel.messageSendSuccess = false
+//                    self.chatModels.append(saveModel)
+//                    self.historyModel?.historyModel = self.chatModels
+//                    self.packChatData()
+//                    self.setTitleViewFrame(withModel: self.historyModel!)
+//                    self.messageList[self.messageList.count - 1].sending = false
+//                    self.messageList[self.messageList.count - 1].sendSuccess = false
+//                    self.messagesCollectionView.reloadData()
+//                    PTBaseViewController.gobal_drop(title: error.localizedDescription)
+//                }
+//            }
+//        }
     }
     
     // MARK: Internal
@@ -1560,126 +1730,244 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
     // MARK: Private
     private func insertMessages(_ data: [Any])
     {
+        self.setTypingIndicatorViewHidden(false)
         for component in data {
             let user = PTChatData.share.user
             let date = Date()
             if let str = component as? String {
                 let saveModel = PTChatModel()
-                saveModel.questionType = 0
-                saveModel.question = str
-                saveModel.questionDate = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
-
-                let message = PTMessageModel(text: str, user: user, messageId: UUID().uuidString, date: date)
+                saveModel.messageType = 0
+                saveModel.messageText = str
+                saveModel.messageDateString = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+                saveModel.messageSendSuccess = false
+                var message = PTMessageModel(text: str, user: user, messageId: UUID().uuidString, date: date)
+                message.sending = true
                 insertMessage(message)
                 self.setTitleViewFrame(text: .thinking)
-                switch self.chatCase {
-                case .chat:
-                    if self.editMessage {
-                        self.openAI.sendEdits(with: str, input: self.editString) { result in
-                            switch result {
-                            case .success(let success):
-                                
-                                let botDate = Date()
-                                
-                                saveModel.answerDate = botDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
-                                saveModel.answerType = 0
-                                saveModel.answer = success.choices.first?.text ?? ""
-                                
-                                let botMessage = PTMessageModel(text: success.choices.first?.text ?? "", user: PTChatData.share.bot, messageId: UUID().uuidString, date: botDate)
-                                self.insertMessage(botMessage)
-                                PTGCDManager.gcdMain {
-                                    self.editString = ""
-                                    self.editMessage = false
-                                    self.setTitleViewFrame(text: .thinking)
-                                }
-                                self.chatModelToJsonString(model: saveModel)
-                            case .failure(let failure):
-                                PTGCDManager.gcdMain {
-                                    self.setTitleViewFrame(withModel: self.historyModel!)
-                                    PTBaseViewController.gobal_drop(title: failure.localizedDescription)
-                                }
-                            }
-                        }
-                    } else {
-                        if self.historyModel!.systemContent.stringIsEmpty() {
-                            let type = AppDelegate.appDelegate()!.appConfig.getAIMpdelType(typeString: AppDelegate.appDelegate()!.appConfig.aiModelType)
-                            switch type {
-                            case .chat(.chatgpt),.chat(.chatgpt0301),.chat(.chatgpt4),.chat(.chatgpt40314),.chat(.chatgpt432k),.chat(.chatgpt432k0314):
-                                let chat: [ChatMessage] = [
-                                    ChatMessage(role: .user, content: str),
-                                ]
-                                self.openAI.sendChat(with: chat,model: type,maxTokens: 2048,temperature: AppDelegate.appDelegate()!.appConfig.aiSmart) { result in
-                                    switch result {
-                                    case .success(let success):
-                                        self.saveQAndAText(question: success.choices.first?.message.content ?? "", saveModel: saveModel)
-                                    case .failure(let failure):
-                                        PTGCDManager.gcdMain {
-                                            self.setTitleViewFrame(withModel: self.historyModel!)
-                                            PTBaseViewController.gobal_drop(title: failure.localizedDescription)
-                                        }
-                                    }
-                                }
-                            default:
-                                self.openAI.sendCompletion(with: str,model: type,maxTokens: 2048,temperature: AppDelegate.appDelegate()!.appConfig.aiSmart) { result in
-                                    switch result {
-                                    case .success(let success):
-                                        self.saveQAndAText(question: success.choices.first?.text ?? "", saveModel: saveModel)
-                                    case .failure(let failure):
-                                        PTGCDManager.gcdMain {
-                                            self.setTitleViewFrame(withModel: self.historyModel!)
-                                            PTBaseViewController.gobal_drop(title: failure.localizedDescription)
-                                        }
-                                    }
-                                }
-                            }
-                        } else {
-                            var type = AppDelegate.appDelegate()!.appConfig.getAIMpdelType(typeString: AppDelegate.appDelegate()!.appConfig.aiModelType)
-                            switch type {
-                            case .chat(.chatgpt),.chat(.chatgpt0301),.chat(.chatgpt4),.chat(.chatgpt40314),.chat(.chatgpt432k),.chat(.chatgpt432k0314): break
-                            default:
-                                type = OpenAIModelType.chat(.chatgpt)
-                            }
-                            let chat: [ChatMessage] = [
-                                ChatMessage(role: .system, content: self.historyModel!.systemContent),
-                                ChatMessage(role: .user, content: str)
-                            ]
-                            self.openAI.sendChat(with: chat,model: type,maxTokens: 2048,temperature: AppDelegate.appDelegate()!.appConfig.aiSmart) { result in
-                                switch result {
-                                case .success(let success):
-                                    self.saveQAndAText(question: success.choices.first?.message.content ?? "", saveModel: saveModel)
-                                case .failure(let failure):
-                                    PTGCDManager.gcdMain {
-                                        self.setTitleViewFrame(withModel: self.historyModel!)
-                                        PTBaseViewController.gobal_drop(title: failure.localizedDescription)
-                                    }
-                                }
-                            }
-
-                        }
-                    }
-                default:
-                    self.drawImage(str: str,saveModel: saveModel)
-                }
+                self.sendTextFunction(str: str, saveModel: saveModel, sectionIndex: self.messageList.count - 1)
             } else if let img = component as? UIImage {
-                let message = PTMessageModel(image: img, user: user, messageId: UUID().uuidString, date: Date())
+                let message = PTMessageModel(image: img, user: user, messageId: UUID().uuidString, date: Date(),sendSuccess: true)
                 insertMessage(message)
             }
         }
     }
     
-    func saveQAndAText(question:String,saveModel:PTChatModel)
+    //MARK: 發送文字內容
+    func sendTextFunction(str:String,saveModel:PTChatModel,sectionIndex:Int,resend:Bool? = false)
+    {
+        switch self.chatCase {
+        case .chat:
+            if self.editMessage {
+                self.openAI.sendEdits(with: str, input: self.editString) { result in
+                    PTGCDManager.gcdBackground {
+                        PTGCDManager.gcdMain {
+                            self.setTypingIndicatorViewHidden(true)
+                        }
+                    }
+                    switch result {
+                    case .success(let success):
+                        self.messageList[sectionIndex].sending = false
+                        self.messageList[sectionIndex].sendSuccess = true
+                        self.messagesCollectionView.reloadData {
+                            
+                            PTGCDManager.gcdBackground {
+                                PTGCDManager.gcdMain {
+                                    let botDate = Date()
+                                    
+                                    saveModel.messageDateString = botDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+                                    saveModel.messageSendSuccess = true
+                                    self.chatModels.append(saveModel)
+
+                                    let botMessageModel = PTChatModel()
+                                    botMessageModel.messageDateString = botDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+                                    botMessageModel.messageType = 0
+                                    botMessageModel.messageText = success.choices.first?.text ?? ""
+                                    botMessageModel.outgoing = false
+                                    self.chatModels.append(botMessageModel)
+                                    
+                                    var botMessage = PTMessageModel(text: success.choices.first?.text ?? "", user: PTChatData.share.bot, messageId: UUID().uuidString, date: botDate)
+                                    botMessage.sending = false
+                                    self.insertMessage(botMessage)
+                                    PTGCDManager.gcdMain {
+                                        self.editString = ""
+                                        self.editMessage = false
+                                        self.setTitleViewFrame(text: .thinking)
+                                    }
+                                    self.historyModel?.historyModel = self.chatModels
+                                    self.packChatData()
+                                }
+                            }
+                        }
+                    case .failure(let failure):
+                        PTGCDManager.gcdMain {
+                            saveModel.messageSendSuccess = false
+                            if self.chatModels.count > 0 {
+                                self.chatModels[sectionIndex] = saveModel
+                            } else {
+                                self.chatModels.append(saveModel)
+                            }
+                            self.historyModel?.historyModel = self.chatModels
+                            self.packChatData()
+                            self.setTitleViewFrame(withModel: self.historyModel!)
+                            PTBaseViewController.gobal_drop(title: failure.localizedDescription)
+                            self.messageList[sectionIndex].sending = false
+                            self.messageList[sectionIndex].sendSuccess = false
+                            self.messagesCollectionView.reloadData()
+                        }
+                    }
+                }
+            } else {
+                if self.historyModel!.systemContent.stringIsEmpty() {
+                    let type = AppDelegate.appDelegate()!.appConfig.getAIMpdelType(typeString: AppDelegate.appDelegate()!.appConfig.aiModelType)
+                    switch type {
+                    case .chat(.chatgpt),.chat(.chatgpt0301),.chat(.chatgpt4),.chat(.chatgpt40314),.chat(.chatgpt432k),.chat(.chatgpt432k0314):
+                        let chat: [ChatMessage] = [
+                            ChatMessage(role: .user, content: str),
+                        ]
+                        self.openAI.sendChat(with: chat,model: type,maxTokens: 2048,temperature: AppDelegate.appDelegate()!.appConfig.aiSmart) { result in
+                            PTGCDManager.gcdBackground {
+                                PTGCDManager.gcdMain {
+                                    self.setTypingIndicatorViewHidden(true)
+                                }
+                            }
+                            switch result {
+                            case .success(let success):
+                                PTGCDManager.gcdMain {
+                                    saveModel.messageSendSuccess = true
+                                    self.messageList[sectionIndex].sending = false
+                                    self.messageList[sectionIndex].sendSuccess = true
+                                    self.messagesCollectionView.reloadData {
+                                        self.saveQAndAText(question: success.choices.first?.message.content ?? "", saveModel: saveModel,sendIndex: sectionIndex)
+                                    }
+                                }
+                            case .failure(let failure):
+                                PTGCDManager.gcdMain {
+                                    saveModel.messageSendSuccess = false
+                                    if resend! {
+                                        self.chatModels[sectionIndex] = saveModel
+                                    } else {
+                                        self.chatModels.append(saveModel)
+                                    }
+                                    self.historyModel?.historyModel = self.chatModels
+                                    self.packChatData()
+                                    self.setTitleViewFrame(withModel: self.historyModel!)
+                                    PTBaseViewController.gobal_drop(title: failure.localizedDescription)
+                                    self.messageList[sectionIndex].sending = false
+                                    self.messageList[sectionIndex].sendSuccess = false
+                                    self.messagesCollectionView.reloadData()
+                                }
+                            }
+                        }
+                    default:
+                        self.openAI.sendCompletion(with: str,model: type,maxTokens: 2048,temperature: AppDelegate.appDelegate()!.appConfig.aiSmart) { result in
+                            PTGCDManager.gcdBackground {
+                                PTGCDManager.gcdMain {
+                                    self.setTypingIndicatorViewHidden(true)
+                                }
+                            }
+                            switch result {
+                            case .success(let success):
+                                PTGCDManager.gcdMain {
+                                    saveModel.messageSendSuccess = true
+                                    self.messageList[sectionIndex].sending = false
+                                    self.messageList[sectionIndex].sendSuccess = true
+                                    self.messagesCollectionView.reloadData {
+                                        self.saveQAndAText(question: success.choices.first?.text ?? "", saveModel: saveModel,sendIndex: sectionIndex)
+                                    }
+                                }
+                            case .failure(let failure):
+                                PTGCDManager.gcdMain {
+                                    saveModel.messageSendSuccess = false
+                                    if self.chatModels.count > 0 {
+                                        self.chatModels[sectionIndex] = saveModel
+                                    } else {
+                                        self.chatModels.append(saveModel)
+                                    }
+                                    self.historyModel?.historyModel = self.chatModels
+                                    self.packChatData()
+                                    self.setTitleViewFrame(withModel: self.historyModel!)
+                                    PTBaseViewController.gobal_drop(title: failure.localizedDescription)
+                                    self.messageList[sectionIndex].sending = false
+                                    self.messageList[sectionIndex].sendSuccess = false
+                                    self.messagesCollectionView.reloadData()
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    var type = AppDelegate.appDelegate()!.appConfig.getAIMpdelType(typeString: AppDelegate.appDelegate()!.appConfig.aiModelType)
+                    switch type {
+                    case .chat(.chatgpt),.chat(.chatgpt0301),.chat(.chatgpt4),.chat(.chatgpt40314),.chat(.chatgpt432k),.chat(.chatgpt432k0314): break
+                    default:
+                        type = OpenAIModelType.chat(.chatgpt)
+                    }
+                    let chat: [ChatMessage] = [
+                        ChatMessage(role: .system, content: self.historyModel!.systemContent),
+                        ChatMessage(role: .user, content: str)
+                    ]
+                    self.openAI.sendChat(with: chat,model: type,maxTokens: 2048,temperature: AppDelegate.appDelegate()!.appConfig.aiSmart) { result in
+                        PTGCDManager.gcdBackground {
+                            PTGCDManager.gcdMain {
+                                self.setTypingIndicatorViewHidden(true)
+                            }
+                        }
+                        switch result {
+                        case .success(let success):
+                            saveModel.messageSendSuccess = true
+                            self.messageList[sectionIndex].sending = false
+                            self.messageList[sectionIndex].sendSuccess = true
+                            self.messagesCollectionView.reloadData {
+                                self.saveQAndAText(question: success.choices.first?.message.content ?? "", saveModel: saveModel,sendIndex: sectionIndex)
+                            }
+                        case .failure(let failure):
+                            PTGCDManager.gcdMain {
+                                saveModel.messageSendSuccess = false
+                                if self.chatModels.count > 0 {
+                                    self.chatModels[sectionIndex] = saveModel
+                                } else {
+                                    self.chatModels.append(saveModel)
+                                }
+                                self.historyModel?.historyModel = self.chatModels
+                                self.packChatData()
+                                self.setTitleViewFrame(withModel: self.historyModel!)
+                                PTBaseViewController.gobal_drop(title: failure.localizedDescription)
+                                self.messageList[sectionIndex].sending = false
+                                self.messageList[sectionIndex].sendSuccess = false
+                                self.messagesCollectionView.reloadData()
+                            }
+                        }
+                    }
+                }
+            }
+        default:
+            PTNSLogConsole("我要畫畫")
+            self.drawImage(str: str,saveModel: saveModel,indexSection: sectionIndex)
+        }
+    }
+    
+    func saveQAndAText(question:String,saveModel:PTChatModel,sendIndex:Int)
     {
         let botDate = Date()
-        saveModel.answerDate = botDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
-        saveModel.answerType = 0
-        saveModel.answer = question
+        
+        saveModel.messageDateString = botDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+        self.chatModels.append(saveModel)
 
-        let botMessage = PTMessageModel(text: question, user: PTChatData.share.bot, messageId: UUID().uuidString, date: botDate)
-        self.insertMessage(botMessage)
+        let botMessageModel = PTChatModel()
+        botMessageModel.messageDateString = botDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+        botMessageModel.messageType = 0
+        botMessageModel.messageText = question
+        botMessageModel.outgoing = false
+        self.chatModels.append(botMessageModel)
+        
+        var botMessage = PTMessageModel(text: question, user: PTChatData.share.bot, messageId: UUID().uuidString, date: botDate)
+        botMessage.sending = false
+    
+        self.historyModel?.historyModel = self.chatModels
+        self.packChatData()
         PTGCDManager.gcdMain {
+            self.insertMessage(botMessage)
             self.setTitleViewFrame(withModel: self.historyModel!)
         }
-        self.chatModelToJsonString(model: saveModel)
     }
 }
 
@@ -1708,8 +1996,7 @@ extension PTChatViewController:OSSSpeechDelegate
     
     func didCompleteTranslation(withText text: String) {
         PTNSLogConsole("Listening>>>>>>>>>>>>>\(text)")
-        if self.translateToText
-        {
+        if self.translateToText {
             self.maskView.translateLabel.text = text
             self.maskView.translateLabel.isHidden = false
             var textHeight = self.maskView.translateLabel.sizeFor(size: CGSize(width: CGFloat.kSCREEN_WIDTH - 40, height: CGFloat(MAXFLOAT))).height + 10
@@ -1742,20 +2029,21 @@ extension PTChatViewController:OSSSpeechDelegate
         PTNSLogConsole("url:\(url) \ntext:\(text)")
         let date = Date()
         let voiceURL = URL(fileURLWithPath: url.absoluteString.replacingOccurrences(of: "file://", with: ""))
-        let voiceMessage = PTMessageModel(audioURL: voiceURL, user: PTChatData.share.user, messageId: UUID().uuidString, date: date)
+        let voiceMessage = PTMessageModel(audioURL: voiceURL, user: PTChatData.share.user, messageId: UUID().uuidString, date: date,sendSuccess: false)
         
         let saveModel = PTChatModel()
         if self.sendTranslateText
         {
-            saveModel.questionType = 0
+            saveModel.messageType = 0
         }
         else
         {
-            saveModel.questionType = 1
-            saveModel.questionVoiceURL = voiceURL.lastPathComponent
+            saveModel.messageType = 1
+            saveModel.messageMediaURL = voiceURL.lastPathComponent
         }
-        saveModel.question = text
-        saveModel.questionDate = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+        saveModel.messageText = text
+        saveModel.messageDateString = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+        saveModel.outgoing = true
         if self.isSendVoice
         {
             self.isSendVoice = false
@@ -1890,7 +2178,9 @@ extension PTChatViewController : CoachMarksControllerDelegate
 {
     func coachMarksController(_ coachMarksController: CoachMarksController, didHide coachMark: CoachMark, at index: Int) {
         AppDelegate.appDelegate()?.appConfig.firstCoach = false
-        self.whatNews()
+        if index == (self.coachArray.count - 1) {
+            self.whatNews()
+        }
     }
     
     func coachMarksController(_ coachMarksController: CoachMarksController, didEndShowingBySkipping skipped: Bool) {

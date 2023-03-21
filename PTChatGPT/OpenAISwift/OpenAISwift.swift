@@ -79,32 +79,7 @@ extension OpenAISwift {
             }
         }
     }
-    
-    public func getImages(with prompt:String,imageSize:CGSize) async throws -> OpenAIImageGeneration
-    {
-        let sizeString = String(format: "%.0fx%.0f", imageSize.width,imageSize.height)
-        let endpoint = Endpoint.generateImage
-        let parameters: [String: Any] = [
-            "prompt" : prompt,
-            "n" : 1,
-            "size" : sizeString,
-            "user" : UUID().uuidString
-        ]
         
-        var urlComponents = URLComponents(url: URL(string: endpoint.baseURL())!, resolvingAgainstBaseURL: true)
-        urlComponents?.path = endpoint.path
-
-        let data: Data = try JSONSerialization.data(withJSONObject: parameters)
-        var request = URLRequest(url: urlComponents!.url!)
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.addValue("Bearer \(self.token!)", forHTTPHeaderField: "Authorization")
-        request.httpMethod = "POST"
-        request.httpBody = data
-        let (response, _) = try await URLSession.shared.data(for: request)
-        let result = try JSONDecoder().decode(OpenAIImageGeneration.self, from: response)
-        return result
-    }
-    
     /// Send a Chat request to the OpenAI API
     /// - Parameters:
     ///   - messages: Array of `ChatMessages`
@@ -131,6 +106,47 @@ extension OpenAISwift {
             }
         }
     }
+    
+    public func getImages(with prompt:String,imageSize:CGSize,completionHandler: @escaping ((Result<OpenAIImageGeneration, OpenAIError>)) -> Void) {
+        let sizeString = String(format: "%.0fx%.0f", imageSize.width,imageSize.height)
+        let endpoint = Endpoint.generateImage
+        let parameters: [String: Any] = [
+            "prompt" : prompt,
+            "n" : 1,
+            "size" : sizeString,
+            "user" : UUID().uuidString
+        ]
+        
+        var urlComponents = URLComponents(url: URL(string: endpoint.baseURL())!, resolvingAgainstBaseURL: true)
+        urlComponents?.path = endpoint.path
+
+        do {
+            let data: Data = try JSONSerialization.data(withJSONObject: parameters)
+            var request = URLRequest(url: urlComponents!.url!)
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.addValue("Bearer \(self.token!)", forHTTPHeaderField: "Authorization")
+            request.httpMethod = "POST"
+            request.httpBody = data
+            
+            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+                if let error = error {
+                    completionHandler(.failure(.genericError(error: error)))
+                } else if let data = data {
+                    do {
+                        let result = try JSONDecoder().decode(OpenAIImageGeneration.self, from: data)
+                        completionHandler(.success(result))
+                    } catch {
+                        completionHandler(.failure(.decodingError(error: error)))
+                    }
+                }
+            }
+            
+            task.resume()
+        } catch {
+            completionHandler(.failure(.genericError(error: error)))
+        }
+    }
+
     
     private func makeRequest(request: URLRequest, completionHandler: @escaping (Result<Data, Error>) -> Void) {
         let session = URLSession.shared
@@ -215,5 +231,31 @@ extension OpenAISwift {
                 continuation.resume(with: result)
             }
         }
+    }
+    
+    @available(swift 5.5)
+    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    public func getImages(with prompt:String,imageSize:CGSize) async throws -> OpenAIImageGeneration {
+        let sizeString = String(format: "%.0fx%.0f", imageSize.width,imageSize.height)
+        let endpoint = Endpoint.generateImage
+        let parameters: [String: Any] = [
+            "prompt" : prompt,
+            "n" : 1,
+            "size" : sizeString,
+            "user" : UUID().uuidString
+        ]
+        
+        var urlComponents = URLComponents(url: URL(string: endpoint.baseURL())!, resolvingAgainstBaseURL: true)
+        urlComponents?.path = endpoint.path
+
+        let data: Data = try JSONSerialization.data(withJSONObject: parameters)
+        var request = URLRequest(url: urlComponents!.url!)
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer \(self.token!)", forHTTPHeaderField: "Authorization")
+        request.httpMethod = "POST"
+        request.httpBody = data
+        let (response, _) = try await URLSession.shared.data(for: request)
+        let result = try JSONDecoder().decode(OpenAIImageGeneration.self, from: response)
+        return result
     }
 }

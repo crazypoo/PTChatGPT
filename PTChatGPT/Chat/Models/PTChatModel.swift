@@ -10,14 +10,21 @@ import UIKit
 import PooTools
 
 class PTChatModel: PTBaseModel {
-    ///0:type,1voice
-    var questionType:Int = 0
-    var question:String = ""
-    var questionVoiceURL:String = ""
-    var questionDate:String = ""
-    ///0:text,1image
-    var answerType:Int = 0
-    var answer:String = ""
-    var answerDate:String = ""
-    var answerImageURL:String = ""
+    ///Type: 0文字,1聲音,2圖片
+    var messageType:Int = 0
+    ///信息是否發送成功
+    var messageSendSuccess:Bool = true
+    ///消息內容
+    var messageText:String = ""
+    ///消息媒體內容URL
+    var messageMediaURL:String = ""
+    ///消息日期
+    var messageDateString :String = ""
+    ///消息發送人
+    var outgoing:Bool = true    
+}
+
+class PTFavouriteModel:PTBaseModel {
+    var chats:[PTChatModel] = [PTChatModel]()
+    var chatContent:String = ""
 }

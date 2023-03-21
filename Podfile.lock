@@ -26,9 +26,6 @@ PODS:
   - FluentDarkModeKit (1.0.4)
   - HandyJSON (5.0.2)
   - InAppViewDebugger (1.0.3)
-  - InputBarAccessoryView (5.5.0):
-    - InputBarAccessoryView/Core (= 5.5.0)
-  - InputBarAccessoryView/Core (5.5.0)
   - Instructions (2.2.0)
   - IQKeyboardManager (6.5.11)
   - KakaJSON (1.1.2)
@@ -40,8 +37,6 @@ PODS:
     - DZNEmptyDataSet (~> 1.8.1)
   - MarqueeLabel (4.3.0)
   - MBProgressHUD (1.2.0)
-  - MessageKit (3.8.0):
-    - InputBarAccessoryView (~> 5.5.0)
   - MJExtension (3.4.1)
   - MJRefresh (3.7.5)
   - NotificationBannerSwift (3.2.0):
@@ -160,7 +155,6 @@ DEPENDENCIES:
   - InAppViewDebugger
   - LifetimeTracker
   - LookinServer
-  - MessageKit
   - PooTools/ColorPicker (from `https://github.com/crazypoo/PTools.git`)
   - PooTools/Core (from `https://github.com/crazypoo/PTools.git`)
   - PooTools/DarkModeSetting (from `https://github.com/crazypoo/PTools.git`)
@@ -192,7 +186,6 @@ SPEC REPOS:
     - FluentDarkModeKit
     - HandyJSON
     - InAppViewDebugger
-    - InputBarAccessoryView
     - Instructions
     - IQKeyboardManager
     - KakaJSON
@@ -201,7 +194,6 @@ SPEC REPOS:
     - LXFProtocolTool
     - MarqueeLabel
     - MBProgressHUD
-    - MessageKit
     - MJExtension
     - MJRefresh
     - NotificationBannerSwift
@@ -251,7 +243,6 @@ SPEC CHECKSUMS:
   FluentDarkModeKit: b6317653a00329564582884772ec57c4eaad1a1f
   HandyJSON: 9e4e236f5d2dbefad5155a77417bbea438201c03
   InAppViewDebugger: 5f1cd0189d348679f153502da1343ba513b5cbae
-  InputBarAccessoryView: 1d7b0a672b36e370f01f264b3907ef39d03328e3
   Instructions: 07052901a398b42eb1d83de9755b8a0bac3e2f7d
   IQKeyboardManager: ef43ce1ba1e5aaf4adf222c0a46f39761f246879
   KakaJSON: cc5ff50a8c1cfbb09413db8496cb709a209e6137
@@ -260,7 +251,6 @@ SPEC CHECKSUMS:
   LXFProtocolTool: 8d1e53c010f6941c273b9908be24bfc20d1ce2f2
   MarqueeLabel: 02f5ac8fd6877c94564556cb93fa86c70c08baeb
   MBProgressHUD: 3ee5efcc380f6a79a7cc9b363dd669c5e1ae7406
-  MessageKit: a1ba0c69ebead94029867853eb44dd05b9b3f453
   MJExtension: 21c5f6f8c4d5d8844b7ae8fbae08fed0b501f961
   MJRefresh: fdf5e979eb406a0341468932d1dfc8b7f9fce961
   NotificationBannerSwift: 437e135298d297fcb03f3eec4466f45cdb128d3d
@@ -287,6 +277,6 @@ SPEC CHECKSUMS:
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
   ZXNavigationBar: a8ceb13fe37f9ca894cf6ae22d805cbdbb9ad6b1
 
-PODFILE CHECKSUM: 7fc0dd4adf3ca7b2fa2d58965419681ff4b18b45
+PODFILE CHECKSUM: f0d67eefb557b1eef4a785bb234b6f4aefa4f0c4
 
 COCOAPODS: 1.12.0

@@ -566,7 +566,6 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                 
                 let baseSub = PTSegHistoryModel()
                 baseSub.keyName = "Base"
-                baseSub.historyJson = ""
                 let jsonArr = [baseSub.toJSON()!.toJSON()!]
                 let dataString = jsonArr.joined(separator: kSeparatorSeg)
                 AppDelegate.appDelegate()?.appConfig.segChatHistory = dataString

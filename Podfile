@@ -33,7 +33,7 @@ target 'PTChatGPT' do
   pod 'PooTools/Slider', :git => 'https://github.com/crazypoo/PTools.git'
   pod 'PooTools/Instructions', :git => 'https://github.com/crazypoo/PTools.git'
 
-  pod 'MessageKit'
+#  pod 'MessageKit'
   pod 'WhatsNew'
   
   pod 'SwiftLint'

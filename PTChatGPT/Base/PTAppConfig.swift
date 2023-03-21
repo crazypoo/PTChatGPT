@@ -457,7 +457,6 @@ class PTAppConfig {
                 } else {
                     let baseSub = PTSegHistoryModel()
                     baseSub.keyName = "Base"
-                    baseSub.historyJson = self.chatHistory
                     let jsonArr = [baseSub.toJSON()!.toJSON()!]
                     let dataString = jsonArr.joined(separator: kSeparatorSeg)
                     return dataString
@@ -468,10 +467,8 @@ class PTAppConfig {
                 } else {
                     let baseSub = PTSegHistoryModel()
                     baseSub.keyName = "Base"
-                    baseSub.historyJson = self.chatHistory
                     let jsonArr = [baseSub.toJSON()!.toJSON()!]
                     let dataString = jsonArr.joined(separator: kSeparatorSeg)
-                    PTNSLogConsole(">>>>>>>>>>>>>>>>>>>>>>\(dataString)")
                     return dataString
                 }
             }
@@ -784,14 +781,14 @@ class PTAppConfig {
     
     //MARK: 精选数据
     ///精选数据
-    func getSaveChatData() -> [PTChatModel]
+    func getSaveChatData() -> [PTFavouriteModel]
     {
-        var saveChatModel = [PTChatModel]()
+        var saveChatModel = [PTFavouriteModel]()
         if !self.chatFavourtie.stringIsEmpty()
         {
             let userModelsStringArr = self.chatFavourtie.components(separatedBy: kSeparator)
             userModelsStringArr.enumerated().forEach { index,value in
-                let models = PTChatModel.deserialize(from: value)
+                let models = PTFavouriteModel.deserialize(from: value)
                 saveChatModel.append(models!)
             }
         }

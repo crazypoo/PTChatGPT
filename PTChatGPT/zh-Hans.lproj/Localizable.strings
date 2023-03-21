@@ -101,3 +101,4 @@
 "appUseInfo_Next" = "下一步";
 "appUseInfo_Finish" = "完成";
 "alert_Time_set_error" = "开始时间必须小于结束时间";
+"chat_Send_error" = "发送失败";

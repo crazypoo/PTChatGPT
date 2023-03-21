@@ -70,60 +70,61 @@ struct PTContactItem: ContactItem {
 
 internal struct PTMessageModel: MessageType {
     // MARK: Lifecycle
-    private init(kind: MessageKind, user: PTChatUser, messageId: String, date: Date) {
+    private init(kind: MessageKind, user: PTChatUser, messageId: String, date: Date,sendSuccess:Bool) {
         self.kind = kind
         self.user = user
         self.messageId = messageId
-        sentDate = date
+        self.sentDate = date
+        self.sendSuccess = sendSuccess
     }
 
-    init(custom: Any?, user: PTChatUser, messageId: String, date: Date) {
-        self.init(kind: .custom(custom), user: user, messageId: messageId, date: date)
+    init(custom: Any?, user: PTChatUser, messageId: String, date: Date,sendSuccess:Bool) {
+        self.init(kind: .custom(custom), user: user, messageId: messageId, date: date,sendSuccess: sendSuccess)
     }
 
-    init(text: String, user: PTChatUser, messageId: String, date: Date) {
-        self.init(kind: .text(text), user: user, messageId: messageId, date: date)
+    init(text: String, user: PTChatUser, messageId: String, date: Date,sendSuccess:Bool? = true) {
+        self.init(kind: .text(text), user: user, messageId: messageId, date: date,sendSuccess: sendSuccess!)
     }
 
-    init(attributedText: NSAttributedString, user: PTChatUser, messageId: String, date: Date) {
-        self.init(kind: .attributedText(attributedText), user: user, messageId: messageId, date: date)
+    init(attributedText: NSAttributedString, user: PTChatUser, messageId: String, date: Date,sendSuccess:Bool) {
+        self.init(kind: .attributedText(attributedText), user: user, messageId: messageId, date: date,sendSuccess: sendSuccess)
     }
 
-    init(image: UIImage, user: PTChatUser, messageId: String, date: Date) {
+    init(image: UIImage, user: PTChatUser, messageId: String, date: Date,sendSuccess:Bool) {
         let mediaItem = PTImageMediaItem(image: image)
-        self.init(kind: .photo(mediaItem), user: user, messageId: messageId, date: date)
+        self.init(kind: .photo(mediaItem), user: user, messageId: messageId, date: date,sendSuccess: sendSuccess)
     }
 
-    init(imageURL: URL, user: PTChatUser, messageId: String, date: Date) {
+    init(imageURL: URL, user: PTChatUser, messageId: String, date: Date,sendSuccess:Bool? = true) {
         let mediaItem = PTImageMediaItem(imageURL: imageURL)
-        self.init(kind: .photo(mediaItem), user: user, messageId: messageId, date: date)
+        self.init(kind: .photo(mediaItem), user: user, messageId: messageId, date: date,sendSuccess: sendSuccess!)
     }
 
-    init(thumbnail: UIImage, user: PTChatUser, messageId: String, date: Date) {
+    init(thumbnail: UIImage, user: PTChatUser, messageId: String, date: Date,sendSuccess:Bool) {
         let mediaItem = PTImageMediaItem(image: thumbnail)
-        self.init(kind: .video(mediaItem), user: user, messageId: messageId, date: date)
+        self.init(kind: .video(mediaItem), user: user, messageId: messageId, date: date,sendSuccess: sendSuccess)
     }
 
-    init(location: CLLocation, user: PTChatUser, messageId: String, date: Date) {
+    init(location: CLLocation, user: PTChatUser, messageId: String, date: Date,sendSuccess:Bool) {
         let locationItem = PTCoordinateItem(location: location)
-        self.init(kind: .location(locationItem), user: user, messageId: messageId, date: date)
+        self.init(kind: .location(locationItem), user: user, messageId: messageId, date: date,sendSuccess: sendSuccess)
     }
 
-    init(emoji: String, user: PTChatUser, messageId: String, date: Date) {
-        self.init(kind: .emoji(emoji), user: user, messageId: messageId, date: date)
+    init(emoji: String, user: PTChatUser, messageId: String, date: Date,sendSuccess:Bool) {
+        self.init(kind: .emoji(emoji), user: user, messageId: messageId, date: date,sendSuccess: sendSuccess)
     }
 
-    init(audioURL: URL, user: PTChatUser, messageId: String, date: Date) {
+    init(audioURL: URL, user: PTChatUser, messageId: String, date: Date,sendSuccess:Bool) {
         let audioItem = PTAudioItem(url: audioURL)
-        self.init(kind: .audio(audioItem), user: user, messageId: messageId, date: date)
+        self.init(kind: .audio(audioItem), user: user, messageId: messageId, date: date,sendSuccess: sendSuccess)
     }
 
-    init(contact: PTContactItem, user: PTChatUser, messageId: String, date: Date) {
-        self.init(kind: .contact(contact), user: user, messageId: messageId, date: date)
+    init(contact: PTContactItem, user: PTChatUser, messageId: String, date: Date,sendSuccess:Bool) {
+        self.init(kind: .contact(contact), user: user, messageId: messageId, date: date,sendSuccess: sendSuccess)
     }
 
-    init(linkItem: LinkItem, user: PTChatUser, messageId: String, date: Date) {
-        self.init(kind: .linkPreview(linkItem), user: user, messageId: messageId, date: date)
+    init(linkItem: LinkItem, user: PTChatUser, messageId: String, date: Date,sendSuccess:Bool) {
+        self.init(kind: .linkPreview(linkItem), user: user, messageId: messageId, date: date,sendSuccess: sendSuccess)
     }
 
     // MARK: Internal
@@ -137,4 +138,7 @@ internal struct PTMessageModel: MessageType {
     var sender: SenderType {
         user
     }
+    
+    var sendSuccess:Bool
+    var sending:Bool? = false
 }

@@ -12,5 +12,5 @@ import PooTools
 class PTSegHistoryModel: PTBaseModel {
     var keyName:String = ""
     var systemContent:String = ""
-    var historyJson:String = ""
+    var historyModel:[PTChatModel] = [PTChatModel]()
 }
