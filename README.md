@@ -39,7 +39,7 @@ App主框架使用了自己的工具框架[PTools](https://github.com/crazypoo/P
 
 里面包含类似微信发送语音的方式来进行提问,其中语音输入使用了[OSSSpeechKit](https://github.com/crazypoo/OSSSpeechKit) ,为什么不用他本身的库?因为他本身的库太少功能,我在里面帮他补全,但是他又不pull我的更新,所以我就不用他的,他支持什么语音识别,就支持什么语音识别
 
-聊天列表使用了3.8版本的[MessageKit](https://github.com/MessageKit/MessageKit) ,我的天,最新版不支持cocoapods
+聊天列表使用了最新版本的[MessageKit](https://github.com/MessageKit/MessageKit)
 
 对于聊天列表的设置,我用了[ChromaColorPicker](https://github.com/joncardasis/ChromaColorPicker) ,来进行颜色设置
 
