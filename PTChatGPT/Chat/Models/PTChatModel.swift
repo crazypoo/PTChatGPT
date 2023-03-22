@@ -21,7 +21,9 @@ class PTChatModel: PTBaseModel {
     ///消息日期
     var messageDateString :String = ""
     ///消息發送人
-    var outgoing:Bool = true    
+    var outgoing:Bool = true
+    
+    var correctionText:String = ""
 }
 
 class PTFavouriteModel:PTBaseModel {

@@ -82,8 +82,9 @@ internal struct PTMessageModel: MessageType {
         self.init(kind: .custom(custom), user: user, messageId: messageId, date: date,sendSuccess: sendSuccess)
     }
 
-    init(text: String, user: PTChatUser, messageId: String, date: Date,sendSuccess:Bool? = true) {
+    init(text: String, user: PTChatUser, messageId: String, date: Date,sendSuccess:Bool? = true,correctionText:String? = "") {
         self.init(kind: .text(text), user: user, messageId: messageId, date: date,sendSuccess: sendSuccess!)
+        self.correctionText = correctionText!
     }
 
     init(attributedText: NSAttributedString, user: PTChatUser, messageId: String, date: Date,sendSuccess:Bool) {
@@ -141,4 +142,5 @@ internal struct PTMessageModel: MessageType {
     
     var sendSuccess:Bool
     var sending:Bool? = false
+    var correctionText:String = ""
 }
