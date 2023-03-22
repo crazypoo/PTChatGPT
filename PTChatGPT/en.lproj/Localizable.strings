@@ -45,7 +45,7 @@
 "alert_Save_Q&A" = "Do you want to save the result of this problem and the corresponding problem?";
 "alert_Error_same" = "Duplicate content cannot be saved.";
 "alert_Save_success" = "Saved successfully";
-"chat_Edit" = "Please enter the content to be modified for %@";
+"chat_Edit" = "Please enter the content modified for this";
 "chat_Sending" = "Sending......";
 "first_Title" = "Get OpenAI API key";
 "first_Info_title" = "To use the app, you must generate a token to access the OpenAI API";

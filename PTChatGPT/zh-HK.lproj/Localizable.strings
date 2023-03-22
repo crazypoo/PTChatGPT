@@ -45,7 +45,7 @@
 "alert_Save_Q&A" = "你想要保存這個問題的結果和對應的問題嗎?";
 "alert_Error_same" = "不可以保存重複內容";
 "alert_Save_success" = "保存成功";
-"chat_Edit" = "請輸入對%@須要修改的內容";
+"chat_Edit" = "請輸入對此修改的內容";
 "chat_Sending" = "發送中......";
 "first_Title" = "獲取OpenAI API key";
 "first_Info_title" = "要使用該應用程式，您必須生成一個令牌來訪問OpenAI API";

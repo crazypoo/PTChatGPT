@@ -45,7 +45,7 @@
 "alert_Save_Q&A" = "¿Quieres guardar el resultado de este problema y el problema correspondiente?";
 "alert_Error_same" = "El contenido duplicado no se puede guardar.";
 "alert_Save_success" = "Guardado con éxito";
-"chat_Edit" = "Por favor, introduzca lo que necesita ser modificado para %@.";
+"chat_Edit" = "Por favor, introduzca el contenido modificado para esto";
 "chat_Sending" = "Enviando......";
 "first_Title" = "Obtener la clave API de OpenAI";
 "first_Info_title" = "Para usar la aplicación, debe generar un token para acceder a la API de OpenAI";

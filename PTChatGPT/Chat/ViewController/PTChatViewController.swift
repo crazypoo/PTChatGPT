@@ -225,23 +225,7 @@ class PTChatViewController: MessagesViewController {
         control.addTarget(self, action: #selector(loadMoreMessage), for: .valueChanged)
         return control
     }()
-    
-    lazy var closeEditButton:UIButton = {
-        let view = UIButton(type: .custom)
-        view.setImage(UIImage(systemName: "xmark.circle.fill")?.withRenderingMode(.automatic), for: .normal)
-        view.addActionHandlers { sender in
-            self.closeEditButton.isHidden = true
-            self.closeEditButton.isUserInteractionEnabled = false
-            self.voiceTypeButton.isHidden = false
-            self.voiceTypeButton.isUserInteractionEnabled = true
-            self.editMessage = false
-            self.messageInputBar.inputTextView.resignFirstResponder()
-            self.editString = ""
-            self.messageInputBar.inputTextView.placeholder = "Aa"
-        }
-        return view
-    }()
-    
+        
     lazy var sendTypeButton:UIButton = {
         let view = UIButton(type: .custom)
         view.isSelected = false
@@ -726,6 +710,38 @@ class PTChatViewController: MessagesViewController {
         self.messageInputBar.setStackViewItems([self.rightInputStackButton(),.flexibleSpace,self.messageInputBar.sendButton,], forStack: .right, animated: false)
         self.messageInputBar.setRightStackViewWidthConstant(to: 96, animated: false)
     }
+    
+    func setEditInputItem() {
+        self.messageInputBar.setStackViewItems([self.inputBarCloseEditButton], forStack: .top, animated: false)
+        self.setInputOtherItem()
+    }
+    
+    private lazy var inputBarCloseEditButton:InputBarButtonItem = {
+        
+        let view = InputBarButtonItem()
+        view.backgroundColor = .gobalBackgroundColor
+        view.spacing = .fixed(10)
+        view.isSelected = false
+        view.titleLabel?.numberOfLines = 0
+        view.setTitle("", for: .normal)
+        view.setImage(UIImage(systemName: "xmark.circle.fill")?.withTintColor(.black, renderingMode: .automatic), for: .normal)
+        view.setSize(CGSize(width: CGFloat.kSCREEN_WIDTH, height: view.sizeFor(size: CGSize(width: CGFloat.kSCREEN_WIDTH, height: CGFloat(MAXFLOAT))).height), animated: true)
+        view.addActionHandlers { sender in
+            self.editString = ""
+            self.editMessage = false
+            self.messageInputBar.inputTextView.resignFirstResponder()
+            self.messageInputBar.inputTextView.placeholder = "Aa"
+            self.messageInputBar.setStackViewItems([], forStack: .top, animated: true)
+        }
+        return view
+    }()
+    
+    private lazy var editLabel : UILabel = {
+        let view = UILabel()
+        view.backgroundColor = .random
+        view.size = CGSize(width: 200, height: 44)
+        return view
+    }()
         
     private func leftInputStackButton() -> InputBarButtonItem {
         let view = InputBarButtonItem()
@@ -779,41 +795,7 @@ class PTChatViewController: MessagesViewController {
         }
         return view
     }
-    
-    func setInputBarFrame()
-    {
-        let senderW = messageInputBar.sendButton.sizeFor(size: CGSize(width: CGFloat(MAXFLOAT), height: 44)).width + 10
-        self.messageInputBar.sendButton.snp.remakeConstraints { make in
-            make.right.equalToSuperview().inset(PTAppBaseConfig.share.defaultViewSpace)
-            make.bottom.equalToSuperview().inset(CGFloat.kTabbarSaveAreaHeight + 10)
-            make.width.equalTo(senderW)
-        }
         
-        self.messageInputBar.addSubviews([self.voiceTypeButton,self.sendTypeButton,self.closeEditButton])
-        self.sendTypeButton.snp.makeConstraints { make in
-            make.right.equalTo(messageInputBar.sendButton.snp.left).offset(-10)
-            make.bottom.equalTo(messageInputBar.sendButton)
-            make.width.height.equalTo(34)
-        }
-        
-        self.voiceTypeButton.snp.makeConstraints { make in
-            make.left.equalToSuperview().inset(PTAppBaseConfig.share.defaultViewSpace)
-            make.bottom.size.equalTo(self.sendTypeButton)
-        }
-        
-        self.messageInputBar.inputTextView.snp.makeConstraints { make in
-            make.top.bottom.equalToSuperview()
-            make.left.equalTo(self.voiceTypeButton.snp.right).offset(10)
-            make.width.equalTo(CGFloat.kSCREEN_WIDTH - senderW - PTAppBaseConfig.share.defaultViewSpace * 2 - 10 * 2 - 34 * 2)
-        }
-        
-        self.closeEditButton.snp.makeConstraints { make in
-            make.edges.equalTo(self.voiceTypeButton)
-        }
-        self.closeEditButton.isHidden = true
-        self.closeEditButton.isUserInteractionEnabled = false
-    }
-    
     // MARK: - Helpers
     func insertMessage(_ message: PTMessageModel) {
         messageList.append(message)
@@ -829,8 +811,7 @@ class PTChatViewController: MessagesViewController {
                     self?.messagesCollectionView.scrollToLastItem(animated: true)
                 }
                 
-                if self?.messageList.count == 1
-                {
+                if self?.messageList.count == 1 {
                     self?.messagesCollectionView.reloadData()
                 }
             })
@@ -842,7 +823,7 @@ class PTChatViewController: MessagesViewController {
             if success, self?.isLastSectionVisible() == true {
                 self?.messagesCollectionView.scrollToLastItem(animated: true)
             }
-      }
+        }
     }
 
     func isLastSectionVisible() -> Bool {
@@ -862,8 +843,7 @@ class PTChatViewController: MessagesViewController {
     }()
 
     //MARK: 语音发送操作
-    @objc func recordButtonPressed()
-    {
+    @objc func recordButtonPressed() {
         if self.avCaptureDeviceAuthorize(avMediaType: .audio) {
             self.messageInputBar.inputTextView.resignFirstResponder()
             self.maskView.visualizerView.start()
@@ -875,8 +855,7 @@ class PTChatViewController: MessagesViewController {
         }
     }
     
-    @objc func recordButtonReleased()
-    {
+    @objc func recordButtonReleased() {
         if self.avCaptureDeviceAuthorize(avMediaType: .audio) {
             // 停止錄音
             self.isRecording = false
@@ -1251,7 +1230,6 @@ extension PTChatViewController:MessagesDataSource
 //        cell.configure(with: message, at: indexPath, and: messagesCollectionView)
         return nil
     }
-
 }
 
 //MARK: MessageCellDelegate
@@ -1287,18 +1265,29 @@ extension PTChatViewController:MessageCellDelegate
         var titles:[String] = [String]()
         switch messageModel.kind {
         case .text( _):
-            if messageModel.sender.senderId == PTChatData.share.bot.senderId
-            {
+            if messageModel.sender.senderId == PTChatData.share.bot.senderId {
                 if self.onlyShowSave {
                     titles = [.copyString,.playString]
                 } else {
-                    titles = [.copyString,.editString,.playString,.saveString]
+                    let type = AppDelegate.appDelegate()!.appConfig.getAIMpdelType(typeString: AppDelegate.appDelegate()!.appConfig.aiModelType)
+                    switch type {
+                    case .chat(.chatgpt),.chat(.chatgpt0301),.chat(.chatgpt4),.chat(.chatgpt40314),.chat(.chatgpt432k),.chat(.chatgpt432k0314):
+                        titles = [.copyString,.playString,.saveString]
+                    default:
+                        titles = [.copyString,.editString,.playString,.saveString]
+                    }
                 }
             } else {
                 if self.onlyShowSave {
                     titles = [.copyString]
                 } else {
-                    titles = [.copyString,.editString]
+                    let type = AppDelegate.appDelegate()!.appConfig.getAIMpdelType(typeString: AppDelegate.appDelegate()!.appConfig.aiModelType)
+                    switch type {
+                    case .chat(.chatgpt),.chat(.chatgpt0301),.chat(.chatgpt4),.chat(.chatgpt40314),.chat(.chatgpt432k),.chat(.chatgpt432k0314):
+                        titles = [.copyString]
+                    default:
+                        titles = [.copyString,.editString]
+                    }
                 }
             }
             
@@ -1328,22 +1317,25 @@ extension PTChatViewController:MessageCellDelegate
                     default: break
                     }
                 case .editString:
-                    
-                    self.closeEditButton.isHidden = false
-                    self.closeEditButton.isUserInteractionEnabled = true
                     self.voiceTypeButton.isHidden = true
                     self.voiceTypeButton.isUserInteractionEnabled = false
-
+                    
                     let type = AppDelegate.appDelegate()!.appConfig.getAIMpdelType(typeString: AppDelegate.appDelegate()!.appConfig.aiModelType)
                     switch type {
-                    case .chat(.chatgpt),.chat(.chatgpt0301),.chat(.chatgpt4),.chat(.chatgpt40314),.chat(.chatgpt432k),.chat(.chatgpt432k0314):
-                        break
+                    case .chat(.chatgpt),.chat(.chatgpt0301),.chat(.chatgpt4),.chat(.chatgpt40314),.chat(.chatgpt432k),.chat(.chatgpt432k0314):break
                     default:
                         switch messageModel.kind {
                         case .text(let text):
+                            self.inputBarCloseEditButton.setTitle(text, for: .normal)
+                            var textHeight = self.inputBarCloseEditButton.sizeFor(size: CGSize(width: CGFloat.kSCREEN_WIDTH, height: CGFloat(MAXFLOAT))).height
+                            if textHeight <= 44 {
+                                textHeight = 44
+                            }
+                            self.inputBarCloseEditButton.setSize(CGSize(width: CGFloat.kSCREEN_WIDTH, height: textHeight), animated: true)
+                            self.setEditInputItem()
                             PTGCDManager.gcdAfter(time: 1) {
                                 self.editString = text
-                                self.messageInputBar.inputTextView.placeholder = String(format: PTLanguage.share.text(forKey: "chat_Edit"), self.editString)
+                                self.messageInputBar.inputTextView.placeholder = PTLanguage.share.text(forKey: "chat_Edit")
                             }
                         default: break
                         }
@@ -1438,8 +1430,7 @@ extension PTChatViewController:MessageCellDelegate
             let viewer = PTMediaViewer(viewConfig: config)
             viewer.showImageViewer()
             viewer.viewSaveImageBlock = { finish in
-                if finish
-                {
+                if finish {
                     PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Save_success"))
                 }
             }
@@ -1540,7 +1531,6 @@ extension PTChatViewController:MessageCellDelegate
                 }
                 return
             }
-
         }
     }
 }
@@ -1580,12 +1570,11 @@ extension PTChatViewController: MessageLabelDelegate {
 }
 
 
-extension PTChatViewController: InputBarAccessoryViewDelegate
-{
-    func drawImage(str:String,saveModel:PTChatModel,indexSection:Int)
-    {
+extension PTChatViewController: InputBarAccessoryViewDelegate {
+    func drawImage(str:String,saveModel:PTChatModel,indexSection:Int) {
         self.setTypingIndicatorViewHidden(false)
         self.openAI.getImages(with: str, imageSize: AppDelegate.appDelegate()!.appConfig.aiDrawSize) { result in
+            PTNSLogConsole("Draw API result>>:\(result)")
             PTGCDManager.gcdBackground {
                 PTGCDManager.gcdMain {
                     self.setTypingIndicatorViewHidden(true)
@@ -1710,8 +1699,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
     }
 
     // MARK: Private
-    private func insertMessages(_ data: [Any])
-    {
+    private func insertMessages(_ data: [Any]) {
         self.setTypingIndicatorViewHidden(false)
         for component in data {
             let user = PTChatData.share.user
@@ -1735,12 +1723,12 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
     }
     
     //MARK: 發送文字內容
-    func sendTextFunction(str:String,saveModel:PTChatModel,sectionIndex:Int,resend:Bool? = false)
-    {
+    func sendTextFunction(str:String,saveModel:PTChatModel,sectionIndex:Int,resend:Bool? = false) {
         switch self.chatCase {
         case .chat:
             if self.editMessage {
                 self.openAI.sendEdits(with: str, input: self.editString) { result in
+                    PTNSLogConsole("Edit API result>>:\(result)")
                     PTGCDManager.gcdBackground {
                         PTGCDManager.gcdMain {
                             self.setTypingIndicatorViewHidden(true)
@@ -1807,6 +1795,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
                             ChatMessage(role: .user, content: str),
                         ]
                         self.openAI.sendChat(with: chat,model: type,maxTokens: 2048,temperature: AppDelegate.appDelegate()!.appConfig.aiSmart) { result in
+                            PTNSLogConsole("GPTX API result>>:\(result)")
                             PTGCDManager.gcdBackground {
                                 PTGCDManager.gcdMain {
                                     self.setTypingIndicatorViewHidden(true)
@@ -1842,6 +1831,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
                         }
                     default:
                         self.openAI.sendCompletion(with: str,model: type,maxTokens: 2048,temperature: AppDelegate.appDelegate()!.appConfig.aiSmart) { result in
+                            PTNSLogConsole("Normal API result>>:\(result)")
                             PTGCDManager.gcdBackground {
                                 PTGCDManager.gcdMain {
                                     self.setTypingIndicatorViewHidden(true)
@@ -1888,6 +1878,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate
                         ChatMessage(role: .user, content: str)
                     ]
                     self.openAI.sendChat(with: chat,model: type,maxTokens: 2048,temperature: AppDelegate.appDelegate()!.appConfig.aiSmart) { result in
+                        PTNSLogConsole("GPTX API result>>:\(result)")
                         PTGCDManager.gcdBackground {
                             PTGCDManager.gcdMain {
                                 self.setTypingIndicatorViewHidden(true)
@@ -1993,9 +1984,7 @@ extension PTChatViewController:OSSSpeechDelegate
             self.maskView.translateLabel.snp.updateConstraints { make in
                 make.height.equalTo(textHeight)
             }
-        }
-        else
-        {
+        } else {
             self.maskView.translateLabel.isHidden = true
             self.maskView.translateLabel.snp.updateConstraints { make in
                 make.height.equalTo(0)
@@ -2014,44 +2003,34 @@ extension PTChatViewController:OSSSpeechDelegate
         var voiceMessage = PTMessageModel(audioURL: voiceURL, user: PTChatData.share.user, messageId: UUID().uuidString, date: date,sendSuccess: false)
         voiceMessage.sending = true
         let saveModel = PTChatModel()
-        if self.sendTranslateText
-        {
+        if self.sendTranslateText {
             saveModel.messageType = 0
-        }
-        else
-        {
+        } else {
             saveModel.messageType = 1
             saveModel.messageMediaURL = voiceURL.lastPathComponent
         }
         saveModel.messageText = text
         saveModel.messageDateString = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
         saveModel.outgoing = true
-        if self.isSendVoice
-        {
+        if self.isSendVoice {
             self.isSendVoice = false
-            if self.sendTranslateText
-            {
+            if self.sendTranslateText {
                 self.insertMessages([text])
                 self.maskView.translateLabel.text = ""
-            }
-            else
-            {
+            } else {
                 self.insertMessage(voiceMessage)
                 self.sendTextFunction(str: text, saveModel: saveModel, sectionIndex: self.messageList.count - 1)
             }
             self.messagesCollectionView.scrollToLastItem(animated: true)
             self.sendTranslateText = false
-        }
-        else
-        {
+        } else {
             self.speechKit.deleteVoiceFolderItem(url: URL(fileURLWithPath: url.absoluteString.replacingOccurrences(of: "file://", with: "")))
         }
     }
 }
 
 //MARK: LXFEmptyDataSetable
-extension PTChatViewController:LXFEmptyDataSetable
-{
+extension PTChatViewController:LXFEmptyDataSetable {
     func showEmptyDataSet(currentScroller: UIScrollView) {
         self.lxf_EmptyDataSet(currentScroller) { () -> ([LXFEmptyDataSetAttributeKeyType : Any]) in
             let color:UIColor = .gobalTextColor
@@ -2156,8 +2135,7 @@ extension PTChatViewController: CoachMarksControllerAnimationDelegate {
     }
 }
 
-extension PTChatViewController : CoachMarksControllerDelegate
-{
+extension PTChatViewController : CoachMarksControllerDelegate {
     func coachMarksController(_ coachMarksController: CoachMarksController, didHide coachMark: CoachMark, at index: Int) {
         AppDelegate.appDelegate()?.appConfig.firstCoach = false
         if index == (self.coachArray.count - 1) {
