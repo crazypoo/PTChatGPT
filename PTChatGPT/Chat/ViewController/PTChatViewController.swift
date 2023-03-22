@@ -1587,28 +1587,31 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
             }
             switch result {
             case .success(let success):
-                self.messageList[self.messageList.count - 1].sending = false
-                self.messageList[self.messageList.count - 1].sendSuccess = true
-                self.messagesCollectionView.reloadData {
-                    let imageURL = success.data.first?.url ?? URL(string: "")
-                    self.chatModels.append(saveModel)
-                    let date = Date()
+                PTGCDManager.gcdBackground {
+                    PTGCDManager.gcdMain {
+                        self.messageList[self.messageList.count - 1].sending = false
+                        self.messageList[self.messageList.count - 1].sendSuccess = true
+                        self.messagesCollectionView.reloadData {
+                            let imageURL = success.data.first?.url ?? URL(string: "")
+                            self.chatModels.append(saveModel)
+                            let date = Date()
 
-                    let botMessage = PTChatModel()
-                    botMessage.messageDateString = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
-                    botMessage.messageType = 2
-                    botMessage.messageMediaURL = imageURL?.absoluteString ?? ""
-                    botMessage.outgoing = false
-                    self.chatModels.append(botMessage)
-                    let message = PTMessageModel(imageURL: imageURL!, user: PTChatData.share.bot, messageId: UUID().uuidString, date: date)
-                    self.insertMessage(message)
+                            let botMessage = PTChatModel()
+                            botMessage.messageDateString = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+                            botMessage.messageType = 2
+                            botMessage.messageMediaURL = imageURL?.absoluteString ?? ""
+                            botMessage.outgoing = false
+                            self.chatModels.append(botMessage)
+                            let message = PTMessageModel(imageURL: imageURL!, user: PTChatData.share.bot, messageId: UUID().uuidString, date: date)
+                            self.insertMessage(message)
 
-                    PTNSLogConsole(success.data.first?.url ?? "")
-                    self.setTitleViewFrame(withModel: self.historyModel!)
-                    self.historyModel?.historyModel = self.chatModels
-                    self.packChatData()
+                            PTNSLogConsole(success.data.first?.url ?? "")
+                            self.setTitleViewFrame(withModel: self.historyModel!)
+                            self.historyModel?.historyModel = self.chatModels
+                            self.packChatData()
+                        }
+                    }
                 }
-
             case .failure(let failure):
                 PTGCDManager.gcdMain {
                     saveModel.messageSendSuccess = false
