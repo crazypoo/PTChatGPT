@@ -1056,6 +1056,8 @@ class PTChatViewController: MessagesViewController {
             setNeedsStatusBarAppearanceUpdate()
         }
     }
+    
+//    private lazy var textMessageSizeCalculator = CustomTextLayoutSizeCalculator( layout: self.messagesCollectionView.messagesCollectionViewFlowLayout)
 }
 
 // MARK: - MessagesDisplayDelegate
@@ -1066,11 +1068,13 @@ extension PTChatViewController: MessagesDisplayDelegate {
     func textColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
         return isFromCurrentSender(message: message) ? AppDelegate.appDelegate()!.appConfig.userTextColor : AppDelegate.appDelegate()!.appConfig.botTextColor
     }
-    
+
     func detectorAttributes(for detector: DetectorType, and message: MessageType, at indexPath: IndexPath) -> [NSAttributedString.Key: Any] {
         switch detector {
-        case .hashtag, .mention: return [.foregroundColor: UIColor.blue]
-        default: return MessageLabel.defaultAttributes
+        case .hashtag, .mention:
+            return [.foregroundColor: UIColor.blue]
+        default:
+            return MessageLabel.defaultAttributes
         }
     }
     
@@ -1164,6 +1168,10 @@ extension PTChatViewController: MessagesDisplayDelegate {
 //MARK: MessagesLayoutDelegate
 extension PTChatViewController:MessagesLayoutDelegate
 {
+//    func textCellSizeCalculator( for _: MessageType, at _: IndexPath, in _: MessagesCollectionView) -> CellSizeCalculator? {
+//            textMessageSizeCalculator
+//    }
+
     func cellTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
         return 18
     }
@@ -1177,7 +1185,23 @@ extension PTChatViewController:MessagesLayoutDelegate
     }
     
     func messageBottomLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        return 16
+        let dateString = formatter.string(from: message.sentDate)
+        let messageModel = self.messageList[indexPath.section]
+        
+        var dateHeight = UIView.sizeFor(string: dateString, font: UIFont.preferredFont(forTextStyle: .caption2), lineSpacing: 4, height: CGFloat(MAXFLOAT), width: CGFloat.kSCREEN_WIDTH).height
+        if dateHeight < 16 {
+            dateHeight = 16
+        }
+        
+        var editHeight:CGFloat = 0
+        if !messageModel.correctionText.nsString.stringIsEmpty() {
+            editHeight = UIView.sizeFor(string: messageModel.correctionText, font: UIFont.preferredFont(forTextStyle: .caption2), lineSpacing: 4, height: CGFloat(MAXFLOAT), width: CGFloat.kSCREEN_WIDTH).height
+            
+            if editHeight < 16 {
+                editHeight = 16
+            }
+        }
+        return (dateHeight + editHeight)
     }
 }
 
@@ -1237,19 +1261,21 @@ extension PTChatViewController:MessagesDataSource
         let dateString = formatter.string(from: message.sentDate)
         let messageModel = self.messageList[indexPath.section]
         let arr = NSAttributedString.sj.makeText { make in
-            make.append(dateString).font(UIFont.preferredFont(forTextStyle: .caption2)).textColor(.gobalTextColor).alignment((message.sender.senderId == PTChatData.share.bot.senderId ? .left : .right))
+            make.append(dateString).font(UIFont.preferredFont(forTextStyle: .caption2)).textColor(.gobalTextColor).alignment((message.sender.senderId == PTChatData.share.bot.senderId ? .left : .right)).lineSpacing(4)
             if !messageModel.correctionText.nsString.stringIsEmpty() {
-                make.append((PTLanguage.share.text(forKey: "chat_Edit_message") + messageModel.correctionText)).font(UIFont.preferredFont(forTextStyle: .caption2)).textColor(.gobalTextColor).alignment((message.sender.senderId == PTChatData.share.bot.senderId ? .left : .right)).lineBreakMode(.byTruncatingTail)
+                make.append("\n\((PTLanguage.share.text(forKey: "chat_Edit_message") + messageModel.correctionText))").font(UIFont.preferredFont(forTextStyle: .caption2)).textColor(.gobalTextColor).alignment(/*(message.sender.senderId == PTChatData.share.bot.senderId ? .left : .right)*/.left).lineSpacing(4).backgroundColor(.black.withAlphaComponent(0.05))
             }
         }
         return arr
     }
 
     func textCell(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UICollectionViewCell? {
-//        let cell = messagesCollectionView.dequeueReusableCell(withClass: PTChatCustomCell.self, for: indexPath)
-//        cell.configure(with: message, at: indexPath, and: messagesCollectionView)
+//
+//        let cell = messagesCollectionView.dequeueReusableCell( PTChatCustomCell.self, for: indexPath)
+//        cell.configure( with: message, at: indexPath, in: messagesCollectionView, dataSource: self, and: textMessageSizeCalculator)
         return nil
     }
+    
 }
 
 //MARK: MessageCellDelegate
