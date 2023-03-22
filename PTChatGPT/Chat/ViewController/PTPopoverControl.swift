@@ -22,6 +22,7 @@ class PTPopoverControl: PTChatBaseViewController {
     
     var selectedBlock:((_ selectedModel:PTSegHistoryModel)->Void)?
     var refreshTagArr:(()->Void)?
+    var refreshCurrentTag:((_ updateModel:PTSegHistoryModel)->Void)?
 
     var segDataArr:[PTSegHistoryModel] = {
         var arr = [PTSegHistoryModel]()
@@ -175,7 +176,9 @@ extension PTPopoverControl:UICollectionViewDelegate,UICollectionViewDataSource
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTPopoverCell
             cell.cellModel = (itemRow.dataModel as! PTSegHistoryModel)
             cell.bottomLine.isHidden = indexPath.row == (self.segDataArr.count - 1) ? true : false
-            cell.delegate = self
+            if indexPath.row != 0 {
+                cell.delegate = self
+            }
             return cell
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CELL", for: indexPath)
@@ -240,7 +243,6 @@ extension PTPopoverControl:SwipeCollectionViewCellDelegate
                        PTAppConfig.refreshTagData(segDataArr: self.segDataArr)
                        self.preferredContentSize = CGSize(width: self.popoverWidth, height: CGFloat(self.segDataArr.count) * self.popoverCellBaseHeight + (self.segDataArr.count > 1 ? self.footerHeight : 0))
                        self.collectionView.selectItem(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .top)
-//                       self.returnFrontVC()
                    } else {
                        self.segDataArr.remove(at: indexPath.row)
                        PTAppConfig.refreshTagData(segDataArr: self.segDataArr)
@@ -261,10 +263,69 @@ extension PTPopoverControl:SwipeCollectionViewCellDelegate
                }
            }
            delete.font = .appfont(size: 14)
-           delete.backgroundColor = .red
+           delete.backgroundColor = .clear
            delete.fulfill(with: .delete)
            self.swipe_cell_configure(action: delete, with: .trash)
-           return [delete]
+           
+           let edit = SwipeAction(style: .destructive, title: "编辑") { action, indexPath in
+               PTGCDManager.gcdAfter(time: 0.5) {
+                   let itemSec = self.mSections[indexPath.section]
+                   let itemRow = itemSec.rows[indexPath.row]
+                   let cellModel = (itemRow.dataModel as! PTSegHistoryModel)
+                   if cellModel.keyName == "Base" {
+                       PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Edit_error"))
+                   } else {
+                       let textKey = PTLanguage.share.text(forKey: "alert_Tag_set")
+                       let aiKey = PTLanguage.share.text(forKey: "alert_AI_Set")
+                                          
+                       let currentTitle = cellModel.keyName
+                       let aiSet = cellModel.systemContent
+
+                       UIAlertController.base_textfiele_alertVC(title:PTLanguage.share.text(forKey: "alert_Edit_ai"),titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey,aiKey], textFieldTexts: [currentTitle,aiSet], keyboardType: [.default,.default],textFieldDelegate: self) { result in
+                           let newKey:String? = result[textKey]!
+                           let newAiKey:String? = result[aiKey]
+                           if !(newKey ?? "").stringIsEmpty() {
+                               var segDatas = AppDelegate.appDelegate()?.appConfig.tagDataArr()
+                               let currentCellBaseData = segDatas![indexPath.row]
+                               currentCellBaseData.keyName = newKey!
+                               currentCellBaseData.systemContent = newAiKey ?? ""
+                               segDatas![indexPath.row] = currentCellBaseData
+                               
+                               var jsonArr = [String]()
+                               segDatas!.enumerated().forEach { index,value in
+                                   jsonArr.append(value.toJSON()!.toJSON()!)
+                               }
+                               AppDelegate.appDelegate()?.appConfig.segChatHistory = jsonArr.joined(separator: kSeparatorSeg)
+                               
+                               var indexPathSelect = IndexPath()
+                               self.segDataArr.enumerated().forEach { index,value in
+                                   if value.keyName == self.currentHistoryModel.keyName {
+                                       indexPathSelect = IndexPath.init(row: index, section: 0)
+                                   }
+                               }
+                               self.segDataArr[indexPath.row] = currentCellBaseData
+                               self.showDetail()
+                               self.collectionView.selectItem(at: indexPathSelect, animated: false, scrollPosition: .top)
+                               
+                               if indexPathSelect.row == indexPath.row {
+                                   if self.refreshCurrentTag != nil {
+                                       self.refreshCurrentTag!(currentCellBaseData)
+                                   }
+                               }
+                           } else {
+                               PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Input_error"))
+                           }
+                       }
+
+                   }
+               }
+           }
+           edit.font = .appfont(size: 14)
+           edit.backgroundColor = .clear
+           edit.fulfill(with: .reset)
+           self.swipe_cell_configure(action: edit, with: .edit)
+
+           return [delete,edit]
        } else {
            guard isSwipeRightEnabled else { return nil }
 
@@ -279,3 +340,5 @@ extension PTPopoverControl:SwipeCollectionViewCellDelegate
        }
    }
 }
+
+extension PTPopoverControl : UITextFieldDelegate {}

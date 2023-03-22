@@ -102,3 +102,5 @@
 "appUseInfo_Finish" = "完成";
 "alert_Time_set_error" = "開始時間必須小於結束時間";
 "chat_Send_error" = "發送失敗";
+"alert_Edit_ai" = "更改內容";
+"alert_Edit_error" = "編輯失敗";

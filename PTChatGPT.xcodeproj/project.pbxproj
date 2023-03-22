@@ -286,19 +286,19 @@
 		55A5D71629B1D23D00DCA096 /* PTChatGPT */ = {
 			isa = PBXGroup;
 			children = (
-				55C6BCCE29C4602B00A6B668 /* PTChatGPT.entitlements */,
-				5514B38529BAE76600890161 /* Tools */,
 				5512AB6429B43C2E0059D840 /* 3Party */,
-				55A5D80329B2429300DCA096 /* SettingInfo */,
-				55A5D7F429B1DFCD00DCA096 /* Chat */,
-				55A5D7FF29B1EFA000DCA096 /* Base */,
-				55A5D7E629B1D9A900DCA096 /* OpenAISwift */,
 				55A5D71729B1D23D00DCA096 /* AppDelegate.swift */,
-				55A5D71D29B1D23D00DCA096 /* Main.storyboard */,
 				55A5D72029B1D23E00DCA096 /* Assets.xcassets */,
-				55A5D72229B1D23E00DCA096 /* LaunchScreen.storyboard */,
+				55A5D7FF29B1EFA000DCA096 /* Base */,
+				55A5D7F429B1DFCD00DCA096 /* Chat */,
 				55A5D72529B1D23E00DCA096 /* Info.plist */,
+				55A5D72229B1D23E00DCA096 /* LaunchScreen.storyboard */,
 				5514B39E29BB127F00890161 /* Localizable.strings */,
+				55A5D71D29B1D23D00DCA096 /* Main.storyboard */,
+				55A5D7E629B1D9A900DCA096 /* OpenAISwift */,
+				55C6BCCE29C4602B00A6B668 /* PTChatGPT.entitlements */,
+				55A5D80329B2429300DCA096 /* SettingInfo */,
+				5514B38529BAE76600890161 /* Tools */,
 			);
 			path = PTChatGPT;
 			sourceTree = "<group>";
@@ -328,10 +328,10 @@
 		55A5D7F429B1DFCD00DCA096 /* Chat */ = {
 			isa = PBXGroup;
 			children = (
-				5514B37229B9D4E600890161 /* Models */,
-				5514B36F29B9CBDD00890161 /* Views */,
 				5512AB7A29B470160059D840 /* Function */,
+				5514B37229B9D4E600890161 /* Models */,
 				55A5D7F529B1DFD500DCA096 /* ViewController */,
+				5514B36F29B9CBDD00890161 /* Views */,
 			);
 			path = Chat;
 			sourceTree = "<group>";

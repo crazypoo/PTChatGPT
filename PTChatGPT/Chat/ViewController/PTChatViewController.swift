@@ -184,6 +184,11 @@ class PTChatViewController: MessagesViewController {
                     PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_done"))
                 }
             }
+            popover.refreshCurrentTag = { newTagModel in
+                self.historyModel = newTagModel
+                self.setTitleViewFrame(withModel: self.historyModel!)
+                PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Save_success"))
+            }
         }
         return view
     }()

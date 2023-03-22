@@ -102,3 +102,5 @@
 "appUseInfo_Finish" = "Finish";
 "alert_Time_set_error" = "The start time must be less than the end time";
 "chat_Send_error" = "Failed to send";
+"alert_Edit_ai" = "Change the content";
+"alert_Edit_error" = "Editing failed";

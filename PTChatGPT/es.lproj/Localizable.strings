@@ -102,3 +102,5 @@
 "appUseInfo_Finish" = "Conclusión";
 "alert_Time_set_error" = "La hora de inicio debe ser menor que la hora de finalización";
 "chat_Send_error" = "No se pudo enviar";
+"alert_Edit_ai" = "Cambiar el contenido";
+"alert_Edit_error" = "Error en la edición";

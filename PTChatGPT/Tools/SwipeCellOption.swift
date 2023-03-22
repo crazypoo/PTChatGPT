@@ -20,7 +20,7 @@ class IndicatorView: UIView {
 }
 
 enum ActionDescriptor {
-    case read, unread, more, flag, trash
+    case read, unread, more, flag, trash, edit
     
     func title(forDisplayMode displayMode: ButtonDisplayMode) -> String? {
         guard displayMode != .imageOnly else { return nil }
@@ -31,6 +31,7 @@ enum ActionDescriptor {
         case .more: return "More"
         case .flag: return "Flag"
         case .trash: return "Trash"
+        case .edit: return "Edit"
         }
     }
     
@@ -44,6 +45,7 @@ enum ActionDescriptor {
         case .more: name = "More"
         case .flag: name = "Flag"
         case .trash: name = "Trash"
+        case .edit: name = "Edit"
         }
         
     #if canImport(Combine)
@@ -55,6 +57,8 @@ enum ActionDescriptor {
             case .more: name = "ellipsis.circle.fill"
             case .flag: name = "flag.fill"
             case .trash: name = "trash.fill"
+            case .edit: name =  "pencil"
+
             }
 
             if style == .backgroundColor {
@@ -88,10 +92,11 @@ enum ActionDescriptor {
             }
         case .flag: return UIColor.systemOrange
         case .trash: return UIColor.systemRed
+        case .edit: return UIColor.systemBlue
         }
     #else
         switch self {
-        case .read, .unread: return #colorLiteral(red: 0, green: 0.4577052593, blue: 1, alpha: 1)
+        case .read, .unread, .edit: return #colorLiteral(red: 0, green: 0.4577052593, blue: 1, alpha: 1)
         case .more: return #colorLiteral(red: 0.7803494334, green: 0.7761332393, blue: 0.7967314124, alpha: 1)
         case .flag: return #colorLiteral(red: 1, green: 0.5803921569, blue: 0, alpha: 1)
         case .trash: return #colorLiteral(red: 1, green: 0.2352941176, blue: 0.1882352941, alpha: 1)
