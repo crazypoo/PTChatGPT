@@ -104,3 +104,4 @@
 "chat_Send_error" = "No se pudo enviar";
 "alert_Edit_ai" = "Cambiar el contenido";
 "alert_Edit_error" = "Error en la edición";
+"chat_Get_image_count" = "Obtén el número de fotos";

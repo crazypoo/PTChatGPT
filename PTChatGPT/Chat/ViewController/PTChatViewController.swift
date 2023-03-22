@@ -802,24 +802,32 @@ class PTChatViewController: MessagesViewController {
     }
         
     // MARK: - Helpers
-    func insertMessage(_ message: PTMessageModel) {
+    func insertMessage(_ message: PTMessageModel,refreshDone:(()->Void)? = nil) {
         messageList.append(message)
       // Reload last section to update header/footer labels and insert a new one
-        PTGCDManager.gcdMain {
-            self.messagesCollectionView.performBatchUpdates({
-                self.messagesCollectionView.insertSections([self.messageList.count - 1])
-                if self.messageList.count >= 2 {
-                    self.messagesCollectionView.reloadSections([self.messageList.count - 2])
-              }
-            }, completion: { [weak self] _ in
-                if self?.isLastSectionVisible() == true {
-                    self?.messagesCollectionView.scrollToLastItem(animated: true)
-                }
-                
-                if self?.messageList.count == 1 {
-                    self?.messagesCollectionView.reloadData()
-                }
-            })
+        PTGCDManager.gcdBackground {
+            PTGCDManager.gcdMain {
+                self.messagesCollectionView.performBatchUpdates({
+                    self.messagesCollectionView.insertSections([self.messageList.count - 1])
+                    if self.messageList.count >= 2 {
+                        self.messagesCollectionView.reloadSections([self.messageList.count - 2])
+                  }
+                }, completion: { [weak self] _ in
+                    if self?.isLastSectionVisible() == true {
+                        self?.messagesCollectionView.scrollToLastItem(animated: true)
+                    }
+                    
+                    if self?.messageList.count == 1 {
+                        self?.messagesCollectionView.reloadData()
+                    } 
+                    
+                    PTGCDManager.gcdAfter(time: 0.35) {
+                        if refreshDone != nil {
+                            refreshDone!()
+                        }
+                    }
+                })
+            }
         }
     }
     
@@ -1576,9 +1584,9 @@ extension PTChatViewController: MessageLabelDelegate {
 
 
 extension PTChatViewController: InputBarAccessoryViewDelegate {
-    func drawImage(str:String,saveModel:PTChatModel,indexSection:Int) {
+    func drawImage(str:String,saveModel:PTChatModel,indexSection:Int,resend:Bool? = false) {
         self.setTypingIndicatorViewHidden(false)
-        self.openAI.getImages(with: str, imageSize: AppDelegate.appDelegate()!.appConfig.aiDrawSize) { result in
+        self.openAI.getImages(with: str, imageSize: AppDelegate.appDelegate()!.appConfig.aiDrawSize,imageCount: AppDelegate.appDelegate()!.appConfig.getImageCount) { result in
             PTNSLogConsole("Draw API result>>:\(result)")
             PTGCDManager.gcdBackground {
                 PTGCDManager.gcdMain {
@@ -1587,40 +1595,63 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
             }
             switch result {
             case .success(let success):
-                PTGCDManager.gcdBackground {
-                    PTGCDManager.gcdMain {
-                        self.messageList[self.messageList.count - 1].sending = false
-                        self.messageList[self.messageList.count - 1].sendSuccess = true
-                        self.messagesCollectionView.reloadData {
-                            let imageURL = success.data.first?.url ?? URL(string: "")
-                            self.chatModels.append(saveModel)
-                            let date = Date()
+                self.messageList[self.messageList.count - 1].sending = false
+                self.messageList[self.messageList.count - 1].sendSuccess = true
+                PTGCDManager.gcdMain {
+                    self.messagesCollectionView.reloadData {
+                        self.chatModels.append(saveModel)
+                        let dispatchGroup = DispatchGroup()
+                        let dispatchQueue = DispatchQueue(label: "AppendImageMessage")
+                        let dispatchSemaphore = DispatchSemaphore(value: 0)
+                        dispatchQueue.async {
+                            success.data.enumerated().forEach { index,value in
+                                dispatchGroup.enter()
 
-                            let botMessage = PTChatModel()
-                            botMessage.messageDateString = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
-                            botMessage.messageType = 2
-                            botMessage.messageMediaURL = imageURL?.absoluteString ?? ""
-                            botMessage.outgoing = false
-                            self.chatModels.append(botMessage)
-                            let message = PTMessageModel(imageURL: imageURL!, user: PTChatData.share.bot, messageId: UUID().uuidString, date: date)
-                            self.insertMessage(message)
+                                PTGCDManager.gcdBackground {
+                                    let imageURL = value.url
+                                    let date = Date()
 
-                            PTNSLogConsole(success.data.first?.url ?? "")
-                            self.setTitleViewFrame(withModel: self.historyModel!)
-                            self.historyModel?.historyModel = self.chatModels
-                            self.packChatData()
+                                    let botMessage = PTChatModel()
+                                    botMessage.messageDateString = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+                                    botMessage.messageType = 2
+                                    botMessage.messageMediaURL = imageURL.absoluteString
+                                    botMessage.outgoing = false
+                                    self.chatModels.append(botMessage)
+                                    let message = PTMessageModel(imageURL: imageURL, user: PTChatData.share.bot, messageId: UUID().uuidString, date: date,sendSuccess: true)
+                                    PTGCDManager.gcdMain {
+                                        self.insertMessage(message) {
+                                            dispatchSemaphore.signal()
+                                            dispatchGroup.leave()
+                                        }
+                                    }
+                                }
+                                dispatchSemaphore.wait()
+                            }
+                        }
+                        dispatchGroup.notify(queue: dispatchQueue) {
+                            DispatchQueue.main.async {
+                                self.setTitleViewFrame(withModel: self.historyModel!)
+                                self.historyModel?.historyModel = self.chatModels
+                                self.packChatData()
+                            }
                         }
                     }
                 }
+
+
             case .failure(let failure):
                 PTGCDManager.gcdMain {
                     saveModel.messageSendSuccess = false
-                    self.chatModels.append(saveModel)
+                    if resend! {
+                        self.chatModels[indexSection] = saveModel
+                    } else {
+                        self.chatModels.append(saveModel)
+                    }
                     self.historyModel?.historyModel = self.chatModels
                     self.packChatData()
                     self.setTitleViewFrame(withModel: self.historyModel!)
-                    self.messageList[self.messageList.count - 1].sending = false
-                    self.messageList[self.messageList.count - 1].sendSuccess = false
+                    self.messageList[indexSection].sending = false
+                    self.messageList[indexSection].sendSuccess = false
                     self.messagesCollectionView.reloadData()
                     PTBaseViewController.gobal_drop(title: failure.localizedDescription)
                 }
@@ -1779,7 +1810,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                     case .failure(let failure):
                         PTGCDManager.gcdMain {
                             saveModel.messageSendSuccess = false
-                            if self.chatModels.count > 0 {
+                            if resend! {
                                 self.chatModels[sectionIndex] = saveModel
                             } else {
                                 self.chatModels.append(saveModel)
@@ -1858,7 +1889,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                             case .failure(let failure):
                                 PTGCDManager.gcdMain {
                                     saveModel.messageSendSuccess = false
-                                    if self.chatModels.count > 0 {
+                                    if resend! {
                                         self.chatModels[sectionIndex] = saveModel
                                     } else {
                                         self.chatModels.append(saveModel)
@@ -1903,7 +1934,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                         case .failure(let failure):
                             PTGCDManager.gcdMain {
                                 saveModel.messageSendSuccess = false
-                                if self.chatModels.count > 0 {
+                                if resend! {
                                     self.chatModels[sectionIndex] = saveModel
                                 } else {
                                     self.chatModels.append(saveModel)
@@ -1922,7 +1953,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
             }
         default:
             PTNSLogConsole("我要畫畫")
-            self.drawImage(str: str,saveModel: saveModel,indexSection: sectionIndex)
+            self.drawImage(str: str,saveModel: saveModel,indexSection: sectionIndex,resend: resend)
         }
     }
     

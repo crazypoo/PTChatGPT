@@ -104,3 +104,4 @@
 "chat_Send_error" = "发送失败";
 "alert_Edit_ai" = "更改内容";
 "alert_Edit_error" = "编辑失败";
+"chat_Get_image_count" = "获取图片的数量";

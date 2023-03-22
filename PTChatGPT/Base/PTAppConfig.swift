@@ -46,6 +46,8 @@ let uAppFirstiCloud = "uAppFirstiCloud"
 let uUseiCloud = "uUseiCloud"
 ///第一次使用App提示
 let uFirstCoach = "uFirstCoach"
+///图片数量Key
+let uGetImageCount = "uGetImageCount"
 
 let uFirstDataChange = "uFirstDataChange"
 
@@ -426,6 +428,33 @@ class PTAppConfig {
             }
         }
     }
+    
+    ///获取图片数量
+    var getImageCount:Int {
+        get {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uGetImageCount) {
+                    return value as! Int
+                } else {
+                    return 1
+                }
+            } else {
+                if let value = UserDefaults.standard.value(forKey: uGetImageCount) {
+                    return value as! Int
+                } else {
+                    return 1
+                }
+            }
+        } set {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uGetImageCount)
+                AppDelegate.appDelegate()?.cloudStore.synchronize()
+            } else {
+                UserDefaults.standard.set(newValue, forKey: uGetImageCount)
+            }
+        }
+
+    }
         
     //MARK: 语音输入语言
     ///语音输入语言
@@ -551,6 +580,18 @@ class PTAppConfig {
             data.append(value.rawValue)
         }
         return data
+    }()
+    
+    let imageSizeArray:[String] = {
+        return ["1024x1024","512x512","256x256"]
+    }()
+    
+    let getImageCountPickerData:[String] = {
+        var countString = [String]()
+        for i in 1...10 {
+            countString.append("\(i)")
+        }
+        return countString
     }()
     
     func getAIMpdelType(typeString:String) -> OpenAIModelType
