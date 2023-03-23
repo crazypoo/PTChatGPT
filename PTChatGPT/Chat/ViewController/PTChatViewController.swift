@@ -577,8 +577,8 @@ class PTChatViewController: MessagesViewController {
         {
             let whatsNew = WhatsNewViewController(items: [
                 WhatsNewItem.text(title: "模型", subtitle: "添加了对GPT4模型的支持"),
-                WhatsNewItem.text(title: "聊天", subtitle: "添加对聊天内容设标签的功能,并且可以删除标签\n添加对当前聊天标签内容清理的功能"),
-                WhatsNewItem.text(title: "其他", subtitle: "修复了一些昆虫")
+                WhatsNewItem.text(title: "聊天", subtitle: "添加对聊天内容设标签的功能,并且可以删除/编辑标签\n添加对当前聊天标签内容清理的功能\n现在可以获取更多图片\n支持类似微信的引用功能"),
+                WhatsNewItem.text(title: "其他", subtitle: "修复了一些昆虫\n这是最后一个支持iOS13~iOS14的版本"),
                 ])
             whatsNew.titleText = "What's New"
             whatsNew.itemSubtitleColor = .lightGray
