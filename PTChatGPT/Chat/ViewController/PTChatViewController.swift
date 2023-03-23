@@ -16,6 +16,7 @@ import LXFProtocolTool
 import SwifterSwift
 import Instructions
 import WhatsNew
+import OpenAIKit
 
 fileprivate extension String {
     static let saveNavTitle = PTLanguage.share.text(forKey: "about_SavedChat")
@@ -221,7 +222,14 @@ class PTChatViewController: MessagesViewController {
 
     var editMessage:Bool = false
     var editString:String = ""
+    
     var openAI:OpenAISwift = OpenAISwift(authToken: AppDelegate.appDelegate()!.appConfig.apiToken)
+    var openAIKIT:OpenAI = {
+        let config = Configuration(organizationId: "", apiKey: AppDelegate.appDelegate()!.appConfig.apiToken)
+        let openAI = OpenAI(config)
+        return openAI
+    }()
+    
     lazy var messageList:[PTMessageModel] = []
     let speechKit = OSSSpeech.shared
         
@@ -479,7 +487,7 @@ class PTChatViewController: MessagesViewController {
             self.messageInputBar.inputTextView.becomeFirstResponder()
         }
                         
-        self.maskView.alpha = 0        
+        self.maskView.alpha = 0
     }
         
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -523,7 +531,7 @@ class PTChatViewController: MessagesViewController {
                     let messageModel = PTMessageModel(audioURL: voiceURL, user: PTChatData.share.user, messageId: UUID().uuidString, date: value.messageDateString.toDate()!.date, sendSuccess: value.messageSendSuccess)
                     self.messageList.append(messageModel)
                 case 2:
-                    let messageModel = PTMessageModel(imageURL: URL(string: value.messageMediaURL)!, user: PTChatData.share.bot, messageId: UUID().uuidString, date: value.messageDateString.toDate()!.date)
+                    let messageModel = PTMessageModel(imageURL: value.outgoing ? URL(fileURLWithPath: userImageMessageFilePath + "/\(value.localFileName)") : URL(string: value.messageMediaURL)!, user: value.outgoing ? PTChatData.share.user : PTChatData.share.bot, messageId: UUID().uuidString, date: value.messageDateString.toDate()!.date,sendSuccess: value.messageSendSuccess)
                     self.messageList.append(messageModel)
                 default:break
                 }
@@ -542,16 +550,14 @@ class PTChatViewController: MessagesViewController {
         }
     }
     
-    @objc func showURLNotifi(notifi:Notification)
-    {
+    @objc func showURLNotifi(notifi:Notification) {
         let urlString = (notifi.object as! [String:String])["URLS"]
         if let url = URL(string: urlString) {
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
     }
     
-    @objc func adHide(notifi:Notification)
-    {
+    @objc func adHide(notifi:Notification) {
         PTNSLogConsole("广告隐藏")
         messageInputBar.alpha = 1
         
@@ -573,8 +579,7 @@ class PTChatViewController: MessagesViewController {
     }
     
     func whatNews() {
-        if WhatsNew.shouldPresent()
-        {
+        if WhatsNew.shouldPresent() {
             let whatsNew = WhatsNewViewController(items: [
                 WhatsNewItem.text(title: "模型", subtitle: "添加了对GPT4模型的支持"),
                 WhatsNewItem.text(title: "聊天", subtitle: "添加对聊天内容设标签的功能,并且可以删除/编辑标签\n添加对当前聊天标签内容清理的功能\n现在可以获取更多图片\n支持类似微信的引用功能"),
@@ -685,6 +690,7 @@ class PTChatViewController: MessagesViewController {
         messagesCollectionView.messagesDisplayDelegate = self
     }
     
+    //MARK: KEYBOARD
     func baseInputBar() {
         if AppDelegate.appDelegate()!.appConfig.firstUseApp {
             AppDelegate.appDelegate()!.appConfig.firstUseApp = false
@@ -720,8 +726,10 @@ class PTChatViewController: MessagesViewController {
     func setInputOtherItem() {
         self.messageInputBar.setStackViewItems([self.leftInputStackButton()], forStack: .left, animated: false)
         self.messageInputBar.setLeftStackViewWidthConstant(to: 34, animated: false)
-        self.messageInputBar.setStackViewItems([self.rightInputStackButton(),.flexibleSpace,self.messageInputBar.sendButton,], forStack: .right, animated: false)
+        self.messageInputBar.setStackViewItems([self.rightInputStackButton(),.flexibleSpace,self.messageInputBar.sendButton], forStack: .right, animated: false)
         self.messageInputBar.setRightStackViewWidthConstant(to: 96, animated: false)
+        let bottomItems = [self.imageBarButton, .flexibleSpace]
+        messageInputBar.setStackViewItems(bottomItems, forStack: .bottom, animated: false)
     }
     
     func setEditInputItem() {
@@ -737,9 +745,7 @@ class PTChatViewController: MessagesViewController {
         view.isSelected = false
         view.titleLabel?.font = .appfont(size: 12)
         view.titleLabel?.numberOfLines = 0
-//        view.setTitle("", for: .normal)
         view.setImage(UIImage(systemName: "xmark.circle.fill")?.withTintColor(.black, renderingMode: .automatic), for: .normal)
-//        view.setSize(CGSize(width: CGFloat.kSCREEN_WIDTH, height: view.sizeFor(size: CGSize(width: CGFloat.kSCREEN_WIDTH, height: CGFloat(MAXFLOAT))).height), animated: true)
         view.addActionHandlers { sender in
             self.editString = ""
             self.editMessage = false
@@ -802,6 +808,58 @@ class PTChatViewController: MessagesViewController {
         }
         return view
     }
+    
+    private lazy var imageBarButton:InputBarButtonItem = {
+        
+        let view = InputBarButtonItem()
+        view.backgroundColor = .gobalBackgroundColor
+        view.spacing = .fixed(10)
+        view.setSize(CGSize(width: 44, height: 44), animated: true)
+        view.setImage(UIImage(systemName: "photo.fill")?.withTintColor(.gobalTextColor, renderingMode: .automatic), for: .normal)
+        view.addActionHandlers { sender in
+            PTGCDManager.gcdAfter(time: 0.35) {
+                Task.init {
+                    do {
+                            let object:UIImage = try await PTImagePicker.openAlbum()
+                        
+                            let dateString = Date().dateFormat(formatString: "yyyy-MM-dd-HH-mm-ss")
+                            let fileName = "/\(dateString).png"
+                            let filePath = userImageMessageFilePath.appending(fileName)
+                            let fileURL = URL(fileURLWithPath: filePath)
+
+                            Task.init {
+                                do {
+                                    try object.pngData()!.write(to: fileURL)
+                                    PTNSLogConsole("保存完毕")
+                                    
+                                    let saveModel = PTChatModel()
+                                    saveModel.messageType = 2
+                                    saveModel.messageDateString = Date().dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+                                    saveModel.messageSendSuccess = false
+                                    saveModel.localFileName = "\(dateString).png"
+                                    
+                                    var message = PTMessageModel(image: object, user: PTChatData.share.user, messageId: UUID().uuidString, date: Date(), sendSuccess: false,fileName: fileName)
+                                    message.sending = true
+                                    self.insertMessage(message) {
+                                        self.messageList[(self.messageList.count - 1)].sending = true
+                                        self.messageList[(self.messageList.count - 1)].sendSuccess = false
+                                        self.reloadSomeSection(itemIndex: (self.messageList.count - 1)) {
+                                            PTNSLogConsole("开始发送")
+                                            self.userSendImage(imageObject: object, saveModel: saveModel)
+                                        }
+                                    }
+                                } catch {
+                                    PTNSLogConsole("写文件\(error.localizedDescription)")
+                                }
+                            }
+                    } catch let pickerError as PTImagePicker.PickerError {
+                        pickerError.outPutLog()
+                    }
+                }
+            }
+        }
+        return view
+    }()
         
     // MARK: - Helpers
     func insertMessage(_ message: PTMessageModel,refreshDone:(()->Void)? = nil) {
@@ -1455,11 +1513,45 @@ extension PTChatViewController:MessageCellDelegate
             config.closeViewerImage = UIImage(systemName: "chevron.left")!.withTintColor(.white, renderingMode: .automatic)
             config.moreActionImage = UIImage(systemName: "ellipsis")!.withRenderingMode(.automatic)
             config.mediaData = [viewerModel]
+            config.moreActionEX = ["优化图片"]
             let viewer = PTMediaViewer(viewConfig: config)
             viewer.showImageViewer()
             viewer.viewSaveImageBlock = { finish in
                 if finish {
                     PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Save_success"))
+                }
+            }
+            viewer.viewMoreActionBlock = { index in
+                self.messageInputBar.alpha = 1
+                PTNSLogConsole("12312312313")
+                SDWebImageManager.shared.loadImage(with: image.url) { one, two, url in
+                    
+                } completed: { images, data, error, catchType, finish, url in
+                    if finish {
+//                        Task{
+//                            do{
+//                                var imageSizeType:ImageSize
+//                                switch AppDelegate.appDelegate()!.appConfig.aiDrawSize.width {
+//                                case 1024:
+//                                    imageSizeType = .size1024
+//                                case 512:
+//                                    imageSizeType = .size512
+//                                case 256:
+//                                    imageSizeType = .size256
+//                                default:
+//                                    imageSizeType = .size256
+//                                }
+//
+////                                let completion = try await self.openAI_Kit.images.createEdit(image: images!.pngData()!/*,mask: UIImage(named: "DemoImage")!.pngData()!*/, prompt: "flower",n: AppDelegate.appDelegate()!.appConfig.getImageCount,size: imageSizeType,user: UUID().uuidString)
+//        //                        let completion = try await self.openAI_Kit.images.createVariation(image: UIImage(named: "DemoImage")!.pngData()!,n: AppDelegate.appDelegate()!.appConfig.getImageCount,size: imageSizeType,user: UUID().uuidString)
+//                                await MainActor.run{
+//                                    PTNSLogConsole(">>>>>>>>\(String(describing: completion.data))")
+//                                }
+//                            } catch let error as APIErrorResponse {
+//                                PTNSLogConsole(">>>>>>>>>>>>>\(error.localizedDescription)")
+//                            }
+//                        }
+                    }
                 }
             }
             viewer.viewerDismissBlock = {
@@ -1556,6 +1648,8 @@ extension PTChatViewController:MessageCellDelegate
                             self.sendTextFunction(str: text, saveModel: saveModel, sectionIndex: (self.messageList.count - 1),resend: true)
                         case .audio(_):
                             self.sendTextFunction(str: saveModel.messageText, saveModel: saveModel, sectionIndex: (self.messageList.count - 1))
+                        case .photo(_):
+                            self.userSendImage(imageObject: UIImage(contentsOfFile: userImageMessageFilePath + "/\(saveModel.localFileName).png")!, saveModel: saveModel)
                         default:
                             break
                         }
@@ -1753,6 +1847,56 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
         }
     }
     
+    //MARK: 发送图片内容
+    func userSendImage(imageObject:UIImage,saveModel:PTChatModel)
+    {
+        self.setTypingIndicatorViewHidden(false)
+        var imageSizeType:ImageResolutions
+        switch AppDelegate.appDelegate()!.appConfig.aiDrawSize.width {
+        case 1024:
+            imageSizeType = .large
+        case 512:
+            imageSizeType = .medium
+        case 256:
+            imageSizeType = .small
+        default:
+            imageSizeType = .small
+        }
+        Task.init {
+            do {
+                let imageVariationParam = try ImageVariationParameters(
+                    image: imageObject,
+                    numberOfImages: AppDelegate.appDelegate()!.appConfig.getImageCount,
+                    resolution: imageSizeType,
+                    responseFormat: .url
+                )
+                let variationResponse = try await self.openAIKIT.generateImageVariations(
+                    parameters: imageVariationParam
+                )
+                self.messageList[(self.messageList.count - 1)].sending = false
+                self.messageList[(self.messageList.count - 1)].sendSuccess = true
+                self.receivedImage(urlArr: variationResponse.data, saveModel: saveModel, sendIndex: (self.messageList.count - 1))
+            } catch {
+                PTNSLogConsole(error.localizedDescription)
+                PTGCDManager.gcdMain {
+                    self.setTypingIndicatorViewHidden(true)
+                    saveModel.messageSendSuccess = false
+                    self.chatModels[(self.messageList.count - 1)] = saveModel
+                    self.historyModel?.historyModel = self.chatModels
+                    self.refreshViewAndLoadNewData {
+                        self.messageList[(self.messageList.count - 1)].sending = false
+                        self.messageList[(self.messageList.count - 1)].sendSuccess = false
+                        self.reloadSomeSection(itemIndex: (self.messageList.count - 1)) {
+                            self.packChatData()
+                            self.setTitleViewFrame(withModel: self.historyModel!)
+                            PTBaseViewController.gobal_drop(title: error.localizedDescription)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     //MARK: 發送文字內容
     func sendTextFunction(str:String,saveModel:PTChatModel,sectionIndex:Int,resend:Bool? = false) {
         switch self.chatCase {
@@ -1809,7 +1953,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                         let chat: [ChatMessage] = [
                             ChatMessage(role: .user, content: str),
                         ]
-                        self.openAI.sendChat(with: chat,model: type,temperature: AppDelegate.appDelegate()!.appConfig.aiSmart, maxTokens: 2048) { result in
+                        self.openAI.sendChat(with: chat,model: type,temperature: AppDelegate.appDelegate()!.appConfig.aiSmart * 2, maxTokens: 2048) { result in
                             PTNSLogConsole("GPTX API result>>:\(result)")
                             PTGCDManager.gcdBackground {
                                 PTGCDManager.gcdMain {
@@ -1898,7 +2042,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                         ChatMessage(role: .system, content: self.historyModel!.systemContent),
                         ChatMessage(role: .user, content: str)
                     ]
-                    self.openAI.sendChat(with: chat,model: type,temperature: AppDelegate.appDelegate()!.appConfig.aiSmart, maxTokens: 2048) { result in
+                    self.openAI.sendChat(with: chat,model: type,temperature: AppDelegate.appDelegate()!.appConfig.aiSmart * 2, maxTokens: 2048) { result in
                         PTNSLogConsole("GPTX API result>>:\(result)")
                         PTGCDManager.gcdBackground {
                             PTGCDManager.gcdMain {
@@ -1966,6 +2110,52 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                 self.setTitleViewFrame(withModel: self.historyModel!)
             }
         }
+    }
+    
+    func receivedImage(urlArr:[ImageData],saveModel:PTChatModel,sendIndex:Int) {
+            PTGCDManager.gcdBackground {
+                PTGCDManager.gcdMain {
+                    self.setTypingIndicatorViewHidden(true)
+                }
+            }
+            saveModel.messageSendSuccess = true
+            PTGCDManager.gcdBackground {
+                PTGCDManager.gcdMain {
+                    self.reloadSomeSection(itemIndex: sendIndex) {
+                        self.chatModels.append(saveModel)
+
+                        PTGCDManager.gcdGroup(label: "AppendImageMessage", threadCount: urlArr.count) { dispatchSemaphore, dispatchGroup, currentIndex in
+                            PTGCDManager.gcdBackground {
+                                let imageURL = urlArr[currentIndex].image
+                                let date = Date()
+
+                                let botMessage = PTChatModel()
+                                botMessage.messageDateString = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+                                botMessage.messageType = 2
+                                botMessage.messageMediaURL = imageURL
+                                botMessage.outgoing = false
+                                self.chatModels.append(botMessage)
+                                let message = PTMessageModel(imageURL: URL(string: imageURL)!, user: PTChatData.share.bot, messageId: UUID().uuidString, date: date,sendSuccess: true)
+                                PTGCDManager.gcdMain {
+                                    self.insertMessage(message) {
+                                        dispatchSemaphore.signal()
+                                        dispatchGroup.leave()
+                                    }
+                                }
+                            }
+                        } jobDoneBlock: {
+                            saveModel.messageSendSuccess = true
+                            self.chatModels[sendIndex] = saveModel
+                            self.historyModel?.historyModel = self.chatModels
+                            self.reloadSomeSection(itemIndex: sendIndex)
+                            self.setTitleViewFrame(withModel: self.historyModel!)
+                            self.historyModel?.historyModel = self.chatModels
+                            self.packChatData()
+                        }
+                    }
+                }
+            }
+        
     }
 }
 

@@ -24,6 +24,8 @@ class PTChatModel: PTBaseModel {
     var outgoing:Bool = true
     
     var correctionText:String = ""
+    
+    var localFileName:String = ""
 }
 
 class PTFavouriteModel:PTBaseModel {

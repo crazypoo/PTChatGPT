@@ -33,7 +33,7 @@ extension OpenAISwift {
     ///   - maxTokens: 返回响应的限制字符，根据API默认为16
     ///   - temperature: 较高的值(如0.8)将使输出更加随机，而较低的值(如0.2)将使输出更加集中和确定。默认值为1
     ///   - completionHandler: 返回OpenAI模型
-    public func sendCompletion(with prompt: String, model: OpenAIModelType = .gpt3(.davinci), maxTokens: Int = 16, temperature: Double = 1, completionHandler: @escaping (Result<OpenAI<TextResult>, OpenAIError>) -> Void) {
+    public func sendCompletion(with prompt: String, model: OpenAIModelType = .gpt3(.davinci), maxTokens: Int = 16, temperature: Double = 1, completionHandler: @escaping (Result<OpenAI_Jax<TextResult>, OpenAIError>) -> Void) {
         let endpoint = Endpoint.completions
         let body = Command(prompt: prompt, model: model.modelName, maxTokens: maxTokens, temperature: temperature)
         let request = prepareRequest(endpoint, body: body)
@@ -42,7 +42,7 @@ extension OpenAISwift {
             switch result {
             case .success(let success):
                 do {
-                    let res = try JSONDecoder().decode(OpenAI<TextResult>.self, from: success)
+                    let res = try JSONDecoder().decode(OpenAI_Jax<TextResult>.self, from: success)
                     completionHandler(.success(res))
                 } catch {
                     completionHandler(.failure(.decodingError(error: error)))
@@ -60,7 +60,7 @@ extension OpenAISwift {
     ///   - model: 只支持`text-davinci-edit-001`
     ///   - input: 內容
     ///   - completionHandler: 返回OpenAI模型
-    public func sendEdits(with instruction: String, model: OpenAIModelType = .feature(.davinci), input: String = "", completionHandler: @escaping (Result<OpenAI<TextResult>, OpenAIError>) -> Void) {
+    public func sendEdits(with instruction: String, model: OpenAIModelType = .feature(.davinci), input: String = "", completionHandler: @escaping (Result<OpenAI_Jax<TextResult>, OpenAIError>) -> Void) {
         let endpoint = Endpoint.edits
         let body = Instruction(instruction: instruction, model: model.modelName, input: input)
         let request = prepareRequest(endpoint, body: body)
@@ -69,7 +69,7 @@ extension OpenAISwift {
             switch result {
             case .success(let success):
                 do {
-                    let res = try JSONDecoder().decode(OpenAI<TextResult>.self, from: success)
+                    let res = try JSONDecoder().decode(OpenAI_Jax<TextResult>.self, from: success)
                     completionHandler(.success(res))
                 } catch {
                     completionHandler(.failure(.decodingError(error: error)))
@@ -105,7 +105,7 @@ extension OpenAISwift {
                          presencePenalty: Double? = 0,
                          frequencyPenalty: Double? = 0,
                          logitBias: [Int: Double]? = nil,
-                         completionHandler: @escaping (Result<OpenAI<MessageResult>, OpenAIError>) -> Void) {
+                         completionHandler: @escaping (Result<OpenAI_Jax<MessageResult>, OpenAIError>) -> Void) {
         let endpoint = Endpoint.chat
         let body = ChatConversation(user: user,
                                     messages: messages,
@@ -124,7 +124,7 @@ extension OpenAISwift {
             switch result {
                 case .success(let success):
                     do {
-                        let res = try JSONDecoder().decode(OpenAI<MessageResult>.self, from: success)
+                        let res = try JSONDecoder().decode(OpenAI_Jax<MessageResult>.self, from: success)
                         completionHandler(.success(res))
                     } catch {
                         completionHandler(.failure(.decodingError(error: error)))
@@ -142,7 +142,7 @@ extension OpenAISwift {
     ///   - size: The size of the image, defaults to 1024x1024. There are two other options: 512x512 and 256x256
     ///   - user: An optional unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
     ///   - completionHandler: Returns an OpenAI Data Model
-    public func sendImages(with prompt: String, numImages: Int = 1, size: ImageSize = .size1024, user: String? = UUID().uuidString, completionHandler: @escaping (Result<OpenAI<UrlResult>, OpenAIError>) -> Void) {
+    public func sendImages(with prompt: String, numImages: Int = 1, size: ImageSize = .size1024, user: String? = UUID().uuidString, completionHandler: @escaping (Result<OpenAI_Jax<UrlResult>, OpenAIError>) -> Void) {
         let endpoint = Endpoint.generateImage
         let body = ImageGeneration(prompt: prompt, n: numImages, size: size, user: user)
         let request = prepareRequest(endpoint, body: body)
@@ -151,7 +151,7 @@ extension OpenAISwift {
             switch result {
             case .success(let success):
                 do {
-                    let res = try JSONDecoder().decode(OpenAI<UrlResult>.self, from: success)
+                    let res = try JSONDecoder().decode(OpenAI_Jax<UrlResult>.self, from: success)
                     completionHandler(.success(res))
                 } catch {
                     completionHandler(.failure(.decodingError(error: error)))
@@ -206,7 +206,7 @@ extension OpenAISwift {
     /// - Returns: 返回OpenAI模型
     @available(swift 5.5)
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    public func sendCompletion(with prompt: String, model: OpenAIModelType = .gpt3(.davinci), maxTokens: Int = 16, temperature: Double = 1) async throws -> OpenAI<TextResult> {
+    public func sendCompletion(with prompt: String, model: OpenAIModelType = .gpt3(.davinci), maxTokens: Int = 16, temperature: Double = 1) async throws -> OpenAI_Jax<TextResult> {
         return try await withCheckedThrowingContinuation { continuation in
             sendCompletion(with: prompt, model: model, maxTokens: maxTokens, temperature: temperature) { result in
                 continuation.resume(with: result)
@@ -223,7 +223,7 @@ extension OpenAISwift {
     ///   - completionHandler: 返回OpenAI模型
     @available(swift 5.5)
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    public func sendEdits(with instruction: String, model: OpenAIModelType = .feature(.davinci), input: String = "", completionHandler: @escaping (Result<OpenAI<TextResult>, OpenAIError>) -> Void) async throws -> OpenAI<TextResult> {
+    public func sendEdits(with instruction: String, model: OpenAIModelType = .feature(.davinci), input: String = "", completionHandler: @escaping (Result<OpenAI_Jax<TextResult>, OpenAIError>) -> Void) async throws -> OpenAI_Jax<TextResult> {
         return try await withCheckedThrowingContinuation { continuation in
             sendEdits(with: instruction, model: model, input: input) { result in
                 continuation.resume(with: result)
@@ -257,7 +257,7 @@ extension OpenAISwift {
                          maxTokens: Int? = nil,
                          presencePenalty: Double? = 0,
                          frequencyPenalty: Double? = 0,
-                         logitBias: [Int: Double]? = nil) async throws -> OpenAI<MessageResult> {
+                         logitBias: [Int: Double]? = nil) async throws -> OpenAI_Jax<MessageResult> {
         return try await withCheckedThrowingContinuation { continuation in
             sendChat(with: messages,
                      model: model,
@@ -284,7 +284,7 @@ extension OpenAISwift {
     /// - Returns: Returns an OpenAI Data Model
     @available(swift 5.5)
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    public func sendImages(with prompt: String, numImages: Int = 1, size: ImageSize = .size1024, user: String? = nil) async throws -> OpenAI<UrlResult> {
+    public func sendImages(with prompt: String, numImages: Int = 1, size: ImageSize = .size1024, user: String? = nil) async throws -> OpenAI_Jax<UrlResult> {
         return try await withCheckedThrowingContinuation { continuation in
             sendImages(with: prompt, numImages: numImages, size: size, user: user) { result in
                 continuation.resume(with: result)

@@ -53,6 +53,7 @@
 		55A5D7FE29B1EEF400DCA096 /* PTChatData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A5D7FD29B1EEF400DCA096 /* PTChatData.swift */; };
 		55A5D80129B1F29800DCA096 /* PTMessageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A5D80029B1F29800DCA096 /* PTMessageModel.swift */; };
 		55A5D80629B242CF00DCA096 /* PTSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A5D80529B242CF00DCA096 /* PTSettingViewController.swift */; };
+		55B2744E29CCC56700E05736 /* OpenAIKit in Frameworks */ = {isa = PBXBuildFile; productRef = 55B2744D29CCC56700E05736 /* OpenAIKit */; };
 		55B9C35229CBBDBA00C4D06B /* ImageGeneration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B9C35129CBBDBA00C4D06B /* ImageGeneration.swift */; };
 		55BD5B7C29C613070023458A /* PTSettingFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BD5B7B29C613070023458A /* PTSettingFooter.swift */; };
 		55BD5B8A29C6AE2C0023458A /* PTSegHistoryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BD5B8929C6AE2C0023458A /* PTSegHistoryModel.swift */; };
@@ -152,6 +153,7 @@
 			files = (
 				EC91DE097C54ED7562DD3DCA /* Pods_PTChatGPT.framework in Frameworks */,
 				5503C51629CB273A00B00BE1 /* MessageKit in Frameworks */,
+				55B2744E29CCC56700E05736 /* OpenAIKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -416,6 +418,7 @@
 			name = PTChatGPT;
 			packageProductDependencies = (
 				5503C51529CB273A00B00BE1 /* MessageKit */,
+				55B2744D29CCC56700E05736 /* OpenAIKit */,
 			);
 			productName = PTChatGPT;
 			productReference = 55A5D71429B1D23D00DCA096 /* Chat走啦.app */;
@@ -452,6 +455,7 @@
 			mainGroup = 55A5D70B29B1D23D00DCA096;
 			packageReferences = (
 				5503C51429CB273A00B00BE1 /* XCRemoteSwiftPackageReference "MessageKit" */,
+				55B2744C29CCC56700E05736 /* XCRemoteSwiftPackageReference "OpenAIKit" */,
 			);
 			productRefGroup = 55A5D71529B1D23D00DCA096 /* Products */;
 			projectDirPath = "";
@@ -688,7 +692,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -743,7 +747,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -774,7 +778,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -813,7 +817,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -862,6 +866,14 @@
 				minimumVersion = 4.0.0;
 			};
 		};
+		55B2744C29CCC56700E05736 /* XCRemoteSwiftPackageReference "OpenAIKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/marcodotio/OpenAIKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -869,6 +881,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5503C51429CB273A00B00BE1 /* XCRemoteSwiftPackageReference "MessageKit" */;
 			productName = MessageKit;
+		};
+		55B2744D29CCC56700E05736 /* OpenAIKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 55B2744C29CCC56700E05736 /* XCRemoteSwiftPackageReference "OpenAIKit" */;
+			productName = OpenAIKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

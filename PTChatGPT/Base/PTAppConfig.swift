@@ -65,6 +65,8 @@ let projectGithubUrl = "https://github.com/crazypoo/PTChatGPT"
 let AppDisclaimer = PTLanguage.share.text(forKey: "disclaimer_App_Info")
 let ExternalLinksDisclaimer = PTLanguage.share.text(forKey: "disclaimer_External_info")
 
+let userImageMessageFilePath = FileManager.pt.LibraryDirectory() + "/UserImageMessageFile"
+
 extension UIColor
 {
     static let botBubbleColor = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)

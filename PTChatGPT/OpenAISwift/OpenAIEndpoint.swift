@@ -12,6 +12,7 @@ enum Endpoint {
     case edits
     case generateImage
     case chat
+    case imageVariation
 }
 
 extension Endpoint {
@@ -25,19 +26,21 @@ extension Endpoint {
             return "/v1/images/generations"
         case .chat:
             return "/v1/chat/completions"
+        case .imageVariation:
+            return "/v1/images/variations"
         }
     }
     
     var method: String {
         switch self {
-        case .completions, .edits,.generateImage, .chat:
+        case .completions, .edits,.generateImage, .chat,.imageVariation:
             return "POST"
         }
     }
     
     func baseURL() -> String {
         switch self {
-        case .completions, .edits,.generateImage, .chat:
+        case .completions, .edits,.generateImage, .chat,.imageVariation:
             return "https://api.openai.com"
         }
     }

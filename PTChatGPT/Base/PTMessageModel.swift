@@ -91,9 +91,10 @@ internal struct PTMessageModel: MessageType {
         self.init(kind: .attributedText(attributedText), user: user, messageId: messageId, date: date,sendSuccess: sendSuccess)
     }
 
-    init(image: UIImage, user: PTChatUser, messageId: String, date: Date,sendSuccess:Bool) {
+    init(image: UIImage, user: PTChatUser, messageId: String, date: Date,sendSuccess:Bool,fileName:String? = "") {
         let mediaItem = PTImageMediaItem(image: image)
         self.init(kind: .photo(mediaItem), user: user, messageId: messageId, date: date,sendSuccess: sendSuccess)
+        self.localMessageImageName = fileName!
     }
 
     init(imageURL: URL, user: PTChatUser, messageId: String, date: Date,sendSuccess:Bool? = true) {
@@ -143,4 +144,5 @@ internal struct PTMessageModel: MessageType {
     var sendSuccess:Bool
     var sending:Bool? = false
     var correctionText:String = ""
+    var localMessageImageName:String = ""
 }
