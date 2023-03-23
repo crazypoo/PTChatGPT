@@ -712,9 +712,9 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
             self.languagePicker.show()
             self.languagePicker.resultModelBlock = { route in
                 switch AppDelegate.appDelegate()?.appConfig.imageSizeArray[route!.index] {
-                case "1024x1024":
+                case ImageSize.size1024.rawValue:
                     AppDelegate.appDelegate()!.appConfig.aiDrawSize = CGSize(width: 1024, height: 1024)
-                case "512x512":
+                case ImageSize.size512.rawValue:
                     AppDelegate.appDelegate()!.appConfig.aiDrawSize = CGSize(width: 512, height: 512)
                 default:
                     AppDelegate.appDelegate()!.appConfig.aiDrawSize = CGSize(width: 256, height: 256)

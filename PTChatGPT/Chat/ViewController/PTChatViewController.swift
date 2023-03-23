@@ -479,7 +479,7 @@ class PTChatViewController: MessagesViewController {
             self.messageInputBar.inputTextView.becomeFirstResponder()
         }
                         
-        self.maskView.alpha = 0
+        self.maskView.alpha = 0        
     }
         
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -1605,7 +1605,20 @@ extension PTChatViewController: MessageLabelDelegate {
 extension PTChatViewController: InputBarAccessoryViewDelegate {
     func drawImage(str:String,saveModel:PTChatModel,indexSection:Int,resend:Bool? = false) {
         self.setTypingIndicatorViewHidden(false)
-        self.openAI.getImages(with: str, imageSize: AppDelegate.appDelegate()!.appConfig.aiDrawSize,imageCount: AppDelegate.appDelegate()!.appConfig.getImageCount) { result in
+        
+        var imageSizeType:ImageSize
+        switch AppDelegate.appDelegate()!.appConfig.aiDrawSize.width {
+        case 1024:
+            imageSizeType = .size1024
+        case 512:
+            imageSizeType = .size512
+        case 256:
+            imageSizeType = .size256
+        default:
+            imageSizeType = .size256
+        }
+        
+        self.openAI.sendImages(with: str,numImages: AppDelegate.appDelegate()!.appConfig.getImageCount,size: imageSizeType) { result in
             PTNSLogConsole("Draw API result>>:\(result)")
             PTGCDManager.gcdBackground {
                 PTGCDManager.gcdMain {
@@ -1619,18 +1632,18 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                 PTGCDManager.gcdMain {
                     self.reloadSomeSection(itemIndex: indexSection) {
                         self.chatModels.append(saveModel)
-                        PTGCDManager.gcdGroup(label: "AppendImageMessage", threadCount: success.data.count) { dispatchSemaphore, dispatchGroup, currentIndex in
+                        PTGCDManager.gcdGroup(label: "AppendImageMessage", threadCount: success.data!.count) { dispatchSemaphore, dispatchGroup, currentIndex in
                             PTGCDManager.gcdBackground {
-                                let imageURL = success.data[currentIndex].url
+                                let imageURL = success.data![currentIndex].url
                                 let date = Date()
 
                                 let botMessage = PTChatModel()
                                 botMessage.messageDateString = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
                                 botMessage.messageType = 2
-                                botMessage.messageMediaURL = imageURL.absoluteString
+                                botMessage.messageMediaURL = imageURL
                                 botMessage.outgoing = false
                                 self.chatModels.append(botMessage)
-                                let message = PTMessageModel(imageURL: imageURL, user: PTChatData.share.bot, messageId: UUID().uuidString, date: date,sendSuccess: true)
+                                let message = PTMessageModel(imageURL: URL(string: imageURL)!, user: PTChatData.share.bot, messageId: UUID().uuidString, date: date,sendSuccess: true)
                                 PTGCDManager.gcdMain {
                                     self.insertMessage(message) {
                                         dispatchSemaphore.signal()
@@ -1764,7 +1777,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                         self.messageList[sectionIndex].sendSuccess = true
                         PTGCDManager.gcdMain {
                             self.reloadSomeSection(itemIndex: sectionIndex) {
-                                self.saveQAndAText(question: success.choices.first?.text ?? "", saveModel: saveModel,sendIndex: sectionIndex)
+                                self.saveQAndAText(question: success.choices?.first?.text ?? "", saveModel: saveModel,sendIndex: sectionIndex)
                             }
                         }
                     case .failure(let failure):
@@ -1796,7 +1809,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                         let chat: [ChatMessage] = [
                             ChatMessage(role: .user, content: str),
                         ]
-                        self.openAI.sendChat(with: chat,model: type,maxTokens: 2048,temperature: AppDelegate.appDelegate()!.appConfig.aiSmart) { result in
+                        self.openAI.sendChat(with: chat,model: type,temperature: AppDelegate.appDelegate()!.appConfig.aiSmart, maxTokens: 2048) { result in
                             PTNSLogConsole("GPTX API result>>:\(result)")
                             PTGCDManager.gcdBackground {
                                 PTGCDManager.gcdMain {
@@ -1810,7 +1823,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                                     self.messageList[sectionIndex].sending = false
                                     self.messageList[sectionIndex].sendSuccess = true
                                     self.reloadSomeSection(itemIndex: sectionIndex) {
-                                        self.saveQAndAText(question: success.choices.first?.message.content ?? "", saveModel: saveModel,sendIndex: sectionIndex)
+                                        self.saveQAndAText(question: success.choices?.first?.message.content ?? "", saveModel: saveModel,sendIndex: sectionIndex)
                                     }
                                 }
                             case .failure(let failure):
@@ -1849,7 +1862,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                                     self.messageList[sectionIndex].sending = false
                                     self.messageList[sectionIndex].sendSuccess = true
                                     self.reloadSomeSection(itemIndex: sectionIndex) {
-                                        self.saveQAndAText(question: success.choices.first?.text ?? "", saveModel: saveModel,sendIndex: sectionIndex)
+                                        self.saveQAndAText(question: success.choices?.first?.text ?? "", saveModel: saveModel,sendIndex: sectionIndex)
                                     }
                                 }
                             case .failure(let failure):
@@ -1885,7 +1898,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                         ChatMessage(role: .system, content: self.historyModel!.systemContent),
                         ChatMessage(role: .user, content: str)
                     ]
-                    self.openAI.sendChat(with: chat,model: type,maxTokens: 2048,temperature: AppDelegate.appDelegate()!.appConfig.aiSmart) { result in
+                    self.openAI.sendChat(with: chat,model: type,temperature: AppDelegate.appDelegate()!.appConfig.aiSmart, maxTokens: 2048) { result in
                         PTNSLogConsole("GPTX API result>>:\(result)")
                         PTGCDManager.gcdBackground {
                             PTGCDManager.gcdMain {
@@ -1898,7 +1911,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                             self.messageList[sectionIndex].sending = false
                             self.messageList[sectionIndex].sendSuccess = true
                             self.reloadSomeSection(itemIndex: sectionIndex) {
-                                self.saveQAndAText(question: success.choices.first?.message.content ?? "", saveModel: saveModel,sendIndex: sectionIndex)
+                                self.saveQAndAText(question: success.choices?.first?.message.content ?? "", saveModel: saveModel,sendIndex: sectionIndex)
                             }
                         case .failure(let failure):
                             PTGCDManager.gcdMain {

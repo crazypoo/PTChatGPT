@@ -53,6 +53,7 @@
 		55A5D7FE29B1EEF400DCA096 /* PTChatData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A5D7FD29B1EEF400DCA096 /* PTChatData.swift */; };
 		55A5D80129B1F29800DCA096 /* PTMessageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A5D80029B1F29800DCA096 /* PTMessageModel.swift */; };
 		55A5D80629B242CF00DCA096 /* PTSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A5D80529B242CF00DCA096 /* PTSettingViewController.swift */; };
+		55B9C35229CBBDBA00C4D06B /* ImageGeneration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B9C35129CBBDBA00C4D06B /* ImageGeneration.swift */; };
 		55BD5B7C29C613070023458A /* PTSettingFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BD5B7B29C613070023458A /* PTSettingFooter.swift */; };
 		55BD5B8A29C6AE2C0023458A /* PTSegHistoryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BD5B8929C6AE2C0023458A /* PTSegHistoryModel.swift */; };
 		55BD5B8E29C7074B0023458A /* PTPopoverControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BD5B8D29C7074A0023458A /* PTPopoverControl.swift */; };
@@ -127,6 +128,7 @@
 		55A5D7FD29B1EEF400DCA096 /* PTChatData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTChatData.swift; sourceTree = "<group>"; };
 		55A5D80029B1F29800DCA096 /* PTMessageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTMessageModel.swift; sourceTree = "<group>"; };
 		55A5D80529B242CF00DCA096 /* PTSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSettingViewController.swift; sourceTree = "<group>"; };
+		55B9C35129CBBDBA00C4D06B /* ImageGeneration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageGeneration.swift; sourceTree = "<group>"; };
 		55BD5B7B29C613070023458A /* PTSettingFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSettingFooter.swift; sourceTree = "<group>"; };
 		55BD5B8929C6AE2C0023458A /* PTSegHistoryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSegHistoryModel.swift; sourceTree = "<group>"; };
 		55BD5B8D29C7074A0023458A /* PTPopoverControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTPopoverControl.swift; sourceTree = "<group>"; };
@@ -321,6 +323,7 @@
 				55A5D7E929B1D9A900DCA096 /* OpenAI.swift */,
 				55A5D7EA29B1D9A900DCA096 /* Instruction.swift */,
 				55A5D7EB29B1D9A900DCA096 /* Command.swift */,
+				55B9C35129CBBDBA00C4D06B /* ImageGeneration.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -565,6 +568,7 @@
 				555491DC29BC8014006A47C4 /* ChatMessage.swift in Sources */,
 				5514B37D29BA102400890161 /* PTSettingHeader.swift in Sources */,
 				55A5D7FE29B1EEF400DCA096 /* PTChatData.swift in Sources */,
+				55B9C35229CBBDBA00C4D06B /* ImageGeneration.swift in Sources */,
 				55A5D71829B1D23D00DCA096 /* AppDelegate.swift in Sources */,
 				5514B38729BAE76E00890161 /* PTShareItem.swift in Sources */,
 				5520905B29C35903009B30A1 /* PTVoiceActionView.swift in Sources */,
