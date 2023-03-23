@@ -56,7 +56,7 @@ AI的API我是使用了自己魔改版的[OpenAISwift](https://github.com/adamru
 
 2.聊天界面对话框和文字的颜色选择
 
-3.语言选择,简体,繁体,英语,西班牙语
+3.语言选择 🇨🇳 🇭🇰 🇺🇸 🇪🇸
 
 4.主题设置,黑白色更换
 #### Speech
@@ -71,6 +71,8 @@ AI的API我是使用了自己魔改版的[OpenAISwift](https://github.com/adamru
 4.删除所有对话记录
 
 5.删除语音输入的文件
+
+6.聊天界面支持类似微信的引用功能,以作为修改某内容的展示支持
 #### API
 1.更换AI的模型,已经支持GPT4x的模型
 
@@ -78,7 +80,9 @@ AI的API我是使用了自己魔改版的[OpenAISwift](https://github.com/adamru
 
 3.更改用户需要AI画画的图片大小
 
-4.更改Token
+4.支持获取图片的数量
+
+5.更改Token
 
 #### iCloud
 支持iCloud备份同步
