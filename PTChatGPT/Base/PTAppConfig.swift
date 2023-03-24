@@ -109,7 +109,7 @@ class PTAppConfig {
             UserDefaults.standard.set(self.firstDataChange,forKey: uFirstDataChange)
         }
     }
-
+    
     var firstCoach:Bool = UserDefaults.standard.value(forKey: uFirstCoach) == nil ? true : UserDefaults.standard.value(forKey: uFirstCoach) as! Bool {
         didSet{
             UserDefaults.standard.set(self.firstCoach,forKey: uFirstCoach)
@@ -197,6 +197,60 @@ class PTAppConfig {
             } else {
                 UserDefaults.standard.set(newValue, forKey: uUserIcon)
             }
+        }
+    }
+    
+    ///保存聊天的圖片到iCloud
+    func saveUserSendImage(image:UIImage,fileName:String,jobDoneBlock:@escaping ((_ finish:Bool)->Void)) {
+        if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+            if let iCloudURL = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents") {
+                let imageURL = iCloudURL.appendingPathComponent(fileName)
+                Task.init {
+                    do {
+                        try image.pngData()!.write(to: imageURL,options: .atomic)
+                        jobDoneBlock(true)
+                    } catch {
+                        PTNSLogConsole("Failed to write image data to iCloud: \(error.localizedDescription)")
+                        jobDoneBlock(false)
+                    }
+                }
+            }
+        } else {
+            let filePath = userImageMessageFilePath.appending("/\(fileName)")
+            let fileURL = URL(fileURLWithPath: filePath)
+            Task.init {
+                do {
+                    try image.pngData()!.write(to: fileURL)
+                    jobDoneBlock(true)
+                } catch {
+                    PTNSLogConsole("Failed to write image data to path: \(error.localizedDescription)")
+                    jobDoneBlock(false)
+                }
+            }
+        }
+    }
+    
+    func getMessageImagePath(name:String) -> URL {
+        if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+            if let icloudURL = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents") {
+                let imageURL = icloudURL.appendingPathComponent(name)
+                return imageURL
+            } else {
+                return URL(string: "")!
+            }
+        } else {
+            let imageURL = userImageMessageFilePath + "/\(name)"
+            return URL(fileURLWithPath: imageURL)
+        }
+    }
+    
+    func getMessageImage(name:String) -> UIImage {
+        let filePath = self.getMessageImagePath(name: name)
+        PTNSLogConsole("filePath<<<<<<<<<<<<<<<<<:\(filePath)")
+        if let image = try? UIImage(url: filePath) {
+            return image
+        } else {
+            return UIImage()
         }
     }
 

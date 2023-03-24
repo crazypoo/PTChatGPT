@@ -524,32 +524,12 @@ class PTChatViewController: MessagesViewController {
                         var mainImage:UIImage = UIImage()
                         if FileManager.pt.judgeFileOrFolderExists(filePath: mainPath) {
                             mainImage = UIImage(contentsOfFile: mainPath)!
-                        } else {
-                            if mainPath.isURL() {
-                                SDWebImageManager.shared.loadImage(with: URL(string: mainPath)) { one, two, url in
-                                    
-                                } completed: { image, data, error, cacheType, finish, url in
-                                    if finish {
-                                        mainImage = image!
-                                    }
-                                }
-                            }
                         }
                         
                         let maskPath = userImageMessageFilePath + "/\(value.editMainName)"
                         var maskImage:UIImage = UIImage()
                         if FileManager.pt.judgeFileOrFolderExists(filePath: maskPath) {
                             maskImage = UIImage(contentsOfFile: maskPath)!
-                        } else {
-                            if maskPath.isURL() {
-                                SDWebImageManager.shared.loadImage(with: URL(string: maskPath)) { one, two, url in
-                                    
-                                } completed: { image, data, error, cacheType, finish, url in
-                                    if finish {
-                                        maskImage = image!
-                                    }
-                                }
-                            }
                         }
                         
                         let att = NSMutableAttributedString.sj.makeText { make in
@@ -576,7 +556,6 @@ class PTChatViewController: MessagesViewController {
                     let messageModel = PTMessageModel(audioURL: voiceURL, user: PTChatData.share.user, messageId: UUID().uuidString, date: value.messageDateString.toDate()!.date, sendSuccess: value.messageSendSuccess)
                     self.messageList.append(messageModel)
                 case 2:
-                    
                     var outGoingMediaUrl:URL
                     if value.outgoing {
                         if !value.messageMediaURL.stringIsEmpty() {
@@ -638,9 +617,8 @@ class PTChatViewController: MessagesViewController {
     func whatNews() {
         if WhatsNew.shouldPresent() {
             let whatsNew = WhatsNewViewController(items: [
-                WhatsNewItem.text(title: "模型", subtitle: "添加了对GPT4模型的支持"),
-                WhatsNewItem.text(title: "聊天", subtitle: "添加对聊天内容设标签的功能,并且可以删除/编辑标签\n添加对当前聊天标签内容清理的功能\n现在可以获取更多图片\n支持类似微信的引用功能"),
-                WhatsNewItem.text(title: "其他", subtitle: "修复了一些昆虫\n这是最后一个支持iOS13~iOS14的版本"),
+                WhatsNewItem.text(title: "聊天", subtitle: "1.支持根據圖片查找出相似圖片的功能.\n2.支持根據兩個圖片和需求對圖片進行PS或更改的功能.\n3.支持檢測用戶的言語是否帶有敏感內容的功能."),
+                WhatsNewItem.text(title: "其他", subtitle: "修复了一些昆虫"),
                 ])
             whatsNew.titleText = "What's New"
             whatsNew.itemSubtitleColor = .lightGray
@@ -1822,9 +1800,9 @@ extension PTChatViewController:MessageCellDelegate
                 self.chatModels.remove(at: indexPath!.section)
                 self.chatModels.append(saveModel)
                 self.historyModel?.historyModel = self.chatModels
+                self.messageList[(self.messageList.count - 1)].sending = true
+                self.messageList[(self.messageList.count - 1)].sendSuccess = false
                 self.refreshViewAndLoadNewData {
-                    self.messageList[(self.messageList.count - 1)].sending = true
-                    self.messageList[(self.messageList.count - 1)].sendSuccess = false
                     self.reloadSomeSection(itemIndex: (self.messageList.count - 1)) {
                         switch messageModel.kind {
                         case .text(let text):
@@ -1834,7 +1812,7 @@ extension PTChatViewController:MessageCellDelegate
                         case .audio(_):
                             self.sendTextFunction(str: saveModel.messageText, saveModel: saveModel, sectionIndex: (self.messageList.count - 1),resend: true)
                         case .photo(_):
-                            self.userSendImage(imageObject: UIImage(contentsOfFile: userImageMessageFilePath + "/\(saveModel.localFileName).png")!, saveModel: saveModel)
+                            self.userSendImage(imageObject: UIImage(contentsOfFile: userImageMessageFilePath + "/\(saveModel.localFileName).png")!, saveModel: saveModel,resend: true)
                         default:
                             break
                         }
@@ -2019,12 +1997,22 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                 switch self.chatCase {
                 case .chat(type: .edit):
                     saveModel.correctionText = self.editString
+                    self.sendTextFunction(str: str, saveModel: saveModel, sectionIndex: (self.messageList.count - 1))
+                    var message = PTMessageModel(text: str, user: user, messageId: UUID().uuidString, date: date,correctionText:saveModel.correctionText)
+                    message.sending = true
+                    insertMessage(message)
+                    self.sendTextFunction(str: str, saveModel: saveModel, sectionIndex: (self.messageList.count - 1))
+                case .chat(type: .normal):
+                    var message = PTMessageModel(text: str, user: user, messageId: UUID().uuidString, date: date,correctionText:saveModel.correctionText)
+                    message.sending = true
+                    insertMessage(message)
+                    self.sendTextFunction(str: str, saveModel: saveModel, sectionIndex: (self.messageList.count - 1))
+                case .draw(type: .edit):
+                    var message = PTMessageModel(text: str, user: user, messageId: UUID().uuidString, date: date,correctionText:saveModel.correctionText)
+                    message.sending = true
+                    self.sendTextFunction(str: str, saveModel: saveModel, sectionIndex: (self.messageList.count - 1))
                 default:break
                 }
-                var message = PTMessageModel(text: str, user: user, messageId: UUID().uuidString, date: date,correctionText:saveModel.correctionText)
-                message.sending = true
-                insertMessage(message)
-                self.sendTextFunction(str: str, saveModel: saveModel, sectionIndex: (self.messageList.count - 1))
             } else if let img = component as? UIImage {
                 let message = PTMessageModel(image: img, user: user, messageId: UUID().uuidString, date: Date(),sendSuccess: true)
                 insertMessage(message)
@@ -2102,7 +2090,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                 PTGCDManager.gcdMain {
                     self.setTypingIndicatorViewHidden(true)
                     saveModel.messageSendSuccess = false
-                    self.chatModels[(self.chatModels.count - 1)] = saveModel
+                    self.chatModels.append(saveModel)
                     self.historyModel?.historyModel = self.chatModels
                     self.refreshViewAndLoadNewData {
                         self.messageList[(self.messageList.count - 1)].sending = false
@@ -2118,7 +2106,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
     }
     
     //MARK: 发送图片内容
-    func userSendImage(imageObject:UIImage,saveModel:PTChatModel)
+    func userSendImage(imageObject:UIImage,saveModel:PTChatModel,resend:Bool? = false)
     {
         self.setTypingIndicatorViewHidden(false)
         var imageSizeType:ImageResolutions
@@ -2145,7 +2133,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                 )
                 self.messageList[(self.messageList.count - 1)].sending = false
                 self.messageList[(self.messageList.count - 1)].sendSuccess = true
-                self.receivedImage(urlArr: variationResponse.data, saveModel: saveModel, sendIndex: (self.messageList.count - 1))
+                self.receivedImage(urlArr: variationResponse.data, saveModel: saveModel, sendIndex: (self.messageList.count - 1),resend: resend)
             } catch {
                 PTNSLogConsole(error.localizedDescription)
                 PTGCDManager.gcdMain {
@@ -2510,7 +2498,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
         }
     }
     
-    func receivedImage(urlArr:[ImageData],saveModel:PTChatModel,sendIndex:Int) {
+    func receivedImage(urlArr:[ImageData],saveModel:PTChatModel,sendIndex:Int,resend:Bool? = false) {
         PTGCDManager.gcdBackground {
             PTGCDManager.gcdMain {
                 self.setTypingIndicatorViewHidden(true)
@@ -2519,8 +2507,10 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
         saveModel.messageSendSuccess = true
         PTGCDManager.gcdBackground {
             PTGCDManager.gcdMain {
-                self.reloadSomeSection(itemIndex: sendIndex) {
+                if !resend! {
                     self.chatModels.append(saveModel)
+                }
+                self.reloadSomeSection(itemIndex: sendIndex) {
 
                     PTGCDManager.gcdGroup(label: "AppendImageMessage", threadCount: urlArr.count) { dispatchSemaphore, dispatchGroup, currentIndex in
                         PTGCDManager.gcdBackground {
@@ -2543,16 +2533,47 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                         }
                     } jobDoneBlock: {
                         saveModel.messageSendSuccess = true
-                        self.chatModels[sendIndex] = saveModel
+                        if resend! {
+                            self.chatModels[sendIndex] = saveModel
+                        } else {
+                            self.chatModels.append(saveModel)
+                        }
                         self.historyModel?.historyModel = self.chatModels
                         self.reloadSomeSection(itemIndex: sendIndex)
-                        self.historyModel?.historyModel = self.chatModels
                         self.packChatData()
                     }
                 }
             }
         }
-        
+    }
+    
+    func saveUserSendImage(image:UIImage,fileName:String,jobDoneBlock:@escaping ((_ finish:Bool)->Void)) {
+        if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+            if let iCloudURL = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents") {
+                let imageURL = iCloudURL.appendingPathComponent(fileName)
+                Task.init {
+                    do {
+                        try image.pngData()?.write(to: imageURL,options: .atomic)
+                        jobDoneBlock(true)
+                    } catch {
+                        PTNSLogConsole("Failed to write image data to iCloud: \(error.localizedDescription)")
+                        jobDoneBlock(false)
+                    }
+                }
+            }
+        } else {
+            let filePath = userImageMessageFilePath.appending("/\(fileName)")
+            let fileURL = URL(fileURLWithPath: filePath)
+            Task.init {
+                do {
+                    try image.pngData()!.write(to: fileURL)
+                    jobDoneBlock(true)
+                } catch {
+                    PTNSLogConsole("Failed to write image data to path: \(error.localizedDescription)")
+                    jobDoneBlock(false)
+                }
+            }
+        }
     }
 }
 

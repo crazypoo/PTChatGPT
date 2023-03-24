@@ -4,7 +4,7 @@
 <div align="center">
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)   
-![Swift](https://img.shields.io/badge/iOS%20-13-blue)
+![Swift](https://img.shields.io/badge/iOS%20-15-blue)
 ![Swift](https://img.shields.io/static/v1?style=flat&message=Swift&color=F05138&logo=Swift&logoColor=FFFFFF&label=)
 
 [![crazypoo - PTChatGPT](https://img.shields.io/static/v1?label=crazypoo&message=PTChatGPT&color=red&logo=github)](https://github.com/crazypoo/PTChatGPT)
@@ -43,7 +43,7 @@ App主框架使用了自己的工具框架[PTools](https://github.com/crazypoo/P
 
 对于聊天列表的设置,我用了[ChromaColorPicker](https://github.com/joncardasis/ChromaColorPicker) ,来进行颜色设置
 
-AI的API我是使用了自己魔改版的[OpenAISwift](https://github.com/adamrushy/OpenAISwift) ,因为他不支持获取图片,然后真烦他不支持cocoapods
+AI的API我是使用了自己魔改版的[OpenAISwift](https://github.com/adamrushy/OpenAISwift)(因为他不支持获取图片和模型太少,現在我又懒得改🤪)和[OpenAIKit](https://github.com/MarcoDotIO/OpenAIKit)
 
 # 主要功能
 ### 聊天界面
@@ -73,6 +73,12 @@ AI的API我是使用了自己魔改版的[OpenAISwift](https://github.com/adamru
 5.删除语音输入的文件
 
 6.聊天界面支持类似微信的引用功能,以作为修改某内容的展示支持
+
+7.支持根据图片查找类似的图片
+
+8.支持根据原图和遮罩图和需求来使AI修改图片
+
+9.支持对AI对文字内容是否敏感的检测
 #### API
 1.更换AI的模型,已经支持GPT4x的模型
 

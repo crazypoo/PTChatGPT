@@ -14,8 +14,7 @@ import FloatingPanel
 import ZXNavigationBar
 import FDFullscreenPopGesture
 
-extension String
-{
+extension String {
     //MARK: iCloud
     static let cloudString = "iCloud"
     //MARK: 主題
@@ -274,8 +273,7 @@ class PTSettingListViewController: PTChatBaseViewController {
     }()
 
     var mSections = [PTSection]()
-    func comboLayout()->UICollectionViewCompositionalLayout
-    {
+    func comboLayout()->UICollectionViewCompositionalLayout {
         let layout = UICollectionViewCompositionalLayout.init { section, environment in
             self.generateSection(section: section)
         }
@@ -284,8 +282,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         return layout
     }
     
-    func generateSection(section:NSInteger)->NSCollectionLayoutSection
-    {
+    func generateSection(section:NSInteger)->NSCollectionLayoutSection {
         let sectionModel = mSections[section]
 
         var group : NSCollectionLayoutGroup
@@ -323,12 +320,9 @@ class PTSettingListViewController: PTChatBaseViewController {
         let footerSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(CGFloat.kSCREEN_WIDTH - PTAppBaseConfig.share.defaultViewSpace * 2), heightDimension: NSCollectionLayoutDimension.absolute(sectionModel.footerHeight ?? CGFloat.leastNormalMagnitude))
         let headerItem = NSCollectionLayoutBoundarySupplementaryItem.init(layoutSize: headerSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .topTrailing)
         let footerItem = NSCollectionLayoutBoundarySupplementaryItem.init(layoutSize: footerSize, elementKind: UICollectionView.elementKindSectionFooter, alignment: .bottomTrailing)
-        if sectionModel.headerTitle == PTLanguage.share.text(forKey: "about_Main_Other")
-        {
+        if sectionModel.headerTitle == PTLanguage.share.text(forKey: "about_Main_Other") {
             laySection.boundarySupplementaryItems = [headerItem,footerItem]
-        }
-        else
-        {
+        } else {
             laySection.boundarySupplementaryItems = [headerItem]
         }
 
@@ -363,16 +357,11 @@ class PTSettingListViewController: PTChatBaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        if self.user.senderId == PTChatData.share.bot.senderId
-        {
+        if self.user.senderId == PTChatData.share.bot.senderId {
             self.zx_navTitle = "ZolaAi " + PTLanguage.share.text(forKey: "about_Setting")
-        }
-        else if self.user.senderId == PTChatData.share.user.senderId
-        {
+        } else if self.user.senderId == PTChatData.share.user.senderId {
             self.zx_navTitle = PTLanguage.share.text(forKey: "chat_User") + " " + PTLanguage.share.text(forKey: "about_Setting")
-        }
-        else
-        {
+        } else {
             self.zx_navTitle = PTLanguage.share.text(forKey: "about_Setting")
         }
         self.view.backgroundColor = .gobalScrollerBackgroundColor
@@ -387,33 +376,26 @@ class PTSettingListViewController: PTChatBaseViewController {
         self.showDetail()
     }
     
-    func showDetail()
-    {
+    func showDetail() {
         mSections.removeAll()
 
         self.aboutModels.enumerated().forEach { (index,value) in
             var rows = [PTRows]()
             value.models.enumerated().forEach { (subIndex,subValue) in
                 
-                if subValue.name == .aiSmart
-                {
+                if subValue.name == .aiSmart {
                     let row_List = PTRows.init(title: subValue.name, placeholder: subValue.content,cls: PTAISmartCell.self, ID: PTAISmartCell.ID, dataModel: subValue)
                     rows.append(row_List)
-                }
-                else
-                {
+                } else {
                     let row_List = PTRows.init(title: subValue.name, placeholder: subValue.content,cls: PTFusionCell.self, ID: PTFusionCell.ID, dataModel: subValue)
                     rows.append(row_List)
                 }
             }
             
-            if value.name == PTLanguage.share.text(forKey: "about_Main_Other")
-            {
+            if value.name == PTLanguage.share.text(forKey: "about_Main_Other") {
                 let cellSection = PTSection.init(headerTitle:value.name,headerCls:PTSettingHeader.self,headerID: PTSettingHeader.ID,footerCls:PTSettingFooter.self,footerID:PTSettingFooter.ID,footerHeight:CGFloat.kTabbarHeight_Total,headerHeight: CGFloat.ScaleW(w: 44),rows: rows)
                 mSections.append(cellSection)
-            }
-            else
-            {
+            } else {
                 let cellSection = PTSection.init(headerTitle:value.name,headerCls:PTSettingHeader.self,headerID: PTSettingHeader.ID,headerHeight: CGFloat.ScaleW(w: 44),rows: rows)
                 mSections.append(cellSection)
             }
@@ -424,39 +406,22 @@ class PTSettingListViewController: PTChatBaseViewController {
     }
     
     //MARK: 進入相冊
-    func enterPhotos()
-    {
-        PTGCDManager.gcdAfter(time: 0.1) {
-            if #available(iOS 14.0, *)
-            {
-                Task{
-                    do{
-                        let object:UIImage = try await PTImagePicker.openAlbum()
-                        await MainActor.run{
-                            AppDelegate.appDelegate()!.appConfig.userIcon = object.pngData()!
-                            PTNSLogConsole(object)
-                        }
-                    }
-                    catch let pickerError as PTImagePicker.PickerError
-                    {
-                        pickerError.outPutLog()
-                    }
+    func enterPhotos() {
+        Task {
+            do {
+                let object:UIImage = try await PTImagePicker.openAlbum()
+                await MainActor.run{
+                    AppDelegate.appDelegate()!.appConfig.userIcon = object.pngData()!
+                    PTNSLogConsole(object)
                 }
-            }
-            else
-            {
-                let imagePicker = UIImagePickerController()
-                imagePicker.sourceType = .photoLibrary
-                imagePicker.delegate = self
-                imagePicker.modalPresentationStyle = .fullScreen
-                self.present(imagePicker, animated: true)
+            } catch let pickerError as PTImagePicker.PickerError {
+                pickerError.outPutLog()
             }
         }
     }
 }
 
-extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewDataSource
-{
+extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return self.mSections.count
     }
@@ -467,27 +432,20 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let itemSec = mSections[indexPath.section]
-        if kind == UICollectionView.elementKindSectionHeader
-        {
-            if itemSec.headerID == PTSettingHeader.ID
-            {
+        if kind == UICollectionView.elementKindSectionHeader {
+            if itemSec.headerID == PTSettingHeader.ID {
                 let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: itemSec.headerID!, for: indexPath) as! PTSettingHeader
                 header.titleLabel.text = itemSec.headerTitle
                 return header
             }
             return UICollectionReusableView()
-        }
-        else if kind == UICollectionView.elementKindSectionFooter
-        {
-            if itemSec.footerID == PTSettingFooter.ID
-            {
+        } else if kind == UICollectionView.elementKindSectionFooter {
+            if itemSec.footerID == PTSettingFooter.ID {
                 let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: itemSec.footerID!, for: indexPath) as! PTSettingFooter
                 return footer
             }
             return UICollectionReusableView()
-        }
-        else
-        {
+        } else {
             return UICollectionReusableView()
         }
     }
@@ -495,15 +453,13 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let itemSec = mSections[indexPath.section]
         let itemRow = itemSec.rows[indexPath.row]
-        if itemRow.ID == PTFusionCell.ID
-        {
+        if itemRow.ID == PTFusionCell.ID {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTFusionCell
             cell.dataContent.backgroundColor = .gobalCellBackgroundColor
             cell.cellModel = (itemRow.dataModel as! PTFusionCellModel)
             cell.dataContent.lineView.isHidden = indexPath.row == (itemSec.rows.count - 1) ? true : false
             cell.dataContent.topLineView.isHidden = true
-            if itemRow.title == .cloudString
-            {
+            if itemRow.title == .cloudString {
                 cell.dataContent.valueSwitch.onTintColor = UIColor.orange
                 cell.dataContent.valueSwitch.isOn = AppDelegate.appDelegate()!.appConfig.cloudSwitch
                 cell.dataContent.valueSwitch.addSwitchAction { sender in
@@ -528,8 +484,7 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                 }
             }
             return cell
-        }
-        else if itemRow.ID == PTAISmartCell.ID {
+        } else if itemRow.ID == PTAISmartCell.ID {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTAISmartCell
             cell.contentView.backgroundColor = .gobalCellBackgroundColor
             cell.cellModel = (itemRow.dataModel as! PTFusionCellModel)
@@ -538,9 +493,7 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                 AppDelegate.appDelegate()!.appConfig.aiSmart = Double(realSmart)
             }
             return cell
-        }
-        else
-        {
+        } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CELL", for: indexPath)
             cell.backgroundColor = .random
             return cell
@@ -550,20 +503,15 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let itemSec = mSections[indexPath.section]
         let itemRow = itemSec.rows[indexPath.row]
-        if itemRow.title == .colorString
-        {
+        if itemRow.title == .colorString {
             let vc = PTColorSettingViewController(user: self.user)
             let nav = PTNavController(rootViewController: vc)
             nav.modalPresentationStyle = .fullScreen
             self.navigationController?.present(nav, animated: true)
-        }
-        else if itemRow.title == .savedChat
-        {
+        } else if itemRow.title == .savedChat {
             let vc = PTSaveChatViewController()
             self.navigationController?.pushViewController(vc)
-        }
-        else if itemRow.title == .deleteAllChat
-        {
+        } else if itemRow.title == .deleteAllChat {
             UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "chat_Delete_all_chat"),msgColor: .gobalTextColor,okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
                 
             } moreBtn: { index, title in
@@ -590,13 +538,9 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                     }
                 }
             }
-        }
-        else if itemRow.title == .apiAIType
-        {
+        } else if itemRow.title == .apiAIType {
             self.AIModelPicker.show()
-        }
-        else if itemRow.title == .apiAIToken
-        {
+        } else if itemRow.title == .apiAIToken {
             let textKey = PTLanguage.share.text(forKey: "alert_Input_token")
             let apiToken = AppDelegate.appDelegate()!.appConfig.apiToken
             UIAlertController.base_textfiele_alertVC(title:textKey,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey], textFieldTexts: [apiToken], keyboardType: [.default],textFieldDelegate: self) { result in
@@ -610,24 +554,16 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                     AppDelegate.appDelegate()!.appConfig.apiToken = newToken!
                 }
             }
-        }
-        else if itemRow.title == .getAPIAIToken
-        {
+        } else if itemRow.title == .getAPIAIToken {
             let url = URL(string: getApiUrl)!
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
-        }
-        else if itemRow.title == .github
-        {
+        } else if itemRow.title == .github {
             let url = URL(string: myGithubUrl)!
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
-        }
-        else if itemRow.title == .forum
-        {
+        } else if itemRow.title == .forum {
             let url = URL(string: projectGithubUrl)!
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
-        }
-        else if itemRow.title == .share
-        {
+        } else if itemRow.title == .share {
             let title = kAppName!
             let content = "Look at me!!!!!!!"
             let shareLink = projectGithubUrl
@@ -635,13 +571,9 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
             let shareItem = PTShareItem(title: title, content: content, url: url)
             let activityViewController = UIActivityViewController(activityItems: [shareItem], applicationActivities: nil)
             present(activityViewController, animated: true, completion: nil)
-        }
-        else if itemRow.title == .rate
-        {
+        } else if itemRow.title == .rate {
             PTAppStoreFunction.rateApp(appid: "6446197340")
-        }
-        else if itemRow.title == .speech
-        {
+        } else if itemRow.title == .speech {
             self.languagePicker.title = PTLanguage.share.text(forKey: "about_Main_Speech")
             self.languagePicker.selectValue = AppDelegate.appDelegate()!.appConfig.language
             self.languagePicker.dataSourceArr = AppDelegate.appDelegate()!.appConfig.languagePickerData
@@ -649,9 +581,7 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
             self.languagePicker.resultModelBlock = { route in
                 AppDelegate.appDelegate()!.appConfig.language = OSSVoiceEnum.allCases[route!.index].rawValue
             }
-        }
-        else if itemRow.title == .languageString
-        {
+        } else if itemRow.title == .languageString {
             self.languagePicker.title = PTLanguage.share.text(forKey: "about_Language")
             self.languagePicker.selectValue = self.currentSelectedLanguage
             self.languagePicker.dataSourceArr = self.pickerData
@@ -661,42 +591,28 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                 PTLanguage.share.language = self.currentSelectedLanguage
                 self.showDetail()
             }
-        }
-        else if itemRow.title == .themeString
-        {
+        } else if itemRow.title == .themeString {
             let vc = PTDarkModeControl()
             self.navigationController?.pushViewController(vc)
-        }
-        else if itemRow.title == .userIcon
-        {
+        } else if itemRow.title == .userIcon {
             let status = PHPhotoLibrary.authorizationStatus()
-            if status == .notDetermined
-            {
+            if status == .notDetermined {
                 PHPhotoLibrary.requestAuthorization { blockStatus in
-                    if blockStatus == .authorized
-                    {
+                    if blockStatus == .authorized {
                         PTGCDManager.gcdMain {
                             self.enterPhotos()
                         }
                     }
                 }
-            }
-            else if status == .authorized
-            {
+            } else if status == .authorized {
                 self.enterPhotos()
-            }
-            else if status == .denied
-            {
+            } else if status == .denied {
                 let messageString = String(format: PTLanguage.share.text(forKey: "alert_Go_to_photo_setting"), kAppName!)
                 PTBaseViewController.gobal_drop(title: messageString)
-            }
-            else
-            {
+            } else {
                 PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_No_photo_library"))
             }
-        }
-        else if itemRow.title == .deleteAllVoiceFile
-        {
+        } else if itemRow.title == .deleteAllVoiceFile {
             UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "chat_Delete_all_voice_file"),msgColor: .gobalTextColor,okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
                 
             } moreBtn: { index, title in
@@ -733,40 +649,21 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
     }
 }
 
-extension PTSettingListViewController:UITextFieldDelegate
-{
+extension PTSettingListViewController:UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
         print("123123123123123")
     }
 }
 
-extension PTSettingListViewController:UIImagePickerControllerDelegate,UINavigationControllerDelegate
-{
-    public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        self.returnFrontVC()
-    }
-    
-    public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        let image:UIImage = info[UIImagePickerController.InfoKey.originalImage] as! UIImage
-        let imageData = image.pngData()
-        AppDelegate.appDelegate()!.appConfig.userIcon = imageData!
-        PTNSLogConsole(image)
-    }
-}
-
-extension PTSettingListViewController:OSSSpeechDelegate
-{
+extension PTSettingListViewController:OSSSpeechDelegate {
     func voiceFilePathTranscription(withText text: String) {
         
     }
     
     func deleteVoiceFile(withFinish finish: Bool, withError error: Error?) {
-        if finish
-        {
+        if finish {
             PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_done"))
-        }
-        else
-        {
+        } else {
             PTBaseViewController.gobal_drop(title: error!.localizedDescription)
         }
     }
@@ -794,8 +691,7 @@ extension PTSettingListViewController:OSSSpeechDelegate
     }
 }
 
-extension PTSettingListViewController
-{
+extension PTSettingListViewController {
     override public func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout {
         let layout = PTChatPanelLayout()
         layout.viewHeight = CGFloat.kTabbarSaveAreaHeight + CGFloat.ScaleW(w: 44) + CGFloat.ScaleW(w: 10) + CGFloat.ScaleW(w: 44) * 3 + CGFloat.ScaleW(w: 34) + CGFloat.ScaleW(w: 10) + CGFloat.ScaleW(w: 24) + CGFloat.ScaleW(w: 13)
