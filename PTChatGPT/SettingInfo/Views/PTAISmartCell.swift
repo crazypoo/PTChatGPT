@@ -25,6 +25,8 @@ class PTAISmartCell: PTBaseNormalCell {
         slider.maximumValue = 1
         slider.minimumValue = 0.1
         slider.value = Float(1 - AppDelegate.appDelegate()!.appConfig.aiSmart)
+        slider.tintColor = .orange
+        slider.titleColor = .orange
         return slider
     }()
     
