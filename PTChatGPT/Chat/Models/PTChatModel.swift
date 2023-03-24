@@ -29,6 +29,7 @@ class PTChatModel: PTBaseModel {
     
     var editMainName:String = ""
     var editMaskName:String = ""
+    var starString:String = ""
 }
 
 class PTFavouriteModel:PTBaseModel {

@@ -51,6 +51,8 @@ let uGetImageCount = "uGetImageCount"
 
 let uFirstDataChange = "uFirstDataChange"
 
+let uCheckSentence = "uCheckSentence"
+
 let kSeparator = "[,]"
 let kSeparatorSeg = "[::]"
 
@@ -99,6 +101,16 @@ extension CGSize {
 extension String {
     static let findImage = PTLanguage.share.text(forKey: "chat_Looking_for")
     static let remakeImage = PTLanguage.share.text(forKey: "chat_Paint_image")
+    
+    func replaceStringWithAsterisk() -> String {
+        let nsString = self.nsString
+        let pattern = "." // 正则表达式匹配所有字符
+        let regex = try! NSRegularExpression(pattern: pattern, options: .caseInsensitive)
+        let range = NSMakeRange(0, nsString.length)
+        let mutableStr = NSMutableString(string: self)
+        regex.replaceMatches(in: mutableStr, options: .reportCompletion, range: range, withTemplate: "*")
+        return String(mutableStr)
+    }
 }
 
 class PTAppConfig {
@@ -133,6 +145,33 @@ class PTAppConfig {
     {
         didSet{
             UserDefaults.standard.set(self.cloudSwitch,forKey: uUseiCloud)
+        }
+    }
+    
+    //MARK: 是否开启绿色模式
+    ///是否开启绿色模式
+    var checkSentence:Bool {
+        get {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uCheckSentence) {
+                    return value as! Bool
+                } else {
+                    return false
+                }
+            } else {
+                if let value = UserDefaults.standard.value(forKey: uCheckSentence) {
+                    return value as! Bool
+                } else {
+                    return false
+                }
+            }
+        } set {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uCheckSentence)
+                AppDelegate.appDelegate()?.cloudStore.synchronize()
+            } else {
+                UserDefaults.standard.set(newValue, forKey: uCheckSentence)
+            }
         }
     }
     
@@ -202,7 +241,7 @@ class PTAppConfig {
     
     ///保存聊天的圖片到iCloud
     func saveUserSendImage(image:UIImage,fileName:String,jobDoneBlock:@escaping ((_ finish:Bool)->Void)) {
-        if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+        if self.cloudSwitch {
             if let iCloudURL = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents") {
                 let imageURL = iCloudURL.appendingPathComponent(fileName)
                 Task.init {
@@ -247,8 +286,8 @@ class PTAppConfig {
     func getMessageImage(name:String) -> UIImage {
         let filePath = self.getMessageImagePath(name: name)
         PTNSLogConsole("filePath<<<<<<<<<<<<<<<<<:\(filePath)")
-        if let image = try? UIImage(url: filePath) {
-            return image
+        if let image = try? Data(contentsOf: filePath) {
+            return UIImage(data: image)!
         } else {
             return UIImage()
         }
