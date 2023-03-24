@@ -26,6 +26,9 @@ class PTChatModel: PTBaseModel {
     var correctionText:String = ""
     
     var localFileName:String = ""
+    
+    var editMainName:String = ""
+    var editMaskName:String = ""
 }
 
 class PTFavouriteModel:PTBaseModel {

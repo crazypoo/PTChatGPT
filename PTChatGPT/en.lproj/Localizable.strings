@@ -106,3 +106,6 @@
 "alert_Edit_error" = "Editing failed";
 "chat_Get_image_count" = "Get the number of pictures";
 "chat_Edit_message" = "Modification:";
+"chat_Looking_for" = "Looking for similar";
+"chat_Paint_image" = "Create pictures";
+"chat_Check_sentence" = "There is inappropriate, inappropriate or sensitive content in the data in the article, such as curses, spam, hate speech, pornographic content, etc.";

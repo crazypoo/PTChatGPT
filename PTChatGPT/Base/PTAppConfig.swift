@@ -67,8 +67,7 @@ let ExternalLinksDisclaimer = PTLanguage.share.text(forKey: "disclaimer_External
 
 let userImageMessageFilePath = FileManager.pt.LibraryDirectory() + "/UserImageMessageFile"
 
-extension UIColor
-{
+extension UIColor {
     static let botBubbleColor = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
     static let userBubbleColor = UIColor.systemBlue
     
@@ -95,6 +94,11 @@ extension CGSize {
         unarchiver.finishDecoding()
         return sizeObj
     }
+}
+
+extension String {
+    static let findImage = PTLanguage.share.text(forKey: "chat_Looking_for")
+    static let remakeImage = PTLanguage.share.text(forKey: "chat_Paint_image")
 }
 
 class PTAppConfig {
@@ -160,8 +164,7 @@ class PTAppConfig {
     }
     var userIcon:Data {
         get {
-            if AppDelegate.appDelegate()!.appConfig.cloudSwitch
-            {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
                 if let icloudURL = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents") {
                     let imageURL = icloudURL.appendingPathComponent("userIcon.png")
                     if let imageData = try? Data(contentsOf: imageURL) {
@@ -455,7 +458,6 @@ class PTAppConfig {
                 UserDefaults.standard.set(newValue, forKey: uGetImageCount)
             }
         }
-
     }
         
     //MARK: 语音输入语言
@@ -558,6 +560,10 @@ class PTAppConfig {
             }
         }
     }
+    
+    let imageControlActions:[String] = {
+        return [.findImage,.remakeImage]
+    }()
     
     func mobileDataSavePlaceChange() {
         self.userIcon = self.userIcon

@@ -106,3 +106,6 @@
 "alert_Edit_error" = "编辑失败";
 "chat_Get_image_count" = "获取图片的数量";
 "chat_Edit_message" = "修改:";
+"chat_Looking_for" = "寻找相似的";
+"chat_Paint_image" = "创作图片";
+"chat_Check_sentence" = "文本数据中有不合适、不恰当或敏感的内容，例如诅咒、垃圾信息、仇恨言论、色情内容等等";
