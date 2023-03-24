@@ -1930,7 +1930,6 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                                 }
                             }
                         } jobDoneBlock: {
-                            self.setTitleViewFrame(withModel: self.historyModel!)
                             self.historyModel?.historyModel = self.chatModels
                             self.packChatData()
                         }
@@ -1950,7 +1949,6 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                         self.messageList[indexSection].sendSuccess = false
                         self.reloadSomeSection(itemIndex: indexSection) {
                             self.packChatData()
-                            self.setTitleViewFrame(withModel: self.historyModel!)
                             PTBaseViewController.gobal_drop(title: failure.localizedDescription)
                         }
                     }
@@ -2026,7 +2024,6 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                 var message = PTMessageModel(text: str, user: user, messageId: UUID().uuidString, date: date,correctionText:saveModel.correctionText)
                 message.sending = true
                 insertMessage(message)
-                self.setTitleViewFrame(text: .thinking)
                 self.sendTextFunction(str: str, saveModel: saveModel, sectionIndex: (self.messageList.count - 1))
             } else if let img = component as? UIImage {
                 let message = PTMessageModel(image: img, user: user, messageId: UUID().uuidString, date: Date(),sendSuccess: true)
@@ -2112,7 +2109,6 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                         self.messageList[(self.messageList.count - 1)].sendSuccess = false
                         self.reloadSomeSection(itemIndex: (self.messageList.count - 1)) {
                             self.packChatData()
-                            self.setTitleViewFrame(withModel: self.historyModel!)
                             PTBaseViewController.gobal_drop(title: error.localizedDescription)
                         }
                     }
@@ -2162,7 +2158,6 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                         self.messageList[(self.messageList.count - 1)].sendSuccess = false
                         self.reloadSomeSection(itemIndex: (self.messageList.count - 1)) {
                             self.packChatData()
-                            self.setTitleViewFrame(withModel: self.historyModel!)
                             PTBaseViewController.gobal_drop(title: error.localizedDescription)
                         }
                     }
@@ -2212,7 +2207,6 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                             self.messageList[sectionIndex].sendSuccess = false
                             self.reloadSomeSection(itemIndex: sectionIndex) {
                                 self.packChatData()
-                                self.setTitleViewFrame(withModel: self.historyModel!)
                                 PTBaseViewController.gobal_drop(title: failure.localizedDescription)
                             }
                         }
@@ -2258,7 +2252,6 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                                     self.messageList[sectionIndex].sendSuccess = false
                                     self.reloadSomeSection(itemIndex: sectionIndex) {
                                         self.packChatData()
-                                        self.setTitleViewFrame(withModel: self.historyModel!)
                                         PTBaseViewController.gobal_drop(title: failure.localizedDescription)
                                     }
                                 }
@@ -2297,7 +2290,6 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                                     self.messageList[sectionIndex].sendSuccess = false
                                     self.reloadSomeSection(itemIndex: sectionIndex) {
                                         self.packChatData()
-                                        self.setTitleViewFrame(withModel: self.historyModel!)
                                         PTBaseViewController.gobal_drop(title: failure.localizedDescription)
                                     }
                                 }
@@ -2345,7 +2337,6 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                                 self.messageList[sectionIndex].sendSuccess = false
                                 self.reloadSomeSection(itemIndex: sectionIndex) {
                                     self.packChatData()
-                                    self.setTitleViewFrame(withModel: self.historyModel!)
                                     PTBaseViewController.gobal_drop(title: failure.localizedDescription)
                                 }
                             }
@@ -2437,7 +2428,6 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                     self.messageList[sectionIndex].sending = false
                     self.messageList[sectionIndex].sendSuccess = true
                     self.reloadSomeSection(itemIndex: sectionIndex) {
-                        //TODO: 这里直接发送机器人消息
                         let botDate = Date()
 
                         let botMessageModel = PTChatModel()
@@ -2455,7 +2445,6 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                         self.refreshViewAndLoadNewData() {
                             self.historyModel?.historyModel = self.chatModels
                             self.packChatData()
-                            self.setTitleViewFrame(withModel: self.historyModel!)
                         }
                     }
                 } catch {
@@ -2472,7 +2461,6 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                             self.messageList[sectionIndex].sendSuccess = false
                             self.reloadSomeSection(itemIndex: sectionIndex) {
                                 self.packChatData()
-                                self.setTitleViewFrame(withModel: self.historyModel!)
                                 PTBaseViewController.gobal_drop(title: error.localizedDescription)
                             }
                         }
@@ -2518,7 +2506,6 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
         self.messagesCollectionView.reloadData {
             PTGCDManager.gcdMain {
                 self.insertMessage(botMessage)
-                self.setTitleViewFrame(withModel: self.historyModel!)
             }
         }
     }
@@ -2559,7 +2546,6 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                         self.chatModels[sendIndex] = saveModel
                         self.historyModel?.historyModel = self.chatModels
                         self.reloadSomeSection(itemIndex: sendIndex)
-                        self.setTitleViewFrame(withModel: self.historyModel!)
                         self.historyModel?.historyModel = self.chatModels
                         self.packChatData()
                     }
