@@ -285,7 +285,6 @@ class PTAppConfig {
     
     func getMessageImage(name:String) -> UIImage {
         let filePath = self.getMessageImagePath(name: name)
-        PTNSLogConsole("filePath<<<<<<<<<<<<<<<<<:\(filePath)")
         if let image = try? Data(contentsOf: filePath) {
             return UIImage(data: image)!
         } else {

@@ -46,6 +46,9 @@ enum PTChatCase {
 
 class PTChatViewController: MessagesViewController {
                 
+    var mainImage:UIImage?
+    var maskImage:UIImage?
+
     let coachMarkController = CoachMarksController()
     
     var chatModels = [PTChatModel]()
@@ -519,17 +522,8 @@ class PTChatViewController: MessagesViewController {
                     let messageSender = value.outgoing ? PTChatData.share.user : PTChatData.share.bot
                     if !value.editMainName.stringIsEmpty() || !value.editMaskName.stringIsEmpty() {
                         
-                        let mainPath = userImageMessageFilePath + "/\(value.editMaskName)"
-                        var mainImage:UIImage = UIImage()
-                        if FileManager.pt.judgeFileOrFolderExists(filePath: mainPath) {
-                            mainImage = UIImage(contentsOfFile: mainPath)!
-                        }
-                        
-                        let maskPath = userImageMessageFilePath + "/\(value.editMainName)"
-                        var maskImage:UIImage = UIImage()
-                        if FileManager.pt.judgeFileOrFolderExists(filePath: maskPath) {
-                            maskImage = UIImage(contentsOfFile: maskPath)!
-                        }
+                        let mainImage:UIImage = AppDelegate.appDelegate()!.appConfig.getMessageImage(name: "\(value.editMainName)")
+                        let maskImage:UIImage = AppDelegate.appDelegate()!.appConfig.getMessageImage(name: "\(value.editMaskName)")
                         
                         let textString = !value.starString.stringIsEmpty() ? value.starString : value.messageText
                         let att = NSMutableAttributedString.sj.makeText { make in
@@ -547,6 +541,35 @@ class PTChatViewController: MessagesViewController {
                         
                         let message = PTMessageModel(attributedText: att, user: messageSender, messageId: UUID().uuidString, date: value.messageDateString.toDate()!.date, sendSuccess: value.messageSendSuccess)
                         self.messageList.append(message)
+
+//                        let mainPath = userImageMessageFilePath + "/\(value.editMaskName)"
+//                        var mainImage:UIImage = UIImage()
+//                        if FileManager.pt.judgeFileOrFolderExists(filePath: mainPath) {
+//                            mainImage = UIImage(contentsOfFile: mainPath)!
+//                        }
+//
+//                        let maskPath = userImageMessageFilePath + "/\(value.editMainName)"
+//                        var maskImage:UIImage = UIImage()
+//                        if FileManager.pt.judgeFileOrFolderExists(filePath: maskPath) {
+//                            maskImage = UIImage(contentsOfFile: maskPath)!
+//                        }
+//
+//                        let textString = !value.starString.stringIsEmpty() ? value.starString : value.messageText
+//                        let att = NSMutableAttributedString.sj.makeText { make in
+//                            make.append(textString).textColor(AppDelegate.appDelegate()!.appConfig.userTextColor)
+//                            make.append("\n")
+//                            make.append { imageMake in
+//                                imageMake.image = mainImage
+//                                imageMake.bounds = CGRect(x: 0, y: 0, width: 100, height: 100)
+//                            }
+//                            make.append { imageMake in
+//                                imageMake.image = maskImage
+//                                imageMake.bounds = CGRect(x: 0, y: 0, width: 100, height: 100)
+//                            }
+//                        }
+//
+//                        let message = PTMessageModel(attributedText: att, user: messageSender, messageId: UUID().uuidString, date: value.messageDateString.toDate()!.date, sendSuccess: value.messageSendSuccess)
+//                        self.messageList.append(message)
                     } else {
                         let textString = !value.starString.stringIsEmpty() ? value.starString : value.messageText
                         let messageModel = PTMessageModel(text: textString, user: messageSender, messageId: UUID().uuidString, date: value.messageDateString.toDate()!.date,sendSuccess: value.messageSendSuccess,correctionText:value.correctionText)
@@ -562,7 +585,7 @@ class PTChatViewController: MessagesViewController {
                         if !value.messageMediaURL.stringIsEmpty() {
                             outGoingMediaUrl = URL(string: value.messageMediaURL)!
                         } else {
-                            outGoingMediaUrl = URL(fileURLWithPath: userImageMessageFilePath + "/\(value.localFileName)")
+                            outGoingMediaUrl = AppDelegate.appDelegate()!.appConfig.getMessageImagePath(name: value.localFileName)
                         }
                     } else {
                         outGoingMediaUrl = URL(string: value.messageMediaURL)!
@@ -618,7 +641,7 @@ class PTChatViewController: MessagesViewController {
     func whatNews() {
         if WhatsNew.shouldPresent() {
             let whatsNew = WhatsNewViewController(items: [
-                WhatsNewItem.text(title: "聊天", subtitle: "1.支持根據圖片查找出相似圖片的功能.\n2.支持根據兩個圖片和需求對圖片進行PS或更改的功能.\n3.支持檢測用戶的言語是否帶有敏感內容的功能."),
+                WhatsNewItem.text(title: "聊天", subtitle: "1.支持根據圖片查找出相似圖片的功能.\n2.支持根據兩個圖片和需求對圖片進行PS或更改的功能.\n3.支持檢測用戶的言語是否帶有敏感內容的功能.\n4.本地发送的聊天图片也能同步"),
                 WhatsNewItem.text(title: "其他", subtitle: "修复了一些昆虫"),
                 ])
             whatsNew.titleText = "What's New"
@@ -784,11 +807,6 @@ class PTChatViewController: MessagesViewController {
         view.addActionHandlers { sender in
             sender.isSelected = !sender.isSelected
             AppDelegate.appDelegate()!.appConfig.checkSentence = sender.isSelected
-//            if sender.isSelected {
-//                self.chatCase = .chat(type: .checkSentence)
-//            } else {
-//                self.chatCase = .chat(type: .normal)
-//            }
         }
         return view
     }()
@@ -890,57 +908,32 @@ class PTChatViewController: MessagesViewController {
                     do {
                         let object:UIImage = try await PTImagePicker.openAlbum()
                         
-                        let dateString = Date().dateFormat(formatString: "yyyy-MM-dd-HH-mm-ss")
-                        let fileName = "/\(dateString).png"
-                        let filePath = userImageMessageFilePath.appending(fileName)
-                        let fileURL = URL(fileURLWithPath: filePath)
+                        let date = Date()
+                        let dateString = date.dateFormat(formatString: "yyyy-MM-dd-HH-mm-ss")
+                        let fileName = "\(dateString).png"
+//                        let filePath = userImageMessageFilePath.appending(fileName)
+//                        let fileURL = URL(fileURLWithPath: filePath)
                         
-//                        PTGCDManager.gcdMain {
-//                            AppDelegate.appDelegate()!.appConfig.saveUserSendImage(image: object, fileName: "\(dateString).png") { finish in
-//                                if finish {
-//                                    let saveModel = PTChatModel()
-//                                    saveModel.messageType = 2
-//                                    saveModel.messageDateString = Date().dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
-//                                    saveModel.messageSendSuccess = false
-//                                    saveModel.localFileName = "\(dateString).png"
-//                                    
-//                                    var message = PTMessageModel(image: object, user: PTChatData.share.user, messageId: UUID().uuidString, date: Date(), sendSuccess: false,fileName: fileName)
-//                                    message.sending = true
-//                                    self.insertMessage(message) {
-//                                        self.messageList[(self.messageList.count - 1)].sending = true
-//                                        self.messageList[(self.messageList.count - 1)].sendSuccess = false
-//                                        self.reloadSomeSection(itemIndex: (self.messageList.count - 1)) {
-//                                            PTNSLogConsole("开始发送")
-//                                            self.userSendImage(imageObject: object, saveModel: saveModel)
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
-
-                        Task.init {
-                            do {
-                                try object.pngData()!.write(to: fileURL)
-                                PTNSLogConsole("保存完毕")
-                                
-                                let saveModel = PTChatModel()
-                                saveModel.messageType = 2
-                                saveModel.messageDateString = Date().dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
-                                saveModel.messageSendSuccess = false
-                                saveModel.localFileName = "\(dateString).png"
-                                
-                                var message = PTMessageModel(image: object, user: PTChatData.share.user, messageId: UUID().uuidString, date: Date(), sendSuccess: false,fileName: fileName)
-                                message.sending = true
-                                self.insertMessage(message) {
-                                    self.messageList[(self.messageList.count - 1)].sending = true
-                                    self.messageList[(self.messageList.count - 1)].sendSuccess = false
-                                    self.reloadSomeSection(itemIndex: (self.messageList.count - 1)) {
-                                        PTNSLogConsole("开始发送")
-                                        self.userSendImage(imageObject: object, saveModel: saveModel)
+                        PTGCDManager.gcdMain {
+                            AppDelegate.appDelegate()!.appConfig.saveUserSendImage(image: object, fileName: "\(dateString).png") { finish in
+                                if finish {
+                                    let saveModel = PTChatModel()
+                                    saveModel.messageType = 2
+                                    saveModel.messageDateString = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+                                    saveModel.messageSendSuccess = false
+                                    saveModel.localFileName = "\(dateString).png"
+                                    
+                                    var message = PTMessageModel(image: object, user: PTChatData.share.user, messageId: UUID().uuidString, date: Date(), sendSuccess: false,fileName: fileName)
+                                    message.sending = true
+                                    self.insertMessage(message) {
+                                        self.messageList[(self.messageList.count - 1)].sending = true
+                                        self.messageList[(self.messageList.count - 1)].sendSuccess = false
+                                        self.reloadSomeSection(itemIndex: (self.messageList.count - 1)) {
+                                            PTNSLogConsole("开始发送")
+                                            self.userSendImage(imageObject: object, saveModel: saveModel)
+                                        }
                                     }
                                 }
-                            } catch {
-                                PTNSLogConsole("写文件\(error.localizedDescription)")
                             }
                         }
                     } catch let pickerError as PTImagePicker.PickerError {
@@ -2006,6 +1999,25 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
     }
 
     // MARK: Private
+    //MARK: 绿色标语反馈创建
+    private func notGoodWordRequest() {
+        let botDate = Date()
+        let botMessageModel = PTChatModel()
+        botMessageModel.messageDateString = botDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+        botMessageModel.messageType = 0
+        botMessageModel.messageText = PTLanguage.share.text(forKey: "chat_Check_sentence")
+        botMessageModel.outgoing = false
+        self.chatModels.append(botMessageModel)
+
+        var botMessage = PTMessageModel(text: PTLanguage.share.text(forKey: "chat_Check_sentence"), user: PTChatData.share.bot, messageId: UUID().uuidString, date: botDate)
+        botMessage.sending = false
+        self.insertMessage(botMessage) {
+            self.historyModel?.historyModel = self.chatModels
+            self.packChatData()
+            self.refreshViewAndLoadNewData()
+        }
+    }
+    
     private func insertMessages(_ data: [Any]) {
         self.setTypingIndicatorViewHidden(false)
         for component in data {
@@ -2025,6 +2037,15 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                 var message = PTMessageModel(text: str, user: user, messageId: UUID().uuidString, date: date,correctionText:saveModel.correctionText)
                 message.sending = true
                 
+                switch self.chatCase {
+                case .draw(type: .edit):
+                    self.mainImage = self.editMainImageButton.imageView!.image
+                    self.maskImage = self.editMaskImageButton.imageView!.image
+                    self.cleanInputBarTop()
+                default:
+                    break
+                }
+                
                 self.checkSentence(checkWork: str) { useCheckApi, isFlagged, error in
                     if useCheckApi {
                         if isFlagged {
@@ -2032,41 +2053,87 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                             PTGCDManager.gcdBackground {
                                 PTGCDManager.gcdMain {
                                     self.setTypingIndicatorViewHidden(true)
-                                    message.kind = .text(str.replaceStringWithAsterisk())
-                                    message.sendSuccess = true
-                                    saveModel.starString = str.replaceStringWithAsterisk()
-                                    saveModel.messageSendSuccess = true
-                                    self.chatModels.append(saveModel)
-                                    self.insertMessage(message) {
-                                        let botDate = Date()
+                                    switch self.chatCase {
+                                    case .draw(type: .edit):
+                                        
+                                        let dateString = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+                                        let mainName = "main_\(dateString).png"
+                                        let maskName = "mask_\(dateString).png"
 
-                                        let botMessageModel = PTChatModel()
-                                        botMessageModel.messageDateString = botDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
-                                        botMessageModel.messageType = 0
-                                        botMessageModel.messageText = PTLanguage.share.text(forKey: "chat_Check_sentence")
-                                        botMessageModel.outgoing = false
-                                        self.chatModels.append(botMessageModel)
-
-                                        var botMessage = PTMessageModel(text: PTLanguage.share.text(forKey: "chat_Check_sentence"), user: PTChatData.share.bot, messageId: UUID().uuidString, date: botDate)
-                                        botMessage.sending = false
-                                        self.insertMessage(botMessage) {
-                                            self.historyModel?.historyModel = self.chatModels
-                                            self.packChatData()
-                                            self.refreshViewAndLoadNewData()
+                                        AppDelegate.appDelegate()!.appConfig.saveUserSendImage(image: self.mainImage!, fileName: mainName) { finish in
+                                            if finish {
+                                                PTGCDManager.gcdMain {
+                                                    AppDelegate.appDelegate()!.appConfig.saveUserSendImage(image: self.maskImage!, fileName: maskName) { finish in
+                                                        if finish {
+                                                            PTGCDManager.gcdMain {
+                                                                saveModel.messageType = 0
+                                                                saveModel.messageSendSuccess = true
+                                                                saveModel.messageText = str
+                                                                saveModel.editMainName = mainName
+                                                                saveModel.editMaskName = maskName
+                                                                saveModel.starString = str.replaceStringWithAsterisk()
+                                                                self.chatModels.append(saveModel)
+                                                                
+                                                                let att = NSMutableAttributedString.sj.makeText { make in
+                                                                    make.append(str.replaceStringWithAsterisk()).textColor(AppDelegate.appDelegate()!.appConfig.userTextColor)
+                                                                    make.append("\n")
+                                                                    make.append { imageMake in
+                                                                        imageMake.image = self.mainImage
+                                                                        imageMake.bounds = CGRect(x: 0, y: 0, width: 100, height: 100)
+                                                                    }
+                                                                    if self.maskImage != nil {
+                                                                        make.append { imageMake in
+                                                                            imageMake.image = self.maskImage
+                                                                            imageMake.bounds = CGRect(x: 0, y: 0, width: 100, height: 100)
+                                                                        }
+                                                                    }
+                                                                }
+                                                                self.mainImage = nil
+                                                                self.maskImage = nil
+                                                                
+                                                                var message = PTMessageModel(attributedText: att, user: PTChatData.share.user, messageId: UUID().uuidString, date: date, sendSuccess: true)
+                                                                message.sending = true
+                                                                self.insertMessage(message) {
+                                                                    self.notGoodWordRequest()
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    default:
+                                        message.kind = .text(str.replaceStringWithAsterisk())
+                                        message.sendSuccess = true
+                                        saveModel.starString = str.replaceStringWithAsterisk()
+                                        saveModel.messageSendSuccess = true
+                                        self.chatModels.append(saveModel)
+                                        self.insertMessage(message) {
+                                            self.notGoodWordRequest()
                                         }
                                     }
                                 }
                             }
                         } else {
                             PTNSLogConsole("NO")
-                            self.insertMessage(message) {
+                            switch self.chatCase {
+                            case .draw(type: .edit):
                                 self.sendTextFunction(str: str, saveModel: saveModel, sectionIndex: (self.messageList.count - 1))
+                            default:
+                                self.insertMessage(message) {
+                                    self.sendTextFunction(str: str, saveModel: saveModel, sectionIndex: (self.messageList.count - 1))
+                                }
                             }
                         }
                     } else {
                         PTNSLogConsole("PASS")
-                        self.insertMessage(message) {
+                        switch self.chatCase {
+                        case .draw(type: .edit):
                             self.sendTextFunction(str: str, saveModel: saveModel, sectionIndex: (self.messageList.count - 1))
+                        default:
+                            self.insertMessage(message) {
+                                self.sendTextFunction(str: str, saveModel: saveModel, sectionIndex: (self.messageList.count - 1))
+                            }
                         }
                     }
                 }
@@ -2397,60 +2464,57 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
             PTNSLogConsole("我要PS")
             
             let date = Date()
-            
-            let mainImage = self.editMainImageButton.imageView!.image
-            let maskImage = self.editMaskImageButton.imageView!.image
-            
             let dateString = date.dateFormat(formatString: "yyyy-MM-dd-HH-mm-ss")
-            let fileName_main = "/main_\(dateString).png"
-            let fileName_mask = "/mask_\(dateString).png"
-            let filePath_main = userImageMessageFilePath.appending(fileName_main)
-            let filePath_mask = userImageMessageFilePath.appending(fileName_mask)
-            let fileURL_main = URL(fileURLWithPath: filePath_main)
-            let fileURL_mask = URL(fileURLWithPath: filePath_mask)
+            let mainName = "main_\(dateString).png"
+            let maskName = "mask_\(dateString).png"
 
-            Task.init {
-                do {
-                    try mainImage!.pngData()!.write(to: fileURL_main)
-                    try maskImage!.pngData()!.write(to: fileURL_mask)
-                    PTNSLogConsole("保存完毕")
-                    
-                    let saveModel = PTChatModel()
-                    saveModel.messageType = 0
-                    saveModel.messageDateString = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
-                    saveModel.messageSendSuccess = false
-                    saveModel.messageText = str
-                    saveModel.editMainName = "main_\(dateString).png"
-                    saveModel.editMaskName = "mask_\(dateString).png"
+            PTGCDManager.gcdMain {
+                AppDelegate.appDelegate()!.appConfig.saveUserSendImage(image: self.mainImage!, fileName: mainName) { finish in
+                    if finish {
+                        PTGCDManager.gcdMain {
+                            AppDelegate.appDelegate()!.appConfig.saveUserSendImage(image: self.maskImage!, fileName: maskName) { finish in
+                                if finish {
+                                    PTGCDManager.gcdMain {
+                                        let saveModel = PTChatModel()
+                                        saveModel.messageType = 0
+                                        saveModel.messageDateString = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+                                        saveModel.messageSendSuccess = false
+                                        saveModel.messageText = str
+                                        saveModel.editMainName = mainName
+                                        saveModel.editMaskName = maskName
 
-                    let att = NSMutableAttributedString.sj.makeText { make in
-                        make.append(str).textColor(AppDelegate.appDelegate()!.appConfig.userTextColor)
-                        make.append("\n")
-                        make.append { imageMake in
-                            imageMake.image = mainImage
-                            imageMake.bounds = CGRect(x: 0, y: 0, width: 100, height: 100)
-                        }
-                        if maskImage != nil {
-                            make.append { imageMake in
-                                imageMake.image = maskImage
-                                imageMake.bounds = CGRect(x: 0, y: 0, width: 100, height: 100)
+                                        let att = NSMutableAttributedString.sj.makeText { make in
+                                            make.append(str).textColor(AppDelegate.appDelegate()!.appConfig.userTextColor)
+                                            make.append("\n")
+                                            make.append { imageMake in
+                                                imageMake.image = self.mainImage
+                                                imageMake.bounds = CGRect(x: 0, y: 0, width: 100, height: 100)
+                                            }
+                                            if self.maskImage != nil {
+                                                make.append { imageMake in
+                                                    imageMake.image = self.maskImage
+                                                    imageMake.bounds = CGRect(x: 0, y: 0, width: 100, height: 100)
+                                                }
+                                            }
+                                        }
+                                        self.mainImage = nil
+                                        self.maskImage = nil
+                                        
+                                        var message = PTMessageModel(attributedText: att, user: PTChatData.share.user, messageId: UUID().uuidString, date: date, sendSuccess: false)
+                                        message.sending = true
+                                        self.insertMessage(message) {
+                                            self.messageList[(self.messageList.count - 1)].sending = true
+                                            self.messageList[(self.messageList.count - 1)].sendSuccess = false
+                                            self.reloadSomeSection(itemIndex: (self.messageList.count - 1)) {
+                                                PTNSLogConsole("开始发送")
+                                                self.userEditImage(str: str, saveModel: saveModel)
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
-                    
-                    var message = PTMessageModel(attributedText: att, user: PTChatData.share.user, messageId: UUID().uuidString, date: date, sendSuccess: false)
-                    message.sending = true
-                    self.cleanInputBarTop()
-                    self.insertMessage(message) {
-                        self.messageList[(self.messageList.count - 1)].sending = true
-                        self.messageList[(self.messageList.count - 1)].sendSuccess = false
-                        self.reloadSomeSection(itemIndex: (self.messageList.count - 1)) {
-                            PTNSLogConsole("开始发送")
-                            self.userEditImage(str: str, saveModel: saveModel)
-                        }
-                    }
-                } catch {
-                    PTNSLogConsole("写文件\(error.localizedDescription)")
                 }
             }
         }
@@ -2540,35 +2604,6 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                         self.reloadSomeSection(itemIndex: sendIndex)
                         self.packChatData()
                     }
-                }
-            }
-        }
-    }
-    
-    func saveUserSendImage(image:UIImage,fileName:String,jobDoneBlock:@escaping ((_ finish:Bool)->Void)) {
-        if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
-            if let iCloudURL = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents") {
-                let imageURL = iCloudURL.appendingPathComponent(fileName)
-                Task.init {
-                    do {
-                        try image.pngData()?.write(to: imageURL,options: .atomic)
-                        jobDoneBlock(true)
-                    } catch {
-                        PTNSLogConsole("Failed to write image data to iCloud: \(error.localizedDescription)")
-                        jobDoneBlock(false)
-                    }
-                }
-            }
-        } else {
-            let filePath = userImageMessageFilePath.appending("/\(fileName)")
-            let fileURL = URL(fileURLWithPath: filePath)
-            Task.init {
-                do {
-                    try image.pngData()!.write(to: fileURL)
-                    jobDoneBlock(true)
-                } catch {
-                    PTNSLogConsole("Failed to write image data to path: \(error.localizedDescription)")
-                    jobDoneBlock(false)
                 }
             }
         }
