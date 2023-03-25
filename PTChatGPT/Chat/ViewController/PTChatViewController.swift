@@ -17,6 +17,7 @@ import SwifterSwift
 import Instructions
 import WhatsNew
 import OpenAIKit
+import SwiftSpinner
 
 fileprivate extension String {
     static let saveNavTitle = PTLanguage.share.text(forKey: "about_SavedChat")
@@ -461,18 +462,10 @@ class PTChatViewController: MessagesViewController {
 //            AppDelegate.appDelegate()?.appConfig.segChatHistory = dataString
 #endif
 
-            var arr = [PTSegHistoryModel]()
-            if let dataString = AppDelegate.appDelegate()?.appConfig.segChatHistory {
-                let dataArr = dataString.components(separatedBy: kSeparatorSeg)
-                dataArr.enumerated().forEach { index,vlaue in
-                    if let models = PTSegHistoryModel.deserialize(from: vlaue) {
-                        arr.append(models)
-                    }
-                }
-                self.historyModel = arr.first!
-                self.setTitleViewFrame(withModel: self.historyModel!)
-            }
-            
+//            SwiftSpinner.useContainerView(AppDelegate.appDelegate()!.window)
+            SwiftSpinner.useContainerView(AppDelegate.appDelegate()!.window)
+            SwiftSpinner.setTitleFont(UIFont.appfont(size: 24))
+                        
             self.speechKit.onUpdate = { soundSamples in
                 PTNSLogConsole(">>>>>>>>>>>>>>\(soundSamples)")
                 PTGCDManager.gcdMain {
@@ -655,7 +648,29 @@ class PTChatViewController: MessagesViewController {
                 self.messageInputBar.snp.makeConstraints { make in
                     make.left.right.bottom.equalToSuperview()
                 }
+                
+                self.loadViewData()
             }
+        } else {
+            self.loadViewData()
+        }
+    }
+    
+    func loadViewData()
+    {
+        PTGCDManager.gcdAfter(time: 3) {
+            SwiftSpinner.show(duration: 3, title: "Loading............")
+        }
+        var arr = [PTSegHistoryModel]()
+        if let dataString = AppDelegate.appDelegate()?.appConfig.segChatHistory {
+            let dataArr = dataString.components(separatedBy: kSeparatorSeg)
+            dataArr.enumerated().forEach { index,vlaue in
+                if let models = PTSegHistoryModel.deserialize(from: vlaue) {
+                    arr.append(models)
+                }
+            }
+            self.historyModel = arr.first!
+            self.setTitleViewFrame(withModel: self.historyModel!)
         }
     }
     

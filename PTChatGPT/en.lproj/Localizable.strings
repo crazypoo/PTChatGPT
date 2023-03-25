@@ -113,3 +113,6 @@
 "chat_TF_Cartoon" = "Cartoon";
 "chat_TF_Oil_painting" = "Oil painting";
 "draw_Reference" = "Oil painting reference";
+"setting_Tool" = "Tool";
+"setting_Reset" = "Reset all settings";
+"alert_Reset_all_setting" = "Are you sure to reset all settings?";

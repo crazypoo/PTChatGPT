@@ -113,3 +113,6 @@
 "chat_TF_Cartoon" = "卡通";
 "chat_TF_Oil_painting" = "油畫";
 "draw_Reference" = "油畫參照";
+"setting_Tool" = "工具";
+"setting_Reset" = "重置所有設置";
+"alert_Reset_all_setting" = "是否確定重置所有設定?";

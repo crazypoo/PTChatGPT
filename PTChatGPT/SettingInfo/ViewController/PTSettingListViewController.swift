@@ -13,6 +13,7 @@ import Photos
 import FloatingPanel
 import ZXNavigationBar
 import FDFullscreenPopGesture
+import SwiftSpinner
 
 extension String {
     //MARK: iCloud
@@ -36,6 +37,8 @@ extension String {
     static let drawImageSize = PTLanguage.share.text(forKey: "about_Draw_image_size")
     static let getImageCount = PTLanguage.share.text(forKey: "chat_Get_image_count")
     static let drawRefrence = PTLanguage.share.text(forKey: "draw_Reference")
+    //MARK: Setting
+    static let reset = PTLanguage.share.text(forKey: "setting_Reset")
     //MARK: Other
     static let github = PTLanguage.share.text(forKey: "Github")
     static let forum = PTLanguage.share.text(forKey: "about_Forum")
@@ -131,6 +134,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         language.name = .languageString
         language.haveDisclosureIndicator = true
         language.nameColor = .gobalTextColor
+        language.content = self.currentSelectedLanguage
         language.disclosureIndicatorImage = disclosureIndicatorImageName
 
         let theme = PTFusionCellModel()
@@ -163,6 +167,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         speechLanguage.name = .speech
         speechLanguage.haveDisclosureIndicator = true
         speechLanguage.nameColor = .gobalTextColor
+        speechLanguage.content = AppDelegate.appDelegate()!.appConfig.language
         speechLanguage.disclosureIndicatorImage = disclosureIndicatorImageName
 
         speechMain.models = [speechLanguage]
@@ -175,6 +180,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         savedMessage.name = .savedChat
         savedMessage.haveDisclosureIndicator = true
         savedMessage.nameColor = .gobalTextColor
+        savedMessage.content = "\(AppDelegate.appDelegate()!.appConfig.getSaveChatData().count)"
         savedMessage.disclosureIndicatorImage = disclosureIndicatorImageName
 
         let deleteAllChat = PTFusionCellModel()
@@ -199,6 +205,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         aiType.name = .apiAIType
         aiType.haveDisclosureIndicator = true
         aiType.nameColor = .gobalTextColor
+        aiType.content = AppDelegate.appDelegate()!.appConfig.aiModelType
         aiType.disclosureIndicatorImage = disclosureIndicatorImageName
         
         let aiSmart = PTFusionCellModel()
@@ -209,6 +216,14 @@ class PTSettingListViewController: PTChatBaseViewController {
         drawSize.name = .drawImageSize
         drawSize.haveDisclosureIndicator = true
         drawSize.nameColor = .gobalTextColor
+        switch AppDelegate.appDelegate()!.appConfig.aiDrawSize.width {
+        case 1024:
+            drawSize.content = ImageSize.size1024.rawValue
+        case 512:
+            drawSize.content = ImageSize.size512.rawValue
+        default:
+            drawSize.content = ImageSize.size256.rawValue
+        }
         drawSize.disclosureIndicatorImage = disclosureIndicatorImageName
         
         let imageCount = PTFusionCellModel()
@@ -216,6 +231,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         imageCount.haveDisclosureIndicator = true
         imageCount.nameColor = .gobalTextColor
         imageCount.disclosureIndicatorImage = disclosureIndicatorImageName
+        imageCount.content = "\(AppDelegate.appDelegate()!.appConfig.getImageCount)"
         
         let drawSample = PTFusionCellModel()
         drawSample.name = .drawRefrence
@@ -242,6 +258,17 @@ class PTSettingListViewController: PTChatBaseViewController {
         } else {
             apiMain.models = [aiType,aiSmart,drawSize,imageCount,drawSample,aiToken,getApiToken]
         }
+        
+        let toolMain = PTSettingModels()
+        toolMain.name = PTLanguage.share.text(forKey: "setting_Tool")
+        
+        let reset = PTFusionCellModel()
+        reset.name = .reset
+        reset.haveDisclosureIndicator = true
+        reset.nameColor = .gobalTextColor
+        reset.disclosureIndicatorImage = disclosureIndicatorImageName
+        
+        toolMain.models = [reset]
         
         let otherMain = PTSettingModels()
         otherMain.name = PTLanguage.share.text(forKey: "about_Main_Other")
@@ -278,7 +305,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         } else if self.user.senderId == PTChatData.share.user.senderId {
             return [themeMain,speechMain]
         } else {
-            return [cloudMain,themeMain,speechMain,chatMain,apiMain,otherMain]
+            return [cloudMain,themeMain,speechMain,chatMain,apiMain,toolMain,otherMain]
         }
     }
     
@@ -384,6 +411,9 @@ class PTSettingListViewController: PTChatBaseViewController {
         }
         
         self.showDetail()
+        
+        SwiftSpinner.useContainerView(AppDelegate.appDelegate()!.window)
+        SwiftSpinner.setTitleFont(UIFont.appfont(size: 24))
     }
     
     func showDetail() {
@@ -506,7 +536,10 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
             cell.contentView.backgroundColor = .gobalCellBackgroundColor
             cell.cellModel = (itemRow.dataModel as! PTFusionCellModel)
             cell.aiSlider.addSliderAction { sender in
-                let realSmart = (1 - sender.value)
+                var realSmart = (1 - sender.value)
+                if realSmart <= 0 {
+                    realSmart = 1
+                }
                 AppDelegate.appDelegate()!.appConfig.aiSmart = Double(realSmart)
             }
             return cell
@@ -680,13 +713,35 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
             } else {
                 PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_No_photo_library"))
             }
+        } else if itemRow.title == .reset {
+            UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "alert_Reset_all_setting"),msgColor: .gobalTextColor,okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
+                
+            } moreBtn: { index, title in
+                PTGCDManager.gcdMain {
+                    SwiftSpinner.show("正在重置設定")
+                    AppDelegate.appDelegate()!.appConfig.mobileDataReset(delegate:self) {
+                        SwiftSpinner.show("清空聊天記錄中")
+                    } resetChat: {
+                        SwiftSpinner.show("刪除圖片緩存中")
+                    } resetVoiceFile: {
+                        SwiftSpinner.show("刪除語音緩存中")
+                    } resetImage: {
+                        SwiftSpinner.show("完成!")
+
+                        PTGCDManager.gcdAfter(time: 1) {
+                            SwiftSpinner.hide() {
+                                self.showDetail()
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
 
 extension PTSettingListViewController:UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
-        print("123123123123123")
     }
 }
 

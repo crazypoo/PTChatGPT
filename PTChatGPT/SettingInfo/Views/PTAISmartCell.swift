@@ -21,10 +21,15 @@ class PTAISmartCell: PTBaseNormalCell {
     }()
         
     lazy var aiSlider:PTSlider = {
+        
+        var smartValue = Float(1 - AppDelegate.appDelegate()!.appConfig.aiSmart)
+        if smartValue <= 0 {
+            smartValue = 0.1
+        }
         let slider = PTSlider(showTitle: true, titleIsValue: false)
         slider.maximumValue = 1
         slider.minimumValue = 0.1
-        slider.value = Float(1 - AppDelegate.appDelegate()!.appConfig.aiSmart)
+        slider.value = smartValue
         slider.tintColor = .orange
         slider.titleColor = .orange
         return slider

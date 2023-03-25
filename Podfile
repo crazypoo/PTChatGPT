@@ -36,6 +36,7 @@ target 'PTChatGPT' do
 
   pod 'WhatsNew'
   pod 'TensorFlowLiteSwift', '~> 2.3.0', :subspecs => ['Metal']
+  pod 'SwiftSpinner'
 
   pod 'SwiftLint'
   pod 'Swinject'

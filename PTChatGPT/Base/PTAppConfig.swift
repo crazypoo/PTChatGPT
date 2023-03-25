@@ -518,13 +518,13 @@ class PTAppConfig {
                 if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uAiSmart) {
                     return value as! Double
                 } else {
-                    return 0.2
+                    return 1
                 }
             } else {
                 if let value = UserDefaults.standard.value(forKey: uAiSmart) {
                     return value as! Double
                 } else {
-                    return 0.2
+                    return 1
                 }
             }
         } set {
@@ -690,6 +690,20 @@ class PTAppConfig {
         }
     }
     
+    //MARK: 精选数据
+    ///精选数据
+    func getSaveChatData() -> [PTFavouriteModel] {
+        var saveChatModel = [PTFavouriteModel]()
+        if !self.chatFavourtie.stringIsEmpty() {
+            let userModelsStringArr = self.chatFavourtie.components(separatedBy: kSeparator)
+            userModelsStringArr.enumerated().forEach { index,value in
+                let models = PTFavouriteModel.deserialize(from: value)
+                saveChatModel.append(models!)
+            }
+        }
+        return saveChatModel
+    }
+    
     let imageControlActions:[String] = {
         return [.findImage,.remakeImage]
     }()
@@ -709,6 +723,70 @@ class PTAppConfig {
         self.chatFavourtie = self.chatFavourtie
         self.userIconURL = self.userIconURL
         self.segChatHistory = self.segChatHistory
+        self.drawRefrence = self.drawRefrence
+        self.getImageCount = self.getImageCount
+        self.checkSentence = self.checkSentence
+    }
+    
+    func mobileDataReset(delegate: OSSSpeechDelegate,resetSetting:@escaping (()->Void),resetChat:@escaping (()->Void),resetVoiceFile:@escaping (()->Void),resetImage:@escaping (()->Void)) {
+        PTGCDManager.gcdAfter(time: 1) {
+            //主題
+            self.userIcon = UIImage(named: "DemoImage")!.pngData()!
+            self.userBubbleColor = .userBubbleColor
+            self.botBubbleColor = .botBubbleColor
+            self.userTextColor = .userTextColor
+            self.botTextColor = .botTextColor
+            self.waveColor = .red
+            //Speech
+            self.language = OSSVoiceEnum.ChineseSimplified.rawValue
+            //Chat
+            self.chatFavourtie = ""
+            //AI
+            self.aiModelType = "text-davinci-003"
+            self.aiSmart = 1
+            self.aiDrawSize = CGSize(width: 1024, height: 1024)
+            self.getImageCount = 1
+            self.drawRefrence = UIImage(named: "DemoImage")!.pngData()!
+            
+            resetSetting()
+            
+            PTGCDManager.gcdAfter(time: 1.5) {
+                let baseSub = PTSegHistoryModel()
+                baseSub.keyName = "Base"
+                let jsonArr = [baseSub.toJSON()!.toJSON()!]
+                let dataString = jsonArr.joined(separator: kSeparatorSeg)
+                self.segChatHistory = dataString
+                
+                resetChat()
+                
+                PTGCDManager.gcdAfter(time: 1) {
+                    let speechKit = OSSSpeech.shared
+                    speechKit.delegate = delegate
+                    speechKit.deleteVoiceFolderItem(url: nil)
+
+                    resetVoiceFile()
+                    PTGCDManager.gcdAfter(time: 1) {
+                        if self.cloudSwitch {
+                            let iCloudURL = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents")
+
+                            if let contents = try? FileManager.default.contentsOfDirectory(at: iCloudURL!, includingPropertiesForKeys: nil, options: []) {
+                                for (fileUrl) in contents {
+                                    try? FileManager.default.removeItem(at: fileUrl)
+                                }
+                            }
+                            PTGCDManager.gcdAfter(time: 3) {
+                                resetImage()
+                            }
+                        } else {
+                            FileManager.pt.removefolder(folderPath: userImageMessageFilePath)
+                            PTGCDManager.gcdAfter(time: 3) {
+                                resetImage()
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     lazy var languagePickerData:[String] = {
@@ -935,22 +1013,6 @@ class PTAppConfig {
         }
 
         handle(modelArr,indexPath)
-    }
-    
-    //MARK: 精选数据
-    ///精选数据
-    func getSaveChatData() -> [PTFavouriteModel]
-    {
-        var saveChatModel = [PTFavouriteModel]()
-        if !self.chatFavourtie.stringIsEmpty()
-        {
-            let userModelsStringArr = self.chatFavourtie.components(separatedBy: kSeparator)
-            userModelsStringArr.enumerated().forEach { index,value in
-                let models = PTFavouriteModel.deserialize(from: value)
-                saveChatModel.append(models!)
-            }
-        }
-        return saveChatModel
     }
     
     class open func gobal_BRPickerStyle()->BRPickerStyle

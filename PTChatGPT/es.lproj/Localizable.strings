@@ -113,3 +113,6 @@
 "chat_TF_Cartoon" = "Dibujos animados";
 "chat_TF_Oil_painting" = "Pintura al óleo";
 "draw_Reference" = "Referencia de pintura al óleo";
+"setting_Tool" = "Herramienta";
+"setting_Reset" = "Restablecer todos los ajustes";
+"alert_Reset_all_setting" = "¿Estás seguro de restablecer todos los ajustes?";
