@@ -658,12 +658,14 @@ class PTChatViewController: MessagesViewController {
     
     func loadViewData()
     {
-        PTGCDManager.gcdAfter(time: 3) {
-            SwiftSpinner.show(duration: 3, title: "Loading............")
-        }
         var arr = [PTSegHistoryModel]()
         if let dataString = AppDelegate.appDelegate()?.appConfig.segChatHistory {
             let dataArr = dataString.components(separatedBy: kSeparatorSeg)
+            if dataArr.count > 6 {
+                PTGCDManager.gcdAfter(time: 3) {
+                    SwiftSpinner.show(duration: 3, title: "Loading............")
+                }
+            }
             dataArr.enumerated().forEach { index,vlaue in
                 if let models = PTSegHistoryModel.deserialize(from: vlaue) {
                     arr.append(models)
@@ -805,6 +807,7 @@ class PTChatViewController: MessagesViewController {
     
     private lazy var tfImageButton:InputBarButtonItem = {
         let view = InputBarButtonItem()
+        view.spacing = .fixed(10)
         view.backgroundColor = .gobalBackgroundColor
         view.isSelected = AppDelegate.appDelegate()!.appConfig.checkSentence
         view.imageView?.contentMode = .scaleAspectFit

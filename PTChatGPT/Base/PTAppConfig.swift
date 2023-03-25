@@ -135,15 +135,13 @@ class PTAppConfig {
         }
     }
     
-    var firstUseApp:Bool = UserDefaults.standard.value(forKey: uAppFirstUse) == nil ? true : UserDefaults.standard.value(forKey: uAppFirstUse) as! Bool
-    {
+    var firstUseApp:Bool = UserDefaults.standard.value(forKey: uAppFirstUse) == nil ? true : UserDefaults.standard.value(forKey: uAppFirstUse) as! Bool {
         didSet{
             UserDefaults.standard.set(self.firstUseApp,forKey: uAppFirstUse)
         }
     }
     
-    var cloudSwitch:Bool = UserDefaults.standard.value(forKey: uUseiCloud) == nil ? true : UserDefaults.standard.value(forKey: uUseiCloud) as! Bool
-    {
+    var cloudSwitch:Bool = UserDefaults.standard.value(forKey: uUseiCloud) == nil ? true : UserDefaults.standard.value(forKey: uUseiCloud) as! Bool {
         didSet{
             UserDefaults.standard.set(self.cloudSwitch,forKey: uUseiCloud)
         }
@@ -809,8 +807,7 @@ class PTAppConfig {
         return countString
     }()
     
-    func getAIMpdelType(typeString:String) -> OpenAIModelType
-    {
+    func getAIMpdelType(typeString:String) -> OpenAIModelType {
         if typeString == "text-davinci-003" {
             return OpenAIModelType.gpt3(.davinci)
         } else if typeString == "text-curie-001" {
@@ -842,8 +839,7 @@ class PTAppConfig {
         }
     }
     
-    func getAiModelPickerDate(currentAi:String,currentChatModel:PTSegHistoryModel?,handle:@escaping (_ pickerArr:[BRResultModel],_ currentAiIndex:[NSNumber])->Void)
-    {
+    func getAiModelPickerDate(currentAi:String,currentChatModel:PTSegHistoryModel?,handle:@escaping (_ pickerArr:[BRResultModel],_ currentAiIndex:[NSNumber])->Void) {
         var modelArr = [BRResultModel]()
         
         if (currentChatModel?.systemContent ?? "").stringIsEmpty() {
@@ -1015,8 +1011,7 @@ class PTAppConfig {
         handle(modelArr,indexPath)
     }
     
-    class open func gobal_BRPickerStyle()->BRPickerStyle
-    {
+    class open func gobal_BRPickerStyle()->BRPickerStyle {
         let style = BRPickerStyle()
         style.topCornerRadius = 10
         style.pickerTextFont = .appfont(size: 16)
@@ -1036,8 +1031,7 @@ class PTAppConfig {
         return style
     }
 
-    class func refreshTagData(segDataArr:[PTSegHistoryModel])
-    {
+    class func refreshTagData(segDataArr:[PTSegHistoryModel]) {
         var stringArr = [String]()
         segDataArr.enumerated().forEach { index,value in
             stringArr.append(value.toJSON()!.toJSON()!)

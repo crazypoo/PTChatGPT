@@ -135,6 +135,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         language.haveDisclosureIndicator = true
         language.nameColor = .gobalTextColor
         language.content = self.currentSelectedLanguage
+        language.contentTextColor = .gobalTextColor
         language.disclosureIndicatorImage = disclosureIndicatorImageName
 
         let theme = PTFusionCellModel()
@@ -168,6 +169,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         speechLanguage.haveDisclosureIndicator = true
         speechLanguage.nameColor = .gobalTextColor
         speechLanguage.content = AppDelegate.appDelegate()!.appConfig.language
+        speechLanguage.contentTextColor = .gobalTextColor
         speechLanguage.disclosureIndicatorImage = disclosureIndicatorImageName
 
         speechMain.models = [speechLanguage]
@@ -181,6 +183,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         savedMessage.haveDisclosureIndicator = true
         savedMessage.nameColor = .gobalTextColor
         savedMessage.content = "\(AppDelegate.appDelegate()!.appConfig.getSaveChatData().count)"
+        savedMessage.contentTextColor = .gobalTextColor
         savedMessage.disclosureIndicatorImage = disclosureIndicatorImageName
 
         let deleteAllChat = PTFusionCellModel()
@@ -206,6 +209,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         aiType.haveDisclosureIndicator = true
         aiType.nameColor = .gobalTextColor
         aiType.content = AppDelegate.appDelegate()!.appConfig.aiModelType
+        aiType.contentTextColor = .gobalTextColor
         aiType.disclosureIndicatorImage = disclosureIndicatorImageName
         
         let aiSmart = PTFusionCellModel()
@@ -224,6 +228,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         default:
             drawSize.content = ImageSize.size256.rawValue
         }
+        drawSize.contentTextColor = .gobalTextColor
         drawSize.disclosureIndicatorImage = disclosureIndicatorImageName
         
         let imageCount = PTFusionCellModel()
@@ -232,6 +237,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         imageCount.nameColor = .gobalTextColor
         imageCount.disclosureIndicatorImage = disclosureIndicatorImageName
         imageCount.content = "\(AppDelegate.appDelegate()!.appConfig.getImageCount)"
+        imageCount.contentTextColor = .gobalTextColor
         
         let drawSample = PTFusionCellModel()
         drawSample.name = .drawRefrence
