@@ -81,10 +81,7 @@ final class CartoonGanModel {
     }
 
     func start() {
-        start(
-            name: Constants.File.name,
-            ext: Constants.File.ext
-        )
+        start( name: Constants.File.name, ext: Constants.File.ext )
     }
 
     func process(_ image: UIImage) {
@@ -152,10 +149,7 @@ final class CartoonGanModel {
 
         // fix orientation ⬆️
         context.concatenate(
-            createUpTransformation(
-                orientation,
-                size: Constants.Units.Common.size
-            )
+            createUpTransformation( orientation, size: Constants.Units.Common.size )
         )
 
         // draw image in context ✍️
@@ -260,18 +254,9 @@ final class CartoonGanModel {
 
     private func resize(_ image: CGImage, to size: CGSize) -> CGImage? {
         guard let colorSpace = image.colorSpace else { return nil }
-        guard let context = CGContext(
-            data: nil,
-            width: Int(size.width),
-            height: Int(size.height),
-            bitsPerComponent: image.bitsPerComponent,
-            bytesPerRow: Int(size.width) * image.bitsPerComponent * 4,
-            space: colorSpace,
-            bitmapInfo: image.alphaInfo.rawValue
-        ) else { return nil }
+        guard let context = CGContext( data: nil, width: Int(size.width), height: Int(size.height), bitsPerComponent: image.bitsPerComponent, bytesPerRow: Int(size.width) * image.bitsPerComponent * 4, space: colorSpace, bitmapInfo: image.alphaInfo.rawValue ) else { return nil }
         context.interpolationQuality = .high
         context.draw(image, in: CGRect(origin: .zero, size: size))
         return context.makeImage()
     }
-
 }

@@ -112,3 +112,4 @@
 "chat_TF" = "选择TensorFlowLite生成图片的模式";
 "chat_TF_Cartoon" = "卡通";
 "chat_TF_Oil_painting" = "油画";
+"draw_Reference" = "油画参照";

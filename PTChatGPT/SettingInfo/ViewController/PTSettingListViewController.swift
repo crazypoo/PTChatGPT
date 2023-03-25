@@ -35,6 +35,7 @@ extension String {
     static let getAPIAIToken = PTLanguage.share.text(forKey: "about_GetAPIAIToken")
     static let drawImageSize = PTLanguage.share.text(forKey: "about_Draw_image_size")
     static let getImageCount = PTLanguage.share.text(forKey: "chat_Get_image_count")
+    static let drawRefrence = PTLanguage.share.text(forKey: "draw_Reference")
     //MARK: Other
     static let github = PTLanguage.share.text(forKey: "Github")
     static let forum = PTLanguage.share.text(forKey: "about_Forum")
@@ -103,8 +104,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         return picker
     }()
         
-    lazy var aboutModels : [PTSettingModels] = {
-        
+    func aboutModels() -> [PTSettingModels] {
         let disclosureIndicatorImageName = UIImage(systemName: "chevron.right")!.withTintColor(.gobalTextColor,renderingMode: .alwaysOriginal)
         
         let cloudMain = PTSettingModels()
@@ -141,6 +141,8 @@ class PTSettingListViewController: PTChatBaseViewController {
         
         let userIcon = PTFusionCellModel()
         userIcon.name = .userIcon
+        userIcon.showContentIcon = true
+        userIcon.contentIcon = UIImage(data: AppDelegate.appDelegate()!.appConfig.userIcon)
         userIcon.haveDisclosureIndicator = true
         userIcon.nameColor = .gobalTextColor
         userIcon.disclosureIndicatorImage = disclosureIndicatorImageName
@@ -214,6 +216,14 @@ class PTSettingListViewController: PTChatBaseViewController {
         imageCount.haveDisclosureIndicator = true
         imageCount.nameColor = .gobalTextColor
         imageCount.disclosureIndicatorImage = disclosureIndicatorImageName
+        
+        let drawSample = PTFusionCellModel()
+        drawSample.name = .drawRefrence
+        drawSample.showContentIcon = true
+        drawSample.contentIcon = UIImage(data: AppDelegate.appDelegate()!.appConfig.drawRefrence)
+        drawSample.haveDisclosureIndicator = true
+        drawSample.nameColor = .gobalTextColor
+        drawSample.disclosureIndicatorImage = disclosureIndicatorImageName
 
         let aiToken = PTFusionCellModel()
         aiToken.name = .apiAIToken
@@ -228,9 +238,9 @@ class PTSettingListViewController: PTChatBaseViewController {
         getApiToken.disclosureIndicatorImage = disclosureIndicatorImageName
 
         if self.user.senderId == PTChatData.share.bot.senderId {
-            apiMain.models = [aiType,aiSmart,drawSize,imageCount,aiToken]
+            apiMain.models = [aiType,aiSmart,drawSize,imageCount,drawSample,aiToken]
         } else {
-            apiMain.models = [aiType,aiSmart,drawSize,imageCount,aiToken,getApiToken]
+            apiMain.models = [aiType,aiSmart,drawSize,imageCount,drawSample,aiToken,getApiToken]
         }
         
         let otherMain = PTSettingModels()
@@ -270,8 +280,8 @@ class PTSettingListViewController: PTChatBaseViewController {
         } else {
             return [cloudMain,themeMain,speechMain,chatMain,apiMain,otherMain]
         }
-    }()
-
+    }
+    
     var mSections = [PTSection]()
     func comboLayout()->UICollectionViewCompositionalLayout {
         let layout = UICollectionViewCompositionalLayout.init { section, environment in
@@ -379,7 +389,7 @@ class PTSettingListViewController: PTChatBaseViewController {
     func showDetail() {
         mSections.removeAll()
 
-        self.aboutModels.enumerated().forEach { (index,value) in
+        self.aboutModels().enumerated().forEach { (index,value) in
             var rows = [PTRows]()
             value.models.enumerated().forEach { (subIndex,subValue) in
                 
@@ -406,12 +416,19 @@ class PTSettingListViewController: PTChatBaseViewController {
     }
     
     //MARK: 進入相冊
-    func enterPhotos() {
+    func enterPhotos(string:String) {
         Task {
             do {
                 let object:UIImage = try await PTImagePicker.openAlbum()
                 await MainActor.run{
-                    AppDelegate.appDelegate()!.appConfig.userIcon = object.pngData()!
+                    switch string {
+                    case .userIcon:
+                        AppDelegate.appDelegate()!.appConfig.userIcon = object.pngData()!
+                    case .drawRefrence:
+                        AppDelegate.appDelegate()!.appConfig.drawRefrence = object.pngData()!
+                    default:break
+                    }
+                    self.showDetail()
                     PTNSLogConsole(object)
                 }
             } catch let pickerError as PTImagePicker.PickerError {
@@ -600,12 +617,12 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                 PHPhotoLibrary.requestAuthorization { blockStatus in
                     if blockStatus == .authorized {
                         PTGCDManager.gcdMain {
-                            self.enterPhotos()
+                            self.enterPhotos(string: itemRow.title)
                         }
                     }
                 }
             } else if status == .authorized {
-                self.enterPhotos()
+                self.enterPhotos(string: itemRow.title)
             } else if status == .denied {
                 let messageString = String(format: PTLanguage.share.text(forKey: "alert_Go_to_photo_setting"), kAppName!)
                 PTBaseViewController.gobal_drop(title: messageString)
@@ -644,6 +661,24 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
             self.languagePicker.show()
             self.languagePicker.resultModelBlock = { route in
                 AppDelegate.appDelegate()?.appConfig.getImageCount = (AppDelegate.appDelegate()?.appConfig.getImageCountPickerData[route!.index].int)!
+            }
+        } else if itemRow.title == .drawRefrence {
+            let status = PHPhotoLibrary.authorizationStatus()
+            if status == .notDetermined {
+                PHPhotoLibrary.requestAuthorization { blockStatus in
+                    if blockStatus == .authorized {
+                        PTGCDManager.gcdMain {
+                            self.enterPhotos(string: itemRow.title)
+                        }
+                    }
+                }
+            } else if status == .authorized {
+                self.enterPhotos(string: itemRow.title)
+            } else if status == .denied {
+                let messageString = String(format: PTLanguage.share.text(forKey: "alert_Go_to_photo_setting"), kAppName!)
+                PTBaseViewController.gobal_drop(title: messageString)
+            } else {
+                PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_No_photo_library"))
             }
         }
     }

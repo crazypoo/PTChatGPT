@@ -2949,7 +2949,9 @@ extension PTChatViewController: ModelDelegate {
     func model(_ model: Any, didFinishAllocation error: ModelError?) {
         PTGCDManager.gcdMain {
             self.setTypingIndicatorViewHidden(true)
-            PTBaseViewController.gobal_drop(title: error?.localizedDescription)
+            if error != nil {
+                PTBaseViewController.gobal_drop(title: error!.localizedDescription)
+            }
         }
     }
 }

@@ -112,3 +112,4 @@
 "chat_TF" = "Select the mode of TensorFlowLite to generate pictures";
 "chat_TF_Cartoon" = "Cartoon";
 "chat_TF_Oil_painting" = "Oil painting";
+"draw_Reference" = "Oil painting reference";

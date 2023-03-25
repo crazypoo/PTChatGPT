@@ -25,7 +25,7 @@ final class StyleTransfererModel {
     private var styleImage: UIImage?
 
     func start() {
-        self.styleImage = UIImage(named: "DemoImage")
+        self.styleImage = UIImage(data: AppDelegate.appDelegate()!.appConfig.drawRefrence)
         StyleTransferer.newCPUStyleTransferer { result in
             switch result {
             case .success(let transferer):

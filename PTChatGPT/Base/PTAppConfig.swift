@@ -30,6 +30,7 @@ let uAiSmart = "uAiSmart"
 ///保存的用戶的頭像
 let uUserIcon = "uUserIcon"
 let uUserIconURL = "uUserIconURL"
+let uDrawRefrence = "uDrawRefrence"
 ///保存的AI畫圖大小
 let uAiDrawSize = "uAiDrawSize"
 ///Token key
@@ -228,7 +229,6 @@ class PTAppConfig {
                     do {
                         try newValue.write(to: imageURL, options: .atomic)
                         self.userIconURL = Date().toString()
-                        PTNSLogConsole(">>>>>>>>>>>jobdone")
                     } catch let error {
                         PTNSLogConsole("Failed to write image data to iCloud: \(error.localizedDescription)")
                     }
@@ -238,6 +238,43 @@ class PTAppConfig {
             }
         }
     }
+    ///油畫圖片Data
+    var drawRefrence:Data {
+        get {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                if let icloudURL = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents") {
+                    let imageURL = icloudURL.appendingPathComponent("drawRefrence.png")
+                    if let imageData = try? Data(contentsOf: imageURL) {
+                        return imageData
+                    } else {
+                        return UIImage(named: "DemoImage")!.pngData()!
+                    }
+                } else {
+                    return UIImage(named: "DemoImage")!.pngData()!
+                }
+            } else {
+                if let value = UserDefaults.standard.value(forKey: uDrawRefrence) {
+                    return value as! Data
+                } else {
+                    return UIImage(named: "DemoImage")!.pngData()!
+                }
+            }
+        } set {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                if let icloudURL = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents") {
+                    let imageURL = icloudURL.appendingPathComponent("drawRefrence.png")
+                    do {
+                        try newValue.write(to: imageURL, options: .atomic)
+                    } catch let error {
+                        PTNSLogConsole("Failed to write image data to iCloud: \(error.localizedDescription)")
+                    }
+                }
+            } else {
+                UserDefaults.standard.set(newValue, forKey: uDrawRefrence)
+            }
+        }
+    }
+
     
     ///保存聊天的圖片到iCloud
     func saveUserSendImage(image:UIImage,fileName:String,jobDoneBlock:@escaping ((_ finish:Bool)->Void)) {

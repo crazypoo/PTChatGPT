@@ -308,11 +308,11 @@
 		55A5D71629B1D23D00DCA096 /* PTChatGPT */ = {
 			isa = PBXGroup;
 			children = (
-				55B2744F29CE23EA00E05736 /* CartoonGanModel */,
 				5512AB6429B43C2E0059D840 /* 3Party */,
 				55A5D71729B1D23D00DCA096 /* AppDelegate.swift */,
 				55A5D72029B1D23E00DCA096 /* Assets.xcassets */,
 				55A5D7FF29B1EFA000DCA096 /* Base */,
+				55B2744F29CE23EA00E05736 /* CartoonGanModel */,
 				55A5D7F429B1DFCD00DCA096 /* Chat */,
 				55A5D72529B1D23E00DCA096 /* Info.plist */,
 				55A5D72229B1D23E00DCA096 /* LaunchScreen.storyboard */,
