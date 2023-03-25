@@ -109,3 +109,6 @@
 "chat_Looking_for" = "寻找相似的";
 "chat_Paint_image" = "创作图片";
 "chat_Check_sentence" = "文本数据中有不合适、不恰当或敏感的内容，例如诅咒、垃圾信息、仇恨言论、色情内容等等";
+"chat_TF" = "选择TensorFlowLite生成图片的模式";
+"chat_TF_Cartoon" = "卡通";
+"chat_TF_Oil_painting" = "油画";

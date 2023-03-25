@@ -54,6 +54,15 @@
 		55A5D80129B1F29800DCA096 /* PTMessageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A5D80029B1F29800DCA096 /* PTMessageModel.swift */; };
 		55A5D80629B242CF00DCA096 /* PTSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A5D80529B242CF00DCA096 /* PTSettingViewController.swift */; };
 		55B2744E29CCC56700E05736 /* OpenAIKit in Frameworks */ = {isa = PBXBuildFile; productRef = 55B2744D29CCC56700E05736 /* OpenAIKit */; };
+		55B2745629CE23EA00E05736 /* CartoonGanModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B2745029CE23EA00E05736 /* CartoonGanModel.swift */; };
+		55B2745729CE23EA00E05736 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B2745129CE23EA00E05736 /* Model.swift */; };
+		55B2745829CE23EA00E05736 /* StyleTransfererModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B2745329CE23EA00E05736 /* StyleTransfererModel.swift */; };
+		55B2745929CE23EA00E05736 /* StyleTransferer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B2745429CE23EA00E05736 /* StyleTransferer.swift */; };
+		55B2745F29CE240E00E05736 /* style_transfer_quantized_384.tflite in Resources */ = {isa = PBXBuildFile; fileRef = 55B2745C29CE240E00E05736 /* style_transfer_quantized_384.tflite */; };
+		55B2746029CE240E00E05736 /* style_predict_quantized_256.tflite in Resources */ = {isa = PBXBuildFile; fileRef = 55B2745D29CE240E00E05736 /* style_predict_quantized_256.tflite */; };
+		55B2746129CE240E00E05736 /* cartoongan_int8.tflite in Resources */ = {isa = PBXBuildFile; fileRef = 55B2745E29CE240E00E05736 /* cartoongan_int8.tflite */; };
+		55B2746329CE24DA00E05736 /* Data+Array+Convert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B2746229CE24DA00E05736 /* Data+Array+Convert.swift */; };
+		55B2746529CE250D00E05736 /* TFLiteExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B2746429CE250D00E05736 /* TFLiteExtension.swift */; };
 		55B9C35229CBBDBA00C4D06B /* ImageGeneration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B9C35129CBBDBA00C4D06B /* ImageGeneration.swift */; };
 		55BD5B7C29C613070023458A /* PTSettingFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BD5B7B29C613070023458A /* PTSettingFooter.swift */; };
 		55BD5B8A29C6AE2C0023458A /* PTSegHistoryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BD5B8929C6AE2C0023458A /* PTSegHistoryModel.swift */; };
@@ -129,6 +138,15 @@
 		55A5D7FD29B1EEF400DCA096 /* PTChatData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTChatData.swift; sourceTree = "<group>"; };
 		55A5D80029B1F29800DCA096 /* PTMessageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTMessageModel.swift; sourceTree = "<group>"; };
 		55A5D80529B242CF00DCA096 /* PTSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSettingViewController.swift; sourceTree = "<group>"; };
+		55B2745029CE23EA00E05736 /* CartoonGanModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CartoonGanModel.swift; sourceTree = "<group>"; };
+		55B2745129CE23EA00E05736 /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		55B2745329CE23EA00E05736 /* StyleTransfererModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StyleTransfererModel.swift; sourceTree = "<group>"; };
+		55B2745429CE23EA00E05736 /* StyleTransferer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StyleTransferer.swift; sourceTree = "<group>"; };
+		55B2745C29CE240E00E05736 /* style_transfer_quantized_384.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; path = style_transfer_quantized_384.tflite; sourceTree = "<group>"; };
+		55B2745D29CE240E00E05736 /* style_predict_quantized_256.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; path = style_predict_quantized_256.tflite; sourceTree = "<group>"; };
+		55B2745E29CE240E00E05736 /* cartoongan_int8.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; path = cartoongan_int8.tflite; sourceTree = "<group>"; };
+		55B2746229CE24DA00E05736 /* Data+Array+Convert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+Array+Convert.swift"; sourceTree = "<group>"; };
+		55B2746429CE250D00E05736 /* TFLiteExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TFLiteExtension.swift; sourceTree = "<group>"; };
 		55B9C35129CBBDBA00C4D06B /* ImageGeneration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageGeneration.swift; sourceTree = "<group>"; };
 		55BD5B7B29C613070023458A /* PTSettingFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSettingFooter.swift; sourceTree = "<group>"; };
 		55BD5B8929C6AE2C0023458A /* PTSegHistoryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSegHistoryModel.swift; sourceTree = "<group>"; };
@@ -290,6 +308,7 @@
 		55A5D71629B1D23D00DCA096 /* PTChatGPT */ = {
 			isa = PBXGroup;
 			children = (
+				55B2744F29CE23EA00E05736 /* CartoonGanModel */,
 				5512AB6429B43C2E0059D840 /* 3Party */,
 				55A5D71729B1D23D00DCA096 /* AppDelegate.swift */,
 				55A5D72029B1D23E00DCA096 /* Assets.xcassets */,
@@ -388,6 +407,38 @@
 			path = ViewController;
 			sourceTree = "<group>";
 		};
+		55B2744F29CE23EA00E05736 /* CartoonGanModel */ = {
+			isa = PBXGroup;
+			children = (
+				55B2745029CE23EA00E05736 /* CartoonGanModel.swift */,
+				55B2746229CE24DA00E05736 /* Data+Array+Convert.swift */,
+				55B2745B29CE240E00E05736 /* Model */,
+				55B2745129CE23EA00E05736 /* Model.swift */,
+				55B2745229CE23EA00E05736 /* Stylization */,
+				55B2746429CE250D00E05736 /* TFLiteExtension.swift */,
+			);
+			path = CartoonGanModel;
+			sourceTree = "<group>";
+		};
+		55B2745229CE23EA00E05736 /* Stylization */ = {
+			isa = PBXGroup;
+			children = (
+				55B2745329CE23EA00E05736 /* StyleTransfererModel.swift */,
+				55B2745429CE23EA00E05736 /* StyleTransferer.swift */,
+			);
+			path = Stylization;
+			sourceTree = "<group>";
+		};
+		55B2745B29CE240E00E05736 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				55B2745C29CE240E00E05736 /* style_transfer_quantized_384.tflite */,
+				55B2745D29CE240E00E05736 /* style_predict_quantized_256.tflite */,
+				55B2745E29CE240E00E05736 /* cartoongan_int8.tflite */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		98AAC1E7648563A53AAC739A /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -471,9 +522,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				55B2746129CE240E00E05736 /* cartoongan_int8.tflite in Resources */,
+				55B2745F29CE240E00E05736 /* style_transfer_quantized_384.tflite in Resources */,
 				55A5D72429B1D23E00DCA096 /* LaunchScreen.storyboard in Resources */,
 				5512AB7629B43D520059D840 /* Localizable.strings in Resources */,
 				5512AB7729B43D520059D840 /* Images.xcassets in Resources */,
+				55B2746029CE240E00E05736 /* style_predict_quantized_256.tflite in Resources */,
 				5514B39C29BB127F00890161 /* Localizable.strings in Resources */,
 				55A5D72129B1D23E00DCA096 /* Assets.xcassets in Resources */,
 				5512AB7529B43D520059D840 /* .gitkeep in Resources */,
@@ -549,6 +603,8 @@
 			files = (
 				55BD5B9929C801700023458A /* PTCoachModel.swift in Sources */,
 				55A5D7F029B1D9A900DCA096 /* Instruction.swift in Sources */,
+				55B2745829CE23EA00E05736 /* StyleTransfererModel.swift in Sources */,
+				55B2745629CE23EA00E05736 /* CartoonGanModel.swift in Sources */,
 				5514B39529BB013000890161 /* DarkModePickerView.swift in Sources */,
 				55BD5B9D29C843EA0023458A /* PTDarkModeHeader.swift in Sources */,
 				55BD5B7C29C613070023458A /* PTSettingFooter.swift in Sources */,
@@ -562,9 +618,12 @@
 				5514B38429BA233A00890161 /* PTSaveChatViewController.swift in Sources */,
 				5514B38B29BAF5E900890161 /* PTNavController.swift in Sources */,
 				55A5D7F329B1D9A900DCA096 /* OpenAISwift.swift in Sources */,
+				55B2745929CE23EA00E05736 /* StyleTransferer.swift in Sources */,
 				55A5D7F729B1DFF200DCA096 /* PTChatViewController.swift in Sources */,
 				5514B38229BA14C400890161 /* PTColorSettingViewController.swift in Sources */,
 				55278F3229BB7BF100615B0D /* PTAISmartCell.swift in Sources */,
+				55B2746529CE250D00E05736 /* TFLiteExtension.swift in Sources */,
+				55B2745729CE23EA00E05736 /* Model.swift in Sources */,
 				5514B39929BB024D00890161 /* HSNavControl.swift in Sources */,
 				5514B37A29BA02E300890161 /* PTChatBaseViewController.swift in Sources */,
 				55A5D7EF29B1D9A900DCA096 /* OpenAI.swift in Sources */,
@@ -589,6 +648,7 @@
 				5514B37429B9D50D00890161 /* PTChatModel.swift in Sources */,
 				55A5D80129B1F29800DCA096 /* PTMessageModel.swift in Sources */,
 				5514B37829B9F87C00890161 /* PTSettingListViewController.swift in Sources */,
+				55B2746329CE24DA00E05736 /* Data+Array+Convert.swift in Sources */,
 				5514B37629B9F5AC00890161 /* PTAppConfig.swift in Sources */,
 				5514B37129B9CBFD00890161 /* PTChatCustomCell.swift in Sources */,
 				55BD5B8E29C7074B0023458A /* PTPopoverControl.swift in Sources */,

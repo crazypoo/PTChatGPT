@@ -48,6 +48,22 @@ class PTChatViewController: MessagesViewController {
                 
     var mainImage:UIImage?
     var maskImage:UIImage?
+    
+    let cartoonImageModes : [String] = {
+        return [PTLanguage.share.text(forKey: "chat_TF_Cartoon"),PTLanguage.share.text(forKey: "chat_TF_Oil_painting")]
+    }()
+    
+    private lazy var styleTransfererModel: StyleTransfererModel = {
+        let model = StyleTransfererModel()
+        model.delegate = self
+        return model
+    }()
+
+    private lazy var cartoonGanModel: CartoonGanModel = {
+        let model = CartoonGanModel()
+        model.delegate = self
+        return model
+    }()
 
     let coachMarkController = CoachMarksController()
     
@@ -367,6 +383,8 @@ class PTChatViewController: MessagesViewController {
         
         StatusBarManager.shared.style = PTDrakModeOption.isLight ? .lightContent : .darkContent
         setNeedsStatusBarAppearanceUpdate()
+        self.cartoonGanModel.start()
+        self.styleTransfererModel.start()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -541,35 +559,6 @@ class PTChatViewController: MessagesViewController {
                         
                         let message = PTMessageModel(attributedText: att, user: messageSender, messageId: UUID().uuidString, date: value.messageDateString.toDate()!.date, sendSuccess: value.messageSendSuccess)
                         self.messageList.append(message)
-
-//                        let mainPath = userImageMessageFilePath + "/\(value.editMaskName)"
-//                        var mainImage:UIImage = UIImage()
-//                        if FileManager.pt.judgeFileOrFolderExists(filePath: mainPath) {
-//                            mainImage = UIImage(contentsOfFile: mainPath)!
-//                        }
-//
-//                        let maskPath = userImageMessageFilePath + "/\(value.editMainName)"
-//                        var maskImage:UIImage = UIImage()
-//                        if FileManager.pt.judgeFileOrFolderExists(filePath: maskPath) {
-//                            maskImage = UIImage(contentsOfFile: maskPath)!
-//                        }
-//
-//                        let textString = !value.starString.stringIsEmpty() ? value.starString : value.messageText
-//                        let att = NSMutableAttributedString.sj.makeText { make in
-//                            make.append(textString).textColor(AppDelegate.appDelegate()!.appConfig.userTextColor)
-//                            make.append("\n")
-//                            make.append { imageMake in
-//                                imageMake.image = mainImage
-//                                imageMake.bounds = CGRect(x: 0, y: 0, width: 100, height: 100)
-//                            }
-//                            make.append { imageMake in
-//                                imageMake.image = maskImage
-//                                imageMake.bounds = CGRect(x: 0, y: 0, width: 100, height: 100)
-//                            }
-//                        }
-//
-//                        let message = PTMessageModel(attributedText: att, user: messageSender, messageId: UUID().uuidString, date: value.messageDateString.toDate()!.date, sendSuccess: value.messageSendSuccess)
-//                        self.messageList.append(message)
                     } else {
                         let textString = !value.starString.stringIsEmpty() ? value.starString : value.messageText
                         let messageModel = PTMessageModel(text: textString, user: messageSender, messageId: UUID().uuidString, date: value.messageDateString.toDate()!.date,sendSuccess: value.messageSendSuccess,correctionText:value.correctionText)
@@ -588,7 +577,11 @@ class PTChatViewController: MessagesViewController {
                             outGoingMediaUrl = AppDelegate.appDelegate()!.appConfig.getMessageImagePath(name: value.localFileName)
                         }
                     } else {
-                        outGoingMediaUrl = URL(string: value.messageMediaURL)!
+                        if !value.messageMediaURL.stringIsEmpty() {
+                            outGoingMediaUrl = URL(string: value.messageMediaURL)!
+                        } else {
+                            outGoingMediaUrl = AppDelegate.appDelegate()!.appConfig.getMessageImagePath(name: value.localFileName)
+                        }
                     }
                     
                     let messageModel = PTMessageModel(imageURL: outGoingMediaUrl, user: value.outgoing ? PTChatData.share.user : PTChatData.share.bot, messageId: UUID().uuidString, date: value.messageDateString.toDate()!.date,sendSuccess: value.messageSendSuccess)
@@ -786,7 +779,7 @@ class PTChatViewController: MessagesViewController {
         self.messageInputBar.setLeftStackViewWidthConstant(to: 34, animated: false)
         self.messageInputBar.setStackViewItems([self.rightInputStackButton(),.flexibleSpace,self.messageInputBar.sendButton], forStack: .right, animated: false)
         self.messageInputBar.setRightStackViewWidthConstant(to: 96, animated: false)
-        let bottomItems = [self.imageBarButton,self.textImageBarButton,self.inputBarChatSentence, .flexibleSpace]
+        let bottomItems = [self.imageBarButton,self.textImageBarButton,self.inputBarChatSentence,self.tfImageButton, .flexibleSpace]
         messageInputBar.setStackViewItems(bottomItems, forStack: .bottom, animated: false)
     }
     
@@ -795,8 +788,71 @@ class PTChatViewController: MessagesViewController {
         self.setInputOtherItem()
     }
     
+    private lazy var tfImageButton:InputBarButtonItem = {
+        let view = InputBarButtonItem()
+        view.backgroundColor = .gobalBackgroundColor
+        view.isSelected = AppDelegate.appDelegate()!.appConfig.checkSentence
+        view.imageView?.contentMode = .scaleAspectFit
+        view.setImage("👨‍🎨".emojiToImage(emojiFont: .appfont(size: 24)), for: .normal)
+        view.setSize(CGSize(width: 34, height: 34), animated: false)
+        view.addActionHandlers { sender in
+            UIAlertController.baseActionSheet(title: PTLanguage.share.text(forKey: "chat_TF"), titles: self.cartoonImageModes) { sheet in
+                
+            } cancelBlock: { sheet in
+                
+            } otherBlock: { sheet, index in
+                Task.init {
+                    do {
+                        let object:UIImage = try await PTImagePicker.openAlbum()
+                        let date = Date()
+                        let dateString = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+                        let fileName = "cartoon_\(dateString).png"
+                        
+                        PTGCDManager.gcdBackground {
+                            PTGCDManager.gcdMain {
+                                AppDelegate.appDelegate()!.appConfig.saveUserSendImage(image: object, fileName: fileName) { finish in
+                                    if finish {
+                                        PTGCDManager.gcdMain {
+                                            self.setTypingIndicatorViewHidden(false)
+                                        }
+
+                                        let saveModel = PTChatModel()
+                                        saveModel.messageType = 2
+                                        saveModel.messageDateString = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+                                        saveModel.messageSendSuccess = false
+                                        saveModel.localFileName = fileName
+                                        self.chatModels.append(saveModel)
+                                        var message = PTMessageModel(image: object, user: PTChatData.share.user, messageId: UUID().uuidString, date: Date(), sendSuccess: false,fileName: fileName)
+                                        message.sending = true
+                                        self.historyModel?.historyModel = self.chatModels
+                                        PTGCDManager.gcdMain {
+                                            self.insertMessage(message) {
+                                                switch self.cartoonImageModes[index] {
+                                                case PTLanguage.share.text(forKey: "chat_TF_Cartoon"):
+                                                    self.cartoonGanModel.process(object)
+                                                case PTLanguage.share.text(forKey: "chat_TF_Oil_painting"):
+                                                    self.styleTransfererModel.process(object)
+                                                default:break
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } catch let pickerError as PTImagePicker.PickerError {
+                        pickerError.outPutLog()
+                    }
+                }
+                
+            } tapBackgroundBlock: { sheet in
+                
+            }
+        }
+        return view
+    }()
+    
     private lazy var inputBarChatSentence:InputBarButtonItem = {
-        
         let view = InputBarButtonItem()
         view.backgroundColor = .gobalBackgroundColor
         view.isSelected = AppDelegate.appDelegate()!.appConfig.checkSentence
@@ -911,8 +967,6 @@ class PTChatViewController: MessagesViewController {
                         let date = Date()
                         let dateString = date.dateFormat(formatString: "yyyy-MM-dd-HH-mm-ss")
                         let fileName = "\(dateString).png"
-//                        let filePath = userImageMessageFilePath.appending(fileName)
-//                        let fileURL = URL(fileURLWithPath: filePath)
                         
                         PTGCDManager.gcdMain {
                             AppDelegate.appDelegate()!.appConfig.saveUserSendImage(image: object, fileName: "\(dateString).png") { finish in
@@ -2835,6 +2889,67 @@ extension PTChatViewController {
             } else {
                 completed(throwThisApi,false,nil)
             }
+        }
+    }
+}
+
+// MARK: - CartoonGanModelDelegate
+extension PTChatViewController: ModelDelegate {
+    func model(_ model: Any, didFinishProcessing image: UIImage) {
+        PTGCDManager.gcdMain {
+            self.chatModels[self.chatModels.count - 1].messageSendSuccess = true
+            self.messageList[(self.messageList.count - 1)].sending = true
+            self.messageList[(self.messageList.count - 1)].sendSuccess = false
+            self.historyModel?.historyModel = self.chatModels
+            self.reloadSomeSection(itemIndex: (self.messageList.count - 1)) {
+                let date = Date()
+                let dateString = date.dateFormat(formatString: "yyyy-MM-dd-HH-mm-ss")
+                let fileName = "bot_cartoon_\(dateString).png"
+                PTGCDManager.gcdMain {
+                    AppDelegate.appDelegate()!.appConfig.saveUserSendImage(image: image, fileName: fileName) { finish in
+                        if finish {
+                            PTGCDManager.gcdMain {
+                                self.setTypingIndicatorViewHidden(true)
+                            }
+                            
+                            let saveModel = PTChatModel()
+                            saveModel.messageType = 2
+                            saveModel.messageDateString = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+                            saveModel.messageSendSuccess = true
+                            saveModel.localFileName = fileName
+                            saveModel.outgoing = false
+                            self.chatModels.append(saveModel)
+                            let message = PTMessageModel(image: image, user: PTChatData.share.bot, messageId: UUID().uuidString, date: date, sendSuccess: true,fileName: fileName)
+                            self.historyModel?.historyModel = self.chatModels
+                            PTGCDManager.gcdMain {
+                                self.insertMessage(message) {
+                                    self.refreshViewAndLoadNewData()
+                                    self.packChatData()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    func model(_ model: Any, didFailedProcessing error: ModelError) {
+        PTGCDManager.gcdMain {
+            self.setTypingIndicatorViewHidden(true)
+            self.chatModels[self.chatModels.count - 1].messageSendSuccess = false
+            self.historyModel?.historyModel = self.chatModels
+            self.messageList[self.messageList.count - 1].sending = false
+            self.messageList[self.messageList.count - 1].sendSuccess = false
+            self.reloadSomeSection(itemIndex: self.messageList.count - 1)
+            PTBaseViewController.gobal_drop(title: error.localizedDescription)
+        }
+    }
+
+    func model(_ model: Any, didFinishAllocation error: ModelError?) {
+        PTGCDManager.gcdMain {
+            self.setTypingIndicatorViewHidden(true)
+            PTBaseViewController.gobal_drop(title: error?.localizedDescription)
         }
     }
 }

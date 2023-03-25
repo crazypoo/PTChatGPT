@@ -109,3 +109,6 @@
 "chat_Looking_for" = "Looking for similar";
 "chat_Paint_image" = "Create pictures";
 "chat_Check_sentence" = "There is inappropriate, inappropriate or sensitive content in the data in the article, such as curses, spam, hate speech, pornographic content, etc.";
+"chat_TF" = "Select the mode of TensorFlowLite to generate pictures";
+"chat_TF_Cartoon" = "Cartoon";
+"chat_TF_Oil_painting" = "Oil painting";

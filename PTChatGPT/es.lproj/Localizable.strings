@@ -109,3 +109,6 @@
 "chat_Looking_for" = "Buscando algo similar";
 "chat_Paint_image" = "Crear imágenes";
 "chat_Check_sentence" = "Hay contenido inapropiado, inapropiado o sensible en los datos del artículo, como maldiciones, spam, discurso de odio, contenido pornográfico, etc.";
+"chat_TF" = "Seleccione el modo de TensorFlowLite para generar imágenes";
+"chat_TF_Cartoon" = "Dibujos animados";
+"chat_TF_Oil_painting" = "Pintura al óleo";

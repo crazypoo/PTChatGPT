@@ -34,9 +34,9 @@ target 'PTChatGPT' do
   pod 'PooTools/Slider', :git => 'https://github.com/crazypoo/PTools.git'
   pod 'PooTools/Instructions', :git => 'https://github.com/crazypoo/PTools.git'
 
-#  pod 'MessageKit'
   pod 'WhatsNew'
-  
+  pod 'TensorFlowLiteSwift', '~> 2.3.0', :subspecs => ['Metal']
+
   pod 'SwiftLint'
   pod 'Swinject'
   pod 'YCSymbolTracker'
