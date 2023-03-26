@@ -776,6 +776,8 @@ class PTChatViewController: MessagesViewController {
         self.setInputOtherItem()
     }
     
+    //MARK: 其他畫畫按鈕
+    ///其他畫畫按鈕
     private lazy var tfImageButton:InputBarButtonItem = {
         let view = InputBarButtonItem()
         view.spacing = .fixed(10)
@@ -841,6 +843,8 @@ class PTChatViewController: MessagesViewController {
         return view
     }()
     
+    //MARK: 檢測是否不雅語句按鈕
+    ///檢測是否不雅語句按鈕
     private lazy var inputBarChatSentence:InputBarButtonItem = {
         let view = InputBarButtonItem()
         view.backgroundColor = .gobalBackgroundColor
@@ -913,6 +917,8 @@ class PTChatViewController: MessagesViewController {
         return view
     }
     
+    //MARK: 根據文字回答文字,根據文字回答圖片按鈕
+    ///根據文字回答文字,根據文字回答圖片按鈕
     private func rightInputStackButton() -> InputBarButtonItem {
         let view = InputBarButtonItem()
         view.spacing = .fixed(10)
@@ -943,6 +949,8 @@ class PTChatViewController: MessagesViewController {
         return view
     }
     
+    //MARK: 根據圖片獲取相似圖片按鈕
+    ///根據圖片獲取相似圖片按鈕
     private lazy var imageBarButton:InputBarButtonItem = {
         
         let view = InputBarButtonItem()
@@ -999,6 +1007,8 @@ class PTChatViewController: MessagesViewController {
         self.messageInputBar.setStackViewItems([], forStack: .top, animated: true)
     }
     
+    //MARK: PS圖片按鈕
+    ///PS圖片按鈕
     private lazy var textImageBarButton:InputBarButtonItem = {
         
         let view = InputBarButtonItem()
