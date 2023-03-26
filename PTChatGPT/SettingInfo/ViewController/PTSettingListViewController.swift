@@ -107,16 +107,26 @@ class PTSettingListViewController: PTChatBaseViewController {
         return picker
     }()
         
+    func cellContentAtt(content:String) -> NSMutableAttributedString {
+        let att = NSMutableAttributedString.sj.makeText { make in
+            make.append(content).font(.appfont(size: 14)).alignment(.right).textColor(.gobalTextColor)
+        }
+        return att as! NSMutableAttributedString
+    }
+    
     func aboutModels() -> [PTSettingModels] {
         let disclosureIndicatorImageName = UIImage(systemName: "chevron.right")!.withTintColor(.gobalTextColor,renderingMode: .alwaysOriginal)
-        
+        let nameFont:UIFont = .appfont(size: 16,bold: true)
+
         let cloudMain = PTSettingModels()
         cloudMain.name = "iCloud"
         
         let cloud = PTFusionCellModel()
         cloud.name = .cloudString
+//        cloud.leftImage = "☁️".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         cloud.haveSwitch = true
         cloud.nameColor = .gobalTextColor
+        cloud.cellFont = nameFont
 
         cloudMain.models = [cloud]
 
@@ -126,31 +136,38 @@ class PTSettingListViewController: PTChatBaseViewController {
         //MARK: 主題
         let color = PTFusionCellModel()
         color.name = .colorString
+//        color.leftImage = "🎨".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         color.haveDisclosureIndicator = true
         color.nameColor = .gobalTextColor
         color.disclosureIndicatorImage = disclosureIndicatorImageName
+        color.cellFont = nameFont
 
         let language = PTFusionCellModel()
         language.name = .languageString
+//        language.leftImage = "🚩".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         language.haveDisclosureIndicator = true
         language.nameColor = .gobalTextColor
-        language.content = self.currentSelectedLanguage
-        language.contentTextColor = .gobalTextColor
         language.disclosureIndicatorImage = disclosureIndicatorImageName
+        language.cellFont = nameFont
+        language.contentAttr = self.cellContentAtt(content: self.currentSelectedLanguage)
 
         let theme = PTFusionCellModel()
         theme.name = .themeString
+//        theme.leftImage = "🖼️".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         theme.haveDisclosureIndicator = true
         theme.nameColor = .gobalTextColor
         theme.disclosureIndicatorImage = disclosureIndicatorImageName
-        
+        theme.cellFont = nameFont
+
         let userIcon = PTFusionCellModel()
         userIcon.name = .userIcon
+//        userIcon.leftImage = "🤳".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         userIcon.showContentIcon = true
         userIcon.contentIcon = UIImage(data: AppDelegate.appDelegate()!.appConfig.userIcon)
         userIcon.haveDisclosureIndicator = true
         userIcon.nameColor = .gobalTextColor
         userIcon.disclosureIndicatorImage = disclosureIndicatorImageName
+        userIcon.cellFont = nameFont
 
         if self.user.senderId == PTChatData.share.bot.senderId {
             themeMain.models = [color]
@@ -166,11 +183,12 @@ class PTSettingListViewController: PTChatBaseViewController {
 
         let speechLanguage = PTFusionCellModel()
         speechLanguage.name = .speech
+//        speechLanguage.leftImage = "🎙️".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         speechLanguage.haveDisclosureIndicator = true
         speechLanguage.nameColor = .gobalTextColor
-        speechLanguage.content = AppDelegate.appDelegate()!.appConfig.language
-        speechLanguage.contentTextColor = .gobalTextColor
         speechLanguage.disclosureIndicatorImage = disclosureIndicatorImageName
+        speechLanguage.cellFont = nameFont
+        speechLanguage.contentAttr = self.cellContentAtt(content: AppDelegate.appDelegate()!.appConfig.language)
 
         speechMain.models = [speechLanguage]
 
@@ -180,23 +198,28 @@ class PTSettingListViewController: PTChatBaseViewController {
 
         let savedMessage = PTFusionCellModel()
         savedMessage.name = .savedChat
+//        savedMessage.leftImage = "📑".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         savedMessage.haveDisclosureIndicator = true
         savedMessage.nameColor = .gobalTextColor
-        savedMessage.content = "\(AppDelegate.appDelegate()!.appConfig.getSaveChatData().count)"
-        savedMessage.contentTextColor = .gobalTextColor
         savedMessage.disclosureIndicatorImage = disclosureIndicatorImageName
+        savedMessage.cellFont = nameFont
+        savedMessage.contentAttr = self.cellContentAtt(content: "\(AppDelegate.appDelegate()!.appConfig.getSaveChatData().count)")
 
         let deleteAllChat = PTFusionCellModel()
         deleteAllChat.name = .deleteAllChat
+//        deleteAllChat.leftImage = "🗑️".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         deleteAllChat.haveDisclosureIndicator = true
         deleteAllChat.nameColor = .gobalTextColor
         deleteAllChat.disclosureIndicatorImage = disclosureIndicatorImageName
+        deleteAllChat.cellFont = nameFont
 
         let deleteAllVoiceFile = PTFusionCellModel()
         deleteAllVoiceFile.name = .deleteAllVoiceFile
+//        deleteAllVoiceFile.leftImage = "🔇".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         deleteAllVoiceFile.haveDisclosureIndicator = true
         deleteAllVoiceFile.nameColor = .gobalTextColor
         deleteAllVoiceFile.disclosureIndicatorImage = disclosureIndicatorImageName
+        deleteAllVoiceFile.cellFont = nameFont
 
         chatMain.models = [savedMessage,deleteAllChat,deleteAllVoiceFile]
         
@@ -206,58 +229,71 @@ class PTSettingListViewController: PTChatBaseViewController {
         //MARK: API
         let aiType = PTFusionCellModel()
         aiType.name = .apiAIType
+//        aiType.leftImage = "🤖".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         aiType.haveDisclosureIndicator = true
         aiType.nameColor = .gobalTextColor
-        aiType.content = AppDelegate.appDelegate()!.appConfig.aiModelType
-        aiType.contentTextColor = .gobalTextColor
         aiType.disclosureIndicatorImage = disclosureIndicatorImageName
-        
+        aiType.cellFont = nameFont
+        aiType.contentAttr = self.cellContentAtt(content: AppDelegate.appDelegate()!.appConfig.aiModelType)
+
         let aiSmart = PTFusionCellModel()
         aiSmart.name = .aiSmart
         aiSmart.nameColor = .gobalTextColor
-        
+//        aiSmart.leftImage = "🧠".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
+        aiSmart.cellFont = nameFont
+
         let drawSize = PTFusionCellModel()
         drawSize.name = .drawImageSize
+//        drawSize.leftImage = "📏".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         drawSize.haveDisclosureIndicator = true
         drawSize.nameColor = .gobalTextColor
+        var sizeString = ""
         switch AppDelegate.appDelegate()!.appConfig.aiDrawSize.width {
         case 1024:
-            drawSize.content = ImageSize.size1024.rawValue
+            sizeString = ImageSize.size1024.rawValue
         case 512:
-            drawSize.content = ImageSize.size512.rawValue
+            sizeString = ImageSize.size512.rawValue
         default:
-            drawSize.content = ImageSize.size256.rawValue
+            sizeString = ImageSize.size256.rawValue
         }
-        drawSize.contentTextColor = .gobalTextColor
         drawSize.disclosureIndicatorImage = disclosureIndicatorImageName
-        
+        drawSize.cellFont = nameFont
+        drawSize.contentAttr = self.cellContentAtt(content: sizeString)
+
         let imageCount = PTFusionCellModel()
         imageCount.name = .getImageCount
+//        imageCount.leftImage = "🎆".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         imageCount.haveDisclosureIndicator = true
         imageCount.nameColor = .gobalTextColor
         imageCount.disclosureIndicatorImage = disclosureIndicatorImageName
-        imageCount.content = "\(AppDelegate.appDelegate()!.appConfig.getImageCount)"
-        imageCount.contentTextColor = .gobalTextColor
-        
+        imageCount.cellFont = nameFont
+        imageCount.contentAttr = self.cellContentAtt(content: "\(AppDelegate.appDelegate()!.appConfig.getImageCount)")
+
         let drawSample = PTFusionCellModel()
         drawSample.name = .drawRefrence
+//        drawSample.leftImage = "🎇".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         drawSample.showContentIcon = true
         drawSample.contentIcon = UIImage(data: AppDelegate.appDelegate()!.appConfig.drawRefrence)
         drawSample.haveDisclosureIndicator = true
         drawSample.nameColor = .gobalTextColor
         drawSample.disclosureIndicatorImage = disclosureIndicatorImageName
+        drawSample.cellFont = nameFont
 
         let aiToken = PTFusionCellModel()
         aiToken.name = .apiAIToken
+//        aiToken.leftImage = "🔑".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         aiToken.haveDisclosureIndicator = true
         aiToken.nameColor = .gobalTextColor
         aiToken.disclosureIndicatorImage = disclosureIndicatorImageName
+        aiToken.cellFont = nameFont
 
         let getApiToken = PTFusionCellModel()
         getApiToken.name = .getAPIAIToken
+//        getApiToken.leftImage = "🧭".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         getApiToken.haveDisclosureIndicator = true
         getApiToken.nameColor = .gobalTextColor
         getApiToken.disclosureIndicatorImage = disclosureIndicatorImageName
+        getApiToken.cellFont = nameFont
 
         if self.user.senderId == PTChatData.share.bot.senderId {
             apiMain.models = [aiType,aiSmart,drawSize,imageCount,drawSample,aiToken]
@@ -270,10 +306,12 @@ class PTSettingListViewController: PTChatBaseViewController {
         
         let reset = PTFusionCellModel()
         reset.name = .reset
+//        reset.leftImage = "🔄".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         reset.haveDisclosureIndicator = true
         reset.nameColor = .gobalTextColor
         reset.disclosureIndicatorImage = disclosureIndicatorImageName
-        
+        reset.cellFont = nameFont
+
         toolMain.models = [reset]
         
         let otherMain = PTSettingModels()
@@ -282,28 +320,36 @@ class PTSettingListViewController: PTChatBaseViewController {
         //MARK: Other
         let github = PTFusionCellModel()
         github.name = .github
+//        github.leftImage = "🐙".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         github.haveDisclosureIndicator = true
         github.nameColor = .gobalTextColor
         github.disclosureIndicatorImage = disclosureIndicatorImageName
+        github.cellFont = nameFont
 
         let forum = PTFusionCellModel()
         forum.name = .forum
+//        forum.leftImage = "🧾".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         forum.haveDisclosureIndicator = true
         forum.nameColor = .gobalTextColor
         forum.disclosureIndicatorImage = disclosureIndicatorImageName
+        forum.cellFont = nameFont
 
         let rate = PTFusionCellModel()
         rate.name = .rate
+//        rate.leftImage = "⭐️".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         rate.haveDisclosureIndicator = true
         rate.nameColor = .gobalTextColor
         rate.disclosureIndicatorImage = disclosureIndicatorImageName
+        rate.cellFont = nameFont
 
         let share = PTFusionCellModel()
         share.name = .share
+//        share.leftImage = "💁‍♂️".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         share.haveDisclosureIndicator = true
         share.nameColor = .gobalTextColor
         share.disclosureIndicatorImage = disclosureIndicatorImageName
-        
+        share.cellFont = nameFont
+
         otherMain.models = [github,forum,rate,share]
         
         if self.user.senderId == PTChatData.share.bot.senderId {

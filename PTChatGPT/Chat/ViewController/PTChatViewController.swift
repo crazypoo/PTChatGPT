@@ -2897,7 +2897,6 @@ extension PTChatViewController {
                         let contentResult = try await self.openAIKIT.checkContentPolicy(parameters: contentParameter)
                         
                         let isFlagged = contentResult.results[0].flagged
-        //                let botMessageString = isFlagged ? PTLanguage.share.text(forKey: "chat_Check_sentence") : "PASS!"
                         completed(throwThisApi,isFlagged,nil)
                     } catch {
                         PTBaseViewController.gobal_drop(title: error.localizedDescription)

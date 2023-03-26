@@ -35,9 +35,8 @@ class PTAISmartCell: PTBaseNormalCell {
         return slider
     }()
     
-    var cellModel:PTFusionCellModel?
-    {
-        didSet{
+    var cellModel:PTFusionCellModel? {
+        didSet {
             self.nameTitle.text = self.cellModel!.name
             self.nameTitle.textColor = self.cellModel!.nameColor
             self.nameTitle.font = self.cellModel!.cellFont

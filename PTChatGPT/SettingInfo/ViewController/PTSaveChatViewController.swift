@@ -17,8 +17,7 @@ class PTSaveChatViewController: PTChatBaseViewController {
     fileprivate var isSwipeRightEnabled = false
 
     var mSections = [PTSection]()
-    func comboLayout()->UICollectionViewCompositionalLayout
-    {
+    func comboLayout()->UICollectionViewCompositionalLayout {
         let layout = UICollectionViewCompositionalLayout.init { section, environment in
             self.generateSection(section: section)
         }
@@ -27,8 +26,7 @@ class PTSaveChatViewController: PTChatBaseViewController {
         return layout
     }
     
-    func generateSection(section:NSInteger)->NSCollectionLayoutSection
-    {
+    func generateSection(section:NSInteger)->NSCollectionLayoutSection {
         let sectionModel = mSections[section]
 
         var group : NSCollectionLayoutGroup
@@ -95,10 +93,7 @@ class PTSaveChatViewController: PTChatBaseViewController {
         
         self.showEmptyDataSet(currentScroller: self.collectionView)
         self.lxf_tapEmptyView(self.collectionView) { sender in
-            let viewC = PTChatViewController(token: AppDelegate.appDelegate()!.appConfig.apiToken,language: OSSVoiceEnum(rawValue: AppDelegate.appDelegate()!.appConfig.language)!)
-            let nav = PTNavController(rootViewController: viewC)
-            AppDelegate.appDelegate()!.window!.rootViewController = nav
-            AppDelegate.appDelegate()!.window!.makeKeyAndVisible()
+            self.navigationController?.popToRootViewController(animated: true)
         }
         
         self.showDetail()
@@ -110,12 +105,10 @@ class PTSaveChatViewController: PTChatBaseViewController {
         self.showDetail()
     }
 
-    func showDetail()
-    {
+    func showDetail() {
         mSections.removeAll()
 
-        if self.saveChatModel.count > 0
-        {
+        if self.saveChatModel.count > 0 {
             var rows = [PTRows]()
             self.saveChatModel.enumerated().forEach { (index,value) in
                 let disclosureIndicatorImageName = UIImage(systemName: "chevron.right")!.withTintColor(.gobalTextColor,renderingMode: .alwaysOriginal)
@@ -135,20 +128,17 @@ class PTSaveChatViewController: PTChatBaseViewController {
         self.collectionView.reloadData()
     }
     
-    class open func swipe_cell_buttonStyle(_ type:ButtonStyle? = .circular)->ButtonStyle
-    {
+    class open func swipe_cell_buttonStyle(_ type:ButtonStyle? = .circular)->ButtonStyle {
         type!
     }
     
-    class open func swipe_cell_buttonDisplayMode(_ type:ButtonDisplayMode? = .imageOnly)->ButtonDisplayMode
-    {
+    class open func swipe_cell_buttonDisplayMode(_ type:ButtonDisplayMode? = .imageOnly)->ButtonDisplayMode {
         type!
     }
 
 }
 
-extension PTSaveChatViewController:UICollectionViewDelegate,UICollectionViewDataSource
-{
+extension PTSaveChatViewController:UICollectionViewDelegate,UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return self.mSections.count
     }
@@ -159,18 +149,14 @@ extension PTSaveChatViewController:UICollectionViewDelegate,UICollectionViewData
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let itemSec = mSections[indexPath.section]
-        if kind == UICollectionView.elementKindSectionHeader
-        {
-            if itemSec.headerID == PTSettingHeader.ID
-            {
+        if kind == UICollectionView.elementKindSectionHeader {
+            if itemSec.headerID == PTSettingHeader.ID {
                 let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: itemSec.headerID!, for: indexPath) as! PTSettingHeader
                 header.titleLabel.text = itemSec.headerTitle
                 return header
             }
             return UICollectionReusableView()
-        }
-        else
-        {
+        } else {
             return UICollectionReusableView()
         }
     }
@@ -178,17 +164,14 @@ extension PTSaveChatViewController:UICollectionViewDelegate,UICollectionViewData
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let itemSec = mSections[indexPath.section]
         let itemRow = itemSec.rows[indexPath.row]
-        if itemRow.ID == PTFusionSwipeCell.ID
-        {
+        if itemRow.ID == PTFusionSwipeCell.ID {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTFusionSwipeCell
             cell.cellModel = (itemRow.dataModel as! PTFusionCellModel)
             cell.dataContent.lineView.isHidden = indexPath.row == (itemSec.rows.count - 1) ? true : false
             cell.dataContent.topLineView.isHidden = true
             cell.delegate = self
             return cell
-        }
-        else
-        {
+        } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CELL", for: indexPath)
             cell.backgroundColor = .random
             return cell
@@ -201,8 +184,7 @@ extension PTSaveChatViewController:UICollectionViewDelegate,UICollectionViewData
     }
 }
 
-extension PTSaveChatViewController:SwipeCollectionViewCellDelegate
-{
+extension PTSaveChatViewController:SwipeCollectionViewCellDelegate {
     func swipe_cell_configure(action: SwipeAction, with descriptor: ActionDescriptor,buttonDisplayMode: ButtonDisplayMode? = PTSaveChatViewController.swipe_cell_buttonDisplayMode(),buttonStyle: ButtonStyle? = PTSaveChatViewController.swipe_cell_buttonStyle()) {
        action.title = descriptor.title(forDisplayMode: buttonDisplayMode!)
        action.image = descriptor.image(forStyle: buttonStyle!, displayMode: buttonDisplayMode!)
@@ -262,9 +244,7 @@ extension PTSaveChatViewController:SwipeCollectionViewCellDelegate
            delete.fulfill(with: .delete)
            self.swipe_cell_configure(action: delete, with: .trash)
            return  [delete]
-       }
-       else
-       {
+       } else {
            guard isSwipeRightEnabled else { return nil }
 
            let read = SwipeAction(style: .default, title: nil) { action, indexPath in
@@ -279,8 +259,7 @@ extension PTSaveChatViewController:SwipeCollectionViewCellDelegate
    }
 }
 
-extension PTSaveChatViewController
-{
+extension PTSaveChatViewController {
     override func showEmptyDataSet(currentScroller: UIScrollView) {
         self.lxf_EmptyDataSet(currentScroller) { () -> ([LXFEmptyDataSetAttributeKeyType : Any]) in
             let color:UIColor = .gobalTextColor
