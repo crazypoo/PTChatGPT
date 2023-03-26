@@ -116,3 +116,7 @@
 "setting_Tool" = "工具";
 "setting_Reset" = "重置所有设置";
 "alert_Reset_all_setting" = "是否确定重置所有设定?";
+"about_Help" = "帮助";
+"help_Base" = "基础";
+"help_Other" = "其他标签";
+"help_And" = "或";

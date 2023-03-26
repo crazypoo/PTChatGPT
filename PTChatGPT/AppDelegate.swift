@@ -171,7 +171,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         let data = datas[index]
                         let currentVC = PTUtils.getCurrentVC()
                         if currentVC is PTChatViewController {
-                            (currentVC as! PTChatViewController).insertMessages([chatText!])
+                            let newCurrent = (currentVC as! PTChatViewController)
+                            newCurrent.historyModel = data
+                            PTGCDManager.gcdAfter(time: 0.35) {
+                                newCurrent.insertMessages([chatText!])
+                            }
                         } else {
                             if currentVC is PTColorSettingViewController {
                                 currentVC.dismiss(animated: true) {
@@ -180,9 +184,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                     PTGCDManager.gcdAfter(time: 0.35) {
                                         let chat = (PTUtils.getCurrentVC() as! PTChatViewController)
                                         PTGCDManager.gcdAfter(time: 0.35) {
+                                            chat.historyModel = data
                                             chat.messageInputBar.isHidden = false
                                             chat.messageInputBar.alpha = 1
-                                            chat.insertMessages([chatText!])
+                                            PTGCDManager.gcdAfter(time: 0.35) {
+                                                chat.insertMessages([chatText!])
+                                            }
                                         }
                                     }
                                 }
@@ -192,9 +199,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                     PTGCDManager.gcdAfter(time: 0.35) {
                                         let chat = (PTUtils.getCurrentVC() as! PTChatViewController)
                                         PTGCDManager.gcdAfter(time: 0.35) {
+                                            chat.historyModel = data
                                             chat.messageInputBar.isHidden = false
                                             chat.messageInputBar.alpha = 1
-                                            chat.insertMessages([chatText!])
+                                            PTGCDManager.gcdAfter(time: 0.35) {
+                                                chat.insertMessages([chatText!])
+                                            }
                                         }
                                     }
                                 }

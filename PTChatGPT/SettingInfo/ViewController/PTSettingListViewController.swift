@@ -44,6 +44,7 @@ extension String {
     static let forum = PTLanguage.share.text(forKey: "about_Forum")
     static let rate = PTLanguage.share.text(forKey: "about_Rate")
     static let share = PTLanguage.share.text(forKey: "about_Share")
+    static let help = PTLanguage.share.text(forKey: "about_Help")
 }
 
 class PTChatPanelLayout: FloatingPanelLayout {
@@ -349,8 +350,16 @@ class PTSettingListViewController: PTChatBaseViewController {
         share.nameColor = .gobalTextColor
         share.disclosureIndicatorImage = disclosureIndicatorImageName
         share.cellFont = nameFont
+        
+        let help = PTFusionCellModel()
+        help.name = .help
+//        share.leftImage = "💁‍♂️".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
+        help.haveDisclosureIndicator = true
+        help.nameColor = .gobalTextColor
+        help.disclosureIndicatorImage = disclosureIndicatorImageName
+        help.cellFont = nameFont
 
-        otherMain.models = [github,forum,rate,share]
+        otherMain.models = [github,forum,rate,share,help]
         
         if self.user.senderId == PTChatData.share.bot.senderId {
             return [themeMain,apiMain]
@@ -788,6 +797,9 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                     }
                 }
             }
+        } else if itemRow.title == .help {
+            let vc = PTHelpViewController()
+            self.navigationController?.pushViewController(vc, animated: true)
         }
     }
 }

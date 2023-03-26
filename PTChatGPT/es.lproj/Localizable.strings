@@ -116,3 +116,7 @@
 "setting_Tool" = "Herramienta";
 "setting_Reset" = "Restablecer todos los ajustes";
 "alert_Reset_all_setting" = "¿Estás seguro de restablecer todos los ajustes?";
+"about_Help" = "Ayuda";
+"help_Base" = "Fundamentos";
+"help_Other" = "Otras etiquetas";
+"help_And" = "Oregón";

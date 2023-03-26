@@ -116,3 +116,7 @@
 "setting_Tool" = "Tool";
 "setting_Reset" = "Reset all settings";
 "alert_Reset_all_setting" = "Are you sure to reset all settings?";
+"about_Help" = "Help";
+"help_Base" = "Base";
+"help_Other" = "Other tags";
+"help_And" = "Or";
