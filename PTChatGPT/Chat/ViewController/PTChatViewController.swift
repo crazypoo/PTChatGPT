@@ -272,6 +272,8 @@ class PTChatViewController: MessagesViewController {
     var isRecording:Bool = false
     var isSendVoice:Bool = false
     
+    //MARK: 發送語音按鈕
+    ///發送語音按鈕
     lazy var voiceButton:UIButton = {
         let view = UIButton(type: .custom)
         view.backgroundColor = .white
@@ -288,38 +290,6 @@ class PTChatViewController: MessagesViewController {
     }()
     
     var voiceCanTap:Bool = false
-    lazy var voiceTypeButton:UIButton = {
-        let view = UIButton(type: .custom)
-        view.isSelected = false
-        view.setImage(UIImage(systemName: "mic")?.withTintColor(.black, renderingMode: .automatic), for: .normal)
-        view.setImage(UIImage(systemName: "mic.fill")?.withTintColor(.black, renderingMode: .automatic), for: .selected)
-        view.addActionHandlers { sender in
-            self.messageInputBar.inputTextView.resignFirstResponder()
-            if self.avCaptureDeviceAuthorize(avMediaType: .audio) {
-                sender.isSelected = !sender.isSelected
-                if sender.isSelected {
-                    if !self.messageInputBar.inputTextView.text.stringIsEmpty() {
-                        self.tapVoiceSaveString = self.messageInputBar.inputTextView.text
-                        self.messageInputBar.inputTextView.text = ""
-                    }
-                    self.messageInputBar.addSubview(self.voiceButton)
-                    self.voiceButton.snp.makeConstraints { make in
-                        make.left.right.equalTo(self.messageInputBar.inputTextView)
-                        make.height.bottom.equalTo(self.voiceTypeButton)
-                    }
-                } else {
-                    if !self.tapVoiceSaveString.stringIsEmpty() {
-                        self.messageInputBar.inputTextView.text = self.tapVoiceSaveString
-                    }
-                    self.tapVoiceSaveString = ""
-                    self.voiceButton.removeFromSuperview()
-                }
-            } else {
-                PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Can_not_send_voice"))
-            }
-        }
-        return view
-    }()
 
     var onlyShowSave:Bool = false
     
@@ -338,8 +308,7 @@ class PTChatViewController: MessagesViewController {
         super.init(nibName: nil, bundle: nil)
     }
     
-    init(saveModel:[PTChatModel])
-    {
+    init(saveModel:[PTChatModel]) {
         super.init(nibName: nil, bundle: nil)
         self.onlyShowSave = true
                 
@@ -906,6 +875,8 @@ class PTChatViewController: MessagesViewController {
         return view
     }()
             
+    //MARK: 語音發送開關
+    ///語音發送開關
     private func leftInputStackButton() -> InputBarButtonItem {
         let view = InputBarButtonItem()
         view.spacing = .fixed(10)
@@ -915,8 +886,9 @@ class PTChatViewController: MessagesViewController {
         view.setImage(UIImage(systemName: "mic.fill")?.withTintColor(.black, renderingMode: .automatic), for: .selected)
         view.addActionHandlers { sender in
             self.messageInputBar.inputTextView.resignFirstResponder()
-            if self.voiceCanTap
-            {
+            if self.voiceCanTap {
+                self.chatCase = .chat(type: .normal)
+                self.cleanInputBarTop()
                 sender.isSelected = !sender.isSelected
                 if sender.isSelected {
                     if !self.messageInputBar.inputTextView.text.stringIsEmpty() {
@@ -1039,6 +1011,7 @@ class PTChatViewController: MessagesViewController {
         view.addActionHandlers { sender in
             sender.isSelected = !sender.isSelected
             if sender.isSelected {
+                self.voiceButton.removeFromSuperview()
                 self.chatCase = .draw(type: .edit)
                 self.setEditImageBar()
             } else {
@@ -1655,10 +1628,7 @@ extension PTChatViewController:MessageCellDelegate
                         PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Copy_done"))
                     default: break
                     }
-                case .editString:
-                    self.voiceTypeButton.isHidden = true
-                    self.voiceTypeButton.isUserInteractionEnabled = false
-                    
+                case .editString:                    
                     switch messageModel.kind {
                     case .text(let text):
                         self.chatCase = .chat(type: .edit)
