@@ -148,73 +148,117 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
 #endif
-
         return true
+    }
+    
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        let urlStr = url.absoluteString
+        if urlStr.hasPrefix("chatzola://") {
+            let newUrl = URL.init(string: urlStr.replacingOccurrences(of: "chatzola://", with: "http://127.0.0.1:9090?"))!
+            let tagName = newUrl.queryValue(for: "chatTag")
+            let chatText = newUrl.queryValue(for: "chatText")
+            var selectedTagName = ""
+            if (tagName ?? "").stringIsEmpty() || tagName == "Base" {
+                selectedTagName = "Base"
+            } else {
+                selectedTagName = tagName!
+            }
+            
+            if !(chatText ?? "").stringIsEmpty() {
+                let datas = AppDelegate.appDelegate()!.appConfig.tagDataArr()
+                for (index,value) in datas.enumerated() {
+                    if value.keyName == selectedTagName {
+                        let data = datas[index]
+                        let currentVC = PTUtils.getCurrentVC()
+                        if currentVC is PTChatViewController {
+                            (currentVC as! PTChatViewController).insertMessages([chatText!])
+                        } else {
+                            if currentVC is PTColorSettingViewController {
+                                currentVC.dismiss(animated: true) {
+                                    let setting = (PTUtils.getCurrentVC() as! PTSettingListViewController)
+                                    setting.navigationController?.popToRootViewController(animated: true)
+                                    PTGCDManager.gcdAfter(time: 0.35) {
+                                        let chat = (PTUtils.getCurrentVC() as! PTChatViewController)
+                                        PTGCDManager.gcdAfter(time: 0.35) {
+                                            chat.messageInputBar.isHidden = false
+                                            chat.messageInputBar.alpha = 1
+                                            chat.insertMessages([chatText!])
+                                        }
+                                    }
+                                }
+                            } else {
+                                let newCurrent = (PTUtils.getCurrentVC() as! PTSettingListViewController)
+                                newCurrent.navigationController?.popViewController(animated: true) {
+                                    PTGCDManager.gcdAfter(time: 0.35) {
+                                        let chat = (PTUtils.getCurrentVC() as! PTChatViewController)
+                                        PTGCDManager.gcdAfter(time: 0.35) {
+                                            chat.messageInputBar.isHidden = false
+                                            chat.messageInputBar.alpha = 1
+                                            chat.insertMessages([chatText!])
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        break
+                    }
+                }
+            }
+            return true
+        }
+        return false
     }
     
     @objc class func appDelegate() -> AppDelegate? {
         return UIApplication.shared.delegate as? AppDelegate
     }
     
-    func saveDataToCloud()
-    {
-        if let chatFavourite:String = UserDefaults.standard.value(forKey: uSaveChat) as? String
-        {
+    func saveDataToCloud() {
+        if let chatFavourite:String = UserDefaults.standard.value(forKey: uSaveChat) as? String {
             self.appConfig.chatFavourtie = chatFavourite
         }
                 
-        if let language:String = UserDefaults.standard.value(forKey: uLanguageKey) as? String
-        {
+        if let language:String = UserDefaults.standard.value(forKey: uLanguageKey) as? String {
             self.appConfig.language = language
         }
         
-        if let drawSize:Data = UserDefaults.standard.value(forKey: uAiDrawSize) as? Data
-        {
+        if let drawSize:Data = UserDefaults.standard.value(forKey: uAiDrawSize) as? Data {
             self.appConfig.aiDrawSize = (try? CGSize.from(archivedData: drawSize))!
         }
         
-        if let aiSmart:Double = UserDefaults.standard.value(forKey: uAiSmart) as? Double
-        {
+        if let aiSmart:Double = UserDefaults.standard.value(forKey: uAiSmart) as? Double {
             self.appConfig.aiSmart = aiSmart
         }
         
-        if let apiToken:String = UserDefaults.standard.value(forKey: uTokenKey) as? String
-        {
+        if let apiToken:String = UserDefaults.standard.value(forKey: uTokenKey) as? String {
             self.appConfig.apiToken = apiToken
         }
         
-        if let aiModelType:String = UserDefaults.standard.value(forKey: uAiModelType) as? String
-        {
+        if let aiModelType:String = UserDefaults.standard.value(forKey: uAiModelType) as? String {
             self.appConfig.aiModelType = aiModelType
         }
         
-        if let waveColor:String = UserDefaults.standard.value(forKey: uWaveColor) as? String
-        {
+        if let waveColor:String = UserDefaults.standard.value(forKey: uWaveColor) as? String {
             self.appConfig.waveColor = UIColor(hexString: waveColor)!
         }
         
-        if let botTextColor:String = UserDefaults.standard.value(forKey: uBotTextColor) as? String
-        {
+        if let botTextColor:String = UserDefaults.standard.value(forKey: uBotTextColor) as? String {
             self.appConfig.botTextColor = UIColor(hexString: botTextColor)!
         }
         
-        if let userTextColor:String = UserDefaults.standard.value(forKey: uUserTextColor) as? String
-        {
+        if let userTextColor:String = UserDefaults.standard.value(forKey: uUserTextColor) as? String {
             self.appConfig.userTextColor = UIColor(hexString: userTextColor)!
         }
         
-        if let botBubbleColor:String = UserDefaults.standard.value(forKey: uBotBubbleColor) as? String
-        {
+        if let botBubbleColor:String = UserDefaults.standard.value(forKey: uBotBubbleColor) as? String {
             self.appConfig.botBubbleColor = UIColor(hexString: botBubbleColor)!
         }
         
-        if let userBubbleColor:String = UserDefaults.standard.value(forKey: uUserBubbleColor) as? String
-        {
+        if let userBubbleColor:String = UserDefaults.standard.value(forKey: uUserBubbleColor) as? String {
             self.appConfig.userBubbleColor = UIColor(hexString: userBubbleColor)!
         }
         
-        if let userIcon:Data = UserDefaults.standard.value(forKey: uUserIcon) as? Data
-        {
+        if let userIcon:Data = UserDefaults.standard.value(forKey: uUserIcon) as? Data {
             self.appConfig.userIcon = userIcon
         }
         

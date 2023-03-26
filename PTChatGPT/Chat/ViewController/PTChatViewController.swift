@@ -414,6 +414,8 @@ class PTChatViewController: MessagesViewController {
             self.refreshCurrentTagData()
             self.iWillRefresh = false
         }
+        
+        self.configureMessageInputBar()
     }
             
     override func viewDidLoad() {
@@ -2090,7 +2092,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
         }
     }
     
-    private func insertMessages(_ data: [Any]) {
+    func insertMessages(_ data: [Any]) {
         self.setTypingIndicatorViewHidden(false)
         for component in data {
             let user = PTChatData.share.user
