@@ -95,10 +95,16 @@ AI的API我是使用了自己魔改版的[OpenAISwift](https://github.com/adamru
 
 ### URL SCHEME
 支持URLSCHEME
+
 基础聊天
+
 chatzola://chatTag=Base?chatText=Hola
+
 或:
+
 chatzola://ChatText=Hola
 
+
 如果你有设置标签则可以
-chatzola://chatTag=(你的标签名字)?chatText=Hola
+
+chatzola://chatTag=你的标签名字?chatText=Hola
