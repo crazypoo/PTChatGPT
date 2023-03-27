@@ -1046,4 +1046,17 @@ class PTAppConfig {
         }
         AppDelegate.appDelegate()!.appConfig.segChatHistory = stringArr.joined(separator: kSeparatorSeg)
     }
+    
+    func loadJSON(fileName: String) -> [String: Any]? {
+        if let path = Bundle.main.path(forResource: fileName, ofType: "json") {
+            do {
+                let data = try Data(contentsOf: URL(fileURLWithPath: path), options: .mappedIfSafe)
+                let json = try JSONSerialization.jsonObject(with: data, options: .mutableLeaves)
+                return json as? [String: Any]
+            } catch {
+                print("Error reading JSON file: \(error)")
+            }
+        }
+        return nil
+    }
 }

@@ -79,6 +79,8 @@
 		55BD5B9F29C850AC0023458A /* PTDarkSmartFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BD5B9E29C850AC0023458A /* PTDarkSmartFooter.swift */; };
 		55BD5BA129C85F9E0023458A /* PTDarkFollowSystemFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BD5BA029C85F9E0023458A /* PTDarkFollowSystemFooter.swift */; };
 		55BD5BAF29CA13BA0023458A /* PTPopoverFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BD5BAE29CA13BA0023458A /* PTPopoverFooter.swift */; };
+		55D752F629D1FCF8005CE46B /* SampleJson.json in Resources */ = {isa = PBXBuildFile; fileRef = 55D752F529D1FCF8005CE46B /* SampleJson.json */; };
+		55D752F929D1FDA2005CE46B /* PTSampleModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D752F829D1FDA2005CE46B /* PTSampleModels.swift */; };
 		EC91DE097C54ED7562DD3DCA /* Pods_PTChatGPT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 372877C61B4F76BA38F0C55D /* Pods_PTChatGPT.framework */; };
 /* End PBXBuildFile section */
 
@@ -167,6 +169,8 @@
 		55BD5BA029C85F9E0023458A /* PTDarkFollowSystemFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTDarkFollowSystemFooter.swift; sourceTree = "<group>"; };
 		55BD5BAE29CA13BA0023458A /* PTPopoverFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTPopoverFooter.swift; sourceTree = "<group>"; };
 		55C6BCCE29C4602B00A6B668 /* PTChatGPT.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PTChatGPT.entitlements; sourceTree = "<group>"; };
+		55D752F529D1FCF8005CE46B /* SampleJson.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = SampleJson.json; sourceTree = "<group>"; };
+		55D752F829D1FDA2005CE46B /* PTSampleModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSampleModels.swift; sourceTree = "<group>"; };
 		7E66237D0C268E8EEFD172D0 /* Pods-PTChatGPT.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PTChatGPT.release.xcconfig"; path = "Target Support Files/Pods-PTChatGPT/Pods-PTChatGPT.release.xcconfig"; sourceTree = "<group>"; };
 		E708929BECBB7DC383FA473B /* Pods-PTChatGPT.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PTChatGPT.debug.xcconfig"; path = "Target Support Files/Pods-PTChatGPT/Pods-PTChatGPT.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -316,6 +320,7 @@
 		55A5D71629B1D23D00DCA096 /* PTChatGPT */ = {
 			isa = PBXGroup;
 			children = (
+				55D752F429D1FCED005CE46B /* Resource */,
 				5512AB6429B43C2E0059D840 /* 3Party */,
 				55A5D71729B1D23D00DCA096 /* AppDelegate.swift */,
 				55A5D72029B1D23E00DCA096 /* Assets.xcassets */,
@@ -450,6 +455,23 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
+		55D752F429D1FCED005CE46B /* Resource */ = {
+			isa = PBXGroup;
+			children = (
+				55D752F729D1FD8E005CE46B /* Model */,
+				55D752F529D1FCF8005CE46B /* SampleJson.json */,
+			);
+			path = Resource;
+			sourceTree = "<group>";
+		};
+		55D752F729D1FD8E005CE46B /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				55D752F829D1FDA2005CE46B /* PTSampleModels.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		98AAC1E7648563A53AAC739A /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -544,6 +566,7 @@
 				5514B39C29BB127F00890161 /* Localizable.strings in Resources */,
 				55A5D72129B1D23E00DCA096 /* Assets.xcassets in Resources */,
 				5512AB7529B43D520059D840 /* .gitkeep in Resources */,
+				55D752F629D1FCF8005CE46B /* SampleJson.json in Resources */,
 				55A5D71F29B1D23D00DCA096 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -655,6 +678,7 @@
 				5512AB7029B43D520059D840 /* OSSSpeech.swift in Sources */,
 				55A5D7F229B1D9A900DCA096 /* OpenAIEndpoint.swift in Sources */,
 				55A5D7F129B1D9A900DCA096 /* Command.swift in Sources */,
+				55D752F929D1FDA2005CE46B /* PTSampleModels.swift in Sources */,
 				5514B38929BAE7E400890161 /* SwipeCellOption.swift in Sources */,
 				55BD5B9B29C8424A0023458A /* PTDarkModeControl.swift in Sources */,
 				5514B38029BA112A00890161 /* PTSettingModels.swift in Sources */,

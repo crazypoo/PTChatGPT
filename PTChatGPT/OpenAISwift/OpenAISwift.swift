@@ -14,13 +14,28 @@ import FoundationXML
 public enum OpenAIError: Error {
     case genericError(error: Error)
     case decodingError(error: Error)
+    case chatError(error: ChatError.Payload)
 }
 
 public class OpenAISwift {
     fileprivate(set) var token: String?
+    fileprivate let config: Config
     
-    public init(authToken: String) {
+    /// Configuration object for the client
+    public struct Config {
+        
+        /// Initialiser
+        /// - Parameter session: the session to use for network requests.
+        public init(session: URLSession = URLSession.shared) {
+            self.session = session
+        }
+
+        let session:URLSession
+    }
+    
+    public init(authToken: String, config: Config = Config()) {
         self.token = authToken
+        self.config = Config()
     }
 }
 
@@ -123,12 +138,21 @@ extension OpenAISwift {
         makeRequest(request: request) { result in
             switch result {
                 case .success(let success):
-                    do {
-                        let res = try JSONDecoder().decode(OpenAI_Jax<MessageResult>.self, from: success)
-                        completionHandler(.success(res))
-                    } catch {
-                        completionHandler(.failure(.decodingError(error: error)))
-                    }
+                do {
+                    let res = try JSONDecoder().decode(OpenAI_Jax<MessageResult>.self, from: success)
+                    completionHandler(.success(res))
+                    return
+                } catch {
+                    // Do nothing, we want to try decoding the ChatError before throwing in the towel.
+                }
+                        
+                do {
+                    let chatErr = try JSONDecoder().decode(ChatError.self, from: success) as ChatError
+                    completionHandler(.failure(.chatError(error: chatErr.error)))
+                    
+                } catch {
+                    completionHandler(.failure(.decodingError(error: error)))
+                }
                 case .failure(let failure):
                     completionHandler(.failure(.genericError(error: failure)))
             }

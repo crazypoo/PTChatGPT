@@ -139,6 +139,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
 #endif
+        
+        if let jsonData = self.appConfig.loadJSON(fileName: "SampleJson") {
+            let models = [PTSampleModels].deserialize(from: (jsonData["result"] as! NSArray))
+            PTNSLogConsole(">>>>>>>>>>>>>>>>>>>>>\(String(describing: models))")
+        }
         return true
     }
     
