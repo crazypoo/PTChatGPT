@@ -36,6 +36,9 @@
 		5520905B29C35903009B30A1 /* PTVoiceActionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5520905A29C35903009B30A1 /* PTVoiceActionView.swift */; };
 		55278F3229BB7BF100615B0D /* PTAISmartCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55278F3129BB7BF100615B0D /* PTAISmartCell.swift */; };
 		552B41C129D0A25C00065892 /* PTHelpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552B41C029D0A25C00065892 /* PTHelpViewController.swift */; };
+		552B41C329D1358300065892 /* PTApp3PartyKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552B41C229D1358300065892 /* PTApp3PartyKey.swift */; };
+		552B41C529D135AE00065892 /* PTCheckTestFlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552B41C429D135AE00065892 /* PTCheckTestFlight.swift */; };
+		552B41CA29D14A5200065892 /* AppStoreConnect-Swift-SDK in Frameworks */ = {isa = PBXBuildFile; productRef = 552B41C929D14A5200065892 /* AppStoreConnect-Swift-SDK */; };
 		555491DC29BC8014006A47C4 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555491DB29BC8014006A47C4 /* ChatMessage.swift */; };
 		55796A2229BD6DCE00574DD4 /* PTSoundRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55796A2129BD6DCE00574DD4 /* PTSoundRecorder.swift */; };
 		55796A2429BD6E2A00574DD4 /* PTSoundVisualizerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55796A2329BD6E2A00574DD4 /* PTSoundVisualizerView.swift */; };
@@ -120,6 +123,8 @@
 		5520905A29C35903009B30A1 /* PTVoiceActionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTVoiceActionView.swift; sourceTree = "<group>"; };
 		55278F3129BB7BF100615B0D /* PTAISmartCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTAISmartCell.swift; sourceTree = "<group>"; };
 		552B41C029D0A25C00065892 /* PTHelpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTHelpViewController.swift; sourceTree = "<group>"; };
+		552B41C229D1358300065892 /* PTApp3PartyKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTApp3PartyKey.swift; sourceTree = "<group>"; };
+		552B41C429D135AE00065892 /* PTCheckTestFlight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTCheckTestFlight.swift; sourceTree = "<group>"; };
 		555491DB29BC8014006A47C4 /* ChatMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
 		55796A2129BD6DCE00574DD4 /* PTSoundRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSoundRecorder.swift; sourceTree = "<group>"; };
 		55796A2329BD6E2A00574DD4 /* PTSoundVisualizerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSoundVisualizerView.swift; sourceTree = "<group>"; };
@@ -173,6 +178,7 @@
 			files = (
 				EC91DE097C54ED7562DD3DCA /* Pods_PTChatGPT.framework in Frameworks */,
 				5503C51629CB273A00B00BE1 /* MessageKit in Frameworks */,
+				552B41CA29D14A5200065892 /* AppStoreConnect-Swift-SDK in Frameworks */,
 				55B2744E29CCC56700E05736 /* OpenAIKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -382,6 +388,8 @@
 				55A5D80029B1F29800DCA096 /* PTMessageModel.swift */,
 				5514B37529B9F5AC00890161 /* PTAppConfig.swift */,
 				5514B37929BA02E300890161 /* PTChatBaseViewController.swift */,
+				552B41C229D1358300065892 /* PTApp3PartyKey.swift */,
+				552B41C429D135AE00065892 /* PTCheckTestFlight.swift */,
 			);
 			path = Base;
 			sourceTree = "<group>";
@@ -473,6 +481,7 @@
 			packageProductDependencies = (
 				5503C51529CB273A00B00BE1 /* MessageKit */,
 				55B2744D29CCC56700E05736 /* OpenAIKit */,
+				552B41C929D14A5200065892 /* AppStoreConnect-Swift-SDK */,
 			);
 			productName = PTChatGPT;
 			productReference = 55A5D71429B1D23D00DCA096 /* Chat走啦.app */;
@@ -510,6 +519,7 @@
 			packageReferences = (
 				5503C51429CB273A00B00BE1 /* XCRemoteSwiftPackageReference "MessageKit" */,
 				55B2744C29CCC56700E05736 /* XCRemoteSwiftPackageReference "OpenAIKit" */,
+				552B41C829D14A5200065892 /* XCRemoteSwiftPackageReference "appstoreconnect-swift-sdk" */,
 			);
 			productRefGroup = 55A5D71529B1D23D00DCA096 /* Products */;
 			projectDirPath = "";
@@ -604,6 +614,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				552B41C329D1358300065892 /* PTApp3PartyKey.swift in Sources */,
+				552B41C529D135AE00065892 /* PTCheckTestFlight.swift in Sources */,
 				55BD5B9929C801700023458A /* PTCoachModel.swift in Sources */,
 				55A5D7F029B1D9A900DCA096 /* Instruction.swift in Sources */,
 				55B2745829CE23EA00E05736 /* StyleTransfererModel.swift in Sources */,
@@ -930,6 +942,14 @@
 				minimumVersion = 4.0.0;
 			};
 		};
+		552B41C829D14A5200065892 /* XCRemoteSwiftPackageReference "appstoreconnect-swift-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AvdLee/appstoreconnect-swift-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.3.0;
+			};
+		};
 		55B2744C29CCC56700E05736 /* XCRemoteSwiftPackageReference "OpenAIKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/marcodotio/OpenAIKit.git";
@@ -945,6 +965,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5503C51429CB273A00B00BE1 /* XCRemoteSwiftPackageReference "MessageKit" */;
 			productName = MessageKit;
+		};
+		552B41C929D14A5200065892 /* AppStoreConnect-Swift-SDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 552B41C829D14A5200065892 /* XCRemoteSwiftPackageReference "appstoreconnect-swift-sdk" */;
+			productName = "AppStoreConnect-Swift-SDK";
 		};
 		55B2744D29CCC56700E05736 /* OpenAIKit */ = {
 			isa = XCSwiftPackageProductDependency;

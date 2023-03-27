@@ -100,12 +100,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         
         PTNSLogConsole("\(self.appConfig.apiToken)")
         var viewC:UIViewController!
-        if self.appConfig.apiToken.stringIsEmpty()
-        {
+        if self.appConfig.apiToken.stringIsEmpty() {
             viewC = PTSettingViewController()
-        }
-        else
-        {
+        } else {
             PTNSLogConsole(self.appConfig.segChatHistory)
             viewC = PTChatViewController(historyModel: PTSegHistoryModel())//PTChatViewController(token: self.appConfig.apiToken,language: OSSVoiceEnum(rawValue: self.appConfig.language)!)
         }
@@ -113,10 +110,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window = UIWindow.init(frame: UIScreen.main.bounds)
         self.window?.rootViewController = nav
         self.window?.makeKeyAndVisible()
-
+        
         PTLaunchAdMonitor.showAt(path: ["https://avatars.githubusercontent.com/u/1111976?v=4"], onView: self.window!, timeInterval: 2, param: ["URLS":myGithubUrl], year: "2023", skipFont: .appfont(size: 10), comName: "Crazypoo", comNameFont: .appfont(size: 10)) {
         }
-
+        
 #if DEBUG
         self.devFunction.createLabBtn()
         self.devFunction.goToAppDevVC = {
@@ -125,12 +122,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             PTUtils.getCurrentVC().present(nav, animated: true)
         }
         self.devFunction.flex = {
-            if FLEXManager.shared.isHidden
-            {
+            if FLEXManager.shared.isHidden {
                 FLEXManager.shared.showExplorer()
-            }
-            else
-            {
+            } else {
                 FLEXManager.shared.hideExplorer()
             }
         }
@@ -138,12 +132,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             InAppViewDebugger.present()
         }
         self.devFunction.flexBool = { show in
-            if show
-            {
+            if show {
                 FLEXManager.shared.showExplorer()
-            }
-            else
-            {
+            } else {
                 FLEXManager.shared.hideExplorer()
             }
         }

@@ -33,7 +33,8 @@ target 'PTChatGPT' do
   pod 'PooTools/MediaViewer', :git => 'https://github.com/crazypoo/PTools.git'
   pod 'PooTools/Slider', :git => 'https://github.com/crazypoo/PTools.git'
   pod 'PooTools/Instructions', :git => 'https://github.com/crazypoo/PTools.git'
-
+  pod 'PooTools/CheckUpdate', :git => 'https://github.com/crazypoo/PTools.git'
+  
   pod 'WhatsNew'
   pod 'TensorFlowLiteSwift', '~> 2.3.0', :subspecs => ['Metal']
   pod 'SwiftSpinner'

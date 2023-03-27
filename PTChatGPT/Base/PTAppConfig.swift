@@ -54,6 +54,8 @@ let uFirstDataChange = "uFirstDataChange"
 
 let uCheckSentence = "uCheckSentence"
 
+let uAppCount = "uAppCount"
+
 let kSeparator = "[,]"
 let kSeparatorSeg = "[::]"
 
@@ -116,6 +118,12 @@ extension String {
 
 class PTAppConfig {
     static let share = PTAppConfig()
+    
+    var appCount:Int = UserDefaults.standard.value(forKey: uAppCount) == nil ? 1 : UserDefaults.standard.value(forKey: uAppCount) as! Int {
+        didSet{
+            UserDefaults.standard.set(self.appCount,forKey: uAppCount)
+        }
+    }
     
     var firstDataChange:Bool = UserDefaults.standard.value(forKey: uFirstDataChange) == nil ? true : UserDefaults.standard.value(forKey: uFirstDataChange) as! Bool {
         didSet{

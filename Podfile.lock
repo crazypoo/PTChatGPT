@@ -42,6 +42,8 @@ PODS:
   - NotificationBannerSwift (3.2.0):
     - MarqueeLabel (~> 4.3.0)
     - SnapKit (~> 5.6.0)
+  - PooTools/CheckUpdate (3.0.9):
+    - PooTools/Core
   - PooTools/ColorPicker (3.0.9):
     - ChromaColorPicker
     - PooTools/Core
@@ -166,6 +168,7 @@ DEPENDENCIES:
   - InAppViewDebugger
   - LifetimeTracker
   - LookinServer
+  - PooTools/CheckUpdate (from `https://github.com/crazypoo/PTools.git`)
   - PooTools/ColorPicker (from `https://github.com/crazypoo/PTools.git`)
   - PooTools/Core (from `https://github.com/crazypoo/PTools.git`)
   - PooTools/DarkModeSetting (from `https://github.com/crazypoo/PTools.git`)
@@ -241,7 +244,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   PooTools:
-    :commit: e633a9e3f804a1de225b5a46913df0ad7999e709
+    :commit: fa15409d0844bbe8f8416abc3fb1a0a213b7c7a5
     :git: https://github.com/crazypoo/PTools.git
 
 SPEC CHECKSUMS:
@@ -296,6 +299,6 @@ SPEC CHECKSUMS:
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
   ZXNavigationBar: a8ceb13fe37f9ca894cf6ae22d805cbdbb9ad6b1
 
-PODFILE CHECKSUM: e704a899e15015a7710b27da35aa8059716041ca
+PODFILE CHECKSUM: e51cf731964a2f7ebcba9c0b95c704cae2fd280e
 
 COCOAPODS: 1.12.0

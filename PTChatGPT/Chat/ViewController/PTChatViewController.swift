@@ -383,8 +383,6 @@ class PTChatViewController: MessagesViewController {
             self.refreshCurrentTagData()
             self.iWillRefresh = false
         }
-        
-        self.configureMessageInputBar()
     }
             
     override func viewDidLoad() {
@@ -446,8 +444,12 @@ class PTChatViewController: MessagesViewController {
             
             self.configureMessageInputBar()
             self.speechKit.delegate = self
-            
-            self.createHolderView()
+                        
+            PTGCDManager.gcdBackground {
+                PTGCDManager.gcdMain {
+                    self.configureMessageInputBar()
+                }
+            }
         }
                 
         self.speechKit.srp.requestAuthorization { authStatus in
@@ -484,8 +486,7 @@ class PTChatViewController: MessagesViewController {
                 arr.append(model!)
             }
             for (value) in arr {
-                if value.keyName == self.historyModel!.keyName
-                {
+                if value.keyName == self.historyModel!.keyName {
                     self.historyModel = value
                     break
                 }
@@ -621,9 +622,52 @@ class PTChatViewController: MessagesViewController {
                 }
                 
                 self.loadViewData()
+                PTGCDManager.gcdAfter(time: 2) {
+                    self.checkTF()
+                }
             }
         } else {
             self.loadViewData()
+            PTGCDManager.gcdAfter(time: 2) {
+                self.checkTF()
+            }
+        }
+    }
+    
+    func checkTF() {
+        if UIApplication.applicationEnvironment() == .appStore {
+            AppDelegate.appDelegate()!.appConfig.appCount += 1
+            if AppDelegate.appDelegate()!.appConfig.appCount % 5 == 0 {
+                PTCheckTestFlight.share.checkFunction { can in
+                    if can {
+                        PTGCDManager.gcdMain {
+                            UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "alert_TF"),msgColor: .gobalTextColor, okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
+                                
+                            } moreBtn: { index, title in
+                                let url = URL(string: "https://testflight.apple.com/join/6XpIFw9m")!
+                                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                            }
+                        }
+                    }
+                }
+            } else {
+                PTCheckUpdateFunction.share.checkTheVersionWithappid(appid: AppAppStoreID, test: false, url: nil, version: nil, note: nil, force: true)
+            }
+        } else if UIApplication.applicationEnvironment() == .testFlight {
+            PTCheckUpdateFunction.share.checkTheVersionWithappid(appid: AppAppStoreID, test: false, url: nil, version: nil, note: nil, force: true)
+        } else {
+            PTCheckTestFlight.share.checkFunction { can in
+                if can {
+                    PTGCDManager.gcdMain {
+                        UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "alert_TF"),msgColor: .gobalTextColor, okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
+                            
+                        } moreBtn: { index, title in
+                            let url = URL(string: "https://testflight.apple.com/join/6XpIFw9m")!
+                            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                        }
+                    }
+                }
+            }
         }
     }
     
@@ -732,6 +776,7 @@ class PTChatViewController: MessagesViewController {
     //MARK: KEYBOARD
     func baseInputBar() {
         if AppDelegate.appDelegate()!.appConfig.firstUseApp {
+            self.createHolderView()
             AppDelegate.appDelegate()!.appConfig.firstUseApp = false
             messageInputBar.alpha = 1
         } else {
@@ -1014,6 +1059,7 @@ class PTChatViewController: MessagesViewController {
         let view = InputBarButtonItem()
         view.backgroundColor = .gobalBackgroundColor
         view.spacing = .fixed(10)
+        view.backgroundColor = .gobalBackgroundColor
         view.setSize(CGSize(width: 44, height: 44), animated: true)
         view.isSelected = false
         view.setImage(UIImage(systemName: "text.below.photo.fill")?.withTintColor(.gobalTextColor, renderingMode: .automatic), for: .normal)
@@ -1033,6 +1079,7 @@ class PTChatViewController: MessagesViewController {
     }()
 
     func setEditImageBar() {
+        self.messageInputBar.topStackView.backgroundColor = .gobalBackgroundColor
         self.messageInputBar.setStackViewItems([self.editCloseButton,self.editMainImageButton,self.editMaskImageButton], forStack: .top, animated: false)
         self.setInputOtherItem()
     }

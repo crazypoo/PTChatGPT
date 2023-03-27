@@ -683,7 +683,7 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
             let activityViewController = UIActivityViewController(activityItems: [shareItem], applicationActivities: nil)
             present(activityViewController, animated: true, completion: nil)
         } else if itemRow.title == .rate {
-            PTAppStoreFunction.rateApp(appid: "6446197340")
+            PTAppStoreFunction.rateApp(appid: AppAppStoreID)
         } else if itemRow.title == .speech {
             self.languagePicker.title = PTLanguage.share.text(forKey: "about_Main_Speech")
             self.languagePicker.selectValue = AppDelegate.appDelegate()!.appConfig.language
@@ -792,6 +792,9 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                         PTGCDManager.gcdAfter(time: 1) {
                             SwiftSpinner.hide() {
                                 self.showDetail()
+                                if self.cleanChatListBlock != nil {
+                                    self.cleanChatListBlock!()
+                                }
                             }
                         }
                     }
