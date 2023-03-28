@@ -82,9 +82,33 @@ class PTChatViewController: MessagesViewController {
         
         let setting = PTCoachModel()
         setting.info = PTLanguage.share.text(forKey: "appUseInfo_Setting")
-        setting.next = PTLanguage.share.text(forKey: "appUseInfo_Finish")
+        setting.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
+        
+        let contentDraw = PTCoachModel()
+        contentDraw.info = PTLanguage.share.text(forKey: "suggesstion_Content_draw")
+        contentDraw.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
 
-        return [option,tags,setting]
+        let imageLike = PTCoachModel()
+        imageLike.info = PTLanguage.share.text(forKey: "suggesstion_Like")
+        imageLike.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
+
+        let psPhoto = PTCoachModel()
+        psPhoto.info = PTLanguage.share.text(forKey: "suggesstion_PS")
+        psPhoto.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
+
+        let sentence = PTCoachModel()
+        sentence.info = PTLanguage.share.text(forKey: "suggesstion_Sentence_switch")
+        sentence.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
+
+        let aiDraw = PTCoachModel()
+        aiDraw.info = PTLanguage.share.text(forKey: "suggesstion_AI_draw")
+        aiDraw.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
+
+        let bot = PTCoachModel()
+        bot.info = PTLanguage.share.text(forKey: "bot_Suggesstion")
+        bot.next = PTLanguage.share.text(forKey: "appUseInfo_Finish")
+
+        return [option,tags,setting,imageLike,psPhoto,sentence,aiDraw,bot]
     }()
         
     var iWillRefresh:Bool = false
@@ -171,7 +195,8 @@ class PTChatViewController: MessagesViewController {
     
     lazy var titleButton:BKLayoutButton = {
         let view = BKLayoutButton()
-        view.titleLabel?.numberOfLines = 0
+        view.titleLabel?.lineBreakMode = .byTruncatingTail
+        view.titleLabel?.numberOfLines = 2
         view.titleLabel?.font = .appfont(size: 24,bold: true)
         view.setTitleColor(.gobalTextColor, for: .normal)
         view.layoutStyle = .leftTitleRightImage
@@ -792,13 +817,12 @@ class PTChatViewController: MessagesViewController {
     func setSendVoiceInputBar() {
         self.baseInputBar()
         self.setInputOtherItem()
-//        self.messageInputBar.setMiddleContentView(self.voiceButton, animated: false)
     }
     
     func setInputOtherItem() {
         self.messageInputBar.setStackViewItems([self.leftInputStackButton()], forStack: .left, animated: false)
         self.messageInputBar.setLeftStackViewWidthConstant(to: 34, animated: false)
-        self.messageInputBar.setStackViewItems([self.rightInputStackButton(),.flexibleSpace,self.messageInputBar.sendButton], forStack: .right, animated: false)
+        self.messageInputBar.setStackViewItems([self.rightInputStackButton,.flexibleSpace,self.messageInputBar.sendButton], forStack: .right, animated: false)
         self.messageInputBar.setRightStackViewWidthConstant(to: 96, animated: false)
         let bottomItems = [self.imageBarButton,self.textImageBarButton,self.inputBarChatSentence,self.tfImageButton,self.tagSuggestionButton, .flexibleSpace]
         messageInputBar.setStackViewItems(bottomItems, forStack: .bottom, animated: false)
@@ -952,7 +976,7 @@ class PTChatViewController: MessagesViewController {
     
     //MARK: 根據文字回答文字,根據文字回答圖片按鈕
     ///根據文字回答文字,根據文字回答圖片按鈕
-    private func rightInputStackButton() -> InputBarButtonItem {
+    private lazy var rightInputStackButton : InputBarButtonItem = {
         let view = InputBarButtonItem()
         view.spacing = .fixed(10)
         view.setSize(CGSize(width: 34, height: 34), animated: true)
@@ -980,7 +1004,7 @@ class PTChatViewController: MessagesViewController {
             }
         }
         return view
-    }
+    }()
     
     //MARK: 根據圖片獲取相似圖片按鈕
     ///根據圖片獲取相似圖片按鈕
@@ -2437,46 +2461,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                 let type = AppDelegate.appDelegate()!.appConfig.getAIMpdelType(typeString: AppDelegate.appDelegate()!.appConfig.aiModelType)
                 switch type {
                 case .chat(.chatgpt),.chat(.chatgpt0301),.chat(.chatgpt4),.chat(.chatgpt40314),.chat(.chatgpt432k),.chat(.chatgpt432k0314):
-                    let chat: [ChatMessage] = [
-                        ChatMessage(role: .user, content: str),
-                    ]
-                    self.openAI.sendChat(with: chat,model: type,temperature: AppDelegate.appDelegate()!.appConfig.aiSmart * 2, maxTokens: 2048) { result in
-                        PTNSLogConsole("GPTX API result>>:\(result)")
-                        PTGCDManager.gcdBackground {
-                            PTGCDManager.gcdMain {
-                                self.setTypingIndicatorViewHidden(true)
-                            }
-                        }
-                        switch result {
-                        case .success(let success):
-                            PTGCDManager.gcdMain {
-                                saveModel.messageSendSuccess = true
-                                self.messageList[sectionIndex].sending = false
-                                self.messageList[sectionIndex].sendSuccess = true
-                                self.reloadSomeSection(itemIndex: sectionIndex) {
-                                    self.saveQAndAText(question: success.choices?.first?.message.content ?? "", saveModel: saveModel,sendIndex: sectionIndex)
-                                }
-                            }
-                        case .failure(let failure):
-                            PTGCDManager.gcdMain {
-                                saveModel.messageSendSuccess = false
-                                if resend! {
-                                    self.chatModels[sectionIndex] = saveModel
-                                } else {
-                                    self.chatModels.append(saveModel)
-                                }
-                                self.historyModel?.historyModel = self.chatModels
-                                self.refreshViewAndLoadNewData {
-                                    self.messageList[sectionIndex].sending = false
-                                    self.messageList[sectionIndex].sendSuccess = false
-                                    self.reloadSomeSection(itemIndex: sectionIndex) {
-                                        self.packChatData()
-                                        PTBaseViewController.gobal_drop(title: failure.localizedDescription)
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    self.gpt3xSendMessage(str: str, saveModel: saveModel, sectionIndex: sectionIndex, resend: resend!, type: type)
                 default:
                     self.openAI.sendCompletion(with: str,model: type,maxTokens: 2048,temperature: AppDelegate.appDelegate()!.appConfig.aiSmart) { result in
                         PTNSLogConsole("Normal API result>>:\(result)")
@@ -2523,45 +2508,8 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                 default:
                     type = OpenAIModelType.chat(.chatgpt)
                 }
-                let chat: [ChatMessage] = [
-                    ChatMessage(role: .system, content: self.historyModel!.systemContent),
-                    ChatMessage(role: .user, content: str)
-                ]
-                self.openAI.sendChat(with: chat,model: type,temperature: AppDelegate.appDelegate()!.appConfig.aiSmart * 2, maxTokens: 2048) { result in
-                    PTNSLogConsole("GPTX API result>>:\(result)")
-                    PTGCDManager.gcdBackground {
-                        PTGCDManager.gcdMain {
-                            self.setTypingIndicatorViewHidden(true)
-                        }
-                    }
-                    switch result {
-                    case .success(let success):
-                        saveModel.messageSendSuccess = true
-                        self.messageList[sectionIndex].sending = false
-                        self.messageList[sectionIndex].sendSuccess = true
-                        self.reloadSomeSection(itemIndex: sectionIndex) {
-                            self.saveQAndAText(question: success.choices?.first?.message.content ?? "", saveModel: saveModel,sendIndex: sectionIndex)
-                        }
-                    case .failure(let failure):
-                        PTGCDManager.gcdMain {
-                            saveModel.messageSendSuccess = false
-                            if resend! {
-                                self.chatModels[sectionIndex] = saveModel
-                            } else {
-                                self.chatModels.append(saveModel)
-                            }
-                            self.historyModel?.historyModel = self.chatModels
-                            self.refreshViewAndLoadNewData {
-                                self.messageList[sectionIndex].sending = false
-                                self.messageList[sectionIndex].sendSuccess = false
-                                self.reloadSomeSection(itemIndex: sectionIndex) {
-                                    self.packChatData()
-                                    PTBaseViewController.gobal_drop(title: failure.localizedDescription)
-                                }
-                            }
-                        }
-                    }
-                }
+                
+                self.gpt3xSendMessage(str: str, saveModel: saveModel, sectionIndex: sectionIndex, resend: resend!, type: type)
             }
         case .draw(type: .normal):
             PTNSLogConsole("我要畫畫")
@@ -2619,6 +2567,53 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                                     }
                                 }
                             }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func gpt3xSendMessage(str:String,saveModel:PTChatModel,sectionIndex:Int,resend:Bool,type:OpenAIModelType) {
+        var chat: [ChatMessage]
+        if self.historyModel!.systemContent.stringIsEmpty() {
+            chat = [ChatMessage(role: .user, content: str)]
+        } else {
+            chat = [ChatMessage(role: .system, content: self.historyModel!.systemContent),ChatMessage(role: .user, content: str)]
+        }
+        
+        self.openAI.sendChat(with: chat,model: type,temperature: AppDelegate.appDelegate()!.appConfig.aiSmart * 2, maxTokens: 2048) { result in
+            PTNSLogConsole("GPTX API result>>:\(result)")
+            PTGCDManager.gcdBackground {
+                PTGCDManager.gcdMain {
+                    self.setTypingIndicatorViewHidden(true)
+                }
+            }
+            switch result {
+            case .success(let success):
+                PTGCDManager.gcdMain {
+                    saveModel.messageSendSuccess = true
+                    self.messageList[sectionIndex].sending = false
+                    self.messageList[sectionIndex].sendSuccess = true
+                    self.reloadSomeSection(itemIndex: sectionIndex) {
+                        self.saveQAndAText(question: success.choices?.first?.message.content ?? "", saveModel: saveModel,sendIndex: sectionIndex)
+                    }
+                }
+            case .failure(let failure):
+                PTGCDManager.gcdMain {
+                    saveModel.messageSendSuccess = false
+                    if resend {
+                        self.chatModels[sectionIndex] = saveModel
+                    } else {
+                        self.chatModels.append(saveModel)
+                    }
+                    self.historyModel?.historyModel = self.chatModels
+                    self.refreshViewAndLoadNewData {
+                        self.messageList[sectionIndex].sending = false
+                        self.messageList[sectionIndex].sendSuccess = false
+                        self.reloadSomeSection(itemIndex: sectionIndex) {
+                            self.packChatData()
+                            PTBaseViewController.gobal_drop(title: failure.localizedDescription)
                         }
                     }
                 }
@@ -2856,6 +2851,18 @@ extension PTChatViewController: CoachMarksControllerDataSource {
             return coachMarksController.helper.makeCoachMark(for: self.optionButton)
         case 2:
             return coachMarksController.helper.makeCoachMark(for: self.settingButton)
+        case 3:
+            return coachMarksController.helper.makeCoachMark(for: self.rightInputStackButton)
+        case 4:
+            return coachMarksController.helper.makeCoachMark(for: self.imageBarButton)
+        case 5:
+            return coachMarksController.helper.makeCoachMark(for: self.textImageBarButton)
+        case 6:
+            return coachMarksController.helper.makeCoachMark(for: self.inputBarChatSentence)
+        case 7:
+            return coachMarksController.helper.makeCoachMark(for: self.tfImageButton)
+        case 8:
+            return coachMarksController.helper.makeCoachMark(for: self.tagSuggestionButton)
         default:
             return coachMarksController.helper.makeCoachMark()
         }
