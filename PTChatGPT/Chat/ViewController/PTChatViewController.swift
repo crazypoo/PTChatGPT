@@ -800,7 +800,7 @@ class PTChatViewController: MessagesViewController {
         self.messageInputBar.setLeftStackViewWidthConstant(to: 34, animated: false)
         self.messageInputBar.setStackViewItems([self.rightInputStackButton(),.flexibleSpace,self.messageInputBar.sendButton], forStack: .right, animated: false)
         self.messageInputBar.setRightStackViewWidthConstant(to: 96, animated: false)
-        let bottomItems = [self.imageBarButton,self.textImageBarButton,self.inputBarChatSentence,self.tfImageButton, .flexibleSpace]
+        let bottomItems = [self.imageBarButton,self.textImageBarButton,self.inputBarChatSentence,self.tfImageButton,self.tagSuggestionButton, .flexibleSpace]
         messageInputBar.setStackViewItems(bottomItems, forStack: .bottom, animated: false)
     }
     
@@ -818,7 +818,7 @@ class PTChatViewController: MessagesViewController {
         view.isSelected = AppDelegate.appDelegate()!.appConfig.checkSentence
         view.imageView?.contentMode = .scaleAspectFit
         view.setImage("👨‍🎨".emojiToImage(emojiFont: .appfont(size: 24)), for: .normal)
-        view.setSize(CGSize(width: 34, height: 34), animated: false)
+        view.setSize(CGSize(width: 44, height: 44), animated: false)
         view.addActionHandlers { sender in
             UIAlertController.baseActionSheet(title: PTLanguage.share.text(forKey: "chat_TF"), titles: self.cartoonImageModes) { sheet in
                 
@@ -885,7 +885,7 @@ class PTChatViewController: MessagesViewController {
         view.imageView?.contentMode = .scaleAspectFit
         view.setImage("🤬".emojiToImage(emojiFont: .appfont(size: 24)), for: .normal)
         view.setImage("🤫".emojiToImage(emojiFont: .appfont(size: 24)), for: .selected)
-        view.setSize(CGSize(width: 34, height: 34), animated: false)
+        view.setSize(CGSize(width: 44, height: 44), animated: false)
         view.addActionHandlers { sender in
             sender.isSelected = !sender.isSelected
             AppDelegate.appDelegate()!.appConfig.checkSentence = sender.isSelected
@@ -1062,6 +1062,23 @@ class PTChatViewController: MessagesViewController {
                 self.chatCase = .chat(type: .normal)
                 self.cleanInputBarTop()
             }
+        }
+        return view
+    }()
+    
+    //MARK: GPT推薦AI人設
+    ///GPT推薦AI人設
+    private lazy var tagSuggestionButton:InputBarButtonItem = {
+        
+        let view = InputBarButtonItem()
+        view.backgroundColor = .gobalBackgroundColor
+        view.spacing = .fixed(10)
+        view.backgroundColor = .gobalBackgroundColor
+        view.setSize(CGSize(width: 44, height: 44), animated: true)
+        view.setImage("🤖".emojiToImage(emojiFont: .appfont(size: 24)), for: .normal)
+        view.addActionHandlers { sender in
+            let vc = PTSuggesstionViewController()
+            self.navigationController?.pushViewController(vc, animated: true)
         }
         return view
     }()

@@ -49,16 +49,11 @@ class PTColorSettingViewController: PTChatBaseViewController {
         waveInfo.nameColor = .gobalTextColor
         waveInfo.leftImage = UIImage(systemName: "waveform")!.withRenderingMode(.automatic)
 
-        if self.user.senderId == PTChatData.share.bot.senderId
-        {
+        if self.user.senderId == PTChatData.share.bot.senderId {
             colorMain.models = [botBubbleInfo,botTextInfo]
-        }
-        else if self.user.senderId == PTChatData.share.user.senderId
-        {
+        } else if self.user.senderId == PTChatData.share.user.senderId {
             colorMain.models = [userBubbleInfo,userTextInfo,waveInfo]
-        }
-        else
-        {
+        } else {
             colorMain.models = [userBubbleInfo,botBubbleInfo,userTextInfo,botTextInfo,waveInfo]
         }
         
@@ -66,8 +61,7 @@ class PTColorSettingViewController: PTChatBaseViewController {
     }()
                 
     var mSections = [PTSection]()
-    func comboLayout()->UICollectionViewCompositionalLayout
-    {
+    func comboLayout()->UICollectionViewCompositionalLayout {
         let layout = UICollectionViewCompositionalLayout.init { section, environment in
             self.generateSection(section: section)
         }
@@ -76,8 +70,7 @@ class PTColorSettingViewController: PTChatBaseViewController {
         return layout
     }
     
-    func generateSection(section:NSInteger)->NSCollectionLayoutSection
-    {
+    func generateSection(section:NSInteger)->NSCollectionLayoutSection {
         let sectionModel = mSections[section]
 
         var group : NSCollectionLayoutGroup
@@ -88,8 +81,7 @@ class PTColorSettingViewController: PTChatBaseViewController {
         var groupH:CGFloat = 0
         sectionModel.rows.enumerated().forEach { (index,model) in
             var cellHeight:CGFloat = CGFloat.ScaleW(w: 44)
-            if (model.dataModel as! PTFusionCellModel).name == .aiSmart
-            {
+            if (model.dataModel as! PTFusionCellModel).name == .aiSmart {
                 cellHeight = CGFloat.ScaleW(w: 78)
             }
             let customItem = NSCollectionLayoutGroupCustomItem.init(frame: CGRect.init(x: PTAppBaseConfig.share.defaultViewSpace, y: groupH, width: CGFloat.kSCREEN_WIDTH - PTAppBaseConfig.share.defaultViewSpace * 2, height: cellHeight), zIndex: 1000+index)
@@ -174,21 +166,17 @@ class PTColorSettingViewController: PTChatBaseViewController {
         self.showDetail()
     }
     
-    func showDetail()
-    {
+    func showDetail() {
         mSections.removeAll()
 
         self.aboutModels.enumerated().forEach { (index,value) in
             var rows = [PTRows]()
             value.models.enumerated().forEach { (subIndex,subValue) in
                 
-                if subValue.name == .aiSmart
-                {
+                if subValue.name == .aiSmart {
                     let row_List = PTRows.init(title: subValue.name, placeholder: subValue.content,cls: PTAISmartCell.self, ID: PTAISmartCell.ID, dataModel: subValue)
                     rows.append(row_List)
-                }
-                else
-                {
+                } else {
                     let row_List = PTRows.init(title: subValue.name, placeholder: subValue.content,cls: PTFusionCell.self, ID: PTFusionCell.ID, dataModel: subValue)
                     rows.append(row_List)
                 }
@@ -201,8 +189,7 @@ class PTColorSettingViewController: PTChatBaseViewController {
         self.collectionView.reloadData()
     }
 
-    func setupColorPicker()
-    {
+    func setupColorPicker() {
         self.colorPicker.delegate = self
         self.colorPicker.translatesAutoresizingMaskIntoConstraints = false
     }
@@ -213,8 +200,7 @@ class PTColorSettingViewController: PTChatBaseViewController {
         self.brightnessSlider.translatesAutoresizingMaskIntoConstraints = false
     }
 
-    func botColorSet()
-    {
+    func botColorSet() {
         self.botBubbleHandle = self.colorPicker.addHandle(at: AppDelegate.appDelegate()!.appConfig.botBubbleColor)
         let botBubbleImageView = UIImageView(image: UIImage(systemName: "bubble.right.fill")?.withRenderingMode(.alwaysTemplate))
         botBubbleImageView.contentMode = .scaleAspectFit
@@ -230,8 +216,7 @@ class PTColorSettingViewController: PTChatBaseViewController {
         self.botTextHandle.accessoryViewEdgeInsets = UIEdgeInsets(top: 0, left: 4, bottom: 4, right: 4)
     }
     
-    func userColorSet()
-    {
+    func userColorSet() {
         self.userBubbleHandle = self.colorPicker.addHandle(at: AppDelegate.appDelegate()!.appConfig.userBubbleColor)
         let userBubbleImageView = UIImageView(image: UIImage(systemName: "bubble.left.fill")?.withRenderingMode(.automatic))
         userBubbleImageView.contentMode = .scaleAspectFit
@@ -254,25 +239,18 @@ class PTColorSettingViewController: PTChatBaseViewController {
         self.waveHandle.accessoryViewEdgeInsets = UIEdgeInsets(top: 0, left: 4, bottom: 4, right: 4)
     }
     
-    func setupColorPickerHandles()
-    {
-        if self.user.senderId == PTChatData.share.bot.senderId
-        {
+    func setupColorPickerHandles() {
+        if self.user.senderId == PTChatData.share.bot.senderId {
             self.botColorSet()
-        }
-        else if self.user.senderId == PTChatData.share.user.senderId
-        {
+        } else if self.user.senderId == PTChatData.share.user.senderId {
             self.userColorSet()
-        }
-        else
-        {
+        } else {
             self.userColorSet()
             self.botColorSet()
         }
     }
     
-    func createImageInfo(image:UIImage,info:String)->BKLayoutButton
-    {
+    func createImageInfo(image:UIImage,info:String)->BKLayoutButton {
         let view = BKLayoutButton()
         view.setImage(image, for: .normal)
         view.layoutStyle = .leftImageRightTitle
@@ -286,34 +264,23 @@ class PTColorSettingViewController: PTChatBaseViewController {
     }
 }
 
-extension PTColorSettingViewController:ChromaColorPickerDelegate
-{
+extension PTColorSettingViewController:ChromaColorPickerDelegate {
     func colorPickerHandleDidChange(_ colorPicker: ChromaColorPicker, handle: ChromaColorHandle, to color: UIColor) {
-        if handle == self.botBubbleHandle
-        {
+        if handle == self.botBubbleHandle {
             AppDelegate.appDelegate()?.appConfig.botBubbleColor = color
-        }
-        else if handle == self.userBubbleHandle
-        {
+        } else if handle == self.userBubbleHandle {
             AppDelegate.appDelegate()?.appConfig.userBubbleColor = color
-        }
-        else if handle == self.userTextHandle
-        {
+        } else if handle == self.userTextHandle {
             AppDelegate.appDelegate()?.appConfig.userTextColor = color
-        }
-        else if handle == self.botTextHandle
-        {
+        } else if handle == self.botTextHandle {
             AppDelegate.appDelegate()?.appConfig.botTextColor = color
-        }
-        else if handle == self.waveHandle
-        {
+        } else if handle == self.waveHandle {
             AppDelegate.appDelegate()?.appConfig.waveColor = color
         }
     }
 }
 
-extension PTColorSettingViewController:UICollectionViewDelegate,UICollectionViewDataSource
-{
+extension PTColorSettingViewController:UICollectionViewDelegate,UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return self.mSections.count
     }
@@ -324,18 +291,14 @@ extension PTColorSettingViewController:UICollectionViewDelegate,UICollectionView
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let itemSec = mSections[indexPath.section]
-        if kind == UICollectionView.elementKindSectionHeader
-        {
-            if itemSec.headerID == PTSettingHeader.ID
-            {
+        if kind == UICollectionView.elementKindSectionHeader {
+            if itemSec.headerID == PTSettingHeader.ID {
                 let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: itemSec.headerID!, for: indexPath) as! PTSettingHeader
                 header.titleLabel.text = itemSec.headerTitle
                 return header
             }
             return UICollectionReusableView()
-        }
-        else
-        {
+        } else {
             return UICollectionReusableView()
         }
     }
@@ -343,16 +306,13 @@ extension PTColorSettingViewController:UICollectionViewDelegate,UICollectionView
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let itemSec = mSections[indexPath.section]
         let itemRow = itemSec.rows[indexPath.row]
-        if itemRow.ID == PTFusionCell.ID
-        {
+        if itemRow.ID == PTFusionCell.ID {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTFusionCell
             cell.cellModel = (itemRow.dataModel as! PTFusionCellModel)
             cell.dataContent.lineView.isHidden = indexPath.row == (itemSec.rows.count - 1) ? true : false
             cell.dataContent.topLineView.isHidden = true
             return cell
-        }
-        else
-        {
+        } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CELL", for: indexPath)
             cell.backgroundColor = .random
             return cell

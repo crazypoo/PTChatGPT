@@ -81,6 +81,8 @@
 		55BD5BAF29CA13BA0023458A /* PTPopoverFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BD5BAE29CA13BA0023458A /* PTPopoverFooter.swift */; };
 		55D752F629D1FCF8005CE46B /* SampleJson.json in Resources */ = {isa = PBXBuildFile; fileRef = 55D752F529D1FCF8005CE46B /* SampleJson.json */; };
 		55D752F929D1FDA2005CE46B /* PTSampleModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D752F829D1FDA2005CE46B /* PTSampleModels.swift */; };
+		55D752FB29D27B54005CE46B /* PTSuggesstionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D752FA29D27B54005CE46B /* PTSuggesstionViewController.swift */; };
+		55D752FD29D280E6005CE46B /* PTSuggesstionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D752FC29D280E6005CE46B /* PTSuggesstionCell.swift */; };
 		EC91DE097C54ED7562DD3DCA /* Pods_PTChatGPT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 372877C61B4F76BA38F0C55D /* Pods_PTChatGPT.framework */; };
 /* End PBXBuildFile section */
 
@@ -171,6 +173,8 @@
 		55C6BCCE29C4602B00A6B668 /* PTChatGPT.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PTChatGPT.entitlements; sourceTree = "<group>"; };
 		55D752F529D1FCF8005CE46B /* SampleJson.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = SampleJson.json; sourceTree = "<group>"; };
 		55D752F829D1FDA2005CE46B /* PTSampleModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSampleModels.swift; sourceTree = "<group>"; };
+		55D752FA29D27B54005CE46B /* PTSuggesstionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSuggesstionViewController.swift; sourceTree = "<group>"; };
+		55D752FC29D280E6005CE46B /* PTSuggesstionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSuggesstionCell.swift; sourceTree = "<group>"; };
 		7E66237D0C268E8EEFD172D0 /* Pods-PTChatGPT.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PTChatGPT.release.xcconfig"; path = "Target Support Files/Pods-PTChatGPT/Pods-PTChatGPT.release.xcconfig"; sourceTree = "<group>"; };
 		E708929BECBB7DC383FA473B /* Pods-PTChatGPT.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PTChatGPT.debug.xcconfig"; path = "Target Support Files/Pods-PTChatGPT/Pods-PTChatGPT.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -253,6 +257,7 @@
 				5520905A29C35903009B30A1 /* PTVoiceActionView.swift */,
 				55BD5B8F29C708BF0023458A /* PTPopoverCell.swift */,
 				55BD5BAE29CA13BA0023458A /* PTPopoverFooter.swift */,
+				55D752FC29D280E6005CE46B /* PTSuggesstionCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -379,6 +384,7 @@
 				55A5D7F629B1DFF200DCA096 /* PTChatViewController.swift */,
 				55BD5B8D29C7074A0023458A /* PTPopoverControl.swift */,
 				55BD5B9129C7E4110023458A /* PTPopoverMenuControl.swift */,
+				55D752FA29D27B54005CE46B /* PTSuggesstionViewController.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -678,9 +684,11 @@
 				5512AB7029B43D520059D840 /* OSSSpeech.swift in Sources */,
 				55A5D7F229B1D9A900DCA096 /* OpenAIEndpoint.swift in Sources */,
 				55A5D7F129B1D9A900DCA096 /* Command.swift in Sources */,
+				55D752FB29D27B54005CE46B /* PTSuggesstionViewController.swift in Sources */,
 				55D752F929D1FDA2005CE46B /* PTSampleModels.swift in Sources */,
 				5514B38929BAE7E400890161 /* SwipeCellOption.swift in Sources */,
 				55BD5B9B29C8424A0023458A /* PTDarkModeControl.swift in Sources */,
+				55D752FD29D280E6005CE46B /* PTSuggesstionCell.swift in Sources */,
 				5514B38029BA112A00890161 /* PTSettingModels.swift in Sources */,
 				55796A2229BD6DCE00574DD4 /* PTSoundRecorder.swift in Sources */,
 				5512AB7C29B470310059D840 /* PTAudioPlayer.swift in Sources */,

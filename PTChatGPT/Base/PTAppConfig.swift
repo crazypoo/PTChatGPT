@@ -280,7 +280,7 @@ class PTAppConfig {
             }
         }
     }
-
+    
     
     ///保存聊天的圖片到iCloud
     func saveUserSendImage(image:UIImage,fileName:String,jobDoneBlock:@escaping ((_ finish:Bool)->Void)) {
@@ -334,7 +334,7 @@ class PTAppConfig {
             return UIImage()
         }
     }
-
+    
     //MARK: 聊天框颜色
     ///用户聊天框颜色
     var userBubbleColor:UIColor {
@@ -465,7 +465,7 @@ class PTAppConfig {
             }
         }
     }
-
+    
     //MARK: API相关
     ///机器人类型
     var aiModelType:String {
@@ -594,7 +594,7 @@ class PTAppConfig {
             }
         }
     }
-        
+    
     //MARK: 语音输入语言
     ///语音输入语言
     var language:String {
@@ -769,12 +769,12 @@ class PTAppConfig {
                     let speechKit = OSSSpeech.shared
                     speechKit.delegate = delegate
                     speechKit.deleteVoiceFolderItem(url: nil)
-
+                    
                     resetVoiceFile()
                     PTGCDManager.gcdAfter(time: 1) {
                         if self.cloudSwitch {
                             let iCloudURL = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents")
-
+                            
                             if let contents = try? FileManager.default.contentsOfDirectory(at: iCloudURL!, includingPropertiesForKeys: nil, options: []) {
                                 for (fileUrl) in contents {
                                     try? FileManager.default.removeItem(at: fileUrl)
@@ -794,7 +794,7 @@ class PTAppConfig {
             }
         }
     }
-
+    
     lazy var languagePickerData:[String] = {
         var data = [String]()
         OSSVoiceEnum.allCases.enumerated().forEach { index,value in
@@ -871,49 +871,49 @@ class PTAppConfig {
             gptCurieModel.key = "2"
             gptCurieModel.value = OpenAIModelType.gpt3(.curie).modelName
             modelArr.append(gptCurieModel)
-
+            
             let gptBabbageModel = BRResultModel()
             gptBabbageModel.parentKey = "GPT"
             gptBabbageModel.parentValue = OpenAIModelType.gpt3(.babbage).modelName
             gptBabbageModel.key = "3"
             gptBabbageModel.value = OpenAIModelType.gpt3(.babbage).modelName
             modelArr.append(gptBabbageModel)
-
+            
             let gptAdaModel = BRResultModel()
             gptAdaModel.parentKey = "GPT"
             gptAdaModel.parentValue = OpenAIModelType.gpt3(.ada).modelName
             gptAdaModel.key = "4"
             gptAdaModel.value = OpenAIModelType.gpt3(.ada).modelName
             modelArr.append(gptAdaModel)
-
+            
             let codexMainModel = BRResultModel()
             codexMainModel.parentKey = "-1"
             codexMainModel.parentValue = ""
             codexMainModel.key = "CODEX"
             codexMainModel.value = "CODEX"
             modelArr.append(codexMainModel)
-
+            
             let codexDavinciModel = BRResultModel()
             codexDavinciModel.parentKey = "CODEX"
             codexDavinciModel.parentValue = OpenAIModelType.codex(.davinci).modelName
             codexDavinciModel.key = "1"
             codexDavinciModel.value = OpenAIModelType.codex(.davinci).modelName
             modelArr.append(codexDavinciModel)
-
+            
             let codexCushmanModel = BRResultModel()
             codexCushmanModel.parentKey = "CODEX"
             codexCushmanModel.parentValue = OpenAIModelType.codex(.cushman).modelName
             codexCushmanModel.key = "2"
             codexCushmanModel.value = OpenAIModelType.codex(.cushman).modelName
             modelArr.append(codexCushmanModel)
-
+            
             let featureMainModel = BRResultModel()
             featureMainModel.parentKey = "-1"
             featureMainModel.parentValue = ""
             featureMainModel.key = "FEATURE"
             featureMainModel.value = "FEATURE"
             modelArr.append(featureMainModel)
-
+            
             let featureDavinciModel = BRResultModel()
             featureDavinciModel.parentKey = "FEATURE"
             featureDavinciModel.parentValue = OpenAIModelType.feature(.davinci).modelName
@@ -928,49 +928,49 @@ class PTAppConfig {
         gptXMainModel.key = "GPTX"
         gptXMainModel.value = "GPTX"
         modelArr.append(gptXMainModel)
-
+        
         let gptThreePointFiveModel = BRResultModel()
         gptThreePointFiveModel.parentKey = "GPTX"
         gptThreePointFiveModel.parentValue = OpenAIModelType.chat(.chatgpt).modelName
         gptThreePointFiveModel.key = "1"
         gptThreePointFiveModel.value = OpenAIModelType.chat(.chatgpt).modelName
         modelArr.append(gptThreePointFiveModel)
-
+        
         let gptThreePointFive0301Model = BRResultModel()
         gptThreePointFive0301Model.parentKey = "GPTX"
         gptThreePointFive0301Model.parentValue = OpenAIModelType.chat(.chatgpt0301).modelName
         gptThreePointFive0301Model.key = "2"
         gptThreePointFive0301Model.value = OpenAIModelType.chat(.chatgpt0301).modelName
         modelArr.append(gptThreePointFive0301Model)
-
+        
         let gptFourModel = BRResultModel()
         gptFourModel.parentKey = "GPTX"
         gptFourModel.parentValue = OpenAIModelType.chat(.chatgpt4).modelName
         gptFourModel.key = "3"
         gptFourModel.value = OpenAIModelType.chat(.chatgpt4).modelName
         modelArr.append(gptFourModel)
-
+        
         let gptFour0314Model = BRResultModel()
         gptFour0314Model.parentKey = "GPTX"
         gptFour0314Model.parentValue = OpenAIModelType.chat(.chatgpt40314).modelName
         gptFour0314Model.key = "4"
         gptFour0314Model.value = OpenAIModelType.chat(.chatgpt40314).modelName
         modelArr.append(gptFour0314Model)
-
+        
         let gptFour32kModel = BRResultModel()
         gptFour32kModel.parentKey = "GPTX"
         gptFour32kModel.parentValue = OpenAIModelType.chat(.chatgpt432k).modelName
         gptFour32kModel.key = "5"
         gptFour32kModel.value = OpenAIModelType.chat(.chatgpt432k).modelName
         modelArr.append(gptFour32kModel)
-
+        
         let gptFour32k0314Model = BRResultModel()
         gptFour32k0314Model.parentKey = "GPTX"
         gptFour32k0314Model.parentValue = OpenAIModelType.chat(.chatgpt432k0314).modelName
         gptFour32k0314Model.key = "6"
         gptFour32k0314Model.value = OpenAIModelType.chat(.chatgpt432k0314).modelName
         modelArr.append(gptFour32k0314Model)
-
+        
         var indexPath = [NSNumber]()
         if currentAi == "text-davinci-003" {
             indexPath.append(NSNumber(value: 0))
@@ -1015,7 +1015,7 @@ class PTAppConfig {
             indexPath.append(NSNumber(value: 0))
             indexPath.append(NSNumber(value: 0))
         }
-
+        
         handle(modelArr,indexPath)
     }
     
@@ -1038,13 +1038,27 @@ class PTAppConfig {
         style.doneTextColor = .systemBlue
         return style
     }
-
+    
     class func refreshTagData(segDataArr:[PTSegHistoryModel]) {
         var stringArr = [String]()
         segDataArr.enumerated().forEach { index,value in
             stringArr.append(value.toJSON()!.toJSON()!)
         }
         AppDelegate.appDelegate()!.appConfig.segChatHistory = stringArr.joined(separator: kSeparatorSeg)
+    }
+    
+    func getJsonFileModel() -> [PTSampleModels] {
+        if let jsonData = self.loadJSON(fileName: "SampleJson") {
+            var array = [PTSampleModels]()
+            let models = [PTSampleModels].deserialize(from: (jsonData["result"] as! NSArray))
+            models?.enumerated().forEach({ index,value in
+                let subModel = value
+                subModel!.imported = self.tagDataArr().contains(where: {$0.keyName == value?.keyName && $0.systemContent == value?.systemContent})
+                array.append(subModel!)
+            })
+            return array
+        }
+        return [PTSampleModels]()
     }
     
     func loadJSON(fileName: String) -> [String: Any]? {
