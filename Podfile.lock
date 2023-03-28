@@ -130,7 +130,7 @@ PODS:
   - SwifterSwift/StoreKit (5.2.0)
   - SwifterSwift/SwiftStdlib (5.2.0)
   - SwifterSwift/UIKit (5.2.0)
-  - SwiftLint (0.50.3)
+  - SwiftLint (0.51.0)
   - SwiftSpinner (2.2.0)
   - SwiftyJSON (5.0.1)
   - Swinject (2.8.3)
@@ -244,7 +244,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   PooTools:
-    :commit: fa15409d0844bbe8f8416abc3fb1a0a213b7c7a5
+    :commit: cba6c2a476c3d1e20454a16332ffd0712c85b237
     :git: https://github.com/crazypoo/PTools.git
 
 SPEC CHECKSUMS:
@@ -281,7 +281,7 @@ SPEC CHECKSUMS:
   SnapKit: e01d52ebb8ddbc333eefe2132acf85c8227d9c25
   SwiftDate: bbc26e26fc8c0c33fbee8c140c5e8a68293a148a
   SwifterSwift: 334181863c416882d97b7a60c05054d9e4d799e2
-  SwiftLint: 77f7cb2b9bb81ab4a12fcc86448ba3f11afa50c6
+  SwiftLint: 1b7561918a19e23bfed960e40759086e70f4dba5
   SwiftSpinner: f9b59477fe107427f2b5b835497d6636fa167ede
   SwiftyJSON: 2f33a42c6fbc52764d96f13368585094bfd8aa5e
   Swinject: 893c9a543000ac2f10ee4cbaf0933c6992c935d5

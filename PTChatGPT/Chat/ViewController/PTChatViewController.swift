@@ -656,23 +656,11 @@ class PTChatViewController: MessagesViewController {
         } else if UIApplication.applicationEnvironment() == .testFlight {
             PTCheckUpdateFunction.share.checkTheVersionWithappid(appid: AppAppStoreID, test: false, url: nil, version: nil, note: nil, force: true)
         } else {
-            PTCheckTestFlight.share.checkFunction { can in
-                if can {
-                    PTGCDManager.gcdMain {
-                        UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "alert_TF"),msgColor: .gobalTextColor, okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
-                            
-                        } moreBtn: { index, title in
-                            let url = URL(string: "https://testflight.apple.com/join/6XpIFw9m")!
-                            UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                        }
-                    }
-                }
-            }
+            PTCheckUpdateFunction.share.checkTheVersionWithappid(appid: AppAppStoreID, test: false, url: nil, version: nil, note: nil, force: true)
         }
     }
     
-    func loadViewData()
-    {
+    func loadViewData() {
         var arr = [PTSegHistoryModel]()
         if let dataString = AppDelegate.appDelegate()?.appConfig.segChatHistory {
             let dataArr = dataString.components(separatedBy: kSeparatorSeg)
