@@ -1946,19 +1946,19 @@ extension PTChatViewController:MessageCellDelegate
                 self.chatModels.remove(at: indexPath!.section)
                 self.chatModels.append(saveModel)
                 self.historyModel?.historyModel = self.chatModels
-                self.messageList[(self.messageList.count - 1)].sending = true
-                self.messageList[(self.messageList.count - 1)].sendSuccess = false
                 self.refreshViewAndLoadNewData {
+                    self.messageList[(self.messageList.count - 1)].sending = true
+                    self.messageList[(self.messageList.count - 1)].sendSuccess = false
                     self.reloadSomeSection(itemIndex: (self.messageList.count - 1)) {
                         switch messageModel.kind {
                         case .text(let text):
                             self.sendTextFunction(str: text, saveModel: saveModel, sectionIndex: (self.messageList.count - 1),resend: true)
-                        case .attributedText(let text):
-                            self.resendAttMessage(att: text, saveModel: saveModel)
+                        case .attributedText(_):
+                            self.userEditImage(str: saveModel.messageText, saveModel: saveModel,resend: true)
                         case .audio(_):
                             self.sendTextFunction(str: saveModel.messageText, saveModel: saveModel, sectionIndex: (self.messageList.count - 1),resend: true)
                         case .photo(_):
-                            self.userSendImage(imageObject: UIImage(contentsOfFile: userImageMessageFilePath + "/\(saveModel.localFileName).png")!, saveModel: saveModel,resend: true)
+                            self.userSendImage(imageObject: AppDelegate.appDelegate()!.appConfig.getMessageImage(name: saveModel.localFileName), saveModel: saveModel,resend: true)
                         default:
                             break
                         }
@@ -2131,6 +2131,9 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
     // MARK: Private
     //MARK: 绿色标语反馈创建
     private func notGoodWordRequest() {
+        PTGCDManager.gcdMain {
+            self.setTypingIndicatorViewHidden(true)
+        }
         let botDate = Date()
         let botMessageModel = PTChatModel()
         botMessageModel.messageDateString = botDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
@@ -2141,15 +2144,16 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
 
         var botMessage = PTMessageModel(text: PTLanguage.share.text(forKey: "chat_Check_sentence"), user: PTChatData.share.bot, messageId: UUID().uuidString, date: botDate)
         botMessage.sending = false
-        self.insertMessage(botMessage) {
-            self.historyModel?.historyModel = self.chatModels
-            self.packChatData()
-            self.refreshViewAndLoadNewData()
+        PTGCDManager.gcdMain {
+            self.insertMessage(botMessage) {
+                self.historyModel?.historyModel = self.chatModels
+                self.packChatData()
+                self.refreshViewAndLoadNewData()
+            }
         }
     }
     
     func insertMessages(_ data: [Any]) {
-        self.setTypingIndicatorViewHidden(false)
         for component in data {
             let user = PTChatData.share.user
             let date = Date()
@@ -2182,7 +2186,6 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                             PTNSLogConsole("YES")
                             PTGCDManager.gcdBackground {
                                 PTGCDManager.gcdMain {
-                                    self.setTypingIndicatorViewHidden(true)
                                     switch self.chatCase {
                                     case .draw(type: .edit):
                                         
@@ -2223,8 +2226,14 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                                                                 
                                                                 var message = PTMessageModel(attributedText: att, user: PTChatData.share.user, messageId: UUID().uuidString, date: date, sendSuccess: true)
                                                                 message.sending = true
-                                                                self.insertMessage(message) {
-                                                                    self.notGoodWordRequest()
+                                                                PTGCDManager.gcdMain {
+                                                                    self.insertMessage(message) {
+                                                                        self.chatCase = .chat(type: .normal)
+                                                                        PTGCDManager.gcdMain {
+                                                                            self.setTypingIndicatorViewHidden(false)
+                                                                        }
+                                                                        self.notGoodWordRequest()
+                                                                    }
                                                                 }
                                                             }
                                                         }
@@ -2238,8 +2247,13 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                                         saveModel.starString = str.replaceStringWithAsterisk()
                                         saveModel.messageSendSuccess = true
                                         self.chatModels.append(saveModel)
-                                        self.insertMessage(message) {
-                                            self.notGoodWordRequest()
+                                        PTGCDManager.gcdMain {
+                                            self.insertMessage(message) {
+                                                PTGCDManager.gcdMain {
+                                                    self.setTypingIndicatorViewHidden(false)
+                                                }
+                                                self.notGoodWordRequest()
+                                            }
                                         }
                                     }
                                 }
@@ -2283,7 +2297,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
         }
     }
     
-    func userEditImage(str:String,saveModel:PTChatModel) {
+    func userEditImage(str:String,saveModel:PTChatModel,resend:Bool? = false) {
         self.setTypingIndicatorViewHidden(false)
         var imageSizeType:ImageResolutions
         switch AppDelegate.appDelegate()!.appConfig.aiDrawSize.width {
@@ -2298,40 +2312,9 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
         }
         Task.init {
             do {
-                let mainImagePath = userImageMessageFilePath + "/\(saveModel.editMainName)"
-                let maskImagePath = userImageMessageFilePath + "/\(saveModel.editMaskName)"
+                let mainImage:UIImage = AppDelegate.appDelegate()!.appConfig.getMessageImage(name: "\(saveModel.editMainName)")
+                let maskImage:UIImage = AppDelegate.appDelegate()!.appConfig.getMessageImage(name: "\(saveModel.editMaskName)")
 
-                var mainImage:UIImage = UIImage()
-                if FileManager.pt.judgeFileOrFolderExists(filePath: mainImagePath)
-                {
-                    mainImage = UIImage(contentsOfFile: mainImagePath)!
-                } else {
-                    if mainImagePath.isURL() {
-                        SDWebImageManager.shared.loadImage(with: URL(string: mainImagePath)) { one, two, url in
-                            
-                        } completed: { image, data, error, cacheType, finish, url in
-                            if finish {
-                                mainImage = image!
-                            }
-                        }
-                    }
-                }
-                
-                var maskImage:UIImage = UIImage()
-                if FileManager.pt.judgeFileOrFolderExists(filePath: maskImagePath)
-                {
-                    maskImage = UIImage(contentsOfFile: maskImagePath)!
-                } else {
-                    if maskImagePath.isURL() {
-                        SDWebImageManager.shared.loadImage(with: URL(string: maskImagePath)) { one, two, url in
-                            
-                        } completed: { image, data, error, cacheType, finish, url in
-                            if finish {
-                                maskImage = image!
-                            }
-                        }
-                    }
-                }
                 let imageEditParam = try ImageEditParameters(image: mainImage, mask: maskImage, prompt: str,numberOfImages: AppDelegate.appDelegate()!.appConfig.getImageCount,resolution: imageSizeType,responseFormat: .url)
                 let imageResponse = try await self.openAIKIT.generateImageEdits(
                     parameters: imageEditParam
@@ -2344,7 +2327,11 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                 PTGCDManager.gcdMain {
                     self.setTypingIndicatorViewHidden(true)
                     saveModel.messageSendSuccess = false
-                    self.chatModels.append(saveModel)
+                    if resend! {
+                        self.chatModels[self.chatModels.count - 1] = saveModel
+                    } else {
+                        self.chatModels.append(saveModel)
+                    }
                     self.historyModel?.historyModel = self.chatModels
                     self.refreshViewAndLoadNewData {
                         self.messageList[(self.messageList.count - 1)].sending = false
@@ -2393,7 +2380,11 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                 PTGCDManager.gcdMain {
                     self.setTypingIndicatorViewHidden(true)
                     saveModel.messageSendSuccess = false
-                    self.chatModels[(self.chatModels.count - 1)] = saveModel
+                    if resend! {
+                        self.chatModels[(self.chatModels.count - 1)] = saveModel
+                    } else {
+                        self.chatModels.append(saveModel)
+                    }
                     self.historyModel?.historyModel = self.chatModels
                     self.refreshViewAndLoadNewData {
                         self.messageList[(self.messageList.count - 1)].sending = false
@@ -2517,6 +2508,8 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
         case .draw(type: .edit):
             PTNSLogConsole("我要PS")
             
+            self.chatCase = .chat(type: .normal)
+            
             let date = Date()
             let dateString = date.dateFormat(formatString: "yyyy-MM-dd-HH-mm-ss")
             let mainName = "main_\(dateString).png"
@@ -2620,22 +2613,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
             }
         }
     }
-    
-    func resendAttMessage(att:NSAttributedString,saveModel:PTChatModel) {
-        let date = Date()
-        var message = PTMessageModel(attributedText: att, user: PTChatData.share.user, messageId: UUID().uuidString, date: date, sendSuccess: false)
-        message.sending = true
-        self.cleanInputBarTop()
-        self.insertMessage(message) {
-            self.messageList[(self.messageList.count - 1)].sending = true
-            self.messageList[(self.messageList.count - 1)].sendSuccess = false
-            self.reloadSomeSection(itemIndex: (self.messageList.count - 1)) {
-                PTNSLogConsole("开始发送")
-                self.userEditImage(str: att.string, saveModel: saveModel)
-            }
-        }
-    }
-    
+        
     func saveQAndAText(question:String,saveModel:PTChatModel,sendIndex:Int) {
         let botDate = Date()
         
@@ -2932,16 +2910,21 @@ extension PTChatViewController {
         PTGCDManager.gcdMain {
             let throwThisApi:Bool = AppDelegate.appDelegate()!.appConfig.checkSentence
             if throwThisApi {
+                SwiftSpinner.show("Checking.....")
                 Task.init {
                     do {
                         let contentParameter = ContentPolicyParameters(input: checkWork)
                         let contentResult = try await self.openAIKIT.checkContentPolicy(parameters: contentParameter)
                         
                         let isFlagged = contentResult.results[0].flagged
-                        completed(throwThisApi,isFlagged,nil)
+                        SwiftSpinner.hide() {
+                            completed(throwThisApi,isFlagged,nil)
+                        }
                     } catch {
                         PTBaseViewController.gobal_drop(title: error.localizedDescription)
-                        completed(throwThisApi,false,error)
+                        SwiftSpinner.hide() {
+                            completed(throwThisApi,false,error)
+                        }
                     }
                 }
             } else {
