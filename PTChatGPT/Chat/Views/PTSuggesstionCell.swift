@@ -20,7 +20,7 @@ class PTSuggesstionCell: PTBaseNormalCell {
         didSet {
             let att = NSMutableAttributedString.sj.makeText { make in
                 make.append(self.cellModel!.keyName).lineSpacing(5).font(PTSuggesstionCell.titleFont).textColor(.white).alignment(.left)
-                make.append("\n\(self.cellModel!.who)").lineSpacing(5).font(PTSuggesstionCell.nameFont).textColor(.white).alignment(.left)
+                make.append("\n\(self.cellModel!.who.stringIsEmpty() ? "@anonymous" : self.cellModel!.who)").lineSpacing(5).font(PTSuggesstionCell.nameFont).textColor(.white).alignment(.left)
                 make.append("\n\(self.cellModel!.systemContent)").lineSpacing(5).font(PTSuggesstionCell.infoFont).textColor(.white).alignment(.left)
             }
             self.infoLaebl.attributedText = att

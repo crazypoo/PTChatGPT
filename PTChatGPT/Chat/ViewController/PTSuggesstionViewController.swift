@@ -8,9 +8,12 @@
 
 import UIKit
 import PooTools
+import JXPagingView
 
 class PTSuggesstionViewController: PTChatBaseViewController {
     
+    private var listViewDidScrollCallback:((_ scrollView:UIScrollView)->Void)?
+
     var mSections = [PTSection]()
     func comboLayout()->UICollectionViewCompositionalLayout {
         let layout = UICollectionViewCompositionalLayout.init { section, environment in
@@ -38,9 +41,9 @@ class PTSuggesstionViewController: PTChatBaseViewController {
         sectionModel.rows.enumerated().forEach { (index,model) in
             let cellModel = model.dataModel as! PTSampleModels
             
-            let titleHeight = UIView.sizeFor(string: cellModel.keyName, font: PTSuggesstionCell.titleFont,lineSpacing: 5, height: CGFloat(MAXFLOAT), width: (cellWidth - 20)).height
+            let titleHeight = UIView.sizeFor(string: cellModel.keyName, font: PTSuggesstionCell.titleFont,lineSpacing: 5, height: CGFloat(MAXFLOAT), width: (cellWidth - 20)).height + 10
             
-            let nameHeight = UIView.sizeFor(string: cellModel.who, font: PTSuggesstionCell.nameFont,lineSpacing: 5, height: CGFloat(MAXFLOAT), width: (cellWidth - 20)).height
+            let nameHeight = UIView.sizeFor(string: cellModel.who.stringIsEmpty() ? "@anonymous" : cellModel.who, font: PTSuggesstionCell.nameFont,lineSpacing: 5, height: CGFloat(MAXFLOAT), width: (cellWidth - 20)).height + 10
             
             let contentHeight = UIView.sizeFor(string: cellModel.systemContent, font: PTSuggesstionCell.infoFont,lineSpacing: 5, height: CGFloat(MAXFLOAT), width: (cellWidth - 20)).height + 10
 
@@ -62,7 +65,13 @@ class PTSuggesstionViewController: PTChatBaseViewController {
                 }
 
                 if index == (sectionModel.rows.count - 1) {
-                    groupH = y + itemH + contentTopAndBottom
+                    let lastHeight = (y + itemH + contentTopAndBottom)
+                    let lastLastHeight = (customers[index - 1].frame.height + contentTopAndBottom + customers[index - 1].frame.origin.y)
+                    if lastLastHeight > lastHeight {
+                        groupH = lastLastHeight
+                    } else {
+                        groupH = lastHeight
+                    }
                 }
                 let customItem = NSCollectionLayoutGroupCustomItem.init(frame: CGRect.init(x: x, y: y, width: cellWidth, height: itemH), zIndex: 1000+index)
                 customers.append(customItem)
@@ -89,16 +98,31 @@ class PTSuggesstionViewController: PTChatBaseViewController {
         return view
     }()
 
+    var currentModels:[PTSampleModels] = [PTSampleModels]()
+    
+    init(currentViewModel:[PTSampleModels]) {
+        super.init(nibName: nil, bundle: nil)
+        self.currentModels = currentViewModel
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.zx_hideBaseNavBar = true
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.zx_navTitle = PTLanguage.share.text(forKey: "bot_Suggesstion")
         // Do any additional setup after loading the view.
         self.view.addSubviews([self.collectionView])
         
         self.collectionView.snp.makeConstraints { make in
             make.left.right.bottom.equalToSuperview()
-            make.top.equalToSuperview().inset(CGFloat.kNavBarHeight_Total)
+            make.top.equalToSuperview()
         }
                 
         self.showDetail()
@@ -107,21 +131,21 @@ class PTSuggesstionViewController: PTChatBaseViewController {
     func showDetail() {
         mSections.removeAll()
 
-        let models = AppDelegate.appDelegate()?.appConfig.getJsonFileModel()
-        if (models?.count ?? 0) > 0 {
-            var rows = [PTRows]()
-            models!.enumerated().forEach { (index,value) in
-                let row_List = PTRows.init(cls: PTSuggesstionCell.self, ID: PTSuggesstionCell.ID, dataModel: value)
-                rows.append(row_List)
-            }
-            let cellSection = PTSection.init(rows: rows)
-            mSections.append(cellSection)
+        var rows = [PTRows]()
+        self.currentModels.enumerated().forEach { (index,value) in
+            let row_List = PTRows.init(cls: PTSuggesstionCell.self, ID: PTSuggesstionCell.ID, dataModel: value)
+            rows.append(row_List)
         }
-        
+        let cellSection = PTSection.init(rows: rows)
+        mSections.append(cellSection)
+
         self.collectionView.pt_register(by: mSections)
         self.collectionView.reloadData()
     }
 
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        listViewDidScrollCallback?(scrollView)
+    }
 }
 
 extension PTSuggesstionViewController:UICollectionViewDelegate,UICollectionViewDataSource {
@@ -166,5 +190,19 @@ extension PTSuggesstionViewController:UICollectionViewDelegate,UICollectionViewD
             cell.backgroundColor = .random
             return cell
         }
+    }
+}
+
+extension PTSuggesstionViewController:JXPagingViewListViewDelegate {
+    func listView() -> UIView {
+        return view
+    }
+    
+    func listScrollView() -> UIScrollView {
+        return self.collectionView
+    }
+    
+    func listViewDidScrollCallback(callback: @escaping (UIScrollView) -> ()) {
+        listViewDidScrollCallback = callback
     }
 }

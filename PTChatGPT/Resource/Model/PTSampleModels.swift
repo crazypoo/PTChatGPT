@@ -9,9 +9,14 @@
 import UIKit
 import PooTools
 
+class PTSampleMainModels:PTBaseModel {
+    var segmentName:String = ""
+    var persion:[PTSampleModels] = [PTSampleModels]()
+}
+
 class PTSampleModels: PTBaseModel {
     var keyName:String = ""
     var systemContent:String = ""
-    var who:String = ""
+    var who:String = "@anonymous"
     var imported:Bool = false
 }

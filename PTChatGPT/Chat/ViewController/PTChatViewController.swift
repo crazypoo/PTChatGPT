@@ -624,7 +624,7 @@ class PTChatViewController: MessagesViewController {
     func whatNews() {
         if WhatsNew.shouldPresent() {
             let whatsNew = WhatsNewViewController(items: [
-                WhatsNewItem.text(title: "聊天", subtitle: "1.支持根據圖片查找出相似圖片的功能.\n2.支持根據兩個圖片和需求對圖片進行PS或更改的功能.\n3.支持檢測用戶的言語是否帶有敏感內容的功能.\n4.本地发送的聊天图片也能同步"),
+                WhatsNewItem.text(title: "聊天", subtitle: "1.添加一些AI的人设范例"),
                 WhatsNewItem.text(title: "其他", subtitle: "修复了一些昆虫"),
                 ])
             whatsNew.titleText = "What's New"
@@ -1101,7 +1101,7 @@ class PTChatViewController: MessagesViewController {
         view.setSize(CGSize(width: 44, height: 44), animated: true)
         view.setImage("🤖".emojiToImage(emojiFont: .appfont(size: 24)), for: .normal)
         view.addActionHandlers { sender in
-            let vc = PTSuggesstionViewController()
+            let vc = PTSuggestionControl()
             self.navigationController?.pushViewController(vc, animated: true)
         }
         return view

@@ -1047,14 +1047,27 @@ class PTAppConfig {
         AppDelegate.appDelegate()!.appConfig.segChatHistory = stringArr.joined(separator: kSeparatorSeg)
     }
     
-    func getJsonFileModel() -> [PTSampleModels] {
+    func getJsonFileTags() -> [String] {
+        if let jsonData = self.loadJSON(fileName: "SampleJson") {
+            var array = [String]()
+            let models = [PTSampleMainModels].deserialize(from: (jsonData["result"] as! NSArray))
+            models!.enumerated().forEach({ index,value in
+                array.append(value!.segmentName)
+            })
+            return array
+        }
+        return []
+    }
+    
+    func getJsonFileModel(index:Int) -> [PTSampleModels] {
         if let jsonData = self.loadJSON(fileName: "SampleJson") {
             var array = [PTSampleModels]()
-            let models = [PTSampleModels].deserialize(from: (jsonData["result"] as! NSArray))
-            models?.enumerated().forEach({ index,value in
+            let models = [PTSampleMainModels].deserialize(from: (jsonData["result"] as! NSArray))
+            let subModels = models![index]
+            subModels?.persion.enumerated().forEach({ index,value in
                 let subModel = value
-                subModel!.imported = self.tagDataArr().contains(where: {$0.keyName == value?.keyName && $0.systemContent == value?.systemContent})
-                array.append(subModel!)
+                subModel.imported = self.tagDataArr().contains(where: {$0.keyName == value.keyName && $0.systemContent == value.systemContent})
+                array.append(subModel)
             })
             return array
         }
