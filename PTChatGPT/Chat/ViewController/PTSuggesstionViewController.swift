@@ -14,6 +14,8 @@ class PTSuggesstionViewController: PTChatBaseViewController {
     
     private var listViewDidScrollCallback:((_ scrollView:UIScrollView)->Void)?
 
+    var currentIndex:Int = 0
+    
     var mSections = [PTSection]()
     func comboLayout()->UICollectionViewCompositionalLayout {
         let layout = UICollectionViewCompositionalLayout.init { section, environment in
@@ -188,7 +190,12 @@ extension PTSuggesstionViewController:UICollectionViewDelegate,UICollectionViewD
                         jsonArr.append(value.toJSON()!.toJSON()!)
                     }
                     AppDelegate.appDelegate()?.appConfig.segChatHistory = jsonArr.joined(separator: kSeparatorSeg)
+                    self.currentModels = AppDelegate.appDelegate()!.appConfig.getJsonFileModel(index: self.currentIndex)
                     self.showDetail()
+                    if Gobal_device_info.isPad {
+                        let master = self.splitViewController?.viewControllers.first as! PTChatMasterControl
+                        master.loadData()
+                    }
                 }
             }
             return cell

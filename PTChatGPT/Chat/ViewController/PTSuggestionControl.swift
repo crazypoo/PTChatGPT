@@ -112,6 +112,7 @@ extension PTSuggestionControl: JXPagingViewDelegate {
         
         let models = AppDelegate.appDelegate()!.appConfig.getJsonFileModel(index: index)
         let vc = PTSuggesstionViewController(currentViewModel: models)
+        vc.currentIndex = index
         return vc
     }
         
