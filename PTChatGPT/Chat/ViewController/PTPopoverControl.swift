@@ -156,10 +156,13 @@ extension PTPopoverControl:UICollectionViewDelegate,UICollectionViewDataSource
             if itemSec.footerID == PTPopoverFooter.ID {
                 let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: itemSec.footerID!, for: indexPath) as! PTPopoverFooter
                 footer.deleteButton.addActionHandlers { sender in
-                    if self.deleteAllTagBlock != nil {
-                        self.deleteAllTagBlock!()
+                    UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "alert_delete_all_tag"),msgColor: .gobalTextColor,okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
+                    } moreBtn: { index, title in
+                        if self.deleteAllTagBlock != nil {
+                            self.deleteAllTagBlock!()
+                        }
+                        self.returnFrontVC()
                     }
-                    self.returnFrontVC()
                 }
                 return footer
             }

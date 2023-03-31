@@ -107,10 +107,13 @@ class PTSettingViewController: PTChatBaseViewController {
 
         self.zx_navTitle = PTLanguage.share.text(forKey: "first_Title")
         
+        if Gobal_device_info.isPad {
+            
+        }
+        
         self.view.backgroundColor = .gobalBackgroundColor
         
-        if AppDelegate.appDelegate()!.appConfig.apiToken.stringIsEmpty()
-        {
+        if AppDelegate.appDelegate()!.appConfig.apiToken.stringIsEmpty() {
             NotificationCenter.default.addObserver(self, selector: #selector(self.showURLNotifi(notifi:)), name: NSNotification.Name(rawValue: PLaunchAdDetailDisplayNotification), object: nil)
         }
 
@@ -133,8 +136,7 @@ class PTSettingViewController: PTChatBaseViewController {
         self.token.viewCorner(radius: 5,borderWidth: 1,borderColor: .gobalTextColor)
         
         var selectHeight = self.selectLanguage.sizeFor(size: CGSize(width: CGFloat.kSCREEN_WIDTH - PTAppBaseConfig.share.defaultViewSpace * 2, height: CGFloat(MAXFLOAT))).height
-        if selectHeight < 44
-        {
+        if selectHeight < 44 {
             selectHeight = 44
         }
         self.selectLanguage.snp.makeConstraints { make in
@@ -171,16 +173,14 @@ class PTSettingViewController: PTChatBaseViewController {
         self.disclaimerButton.viewCorner(radius: 5,borderWidth: 1,borderColor: .gobalTextColor)
     }
     
-    @objc func showURLNotifi(notifi:Notification)
-    {
+    @objc func showURLNotifi(notifi:Notification) {
         let urlString = (notifi.object as! [String:String])["URLS"]
         if let url = URL(string: urlString) {
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
     }
     
-    func checkTextField(textField:UITextField)
-    {
+    func checkTextField(textField:UITextField) {
         if (textField.text ?? "").stringIsEmpty() || !(textField.text ?? "").nsString.contains("sk-") {
             PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Token_error"))
         } else {

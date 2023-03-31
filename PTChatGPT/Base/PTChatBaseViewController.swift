@@ -32,6 +32,10 @@ class PTChatBaseViewController: PTBaseViewController {
         self.zx_navTitleColor = .gobalTextColor
         self.view.backgroundColor = .gobalBackgroundColor
         self.zx_navBar?.backgroundColor = .gobalBackgroundColor
+        if Gobal_device_info.isPad {
+            self.zx_navFixFrame = CGRect(x: 0, y: 0, width: CGFloat.kSCREEN_WIDTH - iPadSplitMainControl, height: 54)
+        }
+
         if !(PTUtils.getCurrentVC() is PTSettingViewController)
         {
             self.zx_navLeftBtn?.imageView?.contentMode = .scaleAspectFit

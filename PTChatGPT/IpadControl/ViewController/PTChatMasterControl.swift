@@ -63,7 +63,6 @@ class PTChatMasterControl: PTChatBaseViewController {
     
     lazy var bottomContent:UIView = {
         let view = UIView()
-        view.backgroundColor = .random
         return view
     }()
     
@@ -120,13 +119,6 @@ class PTChatMasterControl: PTChatBaseViewController {
         laySection.orthogonalScrollingBehavior = behavior
         laySection.contentInsets = sectionInsets
 
-        if sectionModel.rows.count > 1 {
-            let footerSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(self.popoverWidth - 20), heightDimension: NSCollectionLayoutDimension.absolute(sectionModel.footerHeight ?? CGFloat.leastNormalMagnitude))
-            let footerItem = NSCollectionLayoutBoundarySupplementaryItem.init(layoutSize: footerSize, elementKind: UICollectionView.elementKindSectionFooter, alignment: .bottomTrailing)
-
-            laySection.boundarySupplementaryItems = [footerItem]
-        }
-
         return laySection
     }
 
@@ -164,6 +156,115 @@ class PTChatMasterControl: PTChatBaseViewController {
             make.height.equalTo(CGFloat.kTabbarSaveAreaHeight + 64)
         }
         
+        let deleteAllTag = UIButton(type: .custom)
+        deleteAllTag.setImage("🗑️".emojiToImage(emojiFont: .appfont(size: 34)), for: .normal)
+        deleteAllTag.addActionHandlers { sender in
+            if self.segDataArr().count == 1 {
+                PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_cannot_delete_tag"))
+            } else {
+                UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "alert_delete_all_tag"),msgColor: .gobalTextColor,okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
+                } moreBtn: { index, title in
+                    var arr = AppDelegate.appDelegate()?.appConfig.tagDataArr()
+                    arr?.removeAll(where: {$0.keyName != "Base"})
+
+                    if arr?.count == 0 {
+                        let baseSub = PTSegHistoryModel()
+                        baseSub.keyName = "Base"
+                        AppDelegate.appDelegate()!.appConfig.segChatHistory = baseSub.toJSON()!.toJSON()!
+                    } else {
+                        var newJsonArr = [String]()
+                        arr!.enumerated().forEach { index,value in
+                            newJsonArr.append(value.toJSON()!.toJSON()!)
+                        }
+                        AppDelegate.appDelegate()!.appConfig.segChatHistory = newJsonArr.joined(separator: kSeparatorSeg)
+                    }
+                    self.reloadTagChat(index: 0)
+                    self.currentHistoryModel = self.segDataArr()[0]
+                    self.showDetail()
+                    self.collectionView.selectItem(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .top)
+                    PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_done"))
+                }
+            }
+        }
+        
+        let cleanChat = UIButton(type: .custom)
+        cleanChat.setImage("♻️".emojiToImage(emojiFont: .appfont(size: 34)), for: .normal)
+        cleanChat.addActionHandlers { sender in
+            UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "alert_Ask_clean_current_chat_record"),msgColor: .gobalTextColor,okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
+                
+            } moreBtn: { index, title in
+                self.currentChatViewController.cleanCurrentTagChatHistory()
+                PTGCDManager.gcdAfter(time: 0.35) {
+                    self.reloadTagChat(index: 0)
+                }
+            }
+        }
+        
+        let addTag = UIButton(type: .custom)
+        addTag.setImage("🏷️".emojiToImage(emojiFont: .appfont(size: 34)), for: .normal)
+        addTag.addActionHandlers { sender in
+            PTGCDManager.gcdAfter(time: 0.5) {
+                let textKey = PTLanguage.share.text(forKey: "alert_Tag_set")
+                let aiKey = PTLanguage.share.text(forKey: "alert_AI_Set")
+                UIAlertController.base_textfiele_alertVC(title:textKey,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey,aiKey], textFieldTexts: ["",""], keyboardType: [.default,.default],textFieldDelegate: self) { result in
+                    let newKey:String? = result[textKey]!
+                    let newAiKey:String? = result[aiKey]
+                    if !(newKey ?? "").stringIsEmpty()
+                    {
+                        if self.segDataArr().contains(where: {$0.keyName == newKey}) {
+                            PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Save_error"))
+                        } else {
+                            var data = self.segDataArr()
+                            let newTag = PTSegHistoryModel()
+                            newTag.keyName = newKey!
+                            newTag.systemContent = newAiKey ?? ""
+                            data.append(newTag)
+                            var jsonArr = [String]()
+                            data.enumerated().forEach { index,value in
+                                jsonArr.append(value.toJSON()!.toJSON()!)
+                            }
+                            AppDelegate.appDelegate()?.appConfig.segChatHistory = jsonArr.joined(separator: kSeparatorSeg)
+                            self.reloadTagChat(index: (data.count - 1))
+                            self.currentHistoryModel = newTag
+                            self.loadData()
+                        }
+                    } else {
+                        PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Input_error"))
+                    }
+                }
+            }
+        }
+        
+        let setting = UIButton(type: .custom)
+        setting.setImage("⚙️".emojiToImage(emojiFont: .appfont(size: 34)), for: .normal)
+        setting.addActionHandlers { sender in
+            let vc = PTSettingListViewController(user: PTChatUser(senderId: "0", displayName: "0"))
+            vc.cleanChatListBlock = {
+                self.currentChatViewController.iWillRefresh = true
+            }
+            self.currentChatViewController.navigationController?.pushViewController(vc)
+        }
+        
+        self.bottomContent.addSubviews([deleteAllTag,cleanChat,addTag,setting])
+        deleteAllTag.snp.makeConstraints { make in
+            make.width.equalTo(iPadSplitMainControl / 4)
+            make.height.equalTo(deleteAllTag.snp.width)
+            make.centerY.equalToSuperview()
+            make.left.equalToSuperview()
+        }
+        cleanChat.snp.makeConstraints { make in
+            make.width.height.centerY.equalTo(deleteAllTag)
+            make.left.equalTo(deleteAllTag.snp.right)
+        }
+        addTag.snp.makeConstraints { make in
+            make.width.height.centerY.equalTo(deleteAllTag)
+            make.left.equalTo(cleanChat.snp.right)
+        }
+        setting.snp.makeConstraints { make in
+            make.width.height.centerY.equalTo(deleteAllTag)
+            make.left.equalTo(addTag.snp.right)
+        }
+        
         self.currentHistoryModel = self.segDataArr().first!
         
         self.collectionView.snp.makeConstraints { make in
@@ -172,6 +273,10 @@ class PTChatMasterControl: PTChatBaseViewController {
             make.bottom.equalTo(self.bottomContent.snp.top)
         }
         
+        self.loadData()
+    }
+    
+    func loadData() {
         self.showDetail()
         
         var indexPath = IndexPath()
@@ -181,7 +286,6 @@ class PTChatMasterControl: PTChatBaseViewController {
             }
         }
         self.collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .top)
-
     }
     
     func showDetail() {
@@ -193,18 +297,12 @@ class PTChatMasterControl: PTChatBaseViewController {
             rows.append(row_List)
         }
         
-        var sections:PTSection
-        if self.segDataArr().count > 1 {
-            sections = PTSection.init(footerCls:PTPopoverFooter.self,footerID: PTPopoverFooter.ID,footerHeight: self.footerHeight,rows: rows)
-        } else {
-            sections = PTSection.init(rows: rows)
-        }
+        let sections = PTSection.init(rows: rows)
         mSections.append(sections)
 
         self.collectionView.pt_register(by: mSections)
         self.collectionView.reloadData()
     }
-
     
     //MARK: 進入相冊
     func enterPhotos(string:String) {
@@ -230,11 +328,12 @@ class PTChatMasterControl: PTChatBaseViewController {
     }
     
     func reloadTagChat(index:Int) {
+        let segModel = self.segDataArr()[index]
         self.currentChatViewController.messageList.removeAll()
         self.currentChatViewController.chatModels.removeAll()
         self.currentChatViewController.messagesCollectionView.reloadData {
-            self.currentChatViewController.historyModel = self.segDataArr()[index]
-            self.currentChatViewController.setTitleViewFrame(withModel: self.segDataArr()[index])
+            self.currentChatViewController.historyModel = segModel
+            self.currentChatViewController.setTitleViewFrame(withModel: segModel)
             self.currentChatViewController.segDataArr = AppDelegate.appDelegate()!.appConfig.tagDataArr()
         }
     }
@@ -288,6 +387,7 @@ extension PTChatMasterControl:UICollectionViewDelegate,UICollectionViewDataSourc
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        self.currentHistoryModel = self.segDataArr()[indexPath.row]
         self.reloadTagChat(index: indexPath.row)
     }
 }
@@ -335,9 +435,10 @@ extension PTChatMasterControl:SwipeCollectionViewCellDelegate
                    } else if self.segDataArr()[indexPath.row].keyName == self.currentHistoryModel.keyName && self.segDataArr()[indexPath.row].keyName != "Base" {
                        var data = self.segDataArr()
                        data.remove(at: indexPath.row)
-                       self.reloadTagChat(index: 0)
                        PTAppConfig.refreshTagData(segDataArr: data)
-                       self.collectionView.selectItem(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .top)
+                       self.reloadTagChat(index: 0)
+                       self.showDetail()
+                       self.collectionView.selectItem(at: IndexPath(item: 0, section: 0), animated: true, scrollPosition: .top)
                    } else {
                        var data = self.segDataArr()
                        data.remove(at: indexPath.row)
@@ -351,7 +452,8 @@ extension PTChatMasterControl:SwipeCollectionViewCellDelegate
                            }
                        }
                        
-                       self.currentChatViewController.segDataArr = AppDelegate.appDelegate()!.appConfig.tagDataArr()
+                       PTAppConfig.refreshTagData(segDataArr: data)
+                       self.currentChatViewController.segDataArr = data
                    }
                }
            }
@@ -403,15 +505,12 @@ extension PTChatMasterControl:SwipeCollectionViewCellDelegate
                                self.collectionView.selectItem(at: indexPathSelect, animated: false, scrollPosition: .top)
                                
                                if indexPathSelect.row == indexPath.row {
-//                                   if self.refreshCurrentTag != nil {
-//                                       self.refreshCurrentTag!(currentCellBaseData)
-//                                   }
+                                   self.reloadTagChat(index: indexPath.row)
                                }
                            } else {
                                PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Input_error"))
                            }
                        }
-
                    }
                }
            }

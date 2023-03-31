@@ -34,7 +34,14 @@ class PTSuggesstionViewController: PTChatBaseViewController {
         var customers = [NSCollectionLayoutGroupCustomItem]()
         var groupH:CGFloat = 0
         let itemRightSapce:CGFloat = 15
-        let cellWidth = (CGFloat.kSCREEN_WIDTH - PTAppBaseConfig.share.defaultViewSpace * 2 - itemRightSapce) / 2
+        var screenW:CGFloat = 0
+        if Gobal_device_info.isPad {
+            screenW = (CGFloat.kSCREEN_WIDTH - iPadSplitMainControl)
+        } else {
+            screenW = CGFloat.kSCREEN_WIDTH
+        }
+
+        let cellWidth = (screenW - PTAppBaseConfig.share.defaultViewSpace * 2 - itemRightSapce) / 2
         let originalX = PTAppBaseConfig.share.defaultViewSpace
         let contentTopAndBottom:CGFloat = 10
         var x:CGFloat = originalX,y:CGFloat = 0 + contentTopAndBottom
@@ -77,7 +84,7 @@ class PTSuggesstionViewController: PTChatBaseViewController {
                 customers.append(customItem)
             }
         }
-        bannerGroupSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(CGFloat.kSCREEN_WIDTH), heightDimension: NSCollectionLayoutDimension.absolute(groupH))
+        bannerGroupSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(screenW), heightDimension: NSCollectionLayoutDimension.absolute(groupH))
         group = NSCollectionLayoutGroup.custom(layoutSize: bannerGroupSize, itemProvider: { layoutEnvironment in
             customers
         })

@@ -84,13 +84,17 @@ class PTChatViewController: MessagesViewController {
         setting.info = PTLanguage.share.text(forKey: "appUseInfo_Setting")
         setting.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
         
-        let contentDraw = PTCoachModel()
-        contentDraw.info = PTLanguage.share.text(forKey: "suggesstion_Content_draw")
-        contentDraw.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
+        let textDraw = PTCoachModel()
+        textDraw.info = PTLanguage.share.text(forKey: "suggesstion_Text_draw")
+        textDraw.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
 
         let imageLike = PTCoachModel()
         imageLike.info = PTLanguage.share.text(forKey: "suggesstion_Like")
         imageLike.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
+
+        let contentDraw = PTCoachModel()
+        contentDraw.info = PTLanguage.share.text(forKey: "suggesstion_Content_draw")
+        contentDraw.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
 
         let psPhoto = PTCoachModel()
         psPhoto.info = PTLanguage.share.text(forKey: "suggesstion_PS")
@@ -108,7 +112,11 @@ class PTChatViewController: MessagesViewController {
         bot.info = PTLanguage.share.text(forKey: "bot_Suggesstion")
         bot.next = PTLanguage.share.text(forKey: "appUseInfo_Finish")
 
-        return [option,tags,setting,imageLike,psPhoto,sentence,aiDraw,bot]
+        if Gobal_device_info.isPad {
+            return [textDraw,imageLike,psPhoto,sentence,aiDraw,bot]
+        } else {
+            return [option,tags,setting,textDraw,imageLike,psPhoto,sentence,aiDraw,bot]
+        }
     }()
         
     var iWillRefresh:Bool = false
@@ -174,16 +182,7 @@ class PTChatViewController: MessagesViewController {
                         UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "alert_Ask_clean_current_chat_record"),msgColor: .gobalTextColor,okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
                             
                         } moreBtn: { index, title in
-                                                            
-                            var arr = [PTSegHistoryModel]()
-                            if let dataArr = AppDelegate.appDelegate()?.appConfig.segChatHistory.components(separatedBy: kSeparatorSeg) {
-                                self.historyModel?.historyModel = []
-                                self.packChatData()
-                                PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_done"))
-                                self.refreshCurrentTagData()
-                            } else {
-                                PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_error"))
-                            }
+                            self.cleanCurrentTagChatHistory()
                         }
                     }
                 default:break
@@ -193,6 +192,13 @@ class PTChatViewController: MessagesViewController {
         return addChat
     }()
     
+    func cleanCurrentTagChatHistory() {
+        self.historyModel?.historyModel = []
+        self.packChatData()
+        self.refreshCurrentTagData()
+        PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_done"))
+    }
+    
     lazy var titleButton:BKLayoutButton = {
         let view = BKLayoutButton()
         view.titleLabel?.lineBreakMode = .byTruncatingTail
@@ -200,8 +206,12 @@ class PTChatViewController: MessagesViewController {
         view.titleLabel?.font = .appfont(size: 24,bold: true)
         view.setTitleColor(.gobalTextColor, for: .normal)
         view.layoutStyle = .leftTitleRightImage
-        view.setImage(UIImage(systemName: "chevron.up.chevron.down")!.withRenderingMode(.automatic), for: .normal)
-        view.setMidSpacing(5)
+        if !Gobal_device_info.isPad {
+            view.setImage(UIImage(systemName: "chevron.up.chevron.down")!.withRenderingMode(.automatic), for: .normal)
+            view.setMidSpacing(5)
+        } else {
+            view.isUserInteractionEnabled = false
+        }
         view.addActionHandlers { sender in
             let popover = PTPopoverControl(currentSelect: self.historyModel!)
             popover.view.backgroundColor = .gobalBackgroundColor.withAlphaComponent(0.45)
@@ -443,14 +453,17 @@ class PTChatViewController: MessagesViewController {
             NotificationCenter.default.addObserver(self, selector: #selector(self.refreshViewAndLoadNewData), name: NSNotification.Name(rawValue: kRefreshControllerAndLoadNewData), object: nil)
             NotificationCenter.default.addObserver(self, selector: #selector(self.refreshCurrentTagData), name: NSNotification.Name(rawValue: kRefreshCurrentTagData), object: nil)
 
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: self.settingButton)
-            self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: self.optionButton)
+            if !Gobal_device_info.isPad {
+                self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: self.settingButton)
+                self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: self.optionButton)
+            }
             self.navigationItem.titleView = self.titleButton
             
 #if DEBUG
-                UserDefaults.standard.removeObject(forKey: "LatestAppVersionPresented")
-                UserDefaults.standard.synchronize()
-            
+            AppDelegate.appDelegate()!.appConfig.firstCoach = true
+            UserDefaults.standard.removeObject(forKey: "LatestAppVersionPresented")
+            UserDefaults.standard.synchronize()
+
 //            let baseSub = PTSegHistoryModel()
 //            baseSub.keyName = "Base"
 //            let jsonArr = [baseSub.toJSON()!.toJSON()!]
@@ -720,8 +733,12 @@ class PTChatViewController: MessagesViewController {
                 contrast = titleViewSapce
             }
             self.titleButton.frame = CGRect(x: 0, y: 0, width: contrast, height: 34)
-            self.titleButton.isUserInteractionEnabled = true
-            self.titleButton.setImage(UIImage(systemName: "chevron.up.chevron.down")!.withRenderingMode(.automatic), for: .normal)
+            if !Gobal_device_info.isPad {
+                self.titleButton.isUserInteractionEnabled = true
+                self.titleButton.setImage(UIImage(systemName: "chevron.up.chevron.down")!.withRenderingMode(.automatic), for: .normal)
+            } else {
+                self.titleButton.isUserInteractionEnabled = false
+            }
             let att = NSMutableAttributedString.sj.makeText { make in
                 make.append(model.keyName).font(.appfont(size: 17)).textColor(.gobalTextColor).alignment(.center).lineSpacing(5)
                 make.append("\n\(model.systemContent)").font(.appfont(size: 14)).textColor(.lightGray).alignment(.center)
@@ -755,8 +772,12 @@ class PTChatViewController: MessagesViewController {
                 buttonW = titleViewSapce
             }
             self.titleButton.frame = CGRect(x: 0, y: 0, width: buttonW, height: 34)
-            self.titleButton.isUserInteractionEnabled = true
-            self.titleButton.setImage(UIImage(systemName: "chevron.up.chevron.down")!.withRenderingMode(.automatic), for: .normal)
+            if !Gobal_device_info.isPad {
+                self.titleButton.isUserInteractionEnabled = true
+                self.titleButton.setImage(UIImage(systemName: "chevron.up.chevron.down")!.withRenderingMode(.automatic), for: .normal)
+            } else {
+                self.titleButton.isUserInteractionEnabled = false
+            }
         }
     }
 
@@ -2824,27 +2845,46 @@ extension PTChatViewController: CoachMarksControllerDataSource {
     }
     
     func coachMarksController(_ coachMarksController: CoachMarksController, coachMarkAt index: Int) -> CoachMark {
-        switch index {
-        case 0:
-            return coachMarksController.helper.makeCoachMark(for: self.titleButton)
-        case 1:
-            return coachMarksController.helper.makeCoachMark(for: self.optionButton)
-        case 2:
-            return coachMarksController.helper.makeCoachMark(for: self.settingButton)
-        case 3:
-            return coachMarksController.helper.makeCoachMark(for: self.rightInputStackButton)
-        case 4:
-            return coachMarksController.helper.makeCoachMark(for: self.imageBarButton)
-        case 5:
-            return coachMarksController.helper.makeCoachMark(for: self.textImageBarButton)
-        case 6:
-            return coachMarksController.helper.makeCoachMark(for: self.inputBarChatSentence)
-        case 7:
-            return coachMarksController.helper.makeCoachMark(for: self.tfImageButton)
-        case 8:
-            return coachMarksController.helper.makeCoachMark(for: self.tagSuggestionButton)
-        default:
-            return coachMarksController.helper.makeCoachMark()
+        if Gobal_device_info.isPad {
+            switch index {
+            case 0:
+                return coachMarksController.helper.makeCoachMark(for: self.rightInputStackButton)
+            case 1:
+                return coachMarksController.helper.makeCoachMark(for: self.imageBarButton)
+            case 2:
+                return coachMarksController.helper.makeCoachMark(for: self.textImageBarButton)
+            case 3:
+                return coachMarksController.helper.makeCoachMark(for: self.inputBarChatSentence)
+            case 4:
+                return coachMarksController.helper.makeCoachMark(for: self.tfImageButton)
+            case 5:
+                return coachMarksController.helper.makeCoachMark(for: self.tagSuggestionButton)
+            default:
+                return coachMarksController.helper.makeCoachMark()
+            }
+        } else {
+            switch index {
+            case 0:
+                return coachMarksController.helper.makeCoachMark(for: self.titleButton)
+            case 1:
+                return coachMarksController.helper.makeCoachMark(for: self.optionButton)
+            case 2:
+                return coachMarksController.helper.makeCoachMark(for: self.settingButton)
+            case 3:
+                return coachMarksController.helper.makeCoachMark(for: self.rightInputStackButton)
+            case 4:
+                return coachMarksController.helper.makeCoachMark(for: self.imageBarButton)
+            case 5:
+                return coachMarksController.helper.makeCoachMark(for: self.textImageBarButton)
+            case 6:
+                return coachMarksController.helper.makeCoachMark(for: self.inputBarChatSentence)
+            case 7:
+                return coachMarksController.helper.makeCoachMark(for: self.tfImageButton)
+            case 8:
+                return coachMarksController.helper.makeCoachMark(for: self.tagSuggestionButton)
+            default:
+                return coachMarksController.helper.makeCoachMark()
+            }
         }
     }
 }

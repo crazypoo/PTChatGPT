@@ -250,7 +250,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   PooTools:
-    :commit: 114597f284be13766057b153edba5ce6fbea0c69
+    :commit: 8b4802cbe2787eb42e7043d8f84bda5d87f28e76
     :git: https://github.com/crazypoo/PTools.git
 
 SPEC CHECKSUMS:

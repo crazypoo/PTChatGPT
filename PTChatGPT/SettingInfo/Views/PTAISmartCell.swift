@@ -46,11 +46,18 @@ class PTAISmartCell: PTBaseNormalCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        var titleHeight:CGFloat = 0
+        if Gobal_device_info.isPad {
+            titleHeight = 34
+        } else {
+            titleHeight = CGFloat.ScaleW(w: 34)
+        }
+        
         self.contentView.addSubviews([self.nameTitle,self.lineView,self.aiSlider])
         self.nameTitle.snp.makeConstraints { make in
             make.left.right.equalToSuperview().inset(10)
             make.top.equalToSuperview()
-            make.height.equalTo(CGFloat.ScaleW(w: 34))
+            make.height.equalTo(titleHeight)
         }
         
         self.lineView.snp.makeConstraints { make in

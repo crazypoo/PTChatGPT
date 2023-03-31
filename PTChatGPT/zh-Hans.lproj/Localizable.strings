@@ -1,131 +1,267 @@
 "chat_Send" = "发送";
+
 "chat_Read" = "已读";
+
 "chat_User" = "用户";
+
 "about_Main_Theme" = "主题";
+
 "about_Main_Speech" = "语音输入";
+
 "about_Main_Other" = "其他";
+
 "about_Setting" = "设置";
+
 "about_Color" = "颜色";
+
 "about_Language" = "语言";
+
 "about_SavedChat" = "精选问答";
+
 "about_DeleteAllChat" = "删除所有对话记录";
+
 "about_APIAIType" = "AI模型";
+
 "about_APIAIToken" = "AI token";
+
 "about_GetAPIAIToken" = "获取AI token";
+
 "about_Forum" = "讨论";
+
 "about_Rate" = "评分";
+
 "about_Share" = "分享";
+
 "about_Version" = "版本";
+
 "color_Setting" = "顏色設置";
+
 "button_Cancel" = "取消";
+
 "button_Confirm" = "确认";
+
 "theme_Title" = "主题设置";
+
 "theme_MT" = "手动设置";
+
 "theme_Black" = "魅力黑";
+
 "theme_FollowSystem" = "跟随系统";
+
 "theme_Night" = "夜间主题";
+
 "theme_Smart" = "智能";
+
 "theme_SmartInfo" = "进入设置时段后，App将自动切换至魅力黑夜间主题，主题时间结束，切换为原始主题";
+
 "theme_SystemInfo" = "开启后将跟随系统打开或关闭夜间主题";
+
 "theme_Time" = "主题时间";
+
 "theme_White" = "简洁白";
+
 "selected_List" = "精选问答列表";
+
 "cell_Delete" = "删除";
+
 "cell_Delete_one_cell" = "是否确认删除这条信息?";
+
 "alert_Info" = "提示";
+
 "alert_Delete_done" = "删除成功";
+
 "chat_Delete_all_chat" = "是否确认删除全部对话记录?";
+
 "alert_Input_token" = "请输入API token";
+
 "alert_Token_error" = "Token错误";
+
 "chat_Thinking" = "思考中......";
+
 "button_Long_tap" = "长按开始录音";
+
 "button_Long_tap_end" = "松开结束";
+
 "button_Long_tap_cancel" = "取消录音";
+
 "button_Long_tap_release" = "松开发送";
+
 "alert_Save_Q&A" = "你想要保存这个问题的结果和对应的问题吗?";
+
 "alert_Error_same" = "不可以保存重复内容";
+
 "alert_Save_success" = "保存成功";
+
 "chat_Edit" = "请输入对此修改的内容";
+
 "chat_Sending" = "发送中......";
+
 "first_Title" = "获取OpenAI API key";
+
 "first_Info_title" = "要使用该应用程序，您必须生成一个令牌来访问OpenAI API";
+
 "first_Info_info" = "这个应用程序不是由OpeanAI制作的。这是一个独立且完全免费的项目，连接到OpenAI的公共API。该应用程序与OpenAI没有任何关联，如果OpenAI想请求关闭该项目，他们可以联系我";
+
 "first_Paste" = "粘贴你的Token";
+
 "first_Go_get_api_token" = "去获取API token";
+
 "first_Disclaimer" = "免责声明";
+
 "first_Start" = "开始使用";
+
 "first_Disclaimer_info" = "继续即表示您同意阅读免责声明";
+
 "first_Select_speech_language" = "请选择你的语音输入母语,默认中文(简体)";
+
 "disclaimer_App" = "App免责声明";
+
 "disclaimer_External" = "外部链接免责声明";
+
 "disclaimer_App_Info" = "Chat 走啦 在我们的移动应用程序上提供的信息仅供一般参考。我们移动应用程序上的所有信息都是善意提供的，但是对于我们移动应用程序上任何信息的准确性、充分性、有效性、可靠性、可用性或完整性，我们不作任何明示或暗示的陈述或保证。在任何情况下，对于因使用我们的移动应用程序或依赖我们移动应用程序上提供的任何信息而造成的任何损失或损害，我们概不负责。您使用我们的移动应用程序以及您对我们移动应用程序上任何信息的依赖完全由您自己承担风险。";
+
 "disclaimer_External_info" = "我们的移动应用程序可能包含（或您可能通过我们的移动应用程序发送）指向其他网站的链接或属于或源自第三方的内容，或链接到横幅或其他广告中的网站和功能。我们不会调查、监控或检查此类外部链接的准确性、充分性、有效性、可靠性、可用性或完整性。对于通过本网站链接的第三方网站或任何横幅或其他广告中链接的任何网站或功能提供的任何信息的准确性或可靠性，我们不保证、认可、保证或承担任何责任。我们不会参与或以任何方式负责监控您与第三方产品或服务提供商之间的任何交易。";
+
 "picker_And" = "至";
+
 "chat_Select" = "暂时没有精选记录,点击我去提问题吧!";
+
 "color_Bubble_user" = "用户聊天框颜色";
+
 "color_Bubble_bot" = "AI聊天框颜色";
+
 "color_Text_bot" = "AI文字颜色";
+
 "color_Text_user" = "用户文字颜色";
+
 "about_AI_smart" = "AI聪明度";
+
 "about_User_icon" = "用户头像";
+
 "alert_No_photo_library" = "由于系统原因, 无法访问相册";
+
 "alert_Go_to_photo_setting" = "[前往：设置 - 隐私 - 照片 - %@] 允许应用访问";
+
 "about_Delete_all_voice_file" = "删除所有语音文件";
+
 "alert_Can_not_send_voice" = "你没有授权使用语音输入功能";
+
 "about_Draw_image_size" = "AI绘画Size";
+
 "size_Wrong" = "Size有误,请检查后重试.最大1024 X 1024";
+
 "chat_Delete_all_voice_file" = "是否确认删除全部语音文件?";
+
 "chat_Empty" = "暂时没有对话记录,点击这里开始";
+
 "color_Wave" = "波纹颜色";
+
 "chat_Copy" = "复制";
+
 "chat_Edit_question" = "更正内容";
+
 "chat_Speak_text" = "转成语音播放";
+
 "chat_Favourite" = "精选";
+
 "alert_Option_title" = "功能";
+
 "alert_Select_option" = "请选择你需要的功能";
+
 "alert_Copy_done" = "复制成功";
+
 "voice_Cancel_send" = "取消发送";
+
 "voice_Change_to_text" = "转成文字发送";
+
 "alert_Tag_set" = "请输入你想创建的标签";
+
 "alert_Input_error" = "输入内容有误";
+
 "alert_Delete_error" = "删除失败";
+
 "chat_Resend" = "重新发送";
+
 "alert_Save_error" = "保存失败";
+
 "alert_AI_Set" = "AI人设";
+
 "alert_Add_tag" = "添加标签";
+
 "alert_Delete_current_history" = "清空当前记录";
+
 "alert_Ask_clean_current_chat_record" = "是否清空当前记录?";
+
 "appUseInfo_Title_view" = "点击这里可以更换你设置的聊天主题,点击展开后可以删除某一个标签.";
+
 "appUseInfo_Option" = "点击这里可以获得更多功能";
+
 "appUseInfo_Setting" = "点击这里可以对App进行更多设置";
+
 "appUseInfo_Next" = "下一步";
+
 "appUseInfo_Finish" = "完成";
+
 "alert_Time_set_error" = "开始时间必须小于结束时间";
+
 "chat_Send_error" = "发送失败";
+
 "alert_Edit_ai" = "更改内容";
+
 "alert_Edit_error" = "编辑失败";
+
 "chat_Get_image_count" = "获取图片的数量";
+
 "chat_Edit_message" = "修改:";
+
 "chat_Looking_for" = "寻找相似的";
+
 "chat_Paint_image" = "创作图片";
+
 "chat_Check_sentence" = "文本数据中有不合适、不恰当或敏感的内容，例如诅咒、垃圾信息、仇恨言论、色情内容等等";
+
 "chat_TF" = "选择TensorFlowLite生成图片的模式";
+
 "chat_TF_Cartoon" = "卡通";
+
 "chat_TF_Oil_painting" = "油画";
+
 "draw_Reference" = "油画参照";
+
 "setting_Tool" = "工具";
+
 "setting_Reset" = "重置所有设置";
+
 "alert_Reset_all_setting" = "是否确定重置所有设定?";
+
 "about_Help" = "帮助";
+
 "help_Base" = "基础";
+
 "help_Other" = "其他标签";
+
 "help_And" = "或";
+
 "alert_TF" = "诚邀你参加我们的TestFlight版本,可以更快地获取新功能";
+
 "bot_Suggesstion" = "AI人设";
+
 "bot_Suggesstion_import_msg" = "是否导入该人设?";
+
 "bot_Suggesstion_import" = "导入";
+
 "suggesstion_AI_draw" = "AI根据对应的颜色生成油画图片/直接根据图片生成动画风格图片";
+
 "suggesstion_Sentence_switch" = "敏感语句过滤开关";
+
 "suggesstion_PS" = "根据原图和遮罩图片和PS需求修改图片";
+
 "suggesstion_Like" = "根据图片查找类似的图片";
+
 "suggesstion_Content_draw" = "AI根据需求画出图片";
+
+"suggesstion_Text_draw" = "根据文字描述画出图片";
+
+"alert_delete_all_tag" = "是否删除所有标签?";
+
+"alert_cannot_delete_tag" = "暂时没有其他标签可以删除";

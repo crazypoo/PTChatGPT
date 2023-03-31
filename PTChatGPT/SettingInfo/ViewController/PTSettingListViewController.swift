@@ -72,6 +72,21 @@ class PTChatPanelLayout: FloatingPanelLayout {
 
 class PTSettingListViewController: PTChatBaseViewController {
 
+    lazy var currentSettingViewController:PTSettingListViewController = {
+        if let splitViewController = self.splitViewController,
+            let detailViewController = splitViewController.viewControllers.last as? PTNavController {
+            // 在这里使用detailViewController
+            let chat = detailViewController.viewControllers.last as! PTSettingListViewController
+            return chat
+        } else if let detailViewController = self.navigationController?.viewControllers.last as? PTNavController {
+            // 在这里使用detailViewController
+            let chat = detailViewController.viewControllers.last as! PTSettingListViewController
+            return chat
+        } else {
+            return PTSettingListViewController(user: PTChatUser(senderId: "0", displayName: "0"))
+        }
+    }()
+    
     var currentChatModel:PTSegHistoryModel?
     
     var cleanChatListBlock:(()->Void)?
@@ -173,9 +188,17 @@ class PTSettingListViewController: PTChatBaseViewController {
         if self.user.senderId == PTChatData.share.bot.senderId {
             themeMain.models = [color]
         } else if self.user.senderId == PTChatData.share.user.senderId {
-            themeMain.models = [color,userIcon]
+            if Gobal_device_info.isPad {
+                themeMain.models = [color]
+            } else {
+                themeMain.models = [color,userIcon]
+            }
         } else {
-            themeMain.models = [color,userIcon,language,theme]
+            if Gobal_device_info.isPad {
+                themeMain.models = [color,language,theme]
+            } else {
+                themeMain.models = [color,userIcon,language,theme]
+            }
         }
         
         //MARK: Speech
@@ -389,17 +412,31 @@ class PTSettingListViewController: PTChatBaseViewController {
         var bannerGroupSize : NSCollectionLayoutSize
         var customers = [NSCollectionLayoutGroupCustomItem]()
         var groupH:CGFloat = 0
+        var screenW:CGFloat = 0
+        if Gobal_device_info.isPad {
+            screenW = (CGFloat.kSCREEN_WIDTH - iPadSplitMainControl)
+        } else {
+            screenW = CGFloat.kSCREEN_WIDTH
+        }
         sectionModel.rows.enumerated().forEach { (index,model) in
-            var cellHeight:CGFloat = CGFloat.ScaleW(w: 44)
-            if (model.dataModel as! PTFusionCellModel).name == .aiSmart
-            {
-                cellHeight = CGFloat.ScaleW(w: 98)
+            var cellHeight:CGFloat = 0
+            if Gobal_device_info.isPad {
+                cellHeight = 54
+            } else {
+                cellHeight = CGFloat.ScaleW(w: 44)
             }
-            let customItem = NSCollectionLayoutGroupCustomItem.init(frame: CGRect.init(x: PTAppBaseConfig.share.defaultViewSpace, y: groupH, width: CGFloat.kSCREEN_WIDTH - PTAppBaseConfig.share.defaultViewSpace * 2, height: cellHeight), zIndex: 1000+index)
+            if (model.dataModel as! PTFusionCellModel).name == .aiSmart {
+                if Gobal_device_info.isPad {
+                    cellHeight = 98
+                } else {
+                    cellHeight = CGFloat.ScaleW(w: 98)
+                }
+            }
+            let customItem = NSCollectionLayoutGroupCustomItem.init(frame: CGRect.init(x: PTAppBaseConfig.share.defaultViewSpace, y: groupH, width: screenW - PTAppBaseConfig.share.defaultViewSpace * 2, height: cellHeight), zIndex: 1000+index)
             customers.append(customItem)
             groupH += cellHeight
         }
-        bannerGroupSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(CGFloat.kSCREEN_WIDTH), heightDimension: NSCollectionLayoutDimension.absolute(groupH))
+        bannerGroupSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(screenW), heightDimension: NSCollectionLayoutDimension.absolute(groupH))
         group = NSCollectionLayoutGroup.custom(layoutSize: bannerGroupSize, itemProvider: { layoutEnvironment in
             customers
         })
@@ -414,8 +451,8 @@ class PTSettingListViewController: PTChatBaseViewController {
         laySection.orthogonalScrollingBehavior = behavior
         laySection.contentInsets = sectionInsets
 
-        let headerSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(CGFloat.kSCREEN_WIDTH - PTAppBaseConfig.share.defaultViewSpace * 2), heightDimension: NSCollectionLayoutDimension.absolute(sectionModel.headerHeight ?? CGFloat.leastNormalMagnitude))
-        let footerSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(CGFloat.kSCREEN_WIDTH - PTAppBaseConfig.share.defaultViewSpace * 2), heightDimension: NSCollectionLayoutDimension.absolute(sectionModel.footerHeight ?? CGFloat.leastNormalMagnitude))
+        let headerSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(screenW - PTAppBaseConfig.share.defaultViewSpace * 2), heightDimension: NSCollectionLayoutDimension.absolute(sectionModel.headerHeight ?? CGFloat.leastNormalMagnitude))
+        let footerSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(screenW - PTAppBaseConfig.share.defaultViewSpace * 2), heightDimension: NSCollectionLayoutDimension.absolute(sectionModel.footerHeight ?? CGFloat.leastNormalMagnitude))
         let headerItem = NSCollectionLayoutBoundarySupplementaryItem.init(layoutSize: headerSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .topTrailing)
         let footerItem = NSCollectionLayoutBoundarySupplementaryItem.init(layoutSize: footerSize, elementKind: UICollectionView.elementKindSectionFooter, alignment: .bottomTrailing)
         if sectionModel.headerTitle == PTLanguage.share.text(forKey: "about_Main_Other") {
@@ -454,7 +491,7 @@ class PTSettingListViewController: PTChatBaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         if self.user.senderId == PTChatData.share.bot.senderId {
             self.zx_navTitle = "ZolaAi " + PTLanguage.share.text(forKey: "about_Setting")
         } else if self.user.senderId == PTChatData.share.user.senderId {
@@ -493,11 +530,17 @@ class PTSettingListViewController: PTChatBaseViewController {
                 }
             }
             
+            var headerHeight:CGFloat = 0
+            if Gobal_device_info.isPad {
+                headerHeight = 44
+            } else {
+                headerHeight = CGFloat.ScaleW(w: 44)
+            }
             if value.name == PTLanguage.share.text(forKey: "about_Main_Other") {
-                let cellSection = PTSection.init(headerTitle:value.name,headerCls:PTSettingHeader.self,headerID: PTSettingHeader.ID,footerCls:PTSettingFooter.self,footerID:PTSettingFooter.ID,footerHeight:CGFloat.kTabbarHeight_Total,headerHeight: CGFloat.ScaleW(w: 44),rows: rows)
+                let cellSection = PTSection.init(headerTitle:value.name,headerCls:PTSettingHeader.self,headerID: PTSettingHeader.ID,footerCls:PTSettingFooter.self,footerID:PTSettingFooter.ID,footerHeight:CGFloat.kTabbarHeight_Total,headerHeight: headerHeight,rows: rows)
                 mSections.append(cellSection)
             } else {
-                let cellSection = PTSection.init(headerTitle:value.name,headerCls:PTSettingHeader.self,headerID: PTSettingHeader.ID,headerHeight: CGFloat.ScaleW(w: 44),rows: rows)
+                let cellSection = PTSection.init(headerTitle:value.name,headerCls:PTSettingHeader.self,headerID: PTSettingHeader.ID,headerHeight: headerHeight,rows: rows)
                 mSections.append(cellSection)
             }
         }
@@ -617,8 +660,14 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
         if itemRow.title == .colorString {
             let vc = PTColorSettingViewController(user: self.user)
             let nav = PTNavController(rootViewController: vc)
-            nav.modalPresentationStyle = .fullScreen
-            self.navigationController?.present(nav, animated: true)
+            if Gobal_device_info.isPad {
+                nav.modalPresentationStyle = .formSheet
+                nav.preferredContentSize = CGSize(width: 400, height: CGFloat.kSCREEN_HEIGHT)
+                self.splitViewController?.present(nav, animated: true)
+            } else {
+                nav.modalPresentationStyle = .fullScreen
+                self.navigationController?.present(nav, animated: true)
+            }
         } else if itemRow.title == .savedChat {
             let vc = PTSaveChatViewController()
             self.navigationController?.pushViewController(vc)
@@ -681,7 +730,13 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
             let url = URL(string: shareLink)!
             let shareItem = PTShareItem(title: title, content: content, url: url)
             let activityViewController = UIActivityViewController(activityItems: [shareItem], applicationActivities: nil)
-            present(activityViewController, animated: true, completion: nil)
+            if Gobal_device_info.isPad {
+                let nav = PTNavController(rootViewController: activityViewController)
+                nav.modalPresentationStyle = .formSheet
+                self.present(nav, animated: true, completion: nil)
+            } else {
+                self.present(activityViewController, animated: true, completion: nil)
+            }
         } else if itemRow.title == .rate {
             PTAppStoreFunction.rateApp(appid: AppAppStoreID)
         } else if itemRow.title == .speech {

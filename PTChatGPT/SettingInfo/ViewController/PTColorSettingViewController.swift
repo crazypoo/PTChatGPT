@@ -79,16 +79,21 @@ class PTColorSettingViewController: PTChatBaseViewController {
         var bannerGroupSize : NSCollectionLayoutSize
         var customers = [NSCollectionLayoutGroupCustomItem]()
         var groupH:CGFloat = 0
+        var cellHeight:CGFloat = 0
+        var screenW:CGFloat = 0
+        if Gobal_device_info.isPad {
+            cellHeight = 64
+            screenW = 400
+        } else {
+            cellHeight = CGFloat.ScaleW(w: 78)
+            screenW = CGFloat.kSCREEN_WIDTH
+        }
         sectionModel.rows.enumerated().forEach { (index,model) in
-            var cellHeight:CGFloat = CGFloat.ScaleW(w: 44)
-            if (model.dataModel as! PTFusionCellModel).name == .aiSmart {
-                cellHeight = CGFloat.ScaleW(w: 78)
-            }
-            let customItem = NSCollectionLayoutGroupCustomItem.init(frame: CGRect.init(x: PTAppBaseConfig.share.defaultViewSpace, y: groupH, width: CGFloat.kSCREEN_WIDTH - PTAppBaseConfig.share.defaultViewSpace * 2, height: cellHeight), zIndex: 1000+index)
+            let customItem = NSCollectionLayoutGroupCustomItem.init(frame: CGRect.init(x: PTAppBaseConfig.share.defaultViewSpace, y: groupH, width: screenW - PTAppBaseConfig.share.defaultViewSpace * 2, height: cellHeight), zIndex: 1000+index)
             customers.append(customItem)
             groupH += cellHeight
         }
-        bannerGroupSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(CGFloat.kSCREEN_WIDTH), heightDimension: NSCollectionLayoutDimension.absolute(groupH))
+        bannerGroupSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(screenW), heightDimension: NSCollectionLayoutDimension.absolute(groupH))
         group = NSCollectionLayoutGroup.custom(layoutSize: bannerGroupSize, itemProvider: { layoutEnvironment in
             customers
         })
@@ -102,10 +107,6 @@ class PTColorSettingViewController: PTChatBaseViewController {
         laySection = NSCollectionLayoutSection(group: group)
         laySection.orthogonalScrollingBehavior = behavior
         laySection.contentInsets = sectionInsets
-
-        let headerSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(CGFloat.kSCREEN_WIDTH - PTAppBaseConfig.share.defaultViewSpace * 2), heightDimension: NSCollectionLayoutDimension.absolute(sectionModel.headerHeight ?? CGFloat.leastNormalMagnitude))
-        let headerItem = NSCollectionLayoutBoundarySupplementaryItem.init(layoutSize: headerSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .topTrailing)
-        laySection.boundarySupplementaryItems = [headerItem]
 
         let backItem = NSCollectionLayoutDecorationItem.background(elementKind: "background")
         backItem.contentInsets = NSDirectionalEdgeInsets.init(top: 10, leading: PTAppBaseConfig.share.defaultViewSpace, bottom: 0, trailing: PTAppBaseConfig.share.defaultViewSpace)
@@ -142,13 +143,21 @@ class PTColorSettingViewController: PTChatBaseViewController {
         super.viewDidLoad()
         
         self.zx_navTitle = PTLanguage.share.text(forKey: "color_Setting")
+        if Gobal_device_info.isPad {
+            self.isModalInPresentation = true
+            self.zx_navFixFrame = CGRect(x: 0, y: 0, width: 400, height: 54)
+        }
         self.setupColorPicker()
         self.setupBrightnessSlider()
         self.setupColorPickerHandles()
         
         self.view.addSubviews([self.colorPicker,self.brightnessSlider,self.collectionView])
         self.colorPicker.snp.makeConstraints { make in
-            make.left.right.equalToSuperview().inset(20)
+            if Gobal_device_info.isPad {
+                make.left.right.equalToSuperview().inset(88)
+            } else {
+                make.left.right.equalToSuperview().inset(20)
+            }
             make.height.equalTo(self.colorPicker.snp.width)
             make.top.equalToSuperview().inset(CGFloat.kNavBarHeight_Total + 10)
         }
@@ -163,25 +172,27 @@ class PTColorSettingViewController: PTChatBaseViewController {
             make.top.equalTo(self.brightnessSlider.snp.bottom)
         }
                 
+        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: nil)
+        panGestureRecognizer.delegate = self
+        self.colorPicker.addGestureRecognizer(panGestureRecognizer)
+
         self.showDetail()
     }
     
+    override func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
+
     func showDetail() {
         mSections.removeAll()
 
         self.aboutModels.enumerated().forEach { (index,value) in
             var rows = [PTRows]()
             value.models.enumerated().forEach { (subIndex,subValue) in
-                
-                if subValue.name == .aiSmart {
-                    let row_List = PTRows.init(title: subValue.name, placeholder: subValue.content,cls: PTAISmartCell.self, ID: PTAISmartCell.ID, dataModel: subValue)
-                    rows.append(row_List)
-                } else {
-                    let row_List = PTRows.init(title: subValue.name, placeholder: subValue.content,cls: PTFusionCell.self, ID: PTFusionCell.ID, dataModel: subValue)
-                    rows.append(row_List)
-                }
+                let row_List = PTRows.init(title: subValue.name, placeholder: subValue.content,cls: PTFusionCell.self, ID: PTFusionCell.ID, dataModel: subValue)
+                rows.append(row_List)
             }
-            let cellSection = PTSection.init(headerTitle:value.name,headerCls:PTSettingHeader.self,headerID: PTSettingHeader.ID,headerHeight: CGFloat.ScaleW(w: 44),rows: rows)
+            let cellSection = PTSection.init(rows: rows)
             mSections.append(cellSection)
         }
         
@@ -289,20 +300,6 @@ extension PTColorSettingViewController:UICollectionViewDelegate,UICollectionView
         return self.mSections[section].rows.count
     }
     
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let itemSec = mSections[indexPath.section]
-        if kind == UICollectionView.elementKindSectionHeader {
-            if itemSec.headerID == PTSettingHeader.ID {
-                let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: itemSec.headerID!, for: indexPath) as! PTSettingHeader
-                header.titleLabel.text = itemSec.headerTitle
-                return header
-            }
-            return UICollectionReusableView()
-        } else {
-            return UICollectionReusableView()
-        }
-    }
-
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let itemSec = mSections[indexPath.section]
         let itemRow = itemSec.rows[indexPath.row]

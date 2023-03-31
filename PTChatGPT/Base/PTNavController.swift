@@ -88,7 +88,7 @@ class PTNavController: ZXNavigationBarNavigationController {
         interactivePopGestureRecognizer?.delegate = self
         delegate = self
         
-        view.backgroundColor = UIColor.black
+        view.backgroundColor = .gobalBackgroundColor
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {

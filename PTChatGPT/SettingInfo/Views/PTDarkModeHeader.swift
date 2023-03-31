@@ -121,10 +121,17 @@ class PTDarkModeHeader: PTBaseCollectionReusableView {
     override init(frame: CGRect) {
         super.init(frame: frame)
                 
+        var screenW:CGFloat = 0
+        if Gobal_device_info.isPad {
+            screenW = (CGFloat.kSCREEN_WIDTH - iPadSplitMainControl)
+        } else {
+            screenW = CGFloat.kSCREEN_WIDTH
+        }
+
         self.addSubviews([self.contentView])
         self.contentView.snp.makeConstraints { make in
             make.bottom.equalToSuperview()
-            make.width.equalTo(CGFloat.kSCREEN_WIDTH - PTAppBaseConfig.share.defaultViewSpace * 2)
+            make.width.equalTo(screenW - PTAppBaseConfig.share.defaultViewSpace * 2)
             make.centerX.equalToSuperview()
             make.top.equalToSuperview().inset(10)
         }
