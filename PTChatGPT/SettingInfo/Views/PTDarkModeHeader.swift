@@ -164,7 +164,7 @@ class PTDarkModeHeader: PTBaseCollectionReusableView {
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        if PTDrakModeOption.isFollowSystem {
+        if PTDarkModeOption.isFollowSystem {
             if UITraitCollection.current.userInterfaceStyle == .light {
                 self.whiteButton.isSelected = true
                 self.blackButton.isSelected = false

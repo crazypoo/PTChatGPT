@@ -40,7 +40,6 @@ PODS:
   - MarqueeLabel (4.3.0)
   - MBProgressHUD (1.2.0)
   - MJExtension (3.4.1)
-  - MJRefresh (3.7.5)
   - NotificationBannerSwift (3.2.0):
     - MarqueeLabel (~> 4.3.0)
     - SnapKit (~> 5.6.0)
@@ -63,7 +62,6 @@ PODS:
     - LXFProtocolTool/LXFEmptyDataSetable
     - MBProgressHUD
     - MJExtension
-    - MJRefresh
     - NotificationBannerSwift
     - pop
     - SDWebImage
@@ -220,7 +218,6 @@ SPEC REPOS:
     - MarqueeLabel
     - MBProgressHUD
     - MJExtension
-    - MJRefresh
     - NotificationBannerSwift
     - pop
     - RangeSeekSlider
@@ -253,7 +250,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   PooTools:
-    :commit: cba6c2a476c3d1e20454a16332ffd0712c85b237
+    :commit: 114597f284be13766057b153edba5ce6fbea0c69
     :git: https://github.com/crazypoo/PTools.git
 
 SPEC CHECKSUMS:
@@ -282,9 +279,8 @@ SPEC CHECKSUMS:
   MarqueeLabel: 02f5ac8fd6877c94564556cb93fa86c70c08baeb
   MBProgressHUD: 3ee5efcc380f6a79a7cc9b363dd669c5e1ae7406
   MJExtension: 21c5f6f8c4d5d8844b7ae8fbae08fed0b501f961
-  MJRefresh: fdf5e979eb406a0341468932d1dfc8b7f9fce961
   NotificationBannerSwift: 437e135298d297fcb03f3eec4466f45cdb128d3d
-  PooTools: 6e13bee37d3575419718ddea2fd5e905fbbb24dd
+  PooTools: e88ea3ecea7cd25dc6ee500d560a8b0399f9ce9c
   pop: d582054913807fd11fd50bfe6a539d91c7e1a55a
   RangeSeekSlider: 650b11fa1edcb92e1e0ede797669d98622570fb5
   SDWebImage: fd7e1a22f00303e058058278639bf6196ee431fe

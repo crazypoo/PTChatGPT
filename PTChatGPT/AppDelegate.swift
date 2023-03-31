@@ -59,10 +59,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     developmentDevice: debugDevice,
                     config: buglyConfig)
 
-        PTDrakModeOption.defaultDark()
+        PTDarkModeOption.defaultDark()
         PTAppBaseConfig.share.decorationBackgroundColor = .gobalCellBackgroundColor
         StatusBarManager.shared.isHidden = false
-        StatusBarManager.shared.style = PTDrakModeOption.isLight ? .darkContent : .lightContent
+        StatusBarManager.shared.style = PTDarkModeOption.isLight ? .darkContent : .lightContent
         
         self.query.searchScopes = [NSMetadataQueryUbiquitousDocumentsScope]
         self.query.predicate = NSPredicate(value: true)
@@ -99,16 +99,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         #endif
                           
         PTNSLogConsole("\(self.appConfig.apiToken)")
+        
+        
         var viewC:UIViewController!
         if self.appConfig.apiToken.stringIsEmpty() {
             viewC = PTSettingViewController()
         } else {
             PTNSLogConsole(self.appConfig.segChatHistory)
-            viewC = PTChatViewController(historyModel: PTSegHistoryModel())//PTChatViewController(token: self.appConfig.apiToken,language: OSSVoiceEnum(rawValue: self.appConfig.language)!)
+            if Gobal_device_info.isPad {
+                viewC = PTSplitViewController()
+            } else {
+                viewC = PTChatViewController(historyModel: PTSegHistoryModel())
+            }
         }
-        let nav = PTNavController(rootViewController: viewC)
         self.window = UIWindow.init(frame: UIScreen.main.bounds)
-        self.window?.rootViewController = nav
+        if Gobal_device_info.isPad {
+            self.window?.rootViewController = viewC
+        } else {
+            let nav = PTNavController(rootViewController: viewC)
+            self.window?.rootViewController = nav
+        }
         self.window?.makeKeyAndVisible()
         
         PTLaunchAdMonitor.showAt(path: ["https://avatars.githubusercontent.com/u/1111976?v=4"], onView: self.window!, timeInterval: 2, param: ["URLS":myGithubUrl], year: "2023", skipFont: .appfont(size: 10), comName: "Crazypoo", comNameFont: .appfont(size: 10)) {

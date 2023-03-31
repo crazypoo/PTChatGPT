@@ -72,6 +72,8 @@ let ExternalLinksDisclaimer = PTLanguage.share.text(forKey: "disclaimer_External
 
 let userImageMessageFilePath = FileManager.pt.LibraryDirectory() + "/UserImageMessageFile"
 
+let iPadSplitMainControl:CGFloat = 300
+
 extension UIColor {
     static let botBubbleColor = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
     static let userBubbleColor = UIColor.systemBlue
@@ -79,12 +81,12 @@ extension UIColor {
     static let userTextColor = UIColor.darkText
     static let botTextColor = UIColor.darkText
     /// 字體顏色
-    private(set) static var gobalTextColor = PTDrakModeOption.colorLightDark(lightColor: .black, darkColor: UIColor.white)
-    private(set) static var gobalBackgroundColor = PTDrakModeOption.colorLightDark(lightColor: PTAppBaseConfig.share.viewControllerBaseBackgroundColor, darkColor: UIColor.black)
+    private(set) static var gobalTextColor = PTDarkModeOption.colorLightDark(lightColor: .black, darkColor: UIColor.white)
+    private(set) static var gobalBackgroundColor = PTDarkModeOption.colorLightDark(lightColor: PTAppBaseConfig.share.viewControllerBaseBackgroundColor, darkColor: UIColor.black)
     
-    private(set) static var gobalScrollerBackgroundColor = PTDrakModeOption.colorLightDark(lightColor: PTAppBaseConfig.share.viewControllerBaseBackgroundColor, darkColor: UIColor.black)
+    private(set) static var gobalScrollerBackgroundColor = PTDarkModeOption.colorLightDark(lightColor: PTAppBaseConfig.share.viewControllerBaseBackgroundColor, darkColor: UIColor.black)
     
-    private(set) static var gobalCellBackgroundColor = PTDrakModeOption.colorLightDark(lightColor: .white, darkColor: .Black25PercentColor)
+    private(set) static var gobalCellBackgroundColor = PTDarkModeOption.colorLightDark(lightColor: .white, darkColor: .Black25PercentColor)
 }
 
 extension CGSize {

@@ -11,7 +11,7 @@ import PooTools
 
 class PTDarkModeControl: PTChatBaseViewController {
 
-    private var darkTime: String = PTDrakModeOption.smartPeelingTimeIntervalValue
+    private var darkTime: String = PTDarkModeOption.smartPeelingTimeIntervalValue
 
     lazy var darkModeControlArr : [[PTFusionCellModel]] = {
         let smart = PTFusionCellModel()
@@ -69,7 +69,7 @@ class PTDarkModeControl: PTChatBaseViewController {
             let footerSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(CGFloat.kSCREEN_WIDTH), heightDimension: NSCollectionLayoutDimension.absolute(sectionModel.footerHeight ?? CGFloat.leastNormalMagnitude))
             let footerItem = NSCollectionLayoutBoundarySupplementaryItem.init(layoutSize: footerSize, elementKind: UICollectionView.elementKindSectionFooter, alignment: .bottomTrailing)
 
-            if PTDrakModeOption.isSmartPeeling {
+            if PTDarkModeOption.isSmartPeeling {
                 laySection.boundarySupplementaryItems = [headerItem,footerItem]
             } else {
                 laySection.boundarySupplementaryItems = [headerItem]
@@ -119,7 +119,7 @@ class PTDarkModeControl: PTChatBaseViewController {
             switch index {
             case 0:
                 var sections:PTSection
-                if PTDrakModeOption.isSmartPeeling {
+                if PTDarkModeOption.isSmartPeeling {
                     sections = PTSection(headerCls: PTDarkModeHeader.self,headerID: PTDarkModeHeader.ID,footerCls: PTDarkSmartFooter.self,footerID: PTDarkSmartFooter.ID,footerHeight: PTDarkSmartFooter.footerTotalHeight,headerHeight: PTDarkModeHeader.contentHeight + 10, rows: rows)
                 } else {
                     sections = PTSection(headerCls: PTDarkModeHeader.self,headerID: PTDarkModeHeader.ID,headerHeight: PTDarkModeHeader.contentHeight + 10, rows: rows)
@@ -127,7 +127,7 @@ class PTDarkModeControl: PTChatBaseViewController {
                 mSections.append(sections)
             case 1:
                 var sections:PTSection
-                if PTDrakModeOption.isFollowSystem {
+                if PTDarkModeOption.isFollowSystem {
                     sections = PTSection(footerCls: PTDarkFollowSystemFooter.self,footerID: PTDarkFollowSystemFooter.ID,footerHeight: PTDarkFollowSystemFooter.footerHeight, rows: rows)
                 } else {
                     sections = PTSection(rows: rows)
@@ -158,9 +158,9 @@ extension PTDarkModeControl:UICollectionViewDelegate,UICollectionViewDataSource
         if kind == UICollectionView.elementKindSectionHeader {
             if itemSec.headerID == PTDarkModeHeader.ID {
                 let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: itemSec.headerID!, for: indexPath) as! PTDarkModeHeader
-                header.currentMode = PTDrakModeOption.isLight ? .light : .dark
+                header.currentMode = PTDarkModeOption.isLight ? .light : .dark
                 header.selectModeBlock = { mode in
-                    PTDrakModeOption.setDarkModeCustom(isLight: mode == .light ? true : false)
+                    PTDarkModeOption.setDarkModeCustom(isLight: mode == .light ? true : false)
                     self.showDetail()
                 }
                 return header
@@ -171,10 +171,10 @@ extension PTDarkModeControl:UICollectionViewDelegate,UICollectionViewDataSource
                 let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: itemSec.footerID!, for: indexPath) as! PTDarkSmartFooter
                 footer.themeTimeButton.setTitle(darkTime, for: .normal)
                 footer.themeTimeButton.addActionHandlers { sender in
-                    let timeIntervalValue = PTDrakModeOption.smartPeelingTimeIntervalValue.separatedByString(with: "~")
+                    let timeIntervalValue = PTDarkModeOption.smartPeelingTimeIntervalValue.separatedByString(with: "~")
                     let darkModePickerView = DarkModePickerView(startTime: timeIntervalValue[0], endTime: timeIntervalValue[1]) { (startTime, endTime) in
                         if startTime < endTime {
-                            PTDrakModeOption.setSmartPeelingTimeChange(startTime: startTime, endTime: endTime)
+                            PTDarkModeOption.setSmartPeelingTimeChange(startTime: startTime, endTime: endTime)
                             self.darkTime = startTime + "~" + endTime
                             self.showDetail()
                         } else {
@@ -207,22 +207,22 @@ extension PTDarkModeControl:UICollectionViewDelegate,UICollectionViewDataSource
             cell.dataContent.backgroundColor = .gobalCellBackgroundColor
             cell.dataContent.valueSwitch.onTintColor = .orange
             if cellModel.name == PTLanguage.share.text(forKey: "theme_Smart") {
-                cell.dataContent.valueSwitch.isOn = PTDrakModeOption.isSmartPeeling
+                cell.dataContent.valueSwitch.isOn = PTDarkModeOption.isSmartPeeling
                 PTGCDManager.gcdMain {
                     cell.contentView.viewCornerRectCorner(cornerRadii: 0, corner: .allCorners)
                 }
             } else if cellModel.name == PTLanguage.share.text(forKey: "theme_FollowSystem") {
-                cell.dataContent.valueSwitch.isOn = PTDrakModeOption.isFollowSystem
+                cell.dataContent.valueSwitch.isOn = PTDarkModeOption.isFollowSystem
                 PTGCDManager.gcdMain {
                     cell.contentView.viewCornerRectCorner(cornerRadii: 5, corner: [.bottomLeft,.bottomRight])
                 }
             }
             cell.dataContent.valueSwitch.addSwitchAction { sender in
                 if cellModel.name == PTLanguage.share.text(forKey: "theme_Smart") {
-                    PTDrakModeOption.setSmartPeelingDarkMode(isSmartPeeling: sender.isOn)
+                    PTDarkModeOption.setSmartPeelingDarkMode(isSmartPeeling: sender.isOn)
                     self.showDetail()
                 } else if cellModel.name == PTLanguage.share.text(forKey: "theme_FollowSystem") {
-                    PTDrakModeOption.setDarkModeFollowSystem(isFollowSystem: sender.isOn)
+                    PTDarkModeOption.setDarkModeFollowSystem(isFollowSystem: sender.isOn)
                     self.showDetail()
                 }
             }
@@ -240,7 +240,7 @@ extension PTDarkModeControl: PTThemeable {
     func apply() {
         self.view.backgroundColor = .gobalBackgroundColor
         self.showDetail()
-        let type:VCStatusBarChangeStatusType = PTDrakModeOption.isLight ? .Light : .Dark
+        let type:VCStatusBarChangeStatusType = PTDarkModeOption.isLight ? .Light : .Dark
         self.changeStatusBar(type: type)
     }
 }

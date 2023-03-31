@@ -63,7 +63,7 @@ class PTDarkSmartFooter: PTBaseCollectionReusableView {
         let view = BKLayoutButton()
         view.layoutStyle = .leftTitleRightImage
         view.setMidSpacing(5)
-        view.setTitle(PTDrakModeOption.smartPeelingTimeIntervalValue, for: .normal)
+        view.setTitle(PTDarkModeOption.smartPeelingTimeIntervalValue, for: .normal)
         view.setImage(UIImage(systemName: "chevron.right")!.withTintColor(.gobalTextColor,renderingMode: .alwaysOriginal), for: .normal)
         view.titleLabel?.font = .appfont(size: 16)
         view.setTitleColor(.gobalTextColor, for: .normal)

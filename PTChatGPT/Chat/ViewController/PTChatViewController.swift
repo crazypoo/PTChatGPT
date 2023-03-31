@@ -373,10 +373,12 @@ class PTChatViewController: MessagesViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        HSNavControl.GobalNavControl(nav: self.navigationController!,textColor: .gobalTextColor,navColor: .gobalBackgroundColor)
+        if !Gobal_device_info.isPad {
+            HSNavControl.GobalNavControl(nav: self.navigationController!,textColor: .gobalTextColor,navColor: .gobalBackgroundColor)
+        }
         messagesCollectionView.contentInsetAdjustmentBehavior = .automatic
         
-        StatusBarManager.shared.style = PTDrakModeOption.isLight ? .lightContent : .darkContent
+        StatusBarManager.shared.style = PTDarkModeOption.isLight ? .lightContent : .darkContent
         setNeedsStatusBarAppearanceUpdate()
         self.cartoonGanModel.start()
         self.styleTransfererModel.start()
@@ -395,7 +397,7 @@ class PTChatViewController: MessagesViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        StatusBarManager.shared.style = PTDrakModeOption.isLight ? .lightContent : .darkContent
+        StatusBarManager.shared.style = PTDarkModeOption.isLight ? .lightContent : .darkContent
         setNeedsStatusBarAppearanceUpdate()
 
         self.messagesCollectionView.reloadData()
@@ -636,7 +638,7 @@ class PTChatViewController: MessagesViewController {
                 UserDefaults.standard.removeObject(forKey: "LatestAppVersionPresented")
                 UserDefaults.standard.synchronize()
 #endif
-                StatusBarManager.shared.style = PTDrakModeOption.isLight ? .lightContent : .darkContent
+                StatusBarManager.shared.style = PTDarkModeOption.isLight ? .lightContent : .darkContent
                 self.setNeedsStatusBarAppearanceUpdate()
 
                 self.messageInputBar.alpha = 1
