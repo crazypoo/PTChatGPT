@@ -11,8 +11,43 @@ import PooTools
 import Photos
 import SwipeCellKit
 import MessageKit
+import Instructions
 
 class PTChatMasterControl: PTChatBaseViewController {
+
+    let coachMarkController = CoachMarksController()
+    lazy var coachArray:[PTCoachModel] = {
+        
+        let icon = PTCoachModel()
+        icon.info = PTLanguage.share.text(forKey: "appUseInfo_Icon")
+        icon.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
+        
+        let userName = PTCoachModel()
+        userName.info = PTLanguage.share.text(forKey: "appUseInfo_User_name")
+        userName.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
+        
+        let tags = PTCoachModel()
+        tags.info = PTLanguage.share.text(forKey: "appUseInfo_Tags")
+        tags.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
+        
+        let deleteAllTags = PTCoachModel()
+        deleteAllTags.info = PTLanguage.share.text(forKey: "appUseInfo_Deleta_all_tag")
+        deleteAllTags.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
+        
+        let cleanChat = PTCoachModel()
+        cleanChat.info = PTLanguage.share.text(forKey: "appUseInfo_Clean_chat")
+        cleanChat.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
+
+        let addTag = PTCoachModel()
+        addTag.info = PTLanguage.share.text(forKey: "appUseInfo_AddTag")
+        addTag.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
+
+        let setting = PTCoachModel()
+        setting.info = PTLanguage.share.text(forKey: "appUseInfo_Setting")
+        setting.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
+
+        return [icon,userName,tags,deleteAllTags,cleanChat,addTag,setting]
+    }()
 
     lazy var lineView:UIView = {
         let view = UIView()
@@ -56,6 +91,36 @@ class PTChatMasterControl: PTChatBaseViewController {
                 PTBaseViewController.gobal_drop(title: messageString)
             } else {
                 PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_No_photo_library"))
+            }
+        }
+        return view
+    }()
+    
+    lazy var nameButton:UIButton = {
+        let view = UIButton(type: .custom)
+        view.titleLabel?.lineBreakMode = .byTruncatingTail
+        view.titleLabel?.font = .appfont(size: 20)
+        view.setTitleColor(.gobalTextColor, for: .normal)
+        view.setTitle(AppDelegate.appDelegate()?.appConfig.userName, for: .normal)
+        view.addActionHandlers { sender in
+            PTGCDManager.gcdAfter(time: 0.5) {
+                let title = PTLanguage.share.text(forKey: "alert_Name_edit_title")
+                let placeHolder = PTLanguage.share.text(forKey: "alert_Name_edit_placeholder")
+                UIAlertController.base_textfiele_alertVC(title:title,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [placeHolder], textFieldTexts: [AppDelegate.appDelegate()!.appConfig.userName], keyboardType: [.default],textFieldDelegate: self) { result in
+                    let userName:String? = result[placeHolder]!
+                    if !(userName ?? "").stringIsEmpty() {
+                        self.nameButton.setTitle(userName!, for: .normal)
+                        AppDelegate.appDelegate()?.appConfig.userName = userName!
+                        PTChatData.share.user = PTChatUser(senderId: "000000", displayName: AppDelegate.appDelegate()!.appConfig.userName)
+                        PTGCDManager.gcdAfter(time: 0.35) {
+                            PTGCDManager.gcdMain {
+                                self.reloadTagChat(index: self.segDataArr().firstIndex(where: {$0.keyName == self.currentHistoryModel.keyName})!)
+                            }
+                        }
+                    } else {
+                        PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Input_error"))
+                    }
+                }
             }
         }
         return view
@@ -130,32 +195,7 @@ class PTChatMasterControl: PTChatBaseViewController {
         return view
     }()
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.view.backgroundColor = .gobalBackgroundColor
-        
-        self.view.addSubviews([self.lineView,self.userIconButton,self.bottomContent,self.collectionView])
-        self.lineView.snp.makeConstraints { make in
-            make.right.equalToSuperview()
-            make.width.equalTo(1)
-            make.top.bottom.equalToSuperview()
-        }
-        
-        let iconSize = iPadSplitMainControl - 192
-        self.userIconButton.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.width.height.equalTo(iconSize)
-            make.top.equalToSuperview().inset(CGFloat.statusBarHeight() + 15)
-        }
-        PTGCDManager.gcdMain {
-            self.userIconButton.viewCorner(radius: iconSize / 2)
-        }
-        
-        self.bottomContent.snp.makeConstraints { make in
-            make.left.right.bottom.equalToSuperview()
-            make.height.equalTo(CGFloat.kTabbarSaveAreaHeight + 64)
-        }
-        
+    lazy var deleteAllTag:UIButton = {
         let deleteAllTag = UIButton(type: .custom)
         deleteAllTag.setImage("🗑️".emojiToImage(emojiFont: .appfont(size: 34)), for: .normal)
         deleteAllTag.addActionHandlers { sender in
@@ -186,7 +226,10 @@ class PTChatMasterControl: PTChatBaseViewController {
                 }
             }
         }
-        
+        return deleteAllTag
+    }()
+    
+    lazy var cleanChat:UIButton = {
         let cleanChat = UIButton(type: .custom)
         cleanChat.setImage("♻️".emojiToImage(emojiFont: .appfont(size: 34)), for: .normal)
         cleanChat.addActionHandlers { sender in
@@ -199,7 +242,10 @@ class PTChatMasterControl: PTChatBaseViewController {
                 }
             }
         }
-        
+        return cleanChat
+    }()
+    
+    lazy var addTag:UIButton = {
         let addTag = UIButton(type: .custom)
         addTag.setImage("🏷️".emojiToImage(emojiFont: .appfont(size: 34)), for: .normal)
         addTag.addActionHandlers { sender in
@@ -209,8 +255,7 @@ class PTChatMasterControl: PTChatBaseViewController {
                 UIAlertController.base_textfiele_alertVC(title:textKey,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey,aiKey], textFieldTexts: ["",""], keyboardType: [.default,.default],textFieldDelegate: self) { result in
                     let newKey:String? = result[textKey]!
                     let newAiKey:String? = result[aiKey]
-                    if !(newKey ?? "").stringIsEmpty()
-                    {
+                    if !(newKey ?? "").stringIsEmpty() {
                         if self.segDataArr().contains(where: {$0.keyName == newKey}) {
                             PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Save_error"))
                         } else {
@@ -234,33 +279,81 @@ class PTChatMasterControl: PTChatBaseViewController {
                 }
             }
         }
-        
+        return addTag
+    }()
+
+    lazy var setting:UIButton = {
         let setting = UIButton(type: .custom)
         setting.setImage("⚙️".emojiToImage(emojiFont: .appfont(size: 34)), for: .normal)
+        setting.isSelected = false
         setting.addActionHandlers { sender in
-            let vc = PTSettingListViewController(user: PTChatUser(senderId: "0", displayName: "0"))
-            vc.cleanChatListBlock = {
-                self.currentChatViewController.iWillRefresh = true
+            setting.isSelected = !sender.isSelected
+            if setting.isSelected {
+                let vc = PTSettingListViewController(user: PTChatUser(senderId: "0", displayName: "0"))
+                vc.cleanChatListBlock = {
+                    self.currentChatViewController.iWillRefresh = true
+                }
+                self.currentChatViewController.navigationController?.pushViewController(vc)
+            } else {
+                self.currentChatViewController.navigationController?.popViewController()
             }
-            self.currentChatViewController.navigationController?.pushViewController(vc)
+        }
+        return setting
+    }()
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        if !AppDelegate.appDelegate()!.appConfig.apiToken.stringIsEmpty() {
+            NotificationCenter.default.addObserver(self, selector: #selector(self.adHide(notifi:)), name: NSNotification.Name(rawValue: PLaunchAdSkipNotification), object: nil)
+        }
+
+        self.view.backgroundColor = .gobalBackgroundColor
+        
+        self.view.addSubviews([self.lineView,self.userIconButton,self.nameButton,self.bottomContent,self.collectionView])
+        self.lineView.snp.makeConstraints { make in
+            make.right.equalToSuperview()
+            make.width.equalTo(1)
+            make.top.bottom.equalToSuperview()
         }
         
-        self.bottomContent.addSubviews([deleteAllTag,cleanChat,addTag,setting])
-        deleteAllTag.snp.makeConstraints { make in
+        let iconSize = iPadSplitMainControl - 192
+        self.userIconButton.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.width.height.equalTo(iconSize)
+            make.top.equalToSuperview().inset(CGFloat.statusBarHeight() + 15)
+        }
+        PTGCDManager.gcdMain {
+            self.userIconButton.viewCorner(radius: iconSize / 2)
+        }
+        
+        self.nameButton.snp.makeConstraints { make in
+            make.left.right.equalToSuperview().inset(10)
+            make.top.equalTo(self.userIconButton.snp.bottom).offset(10)
+            make.height.equalTo(34)
+        }
+        
+        self.bottomContent.snp.makeConstraints { make in
+            make.left.right.bottom.equalToSuperview()
+            make.height.equalTo(CGFloat.kTabbarSaveAreaHeight + 64)
+        }
+                
+        self.bottomContent.addSubviews([self.deleteAllTag,self.cleanChat,self.addTag,self.setting])
+        self.deleteAllTag.snp.makeConstraints { make in
             make.width.equalTo(iPadSplitMainControl / 4)
             make.height.equalTo(deleteAllTag.snp.width)
             make.centerY.equalToSuperview()
             make.left.equalToSuperview()
         }
-        cleanChat.snp.makeConstraints { make in
+        self.cleanChat.snp.makeConstraints { make in
             make.width.height.centerY.equalTo(deleteAllTag)
             make.left.equalTo(deleteAllTag.snp.right)
         }
-        addTag.snp.makeConstraints { make in
+        self.addTag.snp.makeConstraints { make in
             make.width.height.centerY.equalTo(deleteAllTag)
             make.left.equalTo(cleanChat.snp.right)
         }
-        setting.snp.makeConstraints { make in
+        self.setting.snp.makeConstraints { make in
             make.width.height.centerY.equalTo(deleteAllTag)
             make.left.equalTo(addTag.snp.right)
         }
@@ -269,13 +362,29 @@ class PTChatMasterControl: PTChatBaseViewController {
         
         self.collectionView.snp.makeConstraints { make in
             make.left.right.equalToSuperview()
-            make.top.equalTo(self.userIconButton.snp.bottom).offset(15)
+            make.top.equalTo(self.nameButton.snp.bottom).offset(15)
             make.bottom.equalTo(self.bottomContent.snp.top)
         }
         
         self.loadData()
     }
     
+    @objc func adHide(notifi:Notification) {
+        PTNSLogConsole("广告隐藏")
+        
+        self.createHolderView()
+    }
+
+    func createHolderView() {
+        if AppDelegate.appDelegate()!.appConfig.firstCoach {
+            self.coachMarkController.overlay.isUserInteractionEnabled = true
+            self.coachMarkController.delegate = self
+            self.coachMarkController.dataSource = self
+            self.coachMarkController.animationDelegate = self
+            self.coachMarkController.start(in: .window(over: self))
+        }
+    }
+
     func loadData() {
         self.showDetail()
         
@@ -537,3 +646,100 @@ extension PTChatMasterControl:SwipeCollectionViewCellDelegate
 
 extension PTChatMasterControl : UITextFieldDelegate {}
 
+extension PTChatMasterControl: CoachMarksControllerDataSource {
+    func coachMarksController(_ coachMarksController: CoachMarksController, coachMarkViewsAt index: Int, madeFrom coachMark: CoachMark) -> (bodyView: UIView & CoachMarkBodyView, arrowView: (UIView & CoachMarkArrowView)?) {
+        let coachViews = coachMarksController.helper.makeDefaultCoachViews(
+            withArrow: true,
+            arrowOrientation: coachMark.arrowOrientation
+        )
+
+        coachViews.bodyView.hintLabel.font = .appfont(size: 16)
+        coachViews.bodyView.hintLabel.text = self.coachArray[index].info
+        coachViews.bodyView.nextLabel.font = .appfont(size: 16)
+        coachViews.bodyView.nextLabel.text = self.coachArray[index].next
+
+        return (bodyView: coachViews.bodyView, arrowView: coachViews.arrowView)
+    }
+    
+    func numberOfCoachMarks(for coachMarksController: CoachMarksController) -> Int {
+        return self.coachArray.count
+    }
+    
+    func coachMarksController(_ coachMarksController: CoachMarksController, coachMarkAt index: Int) -> CoachMark {
+        switch index {
+        case 0:
+            return coachMarksController.helper.makeCoachMark(for: self.userIconButton)
+        case 1:
+            return coachMarksController.helper.makeCoachMark(for: self.nameButton)
+        case 2:
+            return coachMarksController.helper.makeCoachMark(for: self.collectionView)
+        case 3:
+            return coachMarksController.helper.makeCoachMark(for: self.deleteAllTag)
+        case 4:
+            return coachMarksController.helper.makeCoachMark(for: self.cleanChat)
+        case 5:
+            return coachMarksController.helper.makeCoachMark(for: self.addTag)
+        case 6:
+            return coachMarksController.helper.makeCoachMark(for: self.setting)
+        default:
+            return coachMarksController.helper.makeCoachMark()
+        }
+    }
+}
+
+extension PTChatMasterControl: CoachMarksControllerAnimationDelegate {
+    public func coachMarksController(_ coachMarksController: CoachMarksController,
+                              fetchAppearanceTransitionOfCoachMark coachMarkView: UIView,
+                              at index: Int,
+                              using manager: CoachMarkTransitionManager) {
+        manager.parameters.options = [.beginFromCurrentState]
+        manager.animate(.regular, animations: { _ in
+            coachMarkView.transform = .identity
+            coachMarkView.alpha = 1
+        }, fromInitialState: {
+            coachMarkView.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+            coachMarkView.alpha = 0
+        })
+    }
+
+    public func coachMarksController(_ coachMarksController: CoachMarksController,
+                              fetchDisappearanceTransitionOfCoachMark coachMarkView: UIView,
+                              at index: Int,
+                              using manager: CoachMarkTransitionManager) {
+        manager.parameters.keyframeOptions = [.beginFromCurrentState]
+        manager.animate(.keyframe, animations: { _ in
+            UIView.addKeyframe(withRelativeStartTime: 0.0, relativeDuration: 1.0, animations: {
+                coachMarkView.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+            })
+
+            UIView.addKeyframe(withRelativeStartTime: 0.5, relativeDuration: 0.5, animations: {
+                coachMarkView.alpha = 0
+            })
+        })
+    }
+
+    public func coachMarksController(_ coachMarksController: CoachMarksController,
+                              fetchIdleAnimationOfCoachMark coachMarkView: UIView,
+                              at index: Int,
+                              using manager: CoachMarkAnimationManager) {
+        manager.parameters.options = [.repeat, .autoreverse, .allowUserInteraction]
+        manager.parameters.duration = 0.7
+
+        manager.animate(.regular, animations: { context in
+            let offset: CGFloat = context.coachMark.arrowOrientation == .top ? 10 : -10
+            coachMarkView.transform = CGAffineTransform(translationX: 0, y: offset)
+        })
+    }
+}
+
+extension PTChatMasterControl : CoachMarksControllerDelegate {
+    func coachMarksController(_ coachMarksController: CoachMarksController, didHide coachMark: CoachMark, at index: Int) {
+        if index == (self.coachArray.count - 1) {
+            self.currentChatViewController.createHolderView()
+        }
+    }
+    
+    func coachMarksController(_ coachMarksController: CoachMarksController, didEndShowingBySkipping skipped: Bool) {
+        
+    }
+}

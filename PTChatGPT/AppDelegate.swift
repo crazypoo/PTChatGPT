@@ -283,6 +283,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 PTNSLogConsole(key)
                 PTGCDManager.gcdMain {
                     switch key {
+                    case uUserName:
+                        if let conflictingValues = self.cloudStore.array(forKey: key) {
+                            let chosenValue = conflictingValues.first
+                            self.appConfig.userName = chosenValue as! String
+                        } else {
+                            let value = AppDelegate.appDelegate()!.cloudStore.object(forKey: key)
+                            self.appConfig.userName = value as! String
+                        }
+                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: kRefreshController), object: nil)
                     case uCheckSentence:
                         if let conflictingValues = self.cloudStore.array(forKey: key) {
                             let chosenValue = conflictingValues.first

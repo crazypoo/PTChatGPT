@@ -65,11 +65,10 @@ class PTChatViewController: MessagesViewController {
         model.delegate = self
         return model
     }()
-
-    let coachMarkController = CoachMarksController()
     
     var chatModels = [PTChatModel]()
     
+    let coachMarkController = CoachMarksController()
     lazy var coachArray:[PTCoachModel] = {
         
         let option = PTCoachModel()
@@ -619,7 +618,9 @@ class PTChatViewController: MessagesViewController {
         PTNSLogConsole("广告隐藏")
         messageInputBar.alpha = 1
         
-        self.createHolderView()
+        if !Gobal_device_info.isPad {
+            self.createHolderView()
+        }
     }
     
     //MARK: 第一次使用的提示

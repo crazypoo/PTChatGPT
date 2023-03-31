@@ -31,6 +31,7 @@ let uAiSmart = "uAiSmart"
 let uUserIcon = "uUserIcon"
 let uUserIconURL = "uUserIconURL"
 let uDrawRefrence = "uDrawRefrence"
+let uUserName = "uUserName"
 ///保存的AI畫圖大小
 let uAiDrawSize = "uAiDrawSize"
 ///Token key
@@ -180,6 +181,33 @@ class PTAppConfig {
                 AppDelegate.appDelegate()?.cloudStore.synchronize()
             } else {
                 UserDefaults.standard.set(newValue, forKey: uCheckSentence)
+            }
+        }
+    }
+    
+    //MARK: 用户名字
+    ///用户名字
+    var userName:String {
+        get {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uUserName) {
+                    return value as! String
+                } else {
+                    return PTLanguage.share.text(forKey: "chat_User")
+                }
+            } else {
+                if let value = UserDefaults.standard.value(forKey: uUserName) {
+                    return value as! String
+                } else {
+                    return PTLanguage.share.text(forKey: "chat_User")
+                }
+            }
+        } set {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uUserName)
+                AppDelegate.appDelegate()?.cloudStore.synchronize()
+            } else {
+                UserDefaults.standard.set(newValue, forKey: uUserName)
             }
         }
     }

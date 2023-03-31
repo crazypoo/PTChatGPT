@@ -9,19 +9,17 @@ import UIKit
 import MessageKit
 import PooTools
 
-final internal class PTChatData
-{
+final internal class PTChatData {
     static let share = PTChatData()
     
     private init() {
         
     }
         
-    let user = PTChatUser(senderId: "000000", displayName: PTLanguage.share.text(forKey: "chat_User"))
+    var user = PTChatUser(senderId: "000000", displayName: AppDelegate.appDelegate()!.appConfig.userName)
     let bot = PTChatUser(senderId: "000001", displayName: "ZolaAi")
     
-    func getAvatarFor(sender:SenderType) -> Avatar
-    {
+    func getAvatarFor(sender:SenderType) -> Avatar {
         let firstName = sender.displayName.components(separatedBy: " ").first
         let lastName = sender.displayName.components(separatedBy: " ").first
         let initials = "\(firstName?.first ?? "A")\(lastName?.first ?? "A")"
