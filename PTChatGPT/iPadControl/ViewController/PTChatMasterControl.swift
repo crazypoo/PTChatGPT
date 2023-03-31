@@ -371,7 +371,6 @@ class PTChatMasterControl: PTChatBaseViewController {
     
     @objc func adHide(notifi:Notification) {
         PTNSLogConsole("广告隐藏")
-        
         self.createHolderView()
     }
 
@@ -382,6 +381,8 @@ class PTChatMasterControl: PTChatBaseViewController {
             self.coachMarkController.dataSource = self
             self.coachMarkController.animationDelegate = self
             self.coachMarkController.start(in: .window(over: self))
+        } else {
+            self.reloadTagChat(index: 0)
         }
     }
 

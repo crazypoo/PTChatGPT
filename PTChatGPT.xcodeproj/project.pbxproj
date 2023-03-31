@@ -331,7 +331,7 @@
 		55A5D71629B1D23D00DCA096 /* PTChatGPT */ = {
 			isa = PBXGroup;
 			children = (
-				55F7A8BD29D6AC2D00CF6272 /* IpadControl */,
+				55F7A8BD29D6AC2D00CF6272 /* iPadControl */,
 				55D752F429D1FCED005CE46B /* Resource */,
 				5512AB6429B43C2E0059D840 /* 3Party */,
 				55A5D71729B1D23D00DCA096 /* AppDelegate.swift */,
@@ -486,12 +486,12 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
-		55F7A8BD29D6AC2D00CF6272 /* IpadControl */ = {
+		55F7A8BD29D6AC2D00CF6272 /* iPadControl */ = {
 			isa = PBXGroup;
 			children = (
 				55F7A8BE29D6AC3800CF6272 /* ViewController */,
 			);
-			path = IpadControl;
+			path = iPadControl;
 			sourceTree = "<group>";
 		};
 		55F7A8BE29D6AC3800CF6272 /* ViewController */ = {

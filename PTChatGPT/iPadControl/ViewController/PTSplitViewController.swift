@@ -10,11 +10,11 @@ import UIKit
 
 class PTSplitViewController: UISplitViewController {
 
-    var detailController = NSMutableArray()
-    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        self.showDetailViewController((self.detailController.firstObject as! PTNavController), sender: nil)
+        let chatVc = PTChatViewController(historyModel: PTSegHistoryModel())
+        let nav = PTNavController(rootViewController: chatVc)
+        self.showDetailViewController(nav, sender: nil)
     }
     
     override func viewDidLoad() {
@@ -23,14 +23,12 @@ class PTSplitViewController: UISplitViewController {
         self.view.backgroundColor = .gobalBackgroundColor
         
         self.setUpSpliteViewController()
+
     }
     
     func setUpSpliteViewController() {
         let master = PTChatMasterControl()
         
-        let chatVc = PTChatViewController(historyModel: PTSegHistoryModel())
-        let nav = PTNavController(rootViewController: chatVc)
-        self.detailController.add(nav)
         self.viewControllers = [master]
         self.preferredDisplayMode = .oneBesideSecondary
         self.maximumPrimaryColumnWidth = iPadSplitMainControl

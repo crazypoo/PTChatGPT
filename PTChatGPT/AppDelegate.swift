@@ -121,7 +121,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         self.window?.makeKeyAndVisible()
         
-        PTLaunchAdMonitor.showAt(path: ["https://avatars.githubusercontent.com/u/1111976?v=4"], onView: self.window!, timeInterval: 2, param: ["URLS":myGithubUrl], year: "2023", skipFont: .appfont(size: 10), comName: "Crazypoo", comNameFont: .appfont(size: 10)) {
+        var fontSize:CGFloat = 16
+        var skipFont:CGFloat = 16
+        if Gobal_device_info.isPad {
+            fontSize = 20
+            skipFont = 30
+        }
+        
+        PTLaunchAdMonitor.showAt(path: ["https://avatars.githubusercontent.com/u/1111976?v=4"], onView: self.window!, timeInterval: 2, param: ["URLS":myGithubUrl], year: "2023", skipFont: .appfont(size: skipFont), comName: "Crazypoo", comNameFont: .appfont(size: fontSize)) {
         }
         
 #if DEBUG

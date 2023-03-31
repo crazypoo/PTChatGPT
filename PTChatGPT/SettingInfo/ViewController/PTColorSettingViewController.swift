@@ -85,7 +85,7 @@ class PTColorSettingViewController: PTChatBaseViewController {
             cellHeight = 64
             screenW = 400
         } else {
-            cellHeight = CGFloat.ScaleW(w: 78)
+            cellHeight = CGFloat.ScaleW(w: 54)
             screenW = CGFloat.kSCREEN_WIDTH
         }
         sectionModel.rows.enumerated().forEach { (index,model) in
@@ -156,7 +156,7 @@ class PTColorSettingViewController: PTChatBaseViewController {
             if Gobal_device_info.isPad {
                 make.left.right.equalToSuperview().inset(88)
             } else {
-                make.left.right.equalToSuperview().inset(20)
+                make.left.right.equalToSuperview().inset(30)
             }
             make.height.equalTo(self.colorPicker.snp.width)
             make.top.equalToSuperview().inset(CGFloat.kNavBarHeight_Total + 10)
@@ -172,9 +172,11 @@ class PTColorSettingViewController: PTChatBaseViewController {
             make.top.equalTo(self.brightnessSlider.snp.bottom)
         }
                 
-        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: nil)
-        panGestureRecognizer.delegate = self
-        self.colorPicker.addGestureRecognizer(panGestureRecognizer)
+        if Gobal_device_info.isPad {
+            let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: nil)
+            panGestureRecognizer.delegate = self
+            self.colorPicker.addGestureRecognizer(panGestureRecognizer)
+        }
 
         self.showDetail()
     }

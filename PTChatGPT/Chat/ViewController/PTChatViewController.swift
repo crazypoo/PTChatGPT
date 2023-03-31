@@ -419,6 +419,14 @@ class PTChatViewController: MessagesViewController {
             self.refreshCurrentTagData()
             self.iWillRefresh = false
         }
+        
+        if !self.onlyShowSave {
+            if Gobal_device_info.isPad {
+                self.additionalBottomInset = 114
+            } else {
+                self.additionalBottomInset = 94
+            }
+        }
     }
             
     override func viewDidLoad() {
@@ -640,7 +648,7 @@ class PTChatViewController: MessagesViewController {
     func whatNews() {
         if WhatsNew.shouldPresent() {
             let whatsNew = WhatsNewViewController(items: [
-                WhatsNewItem.text(title: "聊天", subtitle: "1.添加一些AI的人设范例"),
+                WhatsNewItem.text(title: "聊天", subtitle: "1.完全适配iPad,使用方式更熟悉,更加方便.\n2.用户可以更改名字"),
                 WhatsNewItem.text(title: "其他", subtitle: "修复了一些昆虫"),
                 ])
             whatsNew.titleText = "What's New"
@@ -663,13 +671,13 @@ class PTChatViewController: MessagesViewController {
                 }
                 
                 self.loadViewData()
-                PTGCDManager.gcdAfter(time: 2) {
+                PTGCDManager.gcdAfter(time: 1) {
                     self.checkTF()
                 }
             }
         } else {
             self.loadViewData()
-            PTGCDManager.gcdAfter(time: 2) {
+            PTGCDManager.gcdAfter(time: 1) {
                 self.checkTF()
             }
         }

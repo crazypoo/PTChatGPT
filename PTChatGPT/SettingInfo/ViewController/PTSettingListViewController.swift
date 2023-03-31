@@ -21,6 +21,7 @@ extension String {
     //MARK: 主題
     static let colorString = PTLanguage.share.text(forKey: "about_Color")
     static let userIcon = PTLanguage.share.text(forKey: "about_User_icon")
+    static let userName = PTLanguage.share.text(forKey: "about_User_name")
     static let languageString = PTLanguage.share.text(forKey: "about_Language")
     static let themeString = PTLanguage.share.text(forKey: "about_Main_Theme")
     //MARK: 聊天相關
@@ -184,6 +185,14 @@ class PTSettingListViewController: PTChatBaseViewController {
         userIcon.nameColor = .gobalTextColor
         userIcon.disclosureIndicatorImage = disclosureIndicatorImageName
         userIcon.cellFont = nameFont
+        
+        let userName = PTFusionCellModel()
+        userName.name = .userName
+        userName.haveDisclosureIndicator = true
+        userName.nameColor = .gobalTextColor
+        userName.disclosureIndicatorImage = disclosureIndicatorImageName
+        userName.cellFont = nameFont
+        userName.contentAttr = self.cellContentAtt(content: AppDelegate.appDelegate()!.appConfig.userName)
 
         if self.user.senderId == PTChatData.share.bot.senderId {
             themeMain.models = [color]
@@ -191,13 +200,13 @@ class PTSettingListViewController: PTChatBaseViewController {
             if Gobal_device_info.isPad {
                 themeMain.models = [color]
             } else {
-                themeMain.models = [color,userIcon]
+                themeMain.models = [color,userIcon,userName]
             }
         } else {
             if Gobal_device_info.isPad {
                 themeMain.models = [color,language,theme]
             } else {
-                themeMain.models = [color,userIcon,language,theme]
+                themeMain.models = [color,userIcon,userName,language,theme]
             }
         }
         
@@ -777,6 +786,24 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                 PTBaseViewController.gobal_drop(title: messageString)
             } else {
                 PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_No_photo_library"))
+            }
+        } else if itemRow.title == .userName {
+            PTGCDManager.gcdAfter(time: 0.5) {
+                let title = PTLanguage.share.text(forKey: "alert_Name_edit_title")
+                let placeHolder = PTLanguage.share.text(forKey: "alert_Name_edit_placeholder")
+                UIAlertController.base_textfiele_alertVC(title:title,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [placeHolder], textFieldTexts: [AppDelegate.appDelegate()!.appConfig.userName], keyboardType: [.default],textFieldDelegate: self) { result in
+                    let userName:String? = result[placeHolder]!
+                    if !(userName ?? "").stringIsEmpty() {
+                        AppDelegate.appDelegate()?.appConfig.userName = userName!
+                        PTChatData.share.user = PTChatUser(senderId: "000000", displayName: AppDelegate.appDelegate()!.appConfig.userName)
+                        self.showDetail()
+                        if self.cleanChatListBlock != nil {
+                            self.cleanChatListBlock!()
+                        }
+                    } else {
+                        PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Input_error"))
+                    }
+                }
             }
         } else if itemRow.title == .deleteAllVoiceFile {
             UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "chat_Delete_all_voice_file"),msgColor: .gobalTextColor,okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
