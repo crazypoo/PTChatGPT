@@ -161,6 +161,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             HyperionManager.sharedInstance().togglePluginDrawer()
         }
 #endif
+        
+        PTChatApiFunction.share.checkSentence(word: "i will kill them") {model,error in 
+            
+        }
         return true
     }
     
@@ -295,6 +299,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 PTNSLogConsole(key)
                 PTGCDManager.gcdMain {
                     switch key {
+                    case uUseCustomDomain:
+                        if let conflictingValues = self.cloudStore.array(forKey: key) {
+                            let chosenValue = conflictingValues.first
+                            self.appConfig.useCustomDomain = chosenValue as! Bool
+                        } else {
+                            let value = AppDelegate.appDelegate()!.cloudStore.object(forKey: key)
+                            self.appConfig.useCustomDomain = value as! Bool
+                        }
+                    case uCustomDomain:
+                        if let conflictingValues = self.cloudStore.array(forKey: key) {
+                            let chosenValue = conflictingValues.first
+                            self.appConfig.customDomain = chosenValue as! String
+                        } else {
+                            let value = AppDelegate.appDelegate()!.cloudStore.object(forKey: key)
+                            self.appConfig.customDomain = value as! String
+                        }
                     case uUserName:
                         if let conflictingValues = self.cloudStore.array(forKey: key) {
                             let chosenValue = conflictingValues.first

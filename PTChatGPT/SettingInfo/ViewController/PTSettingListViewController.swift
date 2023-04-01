@@ -120,6 +120,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         picker.numberOfComponents = 2
         picker.resultModelArrayBlock = { resultModel in
             AppDelegate.appDelegate()!.appConfig.aiModelType = resultModel!.last!.value!
+            self.showDetail()
         }
         picker.pickerStyle = PTAppConfig.gobal_BRPickerStyle()
         picker.title = PTLanguage.share.text(forKey: "about_APIAIType")
@@ -724,12 +725,9 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
             let apiToken = AppDelegate.appDelegate()!.appConfig.apiToken
             UIAlertController.base_textfiele_alertVC(title:textKey,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey], textFieldTexts: [apiToken], keyboardType: [.default],textFieldDelegate: self) { result in
                 let newToken:String? = result[textKey]!
-                if (newToken ?? "").stringIsEmpty() || !(newToken ?? "").nsString.contains("sk-")
-                {
+                if (newToken ?? "").stringIsEmpty() || !(newToken ?? "").nsString.contains("sk-") {
                     PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Token_error"))
-                }
-                else
-                {
+                } else {
                     AppDelegate.appDelegate()!.appConfig.apiToken = newToken!
                 }
             }
@@ -765,6 +763,7 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
             self.languagePicker.show()
             self.languagePicker.resultModelBlock = { route in
                 AppDelegate.appDelegate()!.appConfig.language = OSSVoiceEnum.allCases[route!.index].rawValue
+                self.showDetail()
             }
         } else if itemRow.title == .languageString {
             self.languagePicker.title = PTLanguage.share.text(forKey: "about_Language")
@@ -855,6 +854,7 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                 default:
                     AppDelegate.appDelegate()!.appConfig.aiDrawSize = CGSize(width: 256, height: 256)
                 }
+                self.showDetail()
             }
         } else if itemRow.title == .getImageCount {
             let imageCount = AppDelegate.appDelegate()!.appConfig.getImageCount
@@ -864,6 +864,7 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
             self.languagePicker.show()
             self.languagePicker.resultModelBlock = { route in
                 AppDelegate.appDelegate()?.appConfig.getImageCount = (AppDelegate.appDelegate()?.appConfig.getImageCountPickerData[route!.index].int)!
+                self.showDetail()
             }
         } else if itemRow.title == .drawRefrence {
             let status = PHPhotoLibrary.authorizationStatus()

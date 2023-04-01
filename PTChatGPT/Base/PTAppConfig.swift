@@ -59,6 +59,11 @@ let uCheckSentence = "uCheckSentence"
 
 let uAppCount = "uAppCount"
 
+///是否用自定义域名
+let uUseCustomDomain = "uUseCustomDomain"
+///自定义域名
+let uCustomDomain = "uCustomDomain"
+
 let kSeparator = "[,]"
 let kSeparatorSeg = "[::]"
 
@@ -157,6 +162,58 @@ class PTAppConfig {
     var cloudSwitch:Bool = UserDefaults.standard.value(forKey: uUseiCloud) == nil ? true : UserDefaults.standard.value(forKey: uUseiCloud) as! Bool {
         didSet{
             UserDefaults.standard.set(self.cloudSwitch,forKey: uUseiCloud)
+        }
+    }
+    
+    //MARK: 是否开启自定义域名
+    ///是否开启自定义域名
+    var useCustomDomain:Bool {
+        get {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uUseCustomDomain) {
+                    return value as! Bool
+                } else {
+                    return false
+                }
+            } else {
+                if let value = UserDefaults.standard.value(forKey: uUseCustomDomain) {
+                    return value as! Bool
+                } else {
+                    return false
+                }
+            }
+        } set {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uUseCustomDomain)
+                AppDelegate.appDelegate()?.cloudStore.synchronize()
+            } else {
+                UserDefaults.standard.set(newValue, forKey: uUseCustomDomain)
+            }
+        }
+    }
+    
+    var customDomain:String {
+        get {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uCustomDomain) {
+                    return value as! String
+                } else {
+                    return ""
+                }
+            } else {
+                if let value = UserDefaults.standard.value(forKey: uCustomDomain) {
+                    return value as! String
+                } else {
+                    return ""
+                }
+            }
+        } set {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uCustomDomain)
+                AppDelegate.appDelegate()?.cloudStore.synchronize()
+            } else {
+                UserDefaults.standard.set(newValue, forKey: uCustomDomain)
+            }
         }
     }
     

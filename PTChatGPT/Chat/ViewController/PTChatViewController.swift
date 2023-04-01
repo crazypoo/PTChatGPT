@@ -294,6 +294,8 @@ class PTChatViewController: MessagesViewController {
         return openAI
     }()
     
+    let apiShare = PTChatApiFunction.share
+    
     lazy var messageList:[PTMessageModel] = []
     let speechKit = OSSSpeech.shared
         
@@ -2962,21 +2964,11 @@ extension PTChatViewController {
         PTGCDManager.gcdMain {
             let throwThisApi:Bool = AppDelegate.appDelegate()!.appConfig.checkSentence
             if throwThisApi {
-                SwiftSpinner.show("Checking.....")
-                Task.init {
-                    do {
-                        let contentParameter = ContentPolicyParameters(input: checkWork)
-                        let contentResult = try await self.openAIKIT.checkContentPolicy(parameters: contentParameter)
-                        
-                        let isFlagged = contentResult.results[0].flagged
-                        SwiftSpinner.hide() {
-                            completed(throwThisApi,isFlagged,nil)
-                        }
-                    } catch {
-                        PTBaseViewController.gobal_drop(title: error.localizedDescription)
-                        SwiftSpinner.hide() {
-                            completed(throwThisApi,false,error)
-                        }
+                self.apiShare.checkSentence(word: checkWork) { model, error in
+                    if model != nil {
+                        completed(throwThisApi,model!.results.first!.flagged,nil)
+                    } else {
+                        completed(throwThisApi,false,error)
                     }
                 }
             } else {
