@@ -16,7 +16,6 @@ import LXFProtocolTool
 import SwifterSwift
 import Instructions
 import WhatsNew
-import OpenAIKit
 import SwiftSpinner
 import OSSSpeechKit
 

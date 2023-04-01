@@ -54,7 +54,6 @@
 		55A5D80129B1F29800DCA096 /* PTMessageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A5D80029B1F29800DCA096 /* PTMessageModel.swift */; };
 		55A5D80629B242CF00DCA096 /* PTSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A5D80529B242CF00DCA096 /* PTSettingViewController.swift */; };
 		55ADCD9229D6BB500092F3D4 /* PTChatMasterControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55ADCD9129D6BB500092F3D4 /* PTChatMasterControl.swift */; };
-		55B2744E29CCC56700E05736 /* OpenAIKit in Frameworks */ = {isa = PBXBuildFile; productRef = 55B2744D29CCC56700E05736 /* OpenAIKit */; };
 		55B2745629CE23EA00E05736 /* CartoonGanModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B2745029CE23EA00E05736 /* CartoonGanModel.swift */; };
 		55B2745729CE23EA00E05736 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B2745129CE23EA00E05736 /* Model.swift */; };
 		55B2745829CE23EA00E05736 /* StyleTransfererModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B2745329CE23EA00E05736 /* StyleTransfererModel.swift */; };
@@ -184,7 +183,6 @@
 				EC91DE097C54ED7562DD3DCA /* Pods_PTChatGPT.framework in Frameworks */,
 				5503C51629CB273A00B00BE1 /* MessageKit in Frameworks */,
 				552B41CA29D14A5200065892 /* AppStoreConnect-Swift-SDK in Frameworks */,
-				55B2744E29CCC56700E05736 /* OpenAIKit in Frameworks */,
 				552A609629D7EACF00239210 /* OSSSpeechKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -520,7 +518,6 @@
 			name = PTChatGPT;
 			packageProductDependencies = (
 				5503C51529CB273A00B00BE1 /* MessageKit */,
-				55B2744D29CCC56700E05736 /* OpenAIKit */,
 				552B41C929D14A5200065892 /* AppStoreConnect-Swift-SDK */,
 				552A609529D7EACF00239210 /* OSSSpeechKit */,
 			);
@@ -559,7 +556,6 @@
 			mainGroup = 55A5D70B29B1D23D00DCA096;
 			packageReferences = (
 				5503C51429CB273A00B00BE1 /* XCRemoteSwiftPackageReference "MessageKit" */,
-				55B2744C29CCC56700E05736 /* XCRemoteSwiftPackageReference "OpenAIKit" */,
 				552B41C829D14A5200065892 /* XCRemoteSwiftPackageReference "appstoreconnect-swift-sdk" */,
 				552A609429D7EACF00239210 /* XCRemoteSwiftPackageReference "OSSSpeechKit" */,
 			);
@@ -1002,14 +998,6 @@
 				minimumVersion = 2.3.0;
 			};
 		};
-		55B2744C29CCC56700E05736 /* XCRemoteSwiftPackageReference "OpenAIKit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/marcodotio/OpenAIKit.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.2.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1027,11 +1015,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 552B41C829D14A5200065892 /* XCRemoteSwiftPackageReference "appstoreconnect-swift-sdk" */;
 			productName = "AppStoreConnect-Swift-SDK";
-		};
-		55B2744D29CCC56700E05736 /* OpenAIKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 55B2744C29CCC56700E05736 /* XCRemoteSwiftPackageReference "OpenAIKit" */;
-			productName = OpenAIKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

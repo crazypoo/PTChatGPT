@@ -8,7 +8,6 @@
 
 import UIKit
 import PooTools
-import OpenAIKit
 import Alamofire
 import SwiftSpinner
 
@@ -22,6 +21,14 @@ enum PTOpenAIImageSize:String {
     }
 }
 
+public enum ContentPolicyModels: String, Codable {
+    /// The latest model that gets automatically upgraded over time.
+    case latest = "text-moderation-latest"
+    
+    /// The stable model that gets prior notification before being upgraded.
+    case stable = "text-moderation-stable"
+}
+
 class PTChatApiFunction: NSObject {
     static let share = PTChatApiFunction()
     
@@ -30,12 +37,6 @@ class PTChatApiFunction: NSObject {
     
     let jsonSerializationFailedError = NSError(domain: "数据解释失败", code: 12345, userInfo: nil)
     
-    var openAIKIT:OpenAI = {
-        let config = Configuration(organizationId: "", apiKey: AppDelegate.appDelegate()!.appConfig.apiToken)
-        let openAI = OpenAI(config)
-        return openAI
-    }()
-
     func fullUrlPath(path:String) -> String {
         var urlBase = ""
 
