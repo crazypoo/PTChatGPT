@@ -14,7 +14,10 @@
 [![issues - yoddchatgpt](https://img.shields.io/github/issues/crazypoo/PTChatGPT)](https://github.com/crazypoo/PTChatGPT/issues)
 </div>
 
-ChatGPT-iOS版,不是SwiftUI,SwiftUI,SwiftUI,😒谁叫我不会.支持iPad和iPhone两种显风格,iPad版使用习惯更似官网使用习惯.现在已经上架了
+ChatGPT-iOS版,不是SwiftUI,SwiftUI,SwiftUI,😒谁叫我不会.现在已经上架了
+
+支持iPad和iPhone两种显示风格,iPad版使用习惯更似官网使用习惯.
+
 <div align="center">
 
 <h2> 下载 </h2>
