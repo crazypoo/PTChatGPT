@@ -15,6 +15,7 @@ import FLEX
 #if canImport(InAppViewDebugger)
 import InAppViewDebugger
 #endif
+import HyperionCore
 #endif
 import Bugly
 
@@ -154,6 +155,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             } else {
                 FLEXManager.shared.hideExplorer()
             }
+        }
+        self.devFunction.HyperioniOS = {
+            HyperionManager.sharedInstance().attach(to: self.window)
+            HyperionManager.sharedInstance().togglePluginDrawer()
         }
 #endif
         return true

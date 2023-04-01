@@ -141,3 +141,5 @@
 "alert_Name_edit_placeholder" = "Introduce tu nombre de usuario";
 "appUseInfo_User_name" = "Haga clic aquí para editar su nombre de usuario.";
 "about_User_name" = "Nombre de usuario";
+"about_AI_name" = "Nombre de la AI";
+"alert_AI_name_edit" = "Por favor, introduzca el nombre de AI";

@@ -25,6 +25,13 @@ PODS:
   - FloatingPanel (2.6.1)
   - FluentDarkModeKit (1.0.4)
   - HandyJSON (5.0.2)
+  - HyperioniOS/AttributesInspector (1.2.0):
+    - HyperioniOS/Core
+  - HyperioniOS/Core (1.2.0)
+  - HyperioniOS/Measurements (1.2.0):
+    - HyperioniOS/Core
+  - HyperioniOS/SlowAnimations (1.2.0):
+    - HyperioniOS/Core
   - InAppViewDebugger (1.0.3)
   - Instructions (2.2.0)
   - IQKeyboardManager (6.5.11)
@@ -169,6 +176,10 @@ PODS:
 DEPENDENCIES:
   - Bugly
   - FLEX
+  - HyperioniOS/AttributesInspector
+  - HyperioniOS/Core
+  - HyperioniOS/Measurements
+  - HyperioniOS/SlowAnimations
   - InAppViewDebugger
   - LifetimeTracker
   - LookinServer
@@ -192,7 +203,7 @@ DEPENDENCIES:
   - YCSymbolTracker
 
 SPEC REPOS:
-  trunk:
+  https://github.com/CocoaPods/Specs.git:
     - Alamofire
     - BRPickerView
     - Bugly
@@ -206,6 +217,7 @@ SPEC REPOS:
     - FloatingPanel
     - FluentDarkModeKit
     - HandyJSON
+    - HyperioniOS
     - InAppViewDebugger
     - Instructions
     - IQKeyboardManager
@@ -250,7 +262,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   PooTools:
-    :commit: 8b4802cbe2787eb42e7043d8f84bda5d87f28e76
+    :commit: 4d40060d26ae7d189f57c89d4ec065edd55b9c59
     :git: https://github.com/crazypoo/PTools.git
 
 SPEC CHECKSUMS:
@@ -267,6 +279,7 @@ SPEC CHECKSUMS:
   FloatingPanel: de6bb891912ede28da7b1140f7b583c474fec28a
   FluentDarkModeKit: b6317653a00329564582884772ec57c4eaad1a1f
   HandyJSON: 9e4e236f5d2dbefad5155a77417bbea438201c03
+  HyperioniOS: 4412ec61a390caadffcaaf3364733b06e103cf63
   InAppViewDebugger: 5f1cd0189d348679f153502da1343ba513b5cbae
   Instructions: 07052901a398b42eb1d83de9755b8a0bac3e2f7d
   IQKeyboardManager: ef43ce1ba1e5aaf4adf222c0a46f39761f246879
@@ -306,6 +319,6 @@ SPEC CHECKSUMS:
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
   ZXNavigationBar: a8ceb13fe37f9ca894cf6ae22d805cbdbb9ad6b1
 
-PODFILE CHECKSUM: ee8d3dcca623a88a0fca2c8c05bab028b5c63add
+PODFILE CHECKSUM: 966f19c72024eb48e2ce5b112273ac1ff83c5860
 
 COCOAPODS: 1.12.0

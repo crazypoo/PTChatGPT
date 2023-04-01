@@ -31,6 +31,7 @@ extension String {
     //MARK: Speech
     static let speech = PTLanguage.share.text(forKey: "about_Main_Speech")
     //MARK: API
+    static let aiName = PTLanguage.share.text(forKey: "about_AI_name")
     static let apiAIType = PTLanguage.share.text(forKey: "about_APIAIType")
     static let apiAIToken = PTLanguage.share.text(forKey: "about_APIAIToken")
     static let aiSmart = PTLanguage.share.text(forKey: "about_AI_smart")
@@ -257,9 +258,17 @@ class PTSettingListViewController: PTChatBaseViewController {
         chatMain.models = [savedMessage,deleteAllChat,deleteAllVoiceFile]
         
         let apiMain = PTSettingModels()
-        apiMain.name = "API"
+        apiMain.name = "AI"
 
-        //MARK: API
+        //MARK: AI
+        let aiName = PTFusionCellModel()
+        aiName.name = .aiName
+        aiName.haveDisclosureIndicator = true
+        aiName.nameColor = .gobalTextColor
+        aiName.disclosureIndicatorImage = disclosureIndicatorImageName
+        aiName.cellFont = nameFont
+        aiName.contentAttr = self.cellContentAtt(content: AppDelegate.appDelegate()!.appConfig.aiName)
+
         let aiType = PTFusionCellModel()
         aiType.name = .apiAIType
 //        aiType.leftImage = "🤖".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
@@ -329,9 +338,9 @@ class PTSettingListViewController: PTChatBaseViewController {
         getApiToken.cellFont = nameFont
 
         if self.user.senderId == PTChatData.share.bot.senderId {
-            apiMain.models = [aiType,aiSmart,drawSize,imageCount,drawSample,aiToken]
+            apiMain.models = [aiName,aiType,aiSmart,drawSize,imageCount,drawSample,aiToken]
         } else {
-            apiMain.models = [aiType,aiSmart,drawSize,imageCount,drawSample,aiToken,getApiToken]
+            apiMain.models = [aiName,aiType,aiSmart,drawSize,imageCount,drawSample,aiToken,getApiToken]
         }
         
         let toolMain = PTSettingModels()
@@ -796,6 +805,23 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                     if !(userName ?? "").stringIsEmpty() {
                         AppDelegate.appDelegate()?.appConfig.userName = userName!
                         PTChatData.share.user = PTChatUser(senderId: "000000", displayName: AppDelegate.appDelegate()!.appConfig.userName)
+                        self.showDetail()
+                        if self.cleanChatListBlock != nil {
+                            self.cleanChatListBlock!()
+                        }
+                    } else {
+                        PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Input_error"))
+                    }
+                }
+            }
+        } else if itemRow.title == .aiName {
+            PTGCDManager.gcdAfter(time: 0.5) {
+                let title = PTLanguage.share.text(forKey: "alert_AI_name_edit")
+                UIAlertController.base_textfiele_alertVC(title:title,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [title], textFieldTexts: [AppDelegate.appDelegate()!.appConfig.aiName], keyboardType: [.default],textFieldDelegate: self) { result in
+                    let userName:String? = result[title]!
+                    if !(userName ?? "").stringIsEmpty() {
+                        AppDelegate.appDelegate()?.appConfig.aiName = userName!
+                        PTChatData.share.bot = PTChatUser(senderId: "000001", displayName: AppDelegate.appDelegate()!.appConfig.aiName)
                         self.showDetail()
                         if self.cleanChatListBlock != nil {
                             self.cleanChatListBlock!()

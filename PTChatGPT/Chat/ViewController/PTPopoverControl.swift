@@ -13,7 +13,7 @@ import SwipeCellKit
 class PTPopoverControl: PTChatBaseViewController {
     
     let popoverWidth:CGFloat = CGFloat.kSCREEN_WIDTH - 30
-    let popoverCellBaseHeight:CGFloat = 44
+    let popoverCellBaseHeight:CGFloat = 64
     let footerHeight:CGFloat = 44
     fileprivate var isSwipeRightEnabled = false
 
@@ -56,11 +56,11 @@ class PTPopoverControl: PTChatBaseViewController {
         var groupH:CGFloat = 0
         sectionModel.rows.enumerated().forEach { (index,model) in
             let cellHeight:CGFloat = self.popoverCellBaseHeight
-            let customItem = NSCollectionLayoutGroupCustomItem.init(frame: CGRect.init(x: 0, y: groupH, width: self.popoverWidth, height: cellHeight), zIndex: 1000+index)
+            let customItem = NSCollectionLayoutGroupCustomItem.init(frame: CGRect.init(x: 10, y: groupH, width: self.popoverWidth - 30, height: cellHeight), zIndex: 1000+index)
             customers.append(customItem)
             groupH += cellHeight
         }
-        bannerGroupSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(self.popoverWidth - 20), heightDimension: NSCollectionLayoutDimension.absolute(groupH))
+        bannerGroupSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(self.popoverWidth - 30), heightDimension: NSCollectionLayoutDimension.absolute(groupH))
         group = NSCollectionLayoutGroup.custom(layoutSize: bannerGroupSize, itemProvider: { layoutEnvironment in
             customers
         })

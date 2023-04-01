@@ -141,3 +141,5 @@
 "alert_Name_edit_placeholder" = "請輸入你的用戶名";
 "appUseInfo_User_name" = "點擊這裏可以編輯用戶名";
 "about_User_name" = "用戶名";
+"about_AI_name" = "AI名字";
+"alert_AI_name_edit" = "請輸入AI名字";

@@ -1,4 +1,5 @@
 platform :ios, '13.0'
+source 'https://github.com/CocoaPods/Specs.git'
 use_frameworks!
 
 post_install do |installer|
@@ -23,6 +24,11 @@ target 'PTChatGPT' do
   pod 'LifetimeTracker', :configurations => ['Debug']
   pod 'WoodPeckeriOS', :configurations => ['Debug']
   pod 'Bugly'
+  pod "HyperioniOS/Core", :configurations => ['Debug']
+  pod 'HyperioniOS/AttributesInspector', :configurations => ['Debug'] # Optional plugin
+  pod 'HyperioniOS/Measurements', :configurations => ['Debug'] # Optional plugin
+  pod 'HyperioniOS/SlowAnimations', :configurations => ['Debug'] # Optional plugin
+
 
   pod 'PooTools/Core', :git => 'https://github.com/crazypoo/PTools.git'
   pod 'PooTools/Picker', :git => 'https://github.com/crazypoo/PTools.git'

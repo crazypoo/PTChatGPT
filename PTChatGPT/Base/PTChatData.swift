@@ -17,7 +17,7 @@ final internal class PTChatData {
     }
         
     var user = PTChatUser(senderId: "000000", displayName: AppDelegate.appDelegate()!.appConfig.userName)
-    let bot = PTChatUser(senderId: "000001", displayName: "ZolaAi")
+    var bot = PTChatUser(senderId: "000001", displayName: AppDelegate.appDelegate()!.appConfig.aiName)
     
     func getAvatarFor(sender:SenderType) -> Avatar {
         let firstName = sender.displayName.components(separatedBy: " ").first
