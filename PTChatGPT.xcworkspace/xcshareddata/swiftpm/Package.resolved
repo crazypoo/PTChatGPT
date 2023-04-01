@@ -37,6 +37,15 @@
       }
     },
     {
+      "identity" : "ossspeechkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/crazypoo/OSSSpeechKit",
+      "state" : {
+        "branch" : "master",
+        "revision" : "114bf79025ecbf2662c5bf87b414a2fd6cca2ca3"
+      }
+    },
+    {
       "identity" : "urlqueryencoder",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CreateAPI/URLQueryEncoder.git",

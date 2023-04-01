@@ -18,6 +18,7 @@ import Instructions
 import WhatsNew
 import OpenAIKit
 import SwiftSpinner
+import OSSSpeechKit
 
 fileprivate extension String {
     static let saveNavTitle = PTLanguage.share.text(forKey: "about_SavedChat")

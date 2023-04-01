@@ -14,6 +14,7 @@ import FloatingPanel
 import ZXNavigationBar
 import FDFullscreenPopGesture
 import SwiftSpinner
+import OSSSpeechKit
 
 extension String {
     //MARK: iCloud

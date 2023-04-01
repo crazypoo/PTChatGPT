@@ -10,6 +10,7 @@ import PooTools
 import SnapKit
 import SwifterSwift
 import BRPickerView
+import OSSSpeechKit
 
 class PTSettingViewController: PTChatBaseViewController {
 

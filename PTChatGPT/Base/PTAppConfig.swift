@@ -10,6 +10,7 @@ import UIKit
 import PooTools
 import BRPickerView
 import SwifterSwift
+import OSSSpeechKit
 
 ///用戶的BubbleColor key
 let uUserBubbleColor = "uUserBubbleColor"

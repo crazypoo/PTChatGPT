@@ -140,8 +140,7 @@ class PTPopoverControl: PTChatBaseViewController {
     }
 }
 
-extension PTPopoverControl:UICollectionViewDelegate,UICollectionViewDataSource
-{
+extension PTPopoverControl:UICollectionViewDelegate,UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return self.mSections.count
     }
@@ -198,8 +197,7 @@ extension PTPopoverControl:UICollectionViewDelegate,UICollectionViewDataSource
     }
 }
 
-extension PTPopoverControl:SwipeCollectionViewCellDelegate
-{
+extension PTPopoverControl:SwipeCollectionViewCellDelegate {
     func swipe_cell_configure(action: SwipeAction, with descriptor: ActionDescriptor,buttonDisplayMode: ButtonDisplayMode? = PTSaveChatViewController.swipe_cell_buttonDisplayMode(),buttonStyle: ButtonStyle? = PTSaveChatViewController.swipe_cell_buttonStyle()) {
        action.title = descriptor.title(forDisplayMode: buttonDisplayMode!)
        action.image = descriptor.image(forStyle: buttonStyle!, displayMode: buttonDisplayMode!)

@@ -8,13 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		5503C51629CB273A00B00BE1 /* MessageKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5503C51529CB273A00B00BE1 /* MessageKit */; };
-		5512AB7029B43D520059D840 /* OSSSpeech.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5512AB6729B43D520059D840 /* OSSSpeech.swift */; };
-		5512AB7229B43D520059D840 /* OSSUtterance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5512AB6929B43D520059D840 /* OSSUtterance.swift */; };
-		5512AB7329B43D520059D840 /* OSSVoice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5512AB6A29B43D520059D840 /* OSSVoice.swift */; };
-		5512AB7429B43D520059D840 /* OSSSpeechUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5512AB6B29B43D520059D840 /* OSSSpeechUtility.swift */; };
-		5512AB7529B43D520059D840 /* .gitkeep in Resources */ = {isa = PBXBuildFile; fileRef = 5512AB6D29B43D520059D840 /* .gitkeep */; };
-		5512AB7629B43D520059D840 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5512AB6E29B43D520059D840 /* Localizable.strings */; };
-		5512AB7729B43D520059D840 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5512AB6F29B43D520059D840 /* Images.xcassets */; };
 		5512AB7C29B470310059D840 /* PTAudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5512AB7B29B470310059D840 /* PTAudioPlayer.swift */; };
 		5514B37129B9CBFD00890161 /* PTChatCustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B37029B9CBFD00890161 /* PTChatCustomCell.swift */; };
 		5514B37429B9D50D00890161 /* PTChatModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B37329B9D50D00890161 /* PTChatModel.swift */; };
@@ -35,6 +28,7 @@
 		5520905929C3587C009B30A1 /* PTBaseMaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5520905829C3587C009B30A1 /* PTBaseMaskView.swift */; };
 		5520905B29C35903009B30A1 /* PTVoiceActionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5520905A29C35903009B30A1 /* PTVoiceActionView.swift */; };
 		55278F3229BB7BF100615B0D /* PTAISmartCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55278F3129BB7BF100615B0D /* PTAISmartCell.swift */; };
+		552A609629D7EACF00239210 /* OSSSpeechKit in Frameworks */ = {isa = PBXBuildFile; productRef = 552A609529D7EACF00239210 /* OSSSpeechKit */; };
 		552B41C129D0A25C00065892 /* PTHelpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552B41C029D0A25C00065892 /* PTHelpViewController.swift */; };
 		552B41C329D1358300065892 /* PTApp3PartyKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552B41C229D1358300065892 /* PTApp3PartyKey.swift */; };
 		552B41C529D135AE00065892 /* PTCheckTestFlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552B41C429D135AE00065892 /* PTCheckTestFlight.swift */; };
@@ -91,13 +85,6 @@
 
 /* Begin PBXFileReference section */
 		372877C61B4F76BA38F0C55D /* Pods_PTChatGPT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PTChatGPT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		5512AB6729B43D520059D840 /* OSSSpeech.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OSSSpeech.swift; sourceTree = "<group>"; };
-		5512AB6929B43D520059D840 /* OSSUtterance.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OSSUtterance.swift; sourceTree = "<group>"; };
-		5512AB6A29B43D520059D840 /* OSSVoice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OSSVoice.swift; sourceTree = "<group>"; };
-		5512AB6B29B43D520059D840 /* OSSSpeechUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OSSSpeechUtility.swift; sourceTree = "<group>"; };
-		5512AB6D29B43D520059D840 /* .gitkeep */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitkeep; sourceTree = "<group>"; };
-		5512AB6E29B43D520059D840 /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
-		5512AB6F29B43D520059D840 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		5512AB7B29B470310059D840 /* PTAudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTAudioPlayer.swift; sourceTree = "<group>"; };
 		5514B37029B9CBFD00890161 /* PTChatCustomCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTChatCustomCell.swift; sourceTree = "<group>"; };
 		5514B37329B9D50D00890161 /* PTChatModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTChatModel.swift; sourceTree = "<group>"; };
@@ -194,6 +181,7 @@
 				5503C51629CB273A00B00BE1 /* MessageKit in Frameworks */,
 				552B41CA29D14A5200065892 /* AppStoreConnect-Swift-SDK in Frameworks */,
 				55B2744E29CCC56700E05736 /* OpenAIKit in Frameworks */,
+				552A609629D7EACF00239210 /* OSSSpeechKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -206,44 +194,6 @@
 				372877C61B4F76BA38F0C55D /* Pods_PTChatGPT.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		5512AB6429B43C2E0059D840 /* 3Party */ = {
-			isa = PBXGroup;
-			children = (
-				5512AB6529B43D520059D840 /* OSSSpeechKit */,
-			);
-			path = 3Party;
-			sourceTree = "<group>";
-		};
-		5512AB6529B43D520059D840 /* OSSSpeechKit */ = {
-			isa = PBXGroup;
-			children = (
-				5512AB6629B43D520059D840 /* Classes */,
-				5512AB6C29B43D520059D840 /* Assets */,
-			);
-			path = OSSSpeechKit;
-			sourceTree = "<group>";
-		};
-		5512AB6629B43D520059D840 /* Classes */ = {
-			isa = PBXGroup;
-			children = (
-				5512AB6729B43D520059D840 /* OSSSpeech.swift */,
-				5512AB6929B43D520059D840 /* OSSUtterance.swift */,
-				5512AB6A29B43D520059D840 /* OSSVoice.swift */,
-				5512AB6B29B43D520059D840 /* OSSSpeechUtility.swift */,
-			);
-			path = Classes;
-			sourceTree = "<group>";
-		};
-		5512AB6C29B43D520059D840 /* Assets */ = {
-			isa = PBXGroup;
-			children = (
-				5512AB6D29B43D520059D840 /* .gitkeep */,
-				5512AB6E29B43D520059D840 /* Localizable.strings */,
-				5512AB6F29B43D520059D840 /* Images.xcassets */,
-			);
-			path = Assets;
 			sourceTree = "<group>";
 		};
 		5512AB7A29B470160059D840 /* Function */ = {
@@ -333,7 +283,6 @@
 			children = (
 				55F7A8BD29D6AC2D00CF6272 /* iPadControl */,
 				55D752F429D1FCED005CE46B /* Resource */,
-				5512AB6429B43C2E0059D840 /* 3Party */,
 				55A5D71729B1D23D00DCA096 /* AppDelegate.swift */,
 				55A5D72029B1D23E00DCA096 /* Assets.xcassets */,
 				55A5D7FF29B1EFA000DCA096 /* Base */,
@@ -535,6 +484,7 @@
 				5503C51529CB273A00B00BE1 /* MessageKit */,
 				55B2744D29CCC56700E05736 /* OpenAIKit */,
 				552B41C929D14A5200065892 /* AppStoreConnect-Swift-SDK */,
+				552A609529D7EACF00239210 /* OSSSpeechKit */,
 			);
 			productName = PTChatGPT;
 			productReference = 55A5D71429B1D23D00DCA096 /* Chat走啦.app */;
@@ -573,6 +523,7 @@
 				5503C51429CB273A00B00BE1 /* XCRemoteSwiftPackageReference "MessageKit" */,
 				55B2744C29CCC56700E05736 /* XCRemoteSwiftPackageReference "OpenAIKit" */,
 				552B41C829D14A5200065892 /* XCRemoteSwiftPackageReference "appstoreconnect-swift-sdk" */,
+				552A609429D7EACF00239210 /* XCRemoteSwiftPackageReference "OSSSpeechKit" */,
 			);
 			productRefGroup = 55A5D71529B1D23D00DCA096 /* Products */;
 			projectDirPath = "";
@@ -591,12 +542,9 @@
 				55B2746129CE240E00E05736 /* cartoongan_int8.tflite in Resources */,
 				55B2745F29CE240E00E05736 /* style_transfer_quantized_384.tflite in Resources */,
 				55A5D72429B1D23E00DCA096 /* LaunchScreen.storyboard in Resources */,
-				5512AB7629B43D520059D840 /* Localizable.strings in Resources */,
-				5512AB7729B43D520059D840 /* Images.xcassets in Resources */,
 				55B2746029CE240E00E05736 /* style_predict_quantized_256.tflite in Resources */,
 				5514B39C29BB127F00890161 /* Localizable.strings in Resources */,
 				55A5D72129B1D23E00DCA096 /* Assets.xcassets in Resources */,
-				5512AB7529B43D520059D840 /* .gitkeep in Resources */,
 				55D752F629D1FCF8005CE46B /* SampleJson.json in Resources */,
 				55A5D71F29B1D23D00DCA096 /* Main.storyboard in Resources */,
 			);
@@ -678,8 +626,6 @@
 				5514B39529BB013000890161 /* DarkModePickerView.swift in Sources */,
 				55BD5B9D29C843EA0023458A /* PTDarkModeHeader.swift in Sources */,
 				55BD5B7C29C613070023458A /* PTSettingFooter.swift in Sources */,
-				5512AB7229B43D520059D840 /* OSSUtterance.swift in Sources */,
-				5512AB7429B43D520059D840 /* OSSSpeechUtility.swift in Sources */,
 				55BD5B8A29C6AE2C0023458A /* PTSegHistoryModel.swift in Sources */,
 				55796A2429BD6E2A00574DD4 /* PTSoundVisualizerView.swift in Sources */,
 				55BD5B9F29C850AC0023458A /* PTDarkSmartFooter.swift in Sources */,
@@ -709,7 +655,6 @@
 				55F7A8C029D6AC7800CF6272 /* PTSplitViewController.swift in Sources */,
 				5520905B29C35903009B30A1 /* PTVoiceActionView.swift in Sources */,
 				55BD5B9229C7E4110023458A /* PTPopoverMenuControl.swift in Sources */,
-				5512AB7029B43D520059D840 /* OSSSpeech.swift in Sources */,
 				55A5D7F229B1D9A900DCA096 /* OpenAIEndpoint.swift in Sources */,
 				55A5D7F129B1D9A900DCA096 /* Command.swift in Sources */,
 				55D752FB29D27B54005CE46B /* PTSuggesstionViewController.swift in Sources */,
@@ -730,7 +675,6 @@
 				55BD5B8E29C7074B0023458A /* PTPopoverControl.swift in Sources */,
 				55BD5B9029C708BF0023458A /* PTPopoverCell.swift in Sources */,
 				55A5D7EE29B1D9A900DCA096 /* OpenAIModelType.swift in Sources */,
-				5512AB7329B43D520059D840 /* OSSVoice.swift in Sources */,
 				5514B38D29BAFA6A00890161 /* PTDisclaimerViewController.swift in Sources */,
 				55A5D7FC29B1E41400DCA096 /* PTChatUser.swift in Sources */,
 			);
@@ -1002,6 +946,14 @@
 				minimumVersion = 4.0.0;
 			};
 		};
+		552A609429D7EACF00239210 /* XCRemoteSwiftPackageReference "OSSSpeechKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/crazypoo/OSSSpeechKit";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		552B41C829D14A5200065892 /* XCRemoteSwiftPackageReference "appstoreconnect-swift-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/AvdLee/appstoreconnect-swift-sdk";
@@ -1025,6 +977,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5503C51429CB273A00B00BE1 /* XCRemoteSwiftPackageReference "MessageKit" */;
 			productName = MessageKit;
+		};
+		552A609529D7EACF00239210 /* OSSSpeechKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 552A609429D7EACF00239210 /* XCRemoteSwiftPackageReference "OSSSpeechKit" */;
+			productName = OSSSpeechKit;
 		};
 		552B41C929D14A5200065892 /* AppStoreConnect-Swift-SDK */ = {
 			isa = XCSwiftPackageProductDependency;
