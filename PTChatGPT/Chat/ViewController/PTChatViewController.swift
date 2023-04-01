@@ -291,14 +291,7 @@ class PTChatViewController: MessagesViewController {
     lazy var audioPlayer = PTAudioPlayer(messageCollectionView: messagesCollectionView)
 
     var editString:String = ""
-    
-//    var openAI:OpenAISwift = OpenAISwift(authToken: AppDelegate.appDelegate()!.appConfig.apiToken)
-//    var openAIKIT:OpenAI = {
-//        let config = Configuration(organizationId: "", apiKey: AppDelegate.appDelegate()!.appConfig.apiToken)
-//        let openAI = OpenAI(config)
-//        return openAI
-//    }()
-    
+        
     let apiShare = PTChatApiFunction.share
     
     lazy var messageList:[PTMessageModel] = []

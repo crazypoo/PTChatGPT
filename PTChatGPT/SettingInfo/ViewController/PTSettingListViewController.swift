@@ -294,11 +294,11 @@ class PTSettingListViewController: PTChatBaseViewController {
         var sizeString = ""
         switch AppDelegate.appDelegate()!.appConfig.aiDrawSize.width {
         case 1024:
-            sizeString = ImageSize.size1024.rawValue
+            sizeString = PTOpenAIImageSize.size1024.rawValue
         case 512:
-            sizeString = ImageSize.size512.rawValue
+            sizeString = PTOpenAIImageSize.size512.rawValue
         default:
-            sizeString = ImageSize.size256.rawValue
+            sizeString = PTOpenAIImageSize.size256.rawValue
         }
         drawSize.disclosureIndicatorImage = disclosureIndicatorImageName
         drawSize.cellFont = nameFont
@@ -847,9 +847,9 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
             self.languagePicker.show()
             self.languagePicker.resultModelBlock = { route in
                 switch AppDelegate.appDelegate()?.appConfig.imageSizeArray[route!.index] {
-                case ImageSize.size1024.rawValue:
+                case PTOpenAIImageSize.size1024.rawValue:
                     AppDelegate.appDelegate()!.appConfig.aiDrawSize = CGSize(width: 1024, height: 1024)
-                case ImageSize.size512.rawValue:
+                case PTOpenAIImageSize.size512.rawValue:
                     AppDelegate.appDelegate()!.appConfig.aiDrawSize = CGSize(width: 512, height: 512)
                 default:
                     AppDelegate.appDelegate()!.appConfig.aiDrawSize = CGSize(width: 256, height: 256)

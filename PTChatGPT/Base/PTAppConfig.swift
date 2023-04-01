@@ -920,7 +920,7 @@ class PTAppConfig {
     }()
     
     let imageSizeArray:[String] = {
-        return ImageSize.allValues.map { $0.rawValue}
+        return PTOpenAIImageSize.allValues.map { $0.rawValue}
     }()
     
     let getImageCountPickerData:[String] = {

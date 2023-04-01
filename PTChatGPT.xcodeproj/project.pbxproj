@@ -41,7 +41,6 @@
 		552B41CA29D14A5200065892 /* AppStoreConnect-Swift-SDK in Frameworks */ = {isa = PBXBuildFile; productRef = 552B41C929D14A5200065892 /* AppStoreConnect-Swift-SDK */; };
 		5539463D29D8794500FFB312 /* PTSendChatModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5539463C29D8794500FFB312 /* PTSendChatModel.swift */; };
 		5539463F29D8822900FFB312 /* PTReceiveChatModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5539463E29D8822900FFB312 /* PTReceiveChatModel.swift */; };
-		555491DC29BC8014006A47C4 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555491DB29BC8014006A47C4 /* ChatMessage.swift */; };
 		55796A2229BD6DCE00574DD4 /* PTSoundRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55796A2129BD6DCE00574DD4 /* PTSoundRecorder.swift */; };
 		55796A2429BD6E2A00574DD4 /* PTSoundVisualizerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55796A2329BD6E2A00574DD4 /* PTSoundVisualizerView.swift */; };
 		55A5D71829B1D23D00DCA096 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A5D71729B1D23D00DCA096 /* AppDelegate.swift */; };
@@ -49,11 +48,6 @@
 		55A5D72129B1D23E00DCA096 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55A5D72029B1D23E00DCA096 /* Assets.xcassets */; };
 		55A5D72429B1D23E00DCA096 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 55A5D72229B1D23E00DCA096 /* LaunchScreen.storyboard */; };
 		55A5D7EE29B1D9A900DCA096 /* OpenAIModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A5D7E829B1D9A900DCA096 /* OpenAIModelType.swift */; };
-		55A5D7EF29B1D9A900DCA096 /* OpenAI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A5D7E929B1D9A900DCA096 /* OpenAI.swift */; };
-		55A5D7F029B1D9A900DCA096 /* Instruction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A5D7EA29B1D9A900DCA096 /* Instruction.swift */; };
-		55A5D7F129B1D9A900DCA096 /* Command.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A5D7EB29B1D9A900DCA096 /* Command.swift */; };
-		55A5D7F229B1D9A900DCA096 /* OpenAIEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A5D7EC29B1D9A900DCA096 /* OpenAIEndpoint.swift */; };
-		55A5D7F329B1D9A900DCA096 /* OpenAISwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A5D7ED29B1D9A900DCA096 /* OpenAISwift.swift */; };
 		55A5D7F729B1DFF200DCA096 /* PTChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A5D7F629B1DFF200DCA096 /* PTChatViewController.swift */; };
 		55A5D7FC29B1E41400DCA096 /* PTChatUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A5D7FB29B1E41400DCA096 /* PTChatUser.swift */; };
 		55A5D7FE29B1EEF400DCA096 /* PTChatData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A5D7FD29B1EEF400DCA096 /* PTChatData.swift */; };
@@ -70,7 +64,6 @@
 		55B2746129CE240E00E05736 /* cartoongan_int8.tflite in Resources */ = {isa = PBXBuildFile; fileRef = 55B2745E29CE240E00E05736 /* cartoongan_int8.tflite */; };
 		55B2746329CE24DA00E05736 /* Data+Array+Convert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B2746229CE24DA00E05736 /* Data+Array+Convert.swift */; };
 		55B2746529CE250D00E05736 /* TFLiteExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B2746429CE250D00E05736 /* TFLiteExtension.swift */; };
-		55B9C35229CBBDBA00C4D06B /* ImageGeneration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B9C35129CBBDBA00C4D06B /* ImageGeneration.swift */; };
 		55BD5B7C29C613070023458A /* PTSettingFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BD5B7B29C613070023458A /* PTSettingFooter.swift */; };
 		55BD5B8A29C6AE2C0023458A /* PTSegHistoryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BD5B8929C6AE2C0023458A /* PTSegHistoryModel.swift */; };
 		55BD5B8E29C7074B0023458A /* PTPopoverControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BD5B8D29C7074A0023458A /* PTPopoverControl.swift */; };
@@ -136,7 +129,6 @@
 		552B41C429D135AE00065892 /* PTCheckTestFlight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTCheckTestFlight.swift; sourceTree = "<group>"; };
 		5539463C29D8794500FFB312 /* PTSendChatModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSendChatModel.swift; sourceTree = "<group>"; };
 		5539463E29D8822900FFB312 /* PTReceiveChatModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTReceiveChatModel.swift; sourceTree = "<group>"; };
-		555491DB29BC8014006A47C4 /* ChatMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
 		55796A2129BD6DCE00574DD4 /* PTSoundRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSoundRecorder.swift; sourceTree = "<group>"; };
 		55796A2329BD6E2A00574DD4 /* PTSoundVisualizerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSoundVisualizerView.swift; sourceTree = "<group>"; };
 		55A5D71429B1D23D00DCA096 /* Chat走啦.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Chat走啦.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -146,11 +138,6 @@
 		55A5D72329B1D23E00DCA096 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		55A5D72529B1D23E00DCA096 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		55A5D7E829B1D9A900DCA096 /* OpenAIModelType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenAIModelType.swift; sourceTree = "<group>"; };
-		55A5D7E929B1D9A900DCA096 /* OpenAI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenAI.swift; sourceTree = "<group>"; };
-		55A5D7EA29B1D9A900DCA096 /* Instruction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Instruction.swift; sourceTree = "<group>"; };
-		55A5D7EB29B1D9A900DCA096 /* Command.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Command.swift; sourceTree = "<group>"; };
-		55A5D7EC29B1D9A900DCA096 /* OpenAIEndpoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenAIEndpoint.swift; sourceTree = "<group>"; };
-		55A5D7ED29B1D9A900DCA096 /* OpenAISwift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenAISwift.swift; sourceTree = "<group>"; };
 		55A5D7F629B1DFF200DCA096 /* PTChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTChatViewController.swift; sourceTree = "<group>"; };
 		55A5D7FB29B1E41400DCA096 /* PTChatUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTChatUser.swift; sourceTree = "<group>"; };
 		55A5D7FD29B1EEF400DCA096 /* PTChatData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTChatData.swift; sourceTree = "<group>"; };
@@ -166,7 +153,6 @@
 		55B2745E29CE240E00E05736 /* cartoongan_int8.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; path = cartoongan_int8.tflite; sourceTree = "<group>"; };
 		55B2746229CE24DA00E05736 /* Data+Array+Convert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+Array+Convert.swift"; sourceTree = "<group>"; };
 		55B2746429CE250D00E05736 /* TFLiteExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TFLiteExtension.swift; sourceTree = "<group>"; };
-		55B9C35129CBBDBA00C4D06B /* ImageGeneration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageGeneration.swift; sourceTree = "<group>"; };
 		55BD5B7B29C613070023458A /* PTSettingFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSettingFooter.swift; sourceTree = "<group>"; };
 		55BD5B8929C6AE2C0023458A /* PTSegHistoryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSegHistoryModel.swift; sourceTree = "<group>"; };
 		55BD5B8D29C7074A0023458A /* PTPopoverControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTPopoverControl.swift; sourceTree = "<group>"; };
@@ -363,8 +349,6 @@
 			isa = PBXGroup;
 			children = (
 				55A5D7E729B1D9A900DCA096 /* Models */,
-				55A5D7EC29B1D9A900DCA096 /* OpenAIEndpoint.swift */,
-				55A5D7ED29B1D9A900DCA096 /* OpenAISwift.swift */,
 			);
 			path = OpenAISwift;
 			sourceTree = "<group>";
@@ -372,12 +356,7 @@
 		55A5D7E729B1D9A900DCA096 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				555491DB29BC8014006A47C4 /* ChatMessage.swift */,
 				55A5D7E829B1D9A900DCA096 /* OpenAIModelType.swift */,
-				55A5D7E929B1D9A900DCA096 /* OpenAI.swift */,
-				55A5D7EA29B1D9A900DCA096 /* Instruction.swift */,
-				55A5D7EB29B1D9A900DCA096 /* Command.swift */,
-				55B9C35129CBBDBA00C4D06B /* ImageGeneration.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -680,7 +659,6 @@
 				552B41C529D135AE00065892 /* PTCheckTestFlight.swift in Sources */,
 				5539463D29D8794500FFB312 /* PTSendChatModel.swift in Sources */,
 				55BD5B9929C801700023458A /* PTCoachModel.swift in Sources */,
-				55A5D7F029B1D9A900DCA096 /* Instruction.swift in Sources */,
 				55B2745829CE23EA00E05736 /* StyleTransfererModel.swift in Sources */,
 				55B2745629CE23EA00E05736 /* CartoonGanModel.swift in Sources */,
 				552A60A129D8390500239210 /* PTAIEditsModel.swift in Sources */,
@@ -696,7 +674,6 @@
 				552B41C129D0A25C00065892 /* PTHelpViewController.swift in Sources */,
 				5514B38429BA233A00890161 /* PTSaveChatViewController.swift in Sources */,
 				5514B38B29BAF5E900890161 /* PTNavController.swift in Sources */,
-				55A5D7F329B1D9A900DCA096 /* OpenAISwift.swift in Sources */,
 				55B2745929CE23EA00E05736 /* StyleTransferer.swift in Sources */,
 				55A5D7F729B1DFF200DCA096 /* PTChatViewController.swift in Sources */,
 				552A60A429D85CB900239210 /* PTClampedProperyWrapper.swift in Sources */,
@@ -706,21 +683,16 @@
 				55B2745729CE23EA00E05736 /* Model.swift in Sources */,
 				5514B39929BB024D00890161 /* HSNavControl.swift in Sources */,
 				5514B37A29BA02E300890161 /* PTChatBaseViewController.swift in Sources */,
-				55A5D7EF29B1D9A900DCA096 /* OpenAI.swift in Sources */,
 				55A5D80629B242CF00DCA096 /* PTSettingViewController.swift in Sources */,
-				555491DC29BC8014006A47C4 /* ChatMessage.swift in Sources */,
 				5514B37D29BA102400890161 /* PTSettingHeader.swift in Sources */,
 				55A5D7FE29B1EEF400DCA096 /* PTChatData.swift in Sources */,
 				55F7A65D29D4012B00CF6272 /* PTSuggestionControl.swift in Sources */,
 				552A609F29D831BD00239210 /* PTAICompletionsModel.swift in Sources */,
-				55B9C35229CBBDBA00C4D06B /* ImageGeneration.swift in Sources */,
 				55A5D71829B1D23D00DCA096 /* AppDelegate.swift in Sources */,
 				5514B38729BAE76E00890161 /* PTShareItem.swift in Sources */,
 				55F7A8C029D6AC7800CF6272 /* PTSplitViewController.swift in Sources */,
 				5520905B29C35903009B30A1 /* PTVoiceActionView.swift in Sources */,
 				55BD5B9229C7E4110023458A /* PTPopoverMenuControl.swift in Sources */,
-				55A5D7F229B1D9A900DCA096 /* OpenAIEndpoint.swift in Sources */,
-				55A5D7F129B1D9A900DCA096 /* Command.swift in Sources */,
 				55D752FB29D27B54005CE46B /* PTSuggesstionViewController.swift in Sources */,
 				55D752F929D1FDA2005CE46B /* PTSampleModels.swift in Sources */,
 				5514B38929BAE7E400890161 /* SwipeCellOption.swift in Sources */,

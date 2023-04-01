@@ -16,6 +16,10 @@ enum PTOpenAIImageSize:String {
     case size1024 = "1024x1024"
     case size512 = "512x512"
     case size256 = "256x256"
+    
+    static var allValues : [PTOpenAIImageSize] {
+        return [.size1024, .size512, .size256]
+    }
 }
 
 class PTChatApiFunction: NSObject {
