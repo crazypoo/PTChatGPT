@@ -12,10 +12,19 @@ import OpenAIKit
 import Alamofire
 import SwiftSpinner
 
+enum PTOpenAIImageSize:String {
+    case size1024 = "1024x1024"
+    case size512 = "512x512"
+    case size256 = "256x256"
+}
+
 class PTChatApiFunction: NSObject {
     static let share = PTChatApiFunction()
     
     let baseURL = "https://api.openai.com/v1"
+    let baseHeader = HTTPHeaders(["Authorization": "Bearer \(AppDelegate.appDelegate()!.appConfig.apiToken)","Content-Type": "application/json"])
+    
+    let jsonSerializationFailedError = NSError(domain: "数据解释失败", code: 12345, userInfo: nil)
     
     var openAIKIT:OpenAI = {
         let config = Configuration(organizationId: "", apiKey: AppDelegate.appDelegate()!.appConfig.apiToken)
@@ -23,10 +32,7 @@ class PTChatApiFunction: NSObject {
         return openAI
     }()
 
-    func checkSentence(word:String,model:ContentPolicyModels? = .latest,completion:@escaping ((_ model:PTAIModerationdModel?,_ error:AFError?)->Void)) {
-                
-        SwiftSpinner.show("Checking.....")
-
+    func fullUrlPath(path:String) -> String {
         var urlBase = ""
 
         if AppDelegate.appDelegate()!.appConfig.useCustomDomain {
@@ -34,22 +40,78 @@ class PTChatApiFunction: NSObject {
         } else {
             urlBase = self.baseURL
         }
+        return (urlBase + path)
+    }
+    
+    func checkSentence(word:String,model:ContentPolicyModels? = .latest,completion:@escaping ((_ model:PTAIModerationdModel?,_ error:AFError?)->Void)) {
+                
+        SwiftSpinner.show("Checking.....")
         
-        let path = "/moderations"
+        let path = self.fullUrlPath(path: "/moderations")
         let param = ["input":word,"model":model!.rawValue]
-        let header = HTTPHeaders(["Authorization": "Bearer \(AppDelegate.appDelegate()!.appConfig.apiToken)","Content-Type": "application/json"])
-        Network.requestApi(needGobal:false,urlStr: (urlBase + path),header: header,parameters: param,modelType: PTAIModerationdModel.self,encoder: JSONEncoding.default) { result, error in
+        Network.requestApi(needGobal:false,urlStr: path,header: self.baseHeader,parameters: param,modelType: PTAIModerationdModel.self,encoder: JSONEncoding.default,showHud: false) { result, error in
             SwiftSpinner.hide() {
                 if error == nil {
                     if let model = PTAIModerationdModel.deserialize(from: result?.originalString.jsonStringToDic()) {
                         completion(model,nil)
                     } else {
-                        completion(nil,AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: NSError(domain: "数据解释失败", code: 12345, userInfo: nil) as Error)))
+                        completion(nil,AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: self.jsonSerializationFailedError)))
                     }
                 } else {
                     PTBaseViewController.gobal_drop(title: error!.localizedDescription)
                     completion(nil,error)
                 }
+            }
+        }
+    }
+    
+    func sendCompletions(prompt:String,modelType: OpenAIModelType = .gpt3(.davinci),temperature:Double? = 1,maxTokens: Int = 16,completion:@escaping ((_ model:PTAICompletionsModel?,_ error:AFError?)->Void)) {
+        let path = self.fullUrlPath(path: "/completions")
+        let param = ["prompt":prompt,"model":modelType.modelName,"max_tokens":maxTokens,"temperature":temperature!] as [String : Any]
+        Network.requestApi(needGobal:false,urlStr: path,header: self.baseHeader,parameters: param,encoder: JSONEncoding.default,showHud: false) { result, error in
+            if error == nil {
+                if let model = PTAICompletionsModel.deserialize(from: result?.originalString.jsonStringToDic()) {
+                    completion(model,nil)
+                } else {
+                    completion(nil,AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: self.jsonSerializationFailedError)))
+                }
+            } else {
+                PTBaseViewController.gobal_drop(title: error!.localizedDescription)
+                completion(nil,error)
+            }
+        }
+    }
+    
+    func sendEdits(input:String,instruction:String,modelType: OpenAIModelType = .feature(.davinci),completion:@escaping ((_ model:PTAIEditsModel?,_ error:AFError?)->Void)) {
+        let path = self.fullUrlPath(path: "/edits")
+        let param = ["input":input,"model":modelType.modelName,"instruction":instruction] as [String : Any]
+        Network.requestApi(needGobal:false,urlStr: path,header: self.baseHeader,parameters: param,encoder: JSONEncoding.default,showHud: false) { result, error in
+            if error == nil {
+                if let model = PTAIEditsModel.deserialize(from: result?.originalString.jsonStringToDic()) {
+                    completion(model,nil)
+                } else {
+                    completion(nil,AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: self.jsonSerializationFailedError)))
+                }
+            } else {
+                PTBaseViewController.gobal_drop(title: error!.localizedDescription)
+                completion(nil,error)
+            }
+        }
+    }
+    
+    func imageGenerations(prompt:String,@PTClampedProperyWrapper(range: 1...10) numberofImages: Int = 1,imageSize:PTOpenAIImageSize,completion:@escaping ((_ model:PTImageGeneration?,_ error:AFError?)->Void)) {
+        let path = self.fullUrlPath(path: "/images/generations")
+        let param = ["prompt":prompt,"n":numberofImages,"size":imageSize.rawValue] as [String : Any]
+        Network.requestApi(needGobal:false,urlStr: path,header: self.baseHeader,parameters: param,encoder: JSONEncoding.default,showHud: false) { result, error in
+            if error == nil {
+                if let model = PTImageGeneration.deserialize(from: result?.originalString.jsonStringToDic()) {
+                    completion(model,nil)
+                } else {
+                    completion(nil,AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: self.jsonSerializationFailedError)))
+                }
+            } else {
+                PTBaseViewController.gobal_drop(title: error!.localizedDescription)
+                completion(nil,error)
             }
         }
     }

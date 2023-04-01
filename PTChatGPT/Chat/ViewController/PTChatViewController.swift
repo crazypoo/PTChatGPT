@@ -2042,7 +2042,7 @@ extension PTChatViewController: MessageLabelDelegate {
 
 extension PTChatViewController: InputBarAccessoryViewDelegate {
     func drawImage(str:String,saveModel:PTChatModel,indexSection:Int,resend:Bool? = false) {
-        var imageSizeType:ImageSize
+        var imageSizeType:PTOpenAIImageSize
         switch AppDelegate.appDelegate()!.appConfig.aiDrawSize.width {
         case 1024:
             imageSizeType = .size1024
@@ -2054,24 +2054,40 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
             imageSizeType = .size256
         }
         
-        self.openAI.sendImages(with: str,numImages: AppDelegate.appDelegate()!.appConfig.getImageCount,size: imageSizeType) { result in
-            PTNSLogConsole("Draw API result>>:\(result)")
+        self.apiShare.imageGenerations(prompt: str,numberofImages: AppDelegate.appDelegate()!.appConfig.getImageCount, imageSize: imageSizeType) { model, error in
             PTGCDManager.gcdBackground {
                 PTGCDManager.gcdMain {
                     self.setTypingIndicatorViewHidden(true)
                 }
             }
-            switch result {
-            case .success(let success):
+            if error != nil {
+                PTGCDManager.gcdMain {
+                    saveModel.messageSendSuccess = false
+                    if resend! {
+                        self.chatModels[indexSection] = saveModel
+                    } else {
+                        self.chatModels.append(saveModel)
+                    }
+                    self.historyModel?.historyModel = self.chatModels
+                    self.refreshViewAndLoadNewData {
+                        self.messageList[indexSection].sending = false
+                        self.messageList[indexSection].sendSuccess = false
+                        self.reloadSomeSection(itemIndex: indexSection) {
+                            self.packChatData()
+                            PTBaseViewController.gobal_drop(title: error!.localizedDescription)
+                        }
+                    }
+                }
+            } else {
                 saveModel.messageSendSuccess = true
                 self.chatModels.append(saveModel)
                 self.messageList[indexSection].sending = false
                 self.messageList[indexSection].sendSuccess = true
                 PTGCDManager.gcdMain {
                     self.reloadSomeSection(itemIndex: indexSection) {
-                        PTGCDManager.gcdGroup(label: "AppendImageMessage", threadCount: success.data!.count) { dispatchSemaphore, dispatchGroup, currentIndex in
+                        PTGCDManager.gcdGroup(label: "AppendImageMessage", threadCount: model!.data!.count) { dispatchSemaphore, dispatchGroup, currentIndex in
                             PTGCDManager.gcdBackground {
-                                let imageURL = success.data![currentIndex].url
+                                let imageURL = model!.data![currentIndex].url
                                 let date = Date()
 
                                 let botMessage = PTChatModel()
@@ -2091,24 +2107,6 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                         } jobDoneBlock: {
                             self.historyModel?.historyModel = self.chatModels
                             self.packChatData()
-                        }
-                    }
-                }
-            case .failure(let failure):
-                PTGCDManager.gcdMain {
-                    saveModel.messageSendSuccess = false
-                    if resend! {
-                        self.chatModels[indexSection] = saveModel
-                    } else {
-                        self.chatModels.append(saveModel)
-                    }
-                    self.historyModel?.historyModel = self.chatModels
-                    self.refreshViewAndLoadNewData {
-                        self.messageList[indexSection].sending = false
-                        self.messageList[indexSection].sendSuccess = false
-                        self.reloadSomeSection(itemIndex: indexSection) {
-                            self.packChatData()
-                            PTBaseViewController.gobal_drop(title: failure.localizedDescription)
                         }
                     }
                 }
@@ -2445,24 +2443,14 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                 self.messageInputBar.setStackViewItems([], forStack: .top, animated: true)
             }
                         
-            self.openAI.sendEdits(with: str, input: self.editString) { result in
-                PTNSLogConsole("Edit API result>>:\(result)")
+            self.apiShare.sendEdits(input: self.editString, instruction: str) { model, error in
+                PTNSLogConsole("Edit API result>>:\(String(describing: model))")
                 PTGCDManager.gcdBackground {
                     PTGCDManager.gcdMain {
                         self.setTypingIndicatorViewHidden(true)
                     }
                 }
-                switch result {
-                case .success(let success):
-                    saveModel.messageSendSuccess = true
-                    self.messageList[sectionIndex].sending = false
-                    self.messageList[sectionIndex].sendSuccess = true
-                    PTGCDManager.gcdMain {
-                        self.reloadSomeSection(itemIndex: sectionIndex) {
-                            self.saveQAndAText(question: success.choices?.first?.text ?? "", saveModel: saveModel,sendIndex: sectionIndex)
-                        }
-                    }
-                case .failure(let failure):
+                if error != nil {
                     PTGCDManager.gcdMain {
                         saveModel.messageSendSuccess = false
                         if resend! {
@@ -2476,8 +2464,17 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                             self.messageList[sectionIndex].sendSuccess = false
                             self.reloadSomeSection(itemIndex: sectionIndex) {
                                 self.packChatData()
-                                PTBaseViewController.gobal_drop(title: failure.localizedDescription)
+                                PTBaseViewController.gobal_drop(title: error!.localizedDescription)
                             }
+                        }
+                    }
+                } else {
+                    saveModel.messageSendSuccess = true
+                    self.messageList[sectionIndex].sending = false
+                    self.messageList[sectionIndex].sendSuccess = true
+                    PTGCDManager.gcdMain {
+                        self.reloadSomeSection(itemIndex: sectionIndex) {
+                            self.saveQAndAText(question: model?.choices?.first?.text ?? "", saveModel: saveModel,sendIndex: sectionIndex)
                         }
                     }
                 }
@@ -2489,24 +2486,13 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                 case .chat(.chatgpt),.chat(.chatgpt0301),.chat(.chatgpt4),.chat(.chatgpt40314),.chat(.chatgpt432k),.chat(.chatgpt432k0314):
                     self.gpt3xSendMessage(str: str, saveModel: saveModel, sectionIndex: sectionIndex, resend: resend!, type: type)
                 default:
-                    self.openAI.sendCompletion(with: str,model: type,maxTokens: 2048,temperature: AppDelegate.appDelegate()!.appConfig.aiSmart) { result in
-                        PTNSLogConsole("Normal API result>>:\(result)")
+                    self.apiShare.sendCompletions(prompt: str,modelType: type,temperature: AppDelegate.appDelegate()!.appConfig.aiSmart,maxTokens: 2048) { model, error in
                         PTGCDManager.gcdBackground {
                             PTGCDManager.gcdMain {
                                 self.setTypingIndicatorViewHidden(true)
                             }
                         }
-                        switch result {
-                        case .success(let success):
-                            PTGCDManager.gcdMain {
-                                saveModel.messageSendSuccess = true
-                                self.messageList[sectionIndex].sending = false
-                                self.messageList[sectionIndex].sendSuccess = true
-                                self.reloadSomeSection(itemIndex: sectionIndex) {
-                                    self.saveQAndAText(question: success.choices?.first?.text ?? "", saveModel: saveModel,sendIndex: sectionIndex)
-                                }
-                            }
-                        case .failure(let failure):
+                        if error != nil {
                             PTGCDManager.gcdMain {
                                 saveModel.messageSendSuccess = false
                                 if resend! {
@@ -2520,8 +2506,17 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                                     self.messageList[sectionIndex].sendSuccess = false
                                     self.reloadSomeSection(itemIndex: sectionIndex) {
                                         self.packChatData()
-                                        PTBaseViewController.gobal_drop(title: failure.localizedDescription)
+                                        PTBaseViewController.gobal_drop(title: error!.localizedDescription)
                                     }
+                                }
+                            }
+                        } else {
+                            PTGCDManager.gcdMain {
+                                saveModel.messageSendSuccess = true
+                                self.messageList[sectionIndex].sending = false
+                                self.messageList[sectionIndex].sendSuccess = true
+                                self.reloadSomeSection(itemIndex: sectionIndex) {
+                                    self.saveQAndAText(question: model?.choices?.first?.text ?? "", saveModel: saveModel,sendIndex: sectionIndex)
                                 }
                             }
                         }
@@ -2966,7 +2961,7 @@ extension PTChatViewController {
             if throwThisApi {
                 self.apiShare.checkSentence(word: checkWork) { model, error in
                     if model != nil {
-                        completed(throwThisApi,model!.results.first!.flagged,nil)
+                        completed(throwThisApi,model!.results?.first?.flagged ?? false,nil)
                     } else {
                         completed(throwThisApi,false,error)
                     }

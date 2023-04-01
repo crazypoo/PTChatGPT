@@ -31,6 +31,10 @@
 		552A609629D7EACF00239210 /* OSSSpeechKit in Frameworks */ = {isa = PBXBuildFile; productRef = 552A609529D7EACF00239210 /* OSSSpeechKit */; };
 		552A609829D7F0E200239210 /* PTChatApiFunction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552A609729D7F0E200239210 /* PTChatApiFunction.swift */; };
 		552A609D29D819F500239210 /* PTAIModerationdModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552A609C29D819F500239210 /* PTAIModerationdModel.swift */; };
+		552A609F29D831BD00239210 /* PTAICompletionsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552A609E29D831BD00239210 /* PTAICompletionsModel.swift */; };
+		552A60A129D8390500239210 /* PTAIEditsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552A60A029D8390500239210 /* PTAIEditsModel.swift */; };
+		552A60A429D85CB900239210 /* PTClampedProperyWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552A60A329D85CB900239210 /* PTClampedProperyWrapper.swift */; };
+		552A60A629D85EF100239210 /* PTImageGeneration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552A60A529D85EF100239210 /* PTImageGeneration.swift */; };
 		552B41C129D0A25C00065892 /* PTHelpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552B41C029D0A25C00065892 /* PTHelpViewController.swift */; };
 		552B41C329D1358300065892 /* PTApp3PartyKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552B41C229D1358300065892 /* PTApp3PartyKey.swift */; };
 		552B41C529D135AE00065892 /* PTCheckTestFlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552B41C429D135AE00065892 /* PTCheckTestFlight.swift */; };
@@ -120,6 +124,10 @@
 		55278F3129BB7BF100615B0D /* PTAISmartCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTAISmartCell.swift; sourceTree = "<group>"; };
 		552A609729D7F0E200239210 /* PTChatApiFunction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTChatApiFunction.swift; sourceTree = "<group>"; };
 		552A609C29D819F500239210 /* PTAIModerationdModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTAIModerationdModel.swift; sourceTree = "<group>"; };
+		552A609E29D831BD00239210 /* PTAICompletionsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTAICompletionsModel.swift; sourceTree = "<group>"; };
+		552A60A029D8390500239210 /* PTAIEditsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTAIEditsModel.swift; sourceTree = "<group>"; };
+		552A60A329D85CB900239210 /* PTClampedProperyWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTClampedProperyWrapper.swift; sourceTree = "<group>"; };
+		552A60A529D85EF100239210 /* PTImageGeneration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTImageGeneration.swift; sourceTree = "<group>"; };
 		552B41C029D0A25C00065892 /* PTHelpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTHelpViewController.swift; sourceTree = "<group>"; };
 		552B41C229D1358300065892 /* PTApp3PartyKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTApp3PartyKey.swift; sourceTree = "<group>"; };
 		552B41C429D135AE00065892 /* PTCheckTestFlight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTCheckTestFlight.swift; sourceTree = "<group>"; };
@@ -267,6 +275,7 @@
 		552A609929D819A100239210 /* API */ = {
 			isa = PBXGroup;
 			children = (
+				552A60A229D85C9900239210 /* Utils */,
 				552A609B29D819BC00239210 /* Model */,
 				552A609A29D819B100239210 /* Function */,
 			);
@@ -285,8 +294,19 @@
 			isa = PBXGroup;
 			children = (
 				552A609C29D819F500239210 /* PTAIModerationdModel.swift */,
+				552A609E29D831BD00239210 /* PTAICompletionsModel.swift */,
+				552A60A029D8390500239210 /* PTAIEditsModel.swift */,
+				552A60A529D85EF100239210 /* PTImageGeneration.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		552A60A229D85C9900239210 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				552A60A329D85CB900239210 /* PTClampedProperyWrapper.swift */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 		55A5D70B29B1D23D00DCA096 = {
@@ -653,6 +673,7 @@
 				55A5D7F029B1D9A900DCA096 /* Instruction.swift in Sources */,
 				55B2745829CE23EA00E05736 /* StyleTransfererModel.swift in Sources */,
 				55B2745629CE23EA00E05736 /* CartoonGanModel.swift in Sources */,
+				552A60A129D8390500239210 /* PTAIEditsModel.swift in Sources */,
 				5514B39529BB013000890161 /* DarkModePickerView.swift in Sources */,
 				55BD5B9D29C843EA0023458A /* PTDarkModeHeader.swift in Sources */,
 				55BD5B7C29C613070023458A /* PTSettingFooter.swift in Sources */,
@@ -667,6 +688,7 @@
 				55A5D7F329B1D9A900DCA096 /* OpenAISwift.swift in Sources */,
 				55B2745929CE23EA00E05736 /* StyleTransferer.swift in Sources */,
 				55A5D7F729B1DFF200DCA096 /* PTChatViewController.swift in Sources */,
+				552A60A429D85CB900239210 /* PTClampedProperyWrapper.swift in Sources */,
 				5514B38229BA14C400890161 /* PTColorSettingViewController.swift in Sources */,
 				55278F3229BB7BF100615B0D /* PTAISmartCell.swift in Sources */,
 				55B2746529CE250D00E05736 /* TFLiteExtension.swift in Sources */,
@@ -679,6 +701,7 @@
 				5514B37D29BA102400890161 /* PTSettingHeader.swift in Sources */,
 				55A5D7FE29B1EEF400DCA096 /* PTChatData.swift in Sources */,
 				55F7A65D29D4012B00CF6272 /* PTSuggestionControl.swift in Sources */,
+				552A609F29D831BD00239210 /* PTAICompletionsModel.swift in Sources */,
 				55B9C35229CBBDBA00C4D06B /* ImageGeneration.swift in Sources */,
 				55A5D71829B1D23D00DCA096 /* AppDelegate.swift in Sources */,
 				5514B38729BAE76E00890161 /* PTShareItem.swift in Sources */,
@@ -702,6 +725,7 @@
 				55A5D80129B1F29800DCA096 /* PTMessageModel.swift in Sources */,
 				5514B37829B9F87C00890161 /* PTSettingListViewController.swift in Sources */,
 				55B2746329CE24DA00E05736 /* Data+Array+Convert.swift in Sources */,
+				552A60A629D85EF100239210 /* PTImageGeneration.swift in Sources */,
 				5514B37629B9F5AC00890161 /* PTAppConfig.swift in Sources */,
 				5514B37129B9CBFD00890161 /* PTChatCustomCell.swift in Sources */,
 				55BD5B8E29C7074B0023458A /* PTPopoverControl.swift in Sources */,

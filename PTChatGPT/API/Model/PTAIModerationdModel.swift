@@ -65,7 +65,7 @@ class PTAIModerationdResults :PTBaseModel {
 }
 
 class PTAIModerationdModel :PTBaseModel {
-    var id: String!
-    var model: String!
-    var results: [PTAIModerationdResults]!
+    var id: String?
+    var model: String?
+    var results: [PTAIModerationdResults]?
 }

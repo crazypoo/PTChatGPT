@@ -162,9 +162,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 #endif
         
-        PTChatApiFunction.share.checkSentence(word: "i will kill them") {model,error in 
-            
-        }
+//        PTChatApiFunction.share.sendCompletions(prompt: "Hola",temperature: AppDelegate.appDelegate()!.appConfig.aiSmart) { model, error in
+//            PTNSLogConsole("1231231231231>>>>>>>\(model?.choices?.first?.text)")
+//        }
         return true
     }
     
