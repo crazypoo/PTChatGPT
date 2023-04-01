@@ -20,7 +20,7 @@ class PTAIEditsChoices :PTBaseModel {
     var text: String = ""
 }
 
-class PTAIEditsModel :PTBaseModel {
+class PTAIEditsModel :PTChatGPTBaseModel {
     var object: String = ""
     var created: Int = 0
     var usage: PTAIEditsUsage?

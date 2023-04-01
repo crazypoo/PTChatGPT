@@ -162,8 +162,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 #endif
         
-//        PTChatApiFunction.share.sendCompletions(prompt: "Hola",temperature: AppDelegate.appDelegate()!.appConfig.aiSmart) { model, error in
-//            PTNSLogConsole("1231231231231>>>>>>>\(model?.choices?.first?.text)")
+//        PTChatApiFunction.share.imageVariation(image: UIImage(named: "DemoImage")!,numberofImages: 2, imageSize: .size256) { model, error in
+//            
 //        }
         return true
     }

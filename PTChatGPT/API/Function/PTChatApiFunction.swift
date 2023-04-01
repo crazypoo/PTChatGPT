@@ -53,7 +53,11 @@ class PTChatApiFunction: NSObject {
             SwiftSpinner.hide() {
                 if error == nil {
                     if let model = PTAIModerationdModel.deserialize(from: result?.originalString.jsonStringToDic()) {
-                        completion(model,nil)
+                        if model.error == nil {
+                            completion(model,nil)
+                        } else {
+                            completion(nil,AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: NSError(domain: model.error!.message, code: 12345, userInfo: nil))))
+                        }
                     } else {
                         completion(nil,AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: self.jsonSerializationFailedError)))
                     }
@@ -71,7 +75,11 @@ class PTChatApiFunction: NSObject {
         Network.requestApi(needGobal:false,urlStr: path,header: self.baseHeader,parameters: param,encoder: JSONEncoding.default,showHud: false) { result, error in
             if error == nil {
                 if let model = PTAICompletionsModel.deserialize(from: result?.originalString.jsonStringToDic()) {
-                    completion(model,nil)
+                    if model.error == nil {
+                        completion(model,nil)
+                    } else {
+                        completion(nil,AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: NSError(domain: model.error!.message, code: 12345, userInfo: nil))))
+                    }
                 } else {
                     completion(nil,AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: self.jsonSerializationFailedError)))
                 }
@@ -88,7 +96,56 @@ class PTChatApiFunction: NSObject {
         Network.requestApi(needGobal:false,urlStr: path,header: self.baseHeader,parameters: param,encoder: JSONEncoding.default,showHud: false) { result, error in
             if error == nil {
                 if let model = PTAIEditsModel.deserialize(from: result?.originalString.jsonStringToDic()) {
-                    completion(model,nil)
+                    if model.error == nil {
+                        completion(model,nil)
+                    } else {
+                        completion(nil,AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: NSError(domain: model.error!.message, code: 12345, userInfo: nil))))
+                    }
+                } else {
+                    completion(nil,AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: self.jsonSerializationFailedError)))
+                }
+            } else {
+                PTBaseViewController.gobal_drop(title: error!.localizedDescription)
+                completion(nil,error)
+            }
+        }
+    }
+        
+    func sendChat(sendModel:PTSendChatModel,completion:@escaping ((_ model:PTReceiveChatModel?,_ error:AFError?)->Void)) {
+        let path = self.fullUrlPath(path: "/chat/completions")
+        let param = sendModel.toJSON()
+        Network.requestApi(needGobal:false,urlStr: path,header: self.baseHeader,parameters: param,encoder: JSONEncoding.default,showHud: false) { result, error in
+            if error == nil {
+                if let model = PTReceiveChatModel.deserialize(from: result?.originalString.jsonStringToDic()) {
+                    if model.error == nil {
+                        completion(model,nil)
+                    } else {
+                        completion(nil,AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: NSError(domain: model.error!.message, code: 12345, userInfo: nil))))
+                    }
+                } else {
+                    completion(nil,AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: self.jsonSerializationFailedError)))
+                }
+            } else {
+                PTBaseViewController.gobal_drop(title: error!.localizedDescription)
+                completion(nil,error)
+            }
+        }
+    }
+}
+
+//MARK: 图片类
+extension PTChatApiFunction {
+    func imageGenerations(prompt:String,@PTClampedProperyWrapper(range: 1...10) numberofImages: Int = 1,imageSize:PTOpenAIImageSize,completion:@escaping ((_ model:PTImageGeneration?,_ error:AFError?)->Void)) {
+        let path = self.fullUrlPath(path: "/images/generations")
+        let param = ["prompt":prompt,"n":numberofImages,"size":imageSize.rawValue] as [String : Any]
+        Network.requestApi(needGobal:false,urlStr: path,header: self.baseHeader,parameters: param,encoder: JSONEncoding.default,showHud: false) { result, error in
+            if error == nil {
+                if let model = PTImageGeneration.deserialize(from: result?.originalString.jsonStringToDic()) {
+                    if model.error == nil {
+                        completion(model,nil)
+                    } else {
+                        completion(nil,AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: NSError(domain: model.error!.message, code: 12345, userInfo: nil))))
+                    }
                 } else {
                     completion(nil,AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: self.jsonSerializationFailedError)))
                 }
@@ -99,13 +156,20 @@ class PTChatApiFunction: NSObject {
         }
     }
     
-    func imageGenerations(prompt:String,@PTClampedProperyWrapper(range: 1...10) numberofImages: Int = 1,imageSize:PTOpenAIImageSize,completion:@escaping ((_ model:PTImageGeneration?,_ error:AFError?)->Void)) {
-        let path = self.fullUrlPath(path: "/images/generations")
-        let param = ["prompt":prompt,"n":numberofImages,"size":imageSize.rawValue] as [String : Any]
-        Network.requestApi(needGobal:false,urlStr: path,header: self.baseHeader,parameters: param,encoder: JSONEncoding.default,showHud: false) { result, error in
+    func imageVariation(image:UIImage,@PTClampedProperyWrapper(range: 1...10) numberofImages: Int = 1,imageSize:PTOpenAIImageSize,completion:@escaping ((_ model:PTImageGeneration?,_ error:AFError?)->Void)) {
+        let path = self.fullUrlPath(path: "/images/variations")
+        let param = ["n":"\(numberofImages)","size":imageSize.rawValue]
+        
+        let baseHeader = HTTPHeaders(["Authorization": "Bearer \(AppDelegate.appDelegate()!.appConfig.apiToken)","Content-Type": "multipart/form-data; boundary=\(UUID().uuidString)"])
+
+        Network.imageUpload(needGobal:false,images: [image],path: path,fileKey: ["image"],parmas: param,header: baseHeader,showHud: false) { result, error in
             if error == nil {
                 if let model = PTImageGeneration.deserialize(from: result?.originalString.jsonStringToDic()) {
-                    completion(model,nil)
+                    if model.error == nil {
+                        completion(model,nil)
+                    } else {
+                        completion(nil,AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: NSError(domain: model.error!.message, code: 12345, userInfo: nil))))
+                    }
                 } else {
                     completion(nil,AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: self.jsonSerializationFailedError)))
                 }
@@ -115,4 +179,39 @@ class PTChatApiFunction: NSObject {
             }
         }
     }
+    
+    func editImage(prompt:String,mainImage:UIImage,maskImage:UIImage? = nil,@PTClampedProperyWrapper(range: 1...10) numberofImages: Int = 1,imageSize:PTOpenAIImageSize,completion:@escaping ((_ model:PTImageGeneration?,_ error:AFError?)->Void)) {
+        let path = self.fullUrlPath(path: "/images/edits")
+        let param = ["prompt":prompt,"n":"\(numberofImages)","size":imageSize.rawValue]
+        
+        let baseHeader = HTTPHeaders(["Authorization": "Bearer \(AppDelegate.appDelegate()!.appConfig.apiToken)","Content-Type": "multipart/form-data; boundary=\(UUID().uuidString)"])
+
+        var images = [UIImage]()
+        var imagesName = [String]()
+        if maskImage != nil {
+            images = [mainImage,maskImage!]
+            imagesName = ["image","mask"]
+        } else {
+            images = [mainImage]
+            imagesName = ["image"]
+        }
+        
+        Network.imageUpload(needGobal:false,images: images,path: path,fileKey: imagesName,parmas: param,header: baseHeader,showHud: false) { result, error in
+            if error == nil {
+                if let model = PTImageGeneration.deserialize(from: result?.originalString.jsonStringToDic()) {
+                    if model.error == nil {
+                        completion(model,nil)
+                    } else {
+                        completion(nil,AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: NSError(domain: model.error!.message, code: 12345, userInfo: nil))))
+                    }
+                } else {
+                    completion(nil,AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: self.jsonSerializationFailedError)))
+                }
+            } else {
+                PTBaseViewController.gobal_drop(title: error!.localizedDescription)
+                completion(nil,error)
+            }
+        }
+    }
+
 }

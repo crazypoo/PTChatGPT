@@ -64,7 +64,7 @@ class PTAIModerationdResults :PTBaseModel {
     var categories: PTAIModerationdCategories!
 }
 
-class PTAIModerationdModel :PTBaseModel {
+class PTAIModerationdModel :PTChatGPTBaseModel {
     var id: String?
     var model: String?
     var results: [PTAIModerationdResults]?

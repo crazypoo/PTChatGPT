@@ -13,7 +13,7 @@ class PTImageGenerationData :PTBaseModel {
     var url: String = ""
 }
 
-class PTImageGeneration :PTBaseModel {
+class PTImageGeneration :PTChatGPTBaseModel {
     var created: Int = 0
     var data: [PTImageGenerationData]?
 }

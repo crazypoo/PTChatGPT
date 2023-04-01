@@ -22,7 +22,7 @@ class PTAICompletionsUsage :PTBaseModel {
     var prompt_tokens: Int = 0
 }
 
-class PTAICompletionsModel :PTBaseModel {
+class PTAICompletionsModel :PTChatGPTBaseModel {
     var id: String?
     var object: String?
     var created: Int = 0
