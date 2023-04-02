@@ -32,9 +32,14 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>20230402154335</string>
+	<string>20230402170345</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<key>NSBonjourServices</key>
 	<array>
 		<string>_adhp._tcp</string>
