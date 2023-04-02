@@ -30,10 +30,15 @@ class PTSendChatMessageModel: PTBaseModel {
 }
 
 class PTSendChatModel: PTBaseModel {
+    ///GPT3.5之后的消息模型
     var messages: [PTSendChatMessageModel]!
+    ///模型
     var model: String = OpenAIModelType.chat(.chatgpt).modelName
+    ///用户标识
     var user: String = UUID().uuidString
+    ///AI智障程度
     var temperature: Double = 1
+    //MARK: 靠,下面的太多了,很少用到,直接引用接口文档https://platform.openai.com/docs/api-reference/chat/create
     var top_p: Double = 1
     var n: Int = 1
     var stream:Bool = false

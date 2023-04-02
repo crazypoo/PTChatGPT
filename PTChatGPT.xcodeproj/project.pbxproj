@@ -283,6 +283,7 @@
 		552A609B29D819BC00239210 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				55A5D7E829B1D9A900DCA096 /* OpenAIModelType.swift */,
 				552A609E29D831BD00239210 /* PTAICompletionsModel.swift */,
 				552A60A029D8390500239210 /* PTAIEditsModel.swift */,
 				552A609C29D819F500239210 /* PTAIModerationdModel.swift */,
@@ -335,28 +336,11 @@
 				55A5D72229B1D23E00DCA096 /* LaunchScreen.storyboard */,
 				5514B39E29BB127F00890161 /* Localizable.strings */,
 				55A5D71D29B1D23D00DCA096 /* Main.storyboard */,
-				55A5D7E629B1D9A900DCA096 /* OpenAISwift */,
 				55C6BCCE29C4602B00A6B668 /* PTChatGPT.entitlements */,
 				55A5D80329B2429300DCA096 /* SettingInfo */,
 				5514B38529BAE76600890161 /* Tools */,
 			);
 			path = PTChatGPT;
-			sourceTree = "<group>";
-		};
-		55A5D7E629B1D9A900DCA096 /* OpenAISwift */ = {
-			isa = PBXGroup;
-			children = (
-				55A5D7E729B1D9A900DCA096 /* Models */,
-			);
-			path = OpenAISwift;
-			sourceTree = "<group>";
-		};
-		55A5D7E729B1D9A900DCA096 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				55A5D7E829B1D9A900DCA096 /* OpenAIModelType.swift */,
-			);
-			path = Models;
 			sourceTree = "<group>";
 		};
 		55A5D7F429B1DFCD00DCA096 /* Chat */ = {
@@ -899,7 +883,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.4;
+				MARKETING_VERSION = 1.0.8;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.zola.chat;
 				PRODUCT_NAME = "Chat走啦";
@@ -938,7 +922,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.4;
+				MARKETING_VERSION = 1.0.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.zola.chat;
 				PRODUCT_NAME = "Chat走啦";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

@@ -656,7 +656,7 @@ class PTChatViewController: MessagesViewController {
     func whatNews() {
         if WhatsNew.shouldPresent() {
             let whatsNew = WhatsNewViewController(items: [
-                WhatsNewItem.text(title: "聊天", subtitle: "1.完全适配iPad,使用方式更熟悉,更加方便.\n2.用户可以更改名字"),
+                WhatsNewItem.text(title: "聊天", subtitle: "1.完全适配iPad,使用方式更熟悉,更加方便.\n2.用户可以更改名字.\n3.用户现在可以更换自定义ChatGPT的服务器"),
                 WhatsNewItem.text(title: "其他", subtitle: "修复了一些昆虫"),
                 ])
             whatsNew.titleText = "What's New"
@@ -2340,12 +2340,30 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                             }
                         } else {
                             PTNSLogConsole("NO")
-                            switch self.chatCase {
-                            case .draw(type: .edit):
-                                self.sendTextFunction(str: str, saveModel: saveModel, sectionIndex: (self.messageList.count - 1))
-                            default:
+                            if error != nil {
                                 self.insertMessage(message) {
+                                    PTGCDManager.gcdMain {
+                                        saveModel.messageSendSuccess = false
+                                        self.chatModels.append(saveModel)
+                                        self.historyModel?.historyModel = self.chatModels
+                                        self.refreshViewAndLoadNewData {
+                                            self.messageList[(self.messageList.count - 1)].sending = false
+                                            self.messageList[(self.messageList.count - 1)].sendSuccess = false
+                                            self.reloadSomeSection(itemIndex: (self.messageList.count - 1)) {
+                                                self.packChatData()
+                                                PTBaseViewController.gobal_drop(title: error!.localizedDescription)
+                                            }
+                                        }
+                                    }
+                                }
+                            } else {
+                                switch self.chatCase {
+                                case .draw(type: .edit):
                                     self.sendTextFunction(str: str, saveModel: saveModel, sectionIndex: (self.messageList.count - 1))
+                                default:
+                                    self.insertMessage(message) {
+                                        self.sendTextFunction(str: str, saveModel: saveModel, sectionIndex: (self.messageList.count - 1))
+                                    }
                                 }
                             }
                         }
@@ -2355,8 +2373,12 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                         case .draw(type: .edit):
                             self.sendTextFunction(str: str, saveModel: saveModel, sectionIndex: (self.messageList.count - 1))
                         default:
-                            self.insertMessage(message) {
-                                self.sendTextFunction(str: str, saveModel: saveModel, sectionIndex: (self.messageList.count - 1))
+                            PTGCDManager.gcdBackground {
+                                PTGCDManager.gcdMain {
+                                    self.insertMessage(message) {
+                                        self.sendTextFunction(str: str, saveModel: saveModel, sectionIndex: (self.messageList.count - 1))
+                                    }
+                                }
                             }
                         }
                     }
@@ -2428,8 +2450,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
     }
     
     //MARK: 发送图片内容
-    func userSendImage(imageObject:UIImage,saveModel:PTChatModel,resend:Bool? = false)
-    {
+    func userSendImage(imageObject:UIImage,saveModel:PTChatModel,resend:Bool? = false) {
         self.setTypingIndicatorViewHidden(false)
         var imageSizeType:PTOpenAIImageSize
         switch AppDelegate.appDelegate()!.appConfig.aiDrawSize.width {
@@ -2915,6 +2936,7 @@ extension PTChatViewController
 
 extension PTChatViewController:UITextFieldDelegate {}
 
+//MARK: 第一次使用APP的时候的用户使用提示
 extension PTChatViewController: CoachMarksControllerDataSource {
     func coachMarksController(_ coachMarksController: CoachMarksController, coachMarkViewsAt index: Int, madeFrom coachMark: CoachMark) -> (bodyView: UIView & CoachMarkBodyView, arrowView: (UIView & CoachMarkArrowView)?) {
         let coachViews = coachMarksController.helper.makeDefaultCoachViews(

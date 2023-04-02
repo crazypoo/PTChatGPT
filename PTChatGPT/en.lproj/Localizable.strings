@@ -143,3 +143,7 @@
 "about_User_name" = "User name";
 "about_AI_name" = "AI name";
 "alert_AI_name_edit" = "Please enter the AI name";
+"about_Use_custom_domain_switch" = "Custom server";
+"about_Use_custom_domain_address" = "Server address";
+"alert_Enter_domain" = "Please enter the server address";
+"alert_Domain_error" = "Please enter the correct server address";

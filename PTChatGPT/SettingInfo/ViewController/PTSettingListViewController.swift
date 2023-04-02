@@ -40,6 +40,9 @@ extension String {
     static let drawImageSize = PTLanguage.share.text(forKey: "about_Draw_image_size")
     static let getImageCount = PTLanguage.share.text(forKey: "chat_Get_image_count")
     static let drawRefrence = PTLanguage.share.text(forKey: "draw_Reference")
+    static let customDomainSwitch = PTLanguage.share.text(forKey: "about_Use_custom_domain_switch")
+    static let domainAddress = PTLanguage.share.text(forKey: "about_Use_custom_domain_address")
+    
     //MARK: Setting
     static let reset = PTLanguage.share.text(forKey: "setting_Reset")
     //MARK: Other
@@ -338,11 +341,26 @@ class PTSettingListViewController: PTChatBaseViewController {
         getApiToken.nameColor = .gobalTextColor
         getApiToken.disclosureIndicatorImage = disclosureIndicatorImageName
         getApiToken.cellFont = nameFont
+        
+        let domainSwitch = PTFusionCellModel()
+        domainSwitch.name = .customDomainSwitch
+        domainSwitch.nameColor = .gobalTextColor
+        domainSwitch.haveSwitch = true
+        domainSwitch.switchTinColor = .orange
+        domainSwitch.cellFont = nameFont
+
+        let domainAddress = PTFusionCellModel()
+        domainAddress.name = .domainAddress
+        domainAddress.haveDisclosureIndicator = true
+        domainAddress.nameColor = .gobalTextColor
+        domainAddress.disclosureIndicatorImage = disclosureIndicatorImageName
+        domainAddress.cellFont = nameFont
+        domainAddress.contentAttr = self.cellContentAtt(content: AppDelegate.appDelegate()!.appConfig.customDomain)
 
         if self.user.senderId == PTChatData.share.bot.senderId {
-            apiMain.models = [aiName,aiType,aiSmart,drawSize,imageCount,drawSample,aiToken]
+            apiMain.models = [aiName,aiType,aiSmart,drawSize,imageCount,drawSample,aiToken,domainSwitch,domainAddress]
         } else {
-            apiMain.models = [aiName,aiType,aiSmart,drawSize,imageCount,drawSample,aiToken,getApiToken]
+            apiMain.models = [aiName,aiType,aiSmart,drawSize,imageCount,drawSample,aiToken,getApiToken,domainSwitch,domainAddress]
         }
         
         let toolMain = PTSettingModels()
@@ -638,6 +656,14 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                     AppDelegate.appDelegate()?.appConfig.mobileDataSavePlaceChange()
                 }
             }
+            else if itemRow.title == .customDomainSwitch {
+//                cell.dataContent.valueSwitch.onTintColor = UIColor.orange
+                cell.dataContent.valueSwitch.isOn = AppDelegate.appDelegate()!.appConfig.useCustomDomain
+                cell.dataContent.valueSwitch.addSwitchAction { sender in
+                    AppDelegate.appDelegate()?.appConfig.useCustomDomain = sender.isOn
+                    AppDelegate.appDelegate()?.appConfig.mobileDataSavePlaceChange()
+                }
+            }
             
             if itemSec.rows.count == 1 {
                 PTGCDManager.gcdMain {
@@ -729,6 +755,18 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                     PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Token_error"))
                 } else {
                     AppDelegate.appDelegate()!.appConfig.apiToken = newToken!
+                }
+            }
+        } else if itemRow.title == .domainAddress {
+            let textKey = PTLanguage.share.text(forKey: "alert_Enter_domain")
+            let domain = AppDelegate.appDelegate()!.appConfig.customDomain
+            UIAlertController.base_textfiele_alertVC(title:textKey,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey], textFieldTexts: [domain], keyboardType: [.default],textFieldDelegate: self) { result in
+                let newDomain:String? = result[textKey]!
+                if (newDomain ?? "").stringIsEmpty() || !(newDomain ?? "").isURL() {
+                    PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Domain_error"))
+                } else {
+                    AppDelegate.appDelegate()!.appConfig.customDomain = newDomain!
+                    self.showDetail()
                 }
             }
         } else if itemRow.title == .getAPIAIToken {

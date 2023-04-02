@@ -143,3 +143,7 @@
 "about_User_name" = "用戶名";
 "about_AI_name" = "AI名字";
 "alert_AI_name_edit" = "請輸入AI名字";
+"about_Use_custom_domain_switch" = "自定義服務器";
+"about_Use_custom_domain_address" = "服務器地址";
+"alert_Enter_domain" = "請輸入服務器地址";
+"alert_Domain_error" = "請輸入正確的服務器地址";

@@ -143,3 +143,7 @@
 "about_User_name" = "用户名";
 "about_AI_name" = "AI名字";
 "alert_AI_name_edit" = "请输入AI名字";
+"about_Use_custom_domain_switch" = "自定义服务器";
+"about_Use_custom_domain_address" = "服务器地址";
+"alert_Enter_domain" = "请输入服务器地址";
+"alert_Domain_error" = "请输入正确的服务器地址";
