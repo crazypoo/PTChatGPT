@@ -46,7 +46,7 @@ App主框架使用了自己的工具框架[PTools](https://github.com/crazypoo/P
 
 对于聊天列表的设置,我用了[ChromaColorPicker](https://github.com/joncardasis/ChromaColorPicker) ,来进行颜色设置
 
-AI的API我是使用了自己魔改版的[OpenAISwift](https://github.com/adamrushy/OpenAISwift)(因为他不支持获取图片和模型太少,現在我又懒得改🤪)和[OpenAIKit](https://github.com/MarcoDotIO/OpenAIKit)
+~~AI的API我是使用了自己魔改版的[OpenAISwift](https://github.com/adamrushy/OpenAISwift)(因为他不支持获取图片和模型太少,現在我又懒得改🤪)和[OpenAIKit](https://github.com/MarcoDotIO/OpenAIKit)~~ 现在已经改成自己的接口请求方式,完全可以摆脱第三方库的限制
 
 # 主要功能
 ### 聊天界面
@@ -82,6 +82,8 @@ AI的API我是使用了自己魔改版的[OpenAISwift](https://github.com/adamru
 8.支持根据原图和遮罩图和需求来使AI修改图片
 
 9.支持对AI对文字内容是否敏感的检测
+
+10.支持根据原图生成油画风格和动画风格的图片
 #### API
 1.更换AI的模型,已经支持GPT4x的模型
 
@@ -92,6 +94,8 @@ AI的API我是使用了自己魔改版的[OpenAISwift](https://github.com/adamru
 4.支持获取图片的数量
 
 5.更改Token
+
+6.支持更换成自定义服务器,但是须要遵循ChatGPT的数据模型
 
 #### iCloud
 支持iCloud备份同步
