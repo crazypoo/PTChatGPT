@@ -114,7 +114,7 @@ class PTChatMasterControl: PTChatBaseViewController {
                         PTChatData.share.user = PTChatUser(senderId: "000000", displayName: AppDelegate.appDelegate()!.appConfig.userName)
                         PTGCDManager.gcdAfter(time: 0.35) {
                             PTGCDManager.gcdMain {
-                                self.reloadTagChat(index: self.segDataArr().firstIndex(where: {$0.keyName == self.currentHistoryModel.keyName})!)
+                                self.reloadTagChat(index: self.segDataArr().firstIndex(where: {$0!.keyName == self.currentHistoryModel.keyName})!)
                             }
                         }
                     } else {
@@ -138,15 +138,8 @@ class PTChatMasterControl: PTChatBaseViewController {
 
     var currentHistoryModel = PTSegHistoryModel()
 
-    func segDataArr() -> [PTSegHistoryModel] {
-        var arr = [PTSegHistoryModel]()
-        let dataString = AppDelegate.appDelegate()?.appConfig.segChatHistory
-        let dataArr = dataString!.components(separatedBy: kSeparatorSeg)
-        dataArr.enumerated().forEach { index,value in
-            let model = PTSegHistoryModel.deserialize(from: value)
-            arr.append(model!)
-        }
-        return arr
+    func segDataArr() -> [PTSegHistoryModel?] {
+        return AppDelegate.appDelegate()!.appConfig.tagDataArr()
     }
 
     var mSections = [PTSection]()
@@ -205,21 +198,17 @@ class PTChatMasterControl: PTChatBaseViewController {
                 UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "alert_delete_all_tag"),msgColor: .gobalTextColor,okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
                 } moreBtn: { index, title in
                     var arr = AppDelegate.appDelegate()?.appConfig.tagDataArr()
-                    arr?.removeAll(where: {$0.keyName != "Base"})
+                    arr?.removeAll(where: {$0!.keyName != "Base"})
 
                     if arr?.count == 0 {
                         let baseSub = PTSegHistoryModel()
                         baseSub.keyName = "Base"
-                        AppDelegate.appDelegate()!.appConfig.segChatHistory = baseSub.toJSON()!.toJSON()!
+                        AppDelegate.appDelegate()!.appConfig.setChatData = [baseSub.toJSON()!]
                     } else {
-                        var newJsonArr = [String]()
-                        arr!.enumerated().forEach { index,value in
-                            newJsonArr.append(value.toJSON()!.toJSON()!)
-                        }
-                        AppDelegate.appDelegate()!.appConfig.segChatHistory = newJsonArr.joined(separator: kSeparatorSeg)
+                        AppDelegate.appDelegate()!.appConfig.setChatData = arr!.kj.JSONObjectArray()
                     }
                     self.reloadTagChat(index: 0)
-                    self.currentHistoryModel = self.segDataArr()[0]
+                    self.currentHistoryModel = self.segDataArr()[0]!
                     self.showDetail()
                     self.collectionView.selectItem(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .top)
                     PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_done"))
@@ -256,7 +245,7 @@ class PTChatMasterControl: PTChatBaseViewController {
                     let newKey:String? = result[textKey]!
                     let newAiKey:String? = result[aiKey]
                     if !(newKey ?? "").stringIsEmpty() {
-                        if self.segDataArr().contains(where: {$0.keyName == newKey}) {
+                        if self.segDataArr().contains(where: {$0?.keyName == newKey}) {
                             PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Save_error"))
                         } else {
                             var data = self.segDataArr()
@@ -264,11 +253,9 @@ class PTChatMasterControl: PTChatBaseViewController {
                             newTag.keyName = newKey!
                             newTag.systemContent = newAiKey ?? ""
                             data.append(newTag)
-                            var jsonArr = [String]()
-                            data.enumerated().forEach { index,value in
-                                jsonArr.append(value.toJSON()!.toJSON()!)
-                            }
-                            AppDelegate.appDelegate()?.appConfig.segChatHistory = jsonArr.joined(separator: kSeparatorSeg)
+                            
+                            AppDelegate.appDelegate()?.appConfig.setChatData = data.kj.JSONObjectArray()
+
                             self.reloadTagChat(index: (data.count - 1))
                             self.currentHistoryModel = newTag
                             self.loadData()
@@ -358,7 +345,13 @@ class PTChatMasterControl: PTChatBaseViewController {
             make.left.equalTo(addTag.snp.right)
         }
         
-        self.currentHistoryModel = self.segDataArr().first!
+        let currentTag = AppDelegate.appDelegate()!.appConfig.currentSelectTag
+        for (index,value) in self.segDataArr().enumerated() {
+            if value?.keyName == currentTag {
+                self.currentHistoryModel = self.segDataArr()[index]!
+                break
+            }
+        }
         
         self.collectionView.snp.makeConstraints { make in
             make.left.right.equalToSuperview()
@@ -391,7 +384,7 @@ class PTChatMasterControl: PTChatBaseViewController {
         
         var indexPath = IndexPath()
         self.segDataArr().enumerated().forEach { index,value in
-            if value.keyName == self.currentHistoryModel.keyName {
+            if value!.keyName == self.currentHistoryModel.keyName {
                 indexPath = IndexPath.init(row: index, section: 0)
             }
         }
@@ -443,7 +436,7 @@ class PTChatMasterControl: PTChatBaseViewController {
         self.currentChatViewController.chatModels.removeAll()
         self.currentChatViewController.messagesCollectionView.reloadData {
             self.currentChatViewController.historyModel = segModel
-            self.currentChatViewController.setTitleViewFrame(withModel: segModel)
+            self.currentChatViewController.setTitleViewFrame(withModel: segModel!)
             self.currentChatViewController.segDataArr = AppDelegate.appDelegate()!.appConfig.tagDataArr()
         }
     }
@@ -497,7 +490,7 @@ extension PTChatMasterControl:UICollectionViewDelegate,UICollectionViewDataSourc
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        self.currentHistoryModel = self.segDataArr()[indexPath.row]
+        self.currentHistoryModel = self.segDataArr()[indexPath.row]!
         self.reloadTagChat(index: indexPath.row)
     }
 }
@@ -539,10 +532,10 @@ extension PTChatMasterControl:SwipeCollectionViewCellDelegate
            
            let delete = SwipeAction(style: .destructive, title: PTLanguage.share.text(forKey: "cell_Delete")) { action, indexPath in
                PTGCDManager.gcdMain {
-                   if self.segDataArr()[indexPath.row].keyName == "Base" {
+                   if self.segDataArr()[indexPath.row]!.keyName == "Base" {
                        PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_error"))
                        self.showDetail()
-                   } else if self.segDataArr()[indexPath.row].keyName == self.currentHistoryModel.keyName && self.segDataArr()[indexPath.row].keyName != "Base" {
+                   } else if self.segDataArr()[indexPath.row]!.keyName == self.currentHistoryModel.keyName && self.segDataArr()[indexPath.row]!.keyName != "Base" {
                        var data = self.segDataArr()
                        data.remove(at: indexPath.row)
                        PTAppConfig.refreshTagData(segDataArr: data)
@@ -556,7 +549,7 @@ extension PTChatMasterControl:SwipeCollectionViewCellDelegate
                        self.showDetail()
 
                        for (index,value) in self.segDataArr().enumerated() {
-                           if value.keyName == self.currentHistoryModel.keyName {
+                           if value!.keyName == self.currentHistoryModel.keyName {
                                self.collectionView.selectItem(at: IndexPath(row: index, section: 0), animated: false, scrollPosition: .top)
                                break
                            }
@@ -592,24 +585,20 @@ extension PTChatMasterControl:SwipeCollectionViewCellDelegate
                            if !(newKey ?? "").stringIsEmpty() {
                                var segDatas = AppDelegate.appDelegate()?.appConfig.tagDataArr()
                                let currentCellBaseData = segDatas![indexPath.row]
-                               currentCellBaseData.keyName = newKey!
-                               currentCellBaseData.systemContent = newAiKey ?? ""
+                               currentCellBaseData!.keyName = newKey!
+                               currentCellBaseData!.systemContent = newAiKey ?? ""
                                segDatas![indexPath.row] = currentCellBaseData
                                
-                               var jsonArr = [String]()
-                               segDatas!.enumerated().forEach { index,value in
-                                   jsonArr.append(value.toJSON()!.toJSON()!)
-                               }
-                               AppDelegate.appDelegate()?.appConfig.segChatHistory = jsonArr.joined(separator: kSeparatorSeg)
+                               AppDelegate.appDelegate()?.appConfig.setChatData = segDatas!.kj.JSONObjectArray()
                                
                                var indexPathSelect = IndexPath()
                                self.segDataArr().enumerated().forEach { index,value in
-                                   if value.keyName == self.currentHistoryModel.keyName {
+                                   if value!.keyName == self.currentHistoryModel.keyName {
                                        indexPathSelect = IndexPath.init(row: index, section: 0)
                                    }
                                }
                                var data = self.segDataArr()
-                               data[indexPath.row] = currentCellBaseData
+                               data[indexPath.row] = currentCellBaseData!
                                PTAppConfig.refreshTagData(segDataArr: data)
                                self.showDetail()
                                self.collectionView.selectItem(at: indexPathSelect, animated: false, scrollPosition: .top)

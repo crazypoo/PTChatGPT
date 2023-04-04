@@ -185,11 +185,9 @@ extension PTSuggesstionViewController:UICollectionViewDelegate,UICollectionViewD
                     newTag.keyName = cellModel.keyName
                     newTag.systemContent = cellModel.systemContent
                     appSegData.append(newTag)
-                    var jsonArr = [String]()
-                    appSegData.enumerated().forEach { index,value in
-                        jsonArr.append(value.toJSON()!.toJSON()!)
-                    }
-                    AppDelegate.appDelegate()?.appConfig.segChatHistory = jsonArr.joined(separator: kSeparatorSeg)
+                    
+                    AppDelegate.appDelegate()?.appConfig.setChatData = appSegData.kj.JSONObjectArray()
+                    
                     self.currentModels = AppDelegate.appDelegate()!.appConfig.getJsonFileModel(index: self.currentIndex)
                     self.showDetail()
                     if Gobal_device_info.isPad {

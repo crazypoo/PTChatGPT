@@ -22,8 +22,11 @@ let uUserTextColor = "uUserTextColor"
 let uBotTextColor = "uBotTextColor"
 ///Seg控制器的历史记录Key
 let uSegChatHistory = "uSegChatHistory"
+let uSegChatHistorySaved = "uSegChatHistorySaved"
+let uUserCurrentTag = "uUserCurrentTag"
 ///保存記錄 key
 let uSaveChat = "uSaveChat"
+let uSaveChatSaved = "uSaveChatSaved"
 ///保存的機器人類型
 let uAiModelType = "uAiModelType"
 ///保存的機器人智障程度
@@ -44,16 +47,12 @@ let uLanguageKey = "UserLanguage"
 let uWaveColor = "uWaveColor"
 ///第一次使用App
 let uAppFirstUse = "uAppFirstUse"
-///第一次使用iCloud
-let uAppFirstiCloud = "uAppFirstiCloud"
 ///使用iCloud
 let uUseiCloud = "uUseiCloud"
 ///第一次使用App提示
 let uFirstCoach = "uFirstCoach"
 ///图片数量Key
 let uGetImageCount = "uGetImageCount"
-
-let uFirstDataChange = "uFirstDataChange"
 
 let uCheckSentence = "uCheckSentence"
 
@@ -63,6 +62,8 @@ let uAppCount = "uAppCount"
 let uUseCustomDomain = "uUseCustomDomain"
 ///自定义域名
 let uCustomDomain = "uCustomDomain"
+
+let uAppBuildVersion = "uAppBuildVersion"
 
 let kSeparator = "[,]"
 let kSeparatorSeg = "[::]"
@@ -78,7 +79,10 @@ let projectGithubUrl = "https://github.com/crazypoo/PTChatGPT"
 let AppDisclaimer = PTLanguage.share.text(forKey: "disclaimer_App_Info")
 let ExternalLinksDisclaimer = PTLanguage.share.text(forKey: "disclaimer_External_info")
 
+//MARK: 图片保存的本地地址
 let userImageMessageFilePath = FileManager.pt.LibraryDirectory() + "/UserImageMessageFile"
+//MARK: 聊天记录保存的本地地址
+let userChatMessageFilePath = FileManager.pt.LibraryDirectory() + "/UserChatMessageFile"
 
 let iPadSplitMainControl:CGFloat = 300
 
@@ -95,20 +99,6 @@ extension UIColor {
     private(set) static var gobalScrollerBackgroundColor = PTDarkModeOption.colorLightDark(lightColor: PTAppBaseConfig.share.viewControllerBaseBackgroundColor, darkColor: UIColor.black)
     
     private(set) static var gobalCellBackgroundColor = PTDarkModeOption.colorLightDark(lightColor: .white, darkColor: .Black25PercentColor)
-}
-
-extension CGSize {
-    static func from(archivedData data: Data) throws -> CGSize {
-        var sizeObj = CGSize.zero
-        let unarchiver = try NSKeyedUnarchiver(forReadingFrom: data)
-        unarchiver.requiresSecureCoding = false
-        if let size = unarchiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as? NSValue
-        {
-            sizeObj =  size.cgSizeValue
-        }
-        unarchiver.finishDecoding()
-        return sizeObj
-    }
 }
 
 extension String {
@@ -128,31 +118,25 @@ extension String {
 
 class PTAppConfig {
     static let share = PTAppConfig()
+        
+    var currentSelectTag:String = UserDefaults.standard.value(forKey: uUserCurrentTag) == nil ? "Base" : UserDefaults.standard.value(forKey: uUserCurrentTag) as! String {
+        didSet{
+            UserDefaults.standard.set(self.currentSelectTag,forKey: uUserCurrentTag)
+        }
+    }
     
     var appCount:Int = UserDefaults.standard.value(forKey: uAppCount) == nil ? 1 : UserDefaults.standard.value(forKey: uAppCount) as! Int {
         didSet{
             UserDefaults.standard.set(self.appCount,forKey: uAppCount)
         }
     }
-    
-    var firstDataChange:Bool = UserDefaults.standard.value(forKey: uFirstDataChange) == nil ? true : UserDefaults.standard.value(forKey: uFirstDataChange) as! Bool {
-        didSet{
-            UserDefaults.standard.set(self.firstDataChange,forKey: uFirstDataChange)
-        }
-    }
-    
+        
     var firstCoach:Bool = UserDefaults.standard.value(forKey: uFirstCoach) == nil ? true : UserDefaults.standard.value(forKey: uFirstCoach) as! Bool {
         didSet{
             UserDefaults.standard.set(self.firstCoach,forKey: uFirstCoach)
         }
     }
-    
-    var firstUseiCloud:Bool = UserDefaults.standard.value(forKey: uAppFirstiCloud) == nil ? true : UserDefaults.standard.value(forKey: uAppFirstiCloud) as! Bool {
-        didSet{
-            UserDefaults.standard.set(self.firstUseiCloud,forKey: uAppFirstiCloud)
-        }
-    }
-    
+        
     var firstUseApp:Bool = UserDefaults.standard.value(forKey: uAppFirstUse) == nil ? true : UserDefaults.standard.value(forKey: uAppFirstUse) as! Bool {
         didSet{
             UserDefaults.standard.set(self.firstUseApp,forKey: uAppFirstUse)
@@ -396,7 +380,6 @@ class PTAppConfig {
             }
         }
     }
-    
     
     ///保存聊天的圖片到iCloud
     func saveUserSendImage(image:UIImage,fileName:String,jobDoneBlock:@escaping ((_ finish:Bool)->Void)) {
@@ -739,6 +722,118 @@ class PTAppConfig {
     }
     
     //MARK: 聊天历史记录
+    var setChatData:[[String:Any]] {
+        get {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                if let icloudURL = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents") {
+                    let imageURL = icloudURL.appendingPathComponent("SetChatJson.json")
+                    do {
+                        let jsonData = try Data(contentsOf: imageURL,options: .mappedIfSafe)
+                        let json = try JSONSerialization.jsonObject(with: jsonData, options: .mutableLeaves)
+                        return json as! [[String : Any]]
+                    } catch {
+                        
+                        let baseSub = PTSegHistoryModel()
+                        baseSub.keyName = "Base"
+                        
+                        let createBaseData = baseSub.toJSON()!
+                        
+                        self.setChatData = [createBaseData]
+                        
+                        return [createBaseData]
+                    }
+                } else {
+                    let baseSub = PTSegHistoryModel()
+                    baseSub.keyName = "Base"
+                    
+                    let createBaseData = baseSub.toJSON()!
+                    
+                    self.setChatData = [createBaseData]
+
+                    return [createBaseData]
+                }
+            } else {
+                let filePath = userChatMessageFilePath.appending("/SetChatJson.json")
+                let fileURL = URL(fileURLWithPath: filePath)
+
+                do {
+                    let jsonData = try Data(contentsOf: fileURL,options: .mappedIfSafe)
+                    let json = try JSONSerialization.jsonObject(with: jsonData, options: .mutableLeaves)
+                    return json as! [[String : Any]]
+                } catch {
+                    let baseSub = PTSegHistoryModel()
+                    baseSub.keyName = "Base"
+                    
+                    let createBaseData = baseSub.toJSON()!
+                    
+                    self.setChatData = [createBaseData]
+
+                    return [createBaseData]
+                }
+            }
+        } set {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                if let icloudURL = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents") {
+                    let chatJsonURL = icloudURL.appendingPathComponent("SetChatJson.json")
+                    do {
+                        let jsonData = try JSONSerialization.data(withJSONObject: newValue, options: .prettyPrinted)
+                        try jsonData.write(to: chatJsonURL, options: .atomic)
+                        self.segChatHistorySaved = "1"
+                    } catch let error {
+                        PTNSLogConsole("Failed to write json data to iCloud: \(error.localizedDescription)")
+                    }
+                }
+            } else {
+                do {
+                    let filePath = userChatMessageFilePath.appendingPathComponent("SetChatJson.json")
+                    if FileManager.pt.judgeFileOrFolderExists(filePath: filePath) {
+                        let fileURL = URL(fileURLWithPath: filePath)
+                        let jsonData = try JSONSerialization.data(withJSONObject: newValue, options: .prettyPrinted)
+                        try jsonData.write(to: fileURL)
+                    } else {
+                        let result = FileManager.pt.createFile(filePath: filePath)
+                        if result.isSuccess {
+                            let fileURL = URL(fileURLWithPath: filePath)
+                            let jsonData = try JSONSerialization.data(withJSONObject: newValue, options: .prettyPrinted)
+                            try jsonData.write(to: fileURL)
+                            self.segChatHistorySaved = "1"
+                        } else {
+                            PTNSLogConsole("Failed to write json data to local: \(result.error)")
+                        }
+                    }
+                } catch {
+                    PTNSLogConsole("Failed to write json data to local: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+    
+    var segChatHistorySaved:String {
+        get {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uSegChatHistorySaved) {
+                    return value as! String
+                } else {
+                    return ""
+                }
+            } else {
+                if let value = UserDefaults.standard.value(forKey: uSegChatHistorySaved) {
+                    return value as! String
+                } else {
+                    return ""
+                }
+            }
+        } set {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uSegChatHistorySaved)
+                AppDelegate.appDelegate()?.cloudStore.synchronize()
+            } else {
+                UserDefaults.standard.set(newValue, forKey: uSegChatHistorySaved)
+            }
+        }
+    }
+
+    //TODO: 下个版本删除
     var segChatHistory:String {
         get {
             if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
@@ -772,21 +867,106 @@ class PTAppConfig {
         }
     }
     
-    func tagDataArr() -> [PTSegHistoryModel] {
-        var arr = [PTSegHistoryModel]()
-        if let dataString = AppDelegate.appDelegate()?.appConfig.segChatHistory {
-            let dataArr = dataString.components(separatedBy: kSeparatorSeg)
-            dataArr.enumerated().forEach { index,value in
-                let model = PTSegHistoryModel.deserialize(from: value)
-                arr.append(model!)
-            }
-            return arr
+    func tagDataArr() -> [PTSegHistoryModel?] {
+        if let models = [PTSegHistoryModel].deserialize(from: self.setChatData) {
+            return models
+        } else {
+            return [PTSegHistoryModel?]()
         }
-        return arr
     }
     
     //MARK: 精选记录
     ///精选记录
+    var favouriteChat:[[String:Any]] {
+        get {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                if let icloudURL = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents") {
+                    let imageURL = icloudURL.appendingPathComponent("FavouriteChat.json")
+                    do {
+                        let jsonData = try Data(contentsOf: imageURL,options: .mappedIfSafe)
+                        let json = try JSONSerialization.jsonObject(with: jsonData, options: .mutableLeaves)
+                        return json as! [[String : Any]]
+                    } catch {
+                        return [[String:Any]]()
+                    }
+                } else {
+                    return [[String:Any]]()
+                }
+            } else {
+                let filePath = userChatMessageFilePath.appending("/FavouriteChat.json")
+                let fileURL = URL(fileURLWithPath: filePath)
+
+                do {
+                    let jsonData = try Data(contentsOf: fileURL,options: .mappedIfSafe)
+                    let json = try JSONSerialization.jsonObject(with: jsonData, options: .mutableLeaves)
+                    return json as! [[String : Any]]
+                } catch {
+                    return [[String:Any]]()
+                }
+            }
+        } set {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                if let icloudURL = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents") {
+                    let chatJsonURL = icloudURL.appendingPathComponent("FavouriteChat.json")
+                    do {
+                        let jsonData = try JSONSerialization.data(withJSONObject: newValue, options: .prettyPrinted)
+                        try jsonData.write(to: chatJsonURL, options: .atomic)
+                        self.chatFavourtieSaved = "1"
+                    } catch let error {
+                        PTNSLogConsole("Failed to write json data to iCloud: \(error.localizedDescription)")
+                    }
+                }
+            } else {
+                do {
+                    let filePath = userChatMessageFilePath.appendingPathComponent("FavouriteChat.json")
+                    if FileManager.pt.judgeFileOrFolderExists(filePath: filePath) {
+                        let fileURL = URL(fileURLWithPath: filePath)
+                        let jsonData = try JSONSerialization.data(withJSONObject: newValue, options: .prettyPrinted)
+                        try jsonData.write(to: fileURL)
+                    } else {
+                        let result = FileManager.pt.createFile(filePath: filePath)
+                        if result.isSuccess {
+                            let fileURL = URL(fileURLWithPath: filePath)
+                            let jsonData = try JSONSerialization.data(withJSONObject: newValue, options: .prettyPrinted)
+                            try jsonData.write(to: fileURL)
+                            self.chatFavourtieSaved = "1"
+                        } else {
+                            PTNSLogConsole("Failed to write json data to local: \(result.error)")
+                        }
+                    }
+                } catch {
+                    PTNSLogConsole("Failed to write json data to local: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+    
+    var chatFavourtieSaved:String {
+        get {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uSaveChatSaved) {
+                    return value as! String
+                } else {
+                    return ""
+                }
+            } else {
+                if let value = UserDefaults.standard.value(forKey: uSaveChatSaved) {
+                    return value as! String
+                } else {
+                    return ""
+                }
+            }
+        } set {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uSaveChatSaved)
+                AppDelegate.appDelegate()?.cloudStore.synchronize()
+            } else {
+                UserDefaults.standard.set(newValue, forKey: uSaveChatSaved)
+            }
+        }
+    }
+
+    //TODO: 下个版本删除
     var chatFavourtie:String {
         get {
             if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
@@ -814,40 +994,56 @@ class PTAppConfig {
     
     //MARK: 精选数据
     ///精选数据
-    func getSaveChatData() -> [PTFavouriteModel] {
-        var saveChatModel = [PTFavouriteModel]()
-        if !self.chatFavourtie.stringIsEmpty() {
-            let userModelsStringArr = self.chatFavourtie.components(separatedBy: kSeparator)
-            userModelsStringArr.enumerated().forEach { index,value in
-                let models = PTFavouriteModel.deserialize(from: value)
-                saveChatModel.append(models!)
-            }
+    func getSaveChatData() -> [PTFavouriteModel?] {
+        if let models = [PTFavouriteModel].deserialize(from: self.favouriteChat) {
+            return models
+        } else {
+            return [PTFavouriteModel?]()
         }
-        return saveChatModel
     }
     
     let imageControlActions:[String] = {
         return [.findImage,.remakeImage]
     }()
     
-    func mobileDataSavePlaceChange() {
-        self.userIcon = self.userIcon
-        self.userBubbleColor = self.userBubbleColor
-        self.botBubbleColor = self.botBubbleColor
-        self.userTextColor = self.userTextColor
-        self.botTextColor = self.botTextColor
-        self.waveColor = self.waveColor
-        self.aiModelType = self.aiModelType
-        self.apiToken = self.apiToken
-        self.aiSmart = self.aiSmart
-        self.aiDrawSize = self.aiDrawSize
-        self.language = self.language
-        self.chatFavourtie = self.chatFavourtie
-        self.userIconURL = self.userIconURL
-        self.segChatHistory = self.segChatHistory
-        self.drawRefrence = self.drawRefrence
-        self.getImageCount = self.getImageCount
-        self.checkSentence = self.checkSentence
+    func mobileDataSavePlaceChange(value:Bool) {
+        let userIcon = self.userIcon
+        let userBubbleColor = self.userBubbleColor
+        let botBubbleColor = self.botBubbleColor
+        let userTextColor = self.userTextColor
+        let botTextColor = self.botTextColor
+        let waveColor = self.waveColor
+        let aiModelType = self.aiModelType
+        let apiToken = self.apiToken
+        let aiSmart = self.aiSmart
+        let aiDrawSize = self.aiDrawSize
+        let language = self.language
+        let chatFavourtie = self.favouriteChat
+        let userIconURL = self.userIconURL
+        let drawRefrence = self.drawRefrence
+        let getImageCount = self.getImageCount
+        let checkSentence = self.checkSentence
+        let setChatData = self.setChatData
+        AppDelegate.appDelegate()?.appConfig.cloudSwitch = value
+        PTGCDManager.gcdAfter(time: 0.35) {
+            self.userIcon = userIcon
+            self.userBubbleColor = userBubbleColor
+            self.botBubbleColor = botBubbleColor
+            self.userTextColor = userTextColor
+            self.botTextColor = botTextColor
+            self.waveColor = waveColor
+            self.aiModelType = aiModelType
+            self.apiToken = apiToken
+            self.aiSmart = aiSmart
+            self.aiDrawSize = aiDrawSize
+            self.language = language
+            self.favouriteChat = chatFavourtie
+            self.userIconURL = userIconURL
+            self.drawRefrence = drawRefrence
+            self.getImageCount = getImageCount
+            self.checkSentence = checkSentence
+            self.setChatData = setChatData
+        }
     }
     
     func mobileDataReset(delegate: OSSSpeechDelegate,resetSetting:@escaping (()->Void),resetChat:@escaping (()->Void),resetVoiceFile:@escaping (()->Void),resetImage:@escaping (()->Void)) {
@@ -862,7 +1058,7 @@ class PTAppConfig {
             //Speech
             self.language = OSSVoiceEnum.ChineseSimplified.rawValue
             //Chat
-            self.chatFavourtie = ""
+            self.favouriteChat = [[String:Any]]()
             //AI
             self.aiModelType = "text-davinci-003"
             self.aiSmart = 1
@@ -875,10 +1071,9 @@ class PTAppConfig {
             PTGCDManager.gcdAfter(time: 1.5) {
                 let baseSub = PTSegHistoryModel()
                 baseSub.keyName = "Base"
-                let jsonArr = [baseSub.toJSON()!.toJSON()!]
-                let dataString = jsonArr.joined(separator: kSeparatorSeg)
-                self.segChatHistory = dataString
-                
+                let createBaseData = baseSub.toJSON()!
+                self.setChatData = [createBaseData]
+                self.favouriteChat = [[String:Any]]()
                 resetChat()
                 
                 PTGCDManager.gcdAfter(time: 1) {
@@ -1155,12 +1350,8 @@ class PTAppConfig {
         return style
     }
     
-    class func refreshTagData(segDataArr:[PTSegHistoryModel]) {
-        var stringArr = [String]()
-        segDataArr.enumerated().forEach { index,value in
-            stringArr.append(value.toJSON()!.toJSON()!)
-        }
-        AppDelegate.appDelegate()!.appConfig.segChatHistory = stringArr.joined(separator: kSeparatorSeg)
+    class func refreshTagData(segDataArr:[PTSegHistoryModel?]) {
+        AppDelegate.appDelegate()!.appConfig.setChatData = segDataArr.kj.JSONObjectArray()
     }
     
     func getJsonFileTags() -> [String] {
@@ -1182,7 +1373,7 @@ class PTAppConfig {
             let subModels = models![index]
             subModels?.persion.enumerated().forEach({ index,value in
                 let subModel = value
-                subModel.imported = self.tagDataArr().contains(where: {$0.keyName == value.keyName && $0.systemContent == value.systemContent})
+                subModel.imported = self.tagDataArr().contains(where: {$0!.keyName == value.keyName && $0!.systemContent == value.systemContent})
                 array.append(subModel)
             })
             return array
@@ -1197,7 +1388,7 @@ class PTAppConfig {
                 let json = try JSONSerialization.jsonObject(with: data, options: .mutableLeaves)
                 return json as? [String: Any]
             } catch {
-                print("Error reading JSON file: \(error)")
+                PTNSLogConsole("Error reading JSON file: \(error)")
             }
         }
         return nil

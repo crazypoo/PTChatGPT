@@ -141,6 +141,8 @@ class PTSettingListViewController: PTChatBaseViewController {
         let disclosureIndicatorImageName = UIImage(systemName: "chevron.right")!.withTintColor(.gobalTextColor,renderingMode: .alwaysOriginal)
         let nameFont:UIFont = .appfont(size: 16,bold: true)
 
+        let switchColor = UIColor.orange
+        
         let cloudMain = PTSettingModels()
         cloudMain.name = "iCloud"
         
@@ -150,6 +152,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         cloud.haveSwitch = true
         cloud.nameColor = .gobalTextColor
         cloud.cellFont = nameFont
+        cloud.switchTinColor = switchColor
 
         cloudMain.models = [cloud]
 
@@ -346,7 +349,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         domainSwitch.name = .customDomainSwitch
         domainSwitch.nameColor = .gobalTextColor
         domainSwitch.haveSwitch = true
-        domainSwitch.switchTinColor = .orange
+        domainSwitch.switchTinColor = switchColor
         domainSwitch.cellFont = nameFont
 
         let domainAddress = PTFusionCellModel()
@@ -649,19 +652,15 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
             cell.dataContent.lineView.isHidden = indexPath.row == (itemSec.rows.count - 1) ? true : false
             cell.dataContent.topLineView.isHidden = true
             if itemRow.title == .cloudString {
-                cell.dataContent.valueSwitch.onTintColor = UIColor.orange
                 cell.dataContent.valueSwitch.isOn = AppDelegate.appDelegate()!.appConfig.cloudSwitch
                 cell.dataContent.valueSwitch.addSwitchAction { sender in
-                    AppDelegate.appDelegate()?.appConfig.cloudSwitch = sender.isOn
-                    AppDelegate.appDelegate()?.appConfig.mobileDataSavePlaceChange()
+                    AppDelegate.appDelegate()?.appConfig.mobileDataSavePlaceChange(value: sender.isOn)
                 }
             }
             else if itemRow.title == .customDomainSwitch {
-//                cell.dataContent.valueSwitch.onTintColor = UIColor.orange
                 cell.dataContent.valueSwitch.isOn = AppDelegate.appDelegate()!.appConfig.useCustomDomain
                 cell.dataContent.valueSwitch.addSwitchAction { sender in
                     AppDelegate.appDelegate()?.appConfig.useCustomDomain = sender.isOn
-                    AppDelegate.appDelegate()?.appConfig.mobileDataSavePlaceChange()
                 }
             }
             
@@ -722,26 +721,14 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                 
             } moreBtn: { index, title in
                 
-                var arr = [PTSegHistoryModel]()
-                if let dataString = AppDelegate.appDelegate()?.appConfig.segChatHistory {
-                    let dataArr = dataString.components(separatedBy: kSeparatorSeg)
-                    dataArr.enumerated().forEach { index,value in
-                        let model = PTSegHistoryModel.deserialize(from: value)
-                        arr.append(model!)
-                    }
-                    for (index,_) in arr.enumerated() {
-                        arr[index].historyModel = [PTChatModel]()
-                    }
-                    
-                    var newJsonArr = [String]()
-                    arr.enumerated().forEach { index,value in
-                        newJsonArr.append(value.toJSON()!.toJSON()!)
-                    }
-                    AppDelegate.appDelegate()!.appConfig.segChatHistory = newJsonArr.joined(separator: kSeparatorSeg)
-                    PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_done"))
-                    if self.cleanChatListBlock != nil {
-                        self.cleanChatListBlock!()
-                    }
+                var arr = AppDelegate.appDelegate()!.appConfig.tagDataArr()
+                for (index,_) in arr.enumerated() {
+                    arr[index]!.historyModel = [PTChatModel]()
+                }
+                AppDelegate.appDelegate()!.appConfig.setChatData = arr.kj.JSONObjectArray()
+                PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_done"))
+                if self.cleanChatListBlock != nil {
+                    self.cleanChatListBlock!()
                 }
             }
         } else if itemRow.title == .apiAIType {

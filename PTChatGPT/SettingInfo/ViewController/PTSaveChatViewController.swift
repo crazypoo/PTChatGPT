@@ -13,7 +13,7 @@ import LXFProtocolTool
 
 class PTSaveChatViewController: PTChatBaseViewController {
 
-    var saveChatModel = [PTFavouriteModel]()
+    var saveChatModel = [PTFavouriteModel?]()
     fileprivate var isSwipeRightEnabled = false
 
     var mSections = [PTSection]()
@@ -113,7 +113,7 @@ class PTSaveChatViewController: PTChatBaseViewController {
             self.saveChatModel.enumerated().forEach { (index,value) in
                 let disclosureIndicatorImageName = UIImage(systemName: "chevron.right")!.withTintColor(.gobalTextColor,renderingMode: .alwaysOriginal)
                 let cellModel = PTFusionCellModel()
-                cellModel.name = value.chatContent
+                cellModel.name = value!.chatContent
                 cellModel.haveDisclosureIndicator = true
                 cellModel.nameColor = .gobalTextColor
                 cellModel.disclosureIndicatorImage = disclosureIndicatorImageName
@@ -179,7 +179,7 @@ extension PTSaveChatViewController:UICollectionViewDelegate,UICollectionViewData
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let vc = PTChatViewController(saveModel: self.saveChatModel[indexPath.row].chats)
+        let vc = PTChatViewController(saveModel: self.saveChatModel[indexPath.row]!.chats)
         self.navigationController?.pushViewController(vc)
     }
 }
@@ -226,13 +226,8 @@ extension PTSaveChatViewController:SwipeCollectionViewCellDelegate {
                    } moreBtn: { index, title in
                        self.saveChatModel.remove(at: indexPath.row)
                        self.mSections[0].rows.remove(at: indexPath.row)
-                       var newArr = [String]()
-                       self.saveChatModel.enumerated().forEach { index,value in
-                           newArr.append((value.toJSON()?.toJSON())!)
-                       }
-                       let dataStrings = newArr.joined(separator: kSeparator)
                        PTGCDManager.gcdMain {
-                           AppDelegate.appDelegate()?.appConfig.chatFavourtie = dataStrings
+                           AppDelegate.appDelegate()!.appConfig.favouriteChat = self.saveChatModel.kj.JSONObjectArray()
                        }
                        self.showDetail()
                        PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_done"))

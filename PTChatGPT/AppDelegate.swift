@@ -32,18 +32,53 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
                 
-        FileManager.pt.createFolder(folderPath: userImageMessageFilePath)
-
-        if self.appConfig.firstDataChange {
-            let baseSub = PTSegHistoryModel()
-            baseSub.keyName = "Base"
-            let jsonArr = [baseSub.toJSON()!.toJSON()!]
-            let dataString = jsonArr.joined(separator: kSeparatorSeg)
-            self.appConfig.segChatHistory = dataString
-            
-            self.appConfig.firstDataChange = false
-        }
         
+        FileManager.pt.createFolder(folderPath: userImageMessageFilePath)
+        FileManager.pt.createFolder(folderPath: userChatMessageFilePath)
+
+        if let buildVersion = UserDefaults.standard.value(forKey: uAppBuildVersion) {
+            let currentBuild = kAppBuildVersion!
+            let didUpdate = (buildVersion as! String) != currentBuild
+            
+            if didUpdate {
+                let dataString = self.appConfig.segChatHistory
+                let chatString = self.appConfig.chatFavourtie
+
+                if !dataString.stringIsEmpty() {
+                    
+                    var arr = [PTSegHistoryModel]()
+                    let dataArr = dataString.components(separatedBy: kSeparatorSeg)
+                    dataArr.enumerated().forEach { index,value in
+                        let model = PTSegHistoryModel.deserialize(from: value)
+                        arr.append(model!)
+                    }
+                    if arr.count > 1 || arr.first!.historyModel.count > 0 {
+                        self.appConfig.setChatData = arr.kj.JSONObjectArray()
+                    }
+                    
+                    self.appConfig.segChatHistory = ""
+                }
+                
+                if !chatString.stringIsEmpty() {
+                    var arrF = [PTFavouriteModel]()
+                    let dataStringF = self.appConfig.chatFavourtie
+                    let dataArrF = dataStringF.components(separatedBy: kSeparator)
+                    if dataArrF.count > 0 {
+                        dataArrF.enumerated().forEach { index,value in
+                            if let model = PTFavouriteModel.deserialize(from: value) {
+                                arrF.append(model)
+                            }
+                        }
+                        self.appConfig.favouriteChat = arrF.kj.JSONObjectArray()
+                    }
+                    self.appConfig.chatFavourtie = ""
+                }
+                UserDefaults.standard.set(kAppBuildVersion, forKey: uAppBuildVersion)
+            }
+        } else {
+            UserDefaults.standard.set(kAppBuildVersion, forKey: uAppBuildVersion)
+        }
+
         var debugDevice = false
         let buglyConfig = BuglyConfig()
 //        buglyConfig.delegate = self
@@ -89,11 +124,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
             query.stop()
         }
-        
-        if self.appConfig.firstUseiCloud {
-            self.saveDataToCloud()
-        }
-        
+                
         #if DEBUG
         let filePath = NSTemporaryDirectory().appending("/demo.order")
         YCSymbolTracker.exportSymbols(filePath: filePath)
@@ -106,7 +137,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if self.appConfig.apiToken.stringIsEmpty() {
             viewC = PTSettingViewController()
         } else {
-            PTNSLogConsole(self.appConfig.segChatHistory)
+            PTNSLogConsole(self.appConfig.tagDataArr())
             if Gobal_device_info.isPad {
                 viewC = PTSplitViewController()
             } else {
@@ -160,11 +191,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             HyperionManager.sharedInstance().attach(to: self.window)
             HyperionManager.sharedInstance().togglePluginDrawer()
         }
-#endif
-        
-//        PTChatApiFunction.share.imageVariation(image: UIImage(named: "DemoImage")!,numberofImages: 2, imageSize: .size256) { model, error in
-//            
-//        }
+#endif        
         return true
     }
     
@@ -184,7 +211,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             if !(chatText ?? "").stringIsEmpty() {
                 let datas = AppDelegate.appDelegate()!.appConfig.tagDataArr()
                 for (index,value) in datas.enumerated() {
-                    if value.keyName == selectedTagName {
+                    if value!.keyName == selectedTagName {
                         let data = datas[index]
                         let currentVC = PTUtils.getCurrentVC()
                         if currentVC is PTChatViewController {
@@ -239,59 +266,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     @objc class func appDelegate() -> AppDelegate? {
         return UIApplication.shared.delegate as? AppDelegate
     }
-    
-    func saveDataToCloud() {
-        if let chatFavourite:String = UserDefaults.standard.value(forKey: uSaveChat) as? String {
-            self.appConfig.chatFavourtie = chatFavourite
-        }
-                
-        if let language:String = UserDefaults.standard.value(forKey: uLanguageKey) as? String {
-            self.appConfig.language = language
-        }
         
-        if let drawSize:Data = UserDefaults.standard.value(forKey: uAiDrawSize) as? Data {
-            self.appConfig.aiDrawSize = (try? CGSize.from(archivedData: drawSize))!
-        }
-        
-        if let aiSmart:Double = UserDefaults.standard.value(forKey: uAiSmart) as? Double {
-            self.appConfig.aiSmart = aiSmart
-        }
-        
-        if let apiToken:String = UserDefaults.standard.value(forKey: uTokenKey) as? String {
-            self.appConfig.apiToken = apiToken
-        }
-        
-        if let aiModelType:String = UserDefaults.standard.value(forKey: uAiModelType) as? String {
-            self.appConfig.aiModelType = aiModelType
-        }
-        
-        if let waveColor:String = UserDefaults.standard.value(forKey: uWaveColor) as? String {
-            self.appConfig.waveColor = UIColor(hexString: waveColor)!
-        }
-        
-        if let botTextColor:String = UserDefaults.standard.value(forKey: uBotTextColor) as? String {
-            self.appConfig.botTextColor = UIColor(hexString: botTextColor)!
-        }
-        
-        if let userTextColor:String = UserDefaults.standard.value(forKey: uUserTextColor) as? String {
-            self.appConfig.userTextColor = UIColor(hexString: userTextColor)!
-        }
-        
-        if let botBubbleColor:String = UserDefaults.standard.value(forKey: uBotBubbleColor) as? String {
-            self.appConfig.botBubbleColor = UIColor(hexString: botBubbleColor)!
-        }
-        
-        if let userBubbleColor:String = UserDefaults.standard.value(forKey: uUserBubbleColor) as? String {
-            self.appConfig.userBubbleColor = UIColor(hexString: userBubbleColor)!
-        }
-        
-        if let userIcon:Data = UserDefaults.standard.value(forKey: uUserIcon) as? Data {
-            self.appConfig.userIcon = userIcon
-        }
-        
-        self.appConfig.firstUseiCloud = false
-    }
-    
     @objc func keyValueStoreDidChange(_ notification: Notification) {
         let userInfo = notification.userInfo
         if let keys = userInfo?[NSUbiquitousKeyValueStoreChangedKeysKey] as? [String] {
@@ -340,13 +315,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                             let value = AppDelegate.appDelegate()!.cloudStore.object(forKey: key)
                             self.appConfig.getImageCount = value as! Int
                         }
-                    case uSegChatHistory:
+                    case uSegChatHistorySaved:
                         if let conflictingValues = self.cloudStore.array(forKey: key) {
                             let chosenValue = conflictingValues.first
-                            self.appConfig.segChatHistory = chosenValue as! String
+                            self.appConfig.segChatHistorySaved = chosenValue as! String
                         } else {
                             let value = AppDelegate.appDelegate()!.cloudStore.object(forKey: key)
-                            self.appConfig.segChatHistory = value as! String
+                            self.appConfig.segChatHistorySaved = value as! String
                         }
                         NotificationCenter.default.post(name: NSNotification.Name(rawValue: kRefreshCurrentTagData), object: nil)
                     case uUserIconURL:
@@ -453,13 +428,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                             let value = AppDelegate.appDelegate()!.cloudStore.object(forKey: key)
                             self.appConfig.language = value as! String
                         }
-                    case uSaveChat:
+                    case uSaveChatSaved:
                         if let conflictingValues = self.cloudStore.array(forKey: key) {
                             let chosenValue = conflictingValues.first
-                            self.appConfig.chatFavourtie = chosenValue as! String
+                            self.appConfig.chatFavourtieSaved = chosenValue as! String
                         } else {
                             let value = AppDelegate.appDelegate()!.cloudStore.object(forKey: key)
-                            self.appConfig.chatFavourtie = value as! String
+                            self.appConfig.chatFavourtieSaved = value as! String
                         }
                         NotificationCenter.default.post(name: NSNotification.Name(rawValue: kRefreshControllerAndLoadNewData), object: nil)
                     default:

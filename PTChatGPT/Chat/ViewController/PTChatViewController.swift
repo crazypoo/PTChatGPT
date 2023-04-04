@@ -473,20 +473,17 @@ class PTChatViewController: MessagesViewController {
                         UIAlertController.base_textfiele_alertVC(title:textKey,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey,aiKey], textFieldTexts: ["",""], keyboardType: [.default,.default],textFieldDelegate: self) { result in
                             let newKey:String? = result[textKey]!
                             let newAiKey:String? = result[aiKey]
-                            if !(newKey ?? "").stringIsEmpty()
-                            {
-                                if self.segDataArr.contains(where: {$0.keyName == newKey}) {
+                            if !(newKey ?? "").stringIsEmpty() {
+                                if self.segDataArr.contains(where: {$0?.keyName == newKey}) {
                                     PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Save_error"))
                                 } else {
                                     let newTag = PTSegHistoryModel()
                                     newTag.keyName = newKey!
                                     newTag.systemContent = newAiKey ?? ""
                                     self.segDataArr.append(newTag)
-                                    var jsonArr = [String]()
-                                    self.segDataArr.enumerated().forEach { index,value in
-                                        jsonArr.append(value.toJSON()!.toJSON()!)
-                                    }
-                                    AppDelegate.appDelegate()?.appConfig.segChatHistory = jsonArr.joined(separator: kSeparatorSeg)
+                                    
+                                    AppDelegate.appDelegate()!.appConfig.setChatData = self.segDataArr.kj.JSONObjectArray()
+                                    
                                     self.messageList.removeAll()
                                     self.chatModels.removeAll()
                                     self.messagesCollectionView.reloadData {
@@ -558,20 +555,17 @@ class PTChatViewController: MessagesViewController {
             popover.deleteAllTagBlock = {
                 PTGCDManager.gcdAfter(time: 0.5) {
                     var arr = AppDelegate.appDelegate()?.appConfig.tagDataArr()
-                    arr?.removeAll(where: {$0.keyName != "Base"})
+                    arr?.removeAll(where: {$0!.keyName != "Base"})
 
                     if arr?.count == 0 {
                         let baseSub = PTSegHistoryModel()
                         baseSub.keyName = "Base"
-                        AppDelegate.appDelegate()!.appConfig.segChatHistory = baseSub.toJSON()!.toJSON()!
+                        AppDelegate.appDelegate()!.appConfig.setChatData = [baseSub.toJSON()!]
                         self.historyModel = baseSub
                     } else {
-                        var newJsonArr = [String]()
-                        arr!.enumerated().forEach { index,value in
-                            newJsonArr.append(value.toJSON()!.toJSON()!)
-                        }
-                        AppDelegate.appDelegate()!.appConfig.segChatHistory = newJsonArr.joined(separator: kSeparatorSeg)
-                        self.historyModel = arr!.first
+                        
+                        AppDelegate.appDelegate()!.appConfig.setChatData = arr!.kj.JSONObjectArray()
+                        self.historyModel = (arr!.first!!)
                     }
                     self.setTitleViewFrame(withModel: self.historyModel!)
                     PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_done"))
@@ -586,16 +580,8 @@ class PTChatViewController: MessagesViewController {
         return view
     }()
         
-    var segDataArr:[PTSegHistoryModel] = {
-        var arr = [PTSegHistoryModel]()
-        let dataString = AppDelegate.appDelegate()?.appConfig.segChatHistory
-        let dataArr = dataString!.components(separatedBy: kSeparatorSeg)
-        dataArr.enumerated().forEach { index,vlaue in
-            if let models = PTSegHistoryModel.deserialize(from: vlaue) {
-                arr.append(models)
-            }
-        }
-        return arr
+    var segDataArr:[PTSegHistoryModel?] = {
+        return AppDelegate.appDelegate()!.appConfig.tagDataArr()
     }()
 
     lazy var maskView:PTVoiceActionView = {
@@ -652,6 +638,7 @@ class PTChatViewController: MessagesViewController {
     
     var historyModel:PTSegHistoryModel? {
         didSet {
+            AppDelegate.appDelegate()!.appConfig.currentSelectTag = self.historyModel!.keyName
             self.refreshViewAndLoadNewData()
         }
     }
@@ -846,18 +833,11 @@ class PTChatViewController: MessagesViewController {
     }
         
     @objc func refreshCurrentTagData() {
-        var arr = [PTSegHistoryModel]()
-        if let dataString = AppDelegate.appDelegate()?.appConfig.segChatHistory {
-            let dataArr = dataString.components(separatedBy: kSeparatorSeg)
-            dataArr.enumerated().forEach { index,value in
-                let model = PTSegHistoryModel.deserialize(from: value)
-                arr.append(model!)
-            }
-            for (value) in arr {
-                if value.keyName == self.historyModel!.keyName {
-                    self.historyModel = value
-                    break
-                }
+        let arr = AppDelegate.appDelegate()?.appConfig.tagDataArr()
+        for (value) in arr! {
+            if value!.keyName == self.historyModel!.keyName {
+                self.historyModel = value
+                break
             }
         }
     }
@@ -1048,22 +1028,24 @@ class PTChatViewController: MessagesViewController {
     }
     
     func loadViewData() {
-        var arr = [PTSegHistoryModel]()
-        if let dataString = AppDelegate.appDelegate()?.appConfig.segChatHistory {
-            let dataArr = dataString.components(separatedBy: kSeparatorSeg)
-            if dataArr.count > 6 {
-                PTGCDManager.gcdAfter(time: 3) {
-                    SwiftSpinner.show(duration: 3, title: "Loading............")
-                }
+        
+        let arr = AppDelegate.appDelegate()?.appConfig.tagDataArr()
+        if arr!.count > 6 {
+            PTGCDManager.gcdAfter(time: 3) {
+                SwiftSpinner.show(duration: 3, title: "Loading............")
             }
-            dataArr.enumerated().forEach { index,vlaue in
-                if let models = PTSegHistoryModel.deserialize(from: vlaue) {
-                    arr.append(models)
-                }
-            }
-            self.historyModel = arr.first!
-            self.setTitleViewFrame(withModel: self.historyModel!)
         }
+        
+        let currentTag = AppDelegate.appDelegate()!.appConfig.currentSelectTag
+        
+        for (index,value) in arr!.enumerated() {
+            if value?.keyName == currentTag {
+                self.historyModel = arr![index]
+                break
+            }
+        }
+        
+        self.setTitleViewFrame(withModel: self.historyModel!)
     }
     
     //MARK: 设置TitleView
@@ -1213,39 +1195,25 @@ class PTChatViewController: MessagesViewController {
     
     //MARK: 保存聊天記錄
     func packChatData() {
-        var arr = [PTSegHistoryModel]()
-        let userHistoryModelString = AppDelegate.appDelegate()!.appConfig.segChatHistory
-        let historyArr = userHistoryModelString.components(separatedBy: kSeparatorSeg)
-        historyArr.enumerated().forEach { index,value in
-            let model = PTSegHistoryModel.deserialize(from: value)
-            arr.append(model!)
-        }
+        var arr = AppDelegate.appDelegate()!.appConfig.tagDataArr()
         for (index,value) in arr.enumerated() {
-            if value.keyName == self.historyModel!.keyName {
+            if value!.keyName == self.historyModel!.keyName {
                 arr[index] = self.historyModel!
                 break
             }
         }
-        var newJsonArr = [String]()
-        arr.enumerated().forEach { index,value in
-            newJsonArr.append(value.toJSON()!.toJSON()!)
-        }
-        AppDelegate.appDelegate()!.appConfig.segChatHistory = newJsonArr.joined(separator: kSeparatorSeg)
+        AppDelegate.appDelegate()!.appConfig.setChatData = arr.kj.JSONObjectArray()
     }
         
     func saveChatModelToJsonString(model:PTFavouriteModel) {
-        let userHistoryModelString = AppDelegate.appDelegate()!.appConfig.chatFavourtie
-        if !userHistoryModelString.stringIsEmpty() {
-            var userModelsStringArr = userHistoryModelString.components(separatedBy: kSeparator)
-            userModelsStringArr.append(model.toJSON()!.toJSON()!)
-            let saaveString = userModelsStringArr.joined(separator: kSeparator)
-            AppDelegate.appDelegate()!.appConfig.chatFavourtie = saaveString
-            print(saaveString)
+        
+        var favourite = AppDelegate.appDelegate()!.appConfig.getSaveChatData()
+        if favourite.count > 0 {
+            favourite.append(model)
+            AppDelegate.appDelegate()!.appConfig.favouriteChat = favourite.kj.JSONObjectArray()
         } else {
-            AppDelegate.appDelegate()!.appConfig.chatFavourtie = model.toJSON()!.toJSON()!
-            print(model.toJSON()!.toJSON()!)
+            AppDelegate.appDelegate()!.appConfig.favouriteChat = [model.kj.JSONObject()]
         }
-
     }
     
     open override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -2784,11 +2752,13 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                     }
                     self.historyModel?.historyModel = self.chatModels
                     self.refreshViewAndLoadNewData {
-                        self.messageList[sectionIndex].sending = false
-                        self.messageList[sectionIndex].sendSuccess = false
-                        self.reloadSomeSection(itemIndex: sectionIndex) {
-                            self.packChatData()
-                            PTBaseViewController.gobal_drop(title: error!.localizedDescription)
+                        PTGCDManager.gcdMain {
+                            self.messageList[sectionIndex].sending = false
+                            self.messageList[sectionIndex].sendSuccess = false
+                            self.reloadSomeSection(itemIndex: sectionIndex) {
+                                self.packChatData()
+                                PTBaseViewController.gobal_drop(title: error!.localizedDescription)
+                            }
                         }
                     }
                 }

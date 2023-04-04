@@ -24,15 +24,8 @@ class PTPopoverControl: PTChatBaseViewController {
     var refreshTagArr:(()->Void)?
     var refreshCurrentTag:((_ updateModel:PTSegHistoryModel)->Void)?
 
-    var segDataArr:[PTSegHistoryModel] = {
-        var arr = [PTSegHistoryModel]()
-        let dataString = AppDelegate.appDelegate()?.appConfig.segChatHistory
-        let dataArr = dataString!.components(separatedBy: kSeparatorSeg)
-        dataArr.enumerated().forEach { index,value in
-            let model = PTSegHistoryModel.deserialize(from: value)
-            arr.append(model!)
-        }
-        return arr
+    var segDataArr:[PTSegHistoryModel?] = {
+        return AppDelegate.appDelegate()!.appConfig.tagDataArr()
     }()
 
     var mSections = [PTSection]()
@@ -111,7 +104,7 @@ class PTPopoverControl: PTChatBaseViewController {
         
         var indexPath = IndexPath()
         self.segDataArr.enumerated().forEach { index,value in
-            if value.keyName == self.currentHistoryModel.keyName {
+            if value!.keyName == self.currentHistoryModel.keyName {
                 indexPath = IndexPath.init(row: index, section: 0)
             }
         }
@@ -191,7 +184,7 @@ extension PTPopoverControl:UICollectionViewDelegate,UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if self.selectedBlock != nil {
-            self.selectedBlock!(self.segDataArr[indexPath.row])
+            self.selectedBlock!(self.segDataArr[indexPath.row]!)
         }
         self.returnFrontVC()
     }
@@ -233,13 +226,13 @@ extension PTPopoverControl:SwipeCollectionViewCellDelegate {
            
            let delete = SwipeAction(style: .destructive, title: PTLanguage.share.text(forKey: "cell_Delete")) { action, indexPath in
                PTGCDManager.gcdMain {
-                   if self.segDataArr[indexPath.row].keyName == "Base" {
+                   if self.segDataArr[indexPath.row]!.keyName == "Base" {
                        PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_error"))
                        self.showDetail()
-                   } else if self.segDataArr[indexPath.row].keyName == self.currentHistoryModel.keyName && self.segDataArr[indexPath.row].keyName != "Base" {
+                   } else if self.segDataArr[indexPath.row]!.keyName == self.currentHistoryModel.keyName && self.segDataArr[indexPath.row]!.keyName != "Base" {
                        self.segDataArr.remove(at: indexPath.row)
                        if self.selectedBlock != nil {
-                           self.selectedBlock!(self.segDataArr.first!)
+                           self.selectedBlock!(self.segDataArr.first!!)
                        }
                        PTAppConfig.refreshTagData(segDataArr: self.segDataArr)
                        self.preferredContentSize = CGSize(width: self.popoverWidth, height: CGFloat(self.segDataArr.count) * self.popoverCellBaseHeight + (self.segDataArr.count > 1 ? self.footerHeight : 0))
@@ -251,7 +244,7 @@ extension PTPopoverControl:SwipeCollectionViewCellDelegate {
                        self.preferredContentSize = CGSize(width: self.popoverWidth, height: CGFloat(self.segDataArr.count) * self.popoverCellBaseHeight + (self.segDataArr.count > 1 ? self.footerHeight : 0))
 
                        for (index,value) in self.segDataArr.enumerated() {
-                           if value.keyName == self.currentHistoryModel.keyName {
+                           if value!.keyName == self.currentHistoryModel.keyName {
                                self.collectionView.selectItem(at: IndexPath(row: index, section: 0), animated: false, scrollPosition: .top)
                                break
                            }
@@ -288,29 +281,25 @@ extension PTPopoverControl:SwipeCollectionViewCellDelegate {
                            if !(newKey ?? "").stringIsEmpty() {
                                var segDatas = AppDelegate.appDelegate()?.appConfig.tagDataArr()
                                let currentCellBaseData = segDatas![indexPath.row]
-                               currentCellBaseData.keyName = newKey!
-                               currentCellBaseData.systemContent = newAiKey ?? ""
+                               currentCellBaseData!.keyName = newKey!
+                               currentCellBaseData!.systemContent = newAiKey ?? ""
                                segDatas![indexPath.row] = currentCellBaseData
                                
-                               var jsonArr = [String]()
-                               segDatas!.enumerated().forEach { index,value in
-                                   jsonArr.append(value.toJSON()!.toJSON()!)
-                               }
-                               AppDelegate.appDelegate()?.appConfig.segChatHistory = jsonArr.joined(separator: kSeparatorSeg)
+                               AppDelegate.appDelegate()?.appConfig.setChatData = segDatas!.kj.JSONObjectArray()
                                
                                var indexPathSelect = IndexPath()
                                self.segDataArr.enumerated().forEach { index,value in
-                                   if value.keyName == self.currentHistoryModel.keyName {
+                                   if value!.keyName == self.currentHistoryModel.keyName {
                                        indexPathSelect = IndexPath.init(row: index, section: 0)
                                    }
                                }
-                               self.segDataArr[indexPath.row] = currentCellBaseData
+                               self.segDataArr[indexPath.row] = currentCellBaseData!
                                self.showDetail()
                                self.collectionView.selectItem(at: indexPathSelect, animated: false, scrollPosition: .top)
                                
                                if indexPathSelect.row == indexPath.row {
                                    if self.refreshCurrentTag != nil {
-                                       self.refreshCurrentTag!(currentCellBaseData)
+                                       self.refreshCurrentTag!(currentCellBaseData!)
                                    }
                                }
                            } else {
