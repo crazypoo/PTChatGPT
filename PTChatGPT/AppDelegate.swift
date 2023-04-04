@@ -286,6 +286,14 @@ extension AppDelegate {
                 PTNSLogConsole(key)
                 PTGCDManager.gcdMain {
                     switch key {
+                    case uTotalToken:
+                        if let conflictingValues = self.cloudStore.array(forKey: key) {
+                            let chosenValue = conflictingValues.first
+                            self.appConfig.totalToken = chosenValue as! Double
+                        } else {
+                            let value = AppDelegate.appDelegate()!.cloudStore.object(forKey: key)
+                            self.appConfig.totalToken = value as! Double
+                        }
                     case uUseCustomDomain:
                         if let conflictingValues = self.cloudStore.array(forKey: key) {
                             let chosenValue = conflictingValues.first

@@ -48,6 +48,24 @@ enum PTChatCase {
 
 class PTChatViewController: MessagesViewController {
                 
+    lazy var tokenButton:BKLayoutButton = {
+        let view = BKLayoutButton()
+        view.layoutStyle = .leftImageRightTitle
+        view.setMidSpacing(5)
+        view.setImage("✏️".emojiToImage(emojiFont: .appfont(size: 13)), for: .normal)
+        view.setImage("💸".emojiToImage(emojiFont: .appfont(size: 13)), for: .selected)
+        view.titleLabel?.font = .appfont(size: 12)
+        view.setTitleColor(.gobalTextColor, for: .normal)
+        view.setTitleColor(.gobalTextColor, for: .selected)
+        view.setTitle(String(format: "%.0f", AppDelegate.appDelegate()!.appConfig.totalToken), for: .normal)
+        view.isSelected = false
+        view.addActionHandlers { sender in
+            sender.isSelected = !sender.isSelected
+            self.setTokenButton()
+        }
+        return view
+    }()
+    
     //MARK: 键盘相关
     //MARK: PS圖片按鈕
     ///PS圖片按鈕
@@ -989,7 +1007,7 @@ class PTChatViewController: MessagesViewController {
                 self.messageInputBar.snp.makeConstraints { make in
                     make.left.right.bottom.equalToSuperview()
                 }
-                
+                                
                 self.loadViewData()
                 PTGCDManager.gcdAfter(time: 1) {
                     self.checkTF()
@@ -1227,6 +1245,17 @@ class PTChatViewController: MessagesViewController {
             setNeedsStatusBarAppearanceUpdate()
         }
     }
+    
+    func setTokenButton() {
+        if self.tokenButton.isSelected {
+            let money = AppDelegate.appDelegate()!.appConfig.totalToken * 0.000002
+            let moneyString = String(format: "%.6f", money)
+            self.tokenButton.setTitle(moneyString, for: .normal)
+        } else {
+            let tokenString = String(format: "%.0f", AppDelegate.appDelegate()!.appConfig.totalToken)
+            self.tokenButton.setTitle(tokenString, for: .normal)
+        }
+    }
 }
 
 //MARK: 键盘相关
@@ -1272,6 +1301,14 @@ extension PTChatViewController {
         self.messageInputBar.setRightStackViewWidthConstant(to: 96, animated: false)
         let bottomItems = [self.imageBarButton,self.textImageBarButton,self.inputBarChatSentence,self.tfImageButton,self.tagSuggestionButton, .flexibleSpace]
         messageInputBar.setStackViewItems(bottomItems, forStack: .bottom, animated: false)
+        
+        self.view.addSubview(self.tokenButton)
+        self.tokenButton.snp.makeConstraints { make in
+            make.left.equalToSuperview()
+            make.height.equalTo(24)
+            make.bottom.equalTo(self.messageInputBar.snp.top).offset(-10)
+            make.width.equalTo(UIView.sizeFor(string: "0.000002", font: self.tokenButton.titleLabel!.font, height: 24, width: CGFloat(MAXFLOAT)).width + UIFont.appfont(size: 13).pointSize + 5 + 10)
+        }
     }
     
     func setEditInputItem() {
@@ -1555,8 +1592,7 @@ extension PTChatViewController: MessagesDisplayDelegate {
 }
 
 //MARK: MessagesLayoutDelegate
-extension PTChatViewController:MessagesLayoutDelegate
-{
+extension PTChatViewController:MessagesLayoutDelegate {
 //    func textCellSizeCalculator( for _: MessageType, at _: IndexPath, in _: MessagesCollectionView) -> CellSizeCalculator? {
 //            textMessageSizeCalculator
 //    }
@@ -1595,8 +1631,7 @@ extension PTChatViewController:MessagesLayoutDelegate
 }
 
 //MARK: MessagesDataSource
-extension PTChatViewController:MessagesDataSource
-{
+extension PTChatViewController:MessagesDataSource {
     var currentSender: MessageKit.SenderType {
         return PTChatData.share.user
     }
@@ -1668,8 +1703,7 @@ extension PTChatViewController:MessagesDataSource
 }
 
 //MARK: MessageCellDelegate
-extension PTChatViewController:MessageCellDelegate
-{
+extension PTChatViewController:MessageCellDelegate {
     func didTapBackground(in cell: MessageCollectionViewCell) {
         PTNSLogConsole("didTapBackground")
     }
@@ -2336,8 +2370,12 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                                 case .draw(type: .edit):
                                     self.sendTextFunction(str: str, saveModel: saveModel, sectionIndex: (self.messageList.count - 1))
                                 default:
-                                    self.insertMessage(message) {
-                                        self.sendTextFunction(str: str, saveModel: saveModel, sectionIndex: (self.messageList.count - 1))
+                                    PTGCDManager.gcdBackground {
+                                        PTGCDManager.gcdMain {
+                                            self.insertMessage(message) {
+                                                self.sendTextFunction(str: str, saveModel: saveModel, sectionIndex: (self.messageList.count - 1))
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -2653,6 +2691,8 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                     self.messageList[sectionIndex].sending = false
                     self.messageList[sectionIndex].sendSuccess = true
                     PTGCDManager.gcdMain {
+                        AppDelegate.appDelegate()!.appConfig.totalToken += Double(model?.usage?.total_tokens ?? 0)
+                        self.setTokenButton()
                         self.reloadSomeSection(itemIndex: sectionIndex) {
                             self.saveQAndAText(question: model?.choices?.first?.text ?? "", saveModel: saveModel,sendIndex: sectionIndex)
                         }
@@ -2692,6 +2732,8 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                             }
                         } else {
                             PTGCDManager.gcdMain {
+                                AppDelegate.appDelegate()!.appConfig.totalToken += Double(model?.usage?.total_tokens ?? 0)
+                                self.setTokenButton()
                                 saveModel.messageSendSuccess = true
                                 self.messageList[sectionIndex].sending = false
                                 self.messageList[sectionIndex].sendSuccess = true
@@ -2769,6 +2811,8 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
             } else {
                 PTGCDManager.gcdBackground {
                     PTGCDManager.gcdMain {
+                        AppDelegate.appDelegate()!.appConfig.totalToken += Double(model?.usage?.total_tokens ?? 0)
+                        self.setTokenButton()
                         saveModel.messageSendSuccess = true
                         self.messageList[sectionIndex].sending = false
                         self.messageList[sectionIndex].sendSuccess = true
@@ -2857,8 +2901,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
 }
 
 //MARK: OSSSpeechDelegate
-extension PTChatViewController:OSSSpeechDelegate
-{
+extension PTChatViewController:OSSSpeechDelegate {
     func voiceFilePathTranscription(withText text: String) {
         
     }
@@ -2960,8 +3003,7 @@ extension PTChatViewController:LXFEmptyDataSetable {
     }
 }
 
-extension PTChatViewController
-{
+extension PTChatViewController {
     open func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         false
     }

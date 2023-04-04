@@ -12,6 +12,8 @@ import BRPickerView
 import SwifterSwift
 import OSSSpeechKit
 
+//“$0.002 per 1k tokens”
+
 ///用戶的BubbleColor key
 let uUserBubbleColor = "uUserBubbleColor"
 ///機器人的BubbleColor key
@@ -57,6 +59,9 @@ let uGetImageCount = "uGetImageCount"
 let uCheckSentence = "uCheckSentence"
 
 let uAppCount = "uAppCount"
+
+//MARK: 总共用了多少Token
+let uTotalToken = "uTotalToken"
 
 ///是否用自定义域名
 let uUseCustomDomain = "uUseCustomDomain"
@@ -1002,6 +1007,31 @@ class PTAppConfig {
         }
     }
     
+    var totalToken:Double {
+        get {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uTotalToken) {
+                    return value as! Double
+                } else {
+                    return 0
+                }
+            } else {
+                if let value = UserDefaults.standard.value(forKey: uTotalToken) {
+                    return value as! Double
+                } else {
+                    return 0
+                }
+            }
+        } set {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uTotalToken)
+                AppDelegate.appDelegate()?.cloudStore.synchronize()
+            } else {
+                UserDefaults.standard.set(newValue, forKey: uTotalToken)
+            }
+        }
+    }
+    
     let imageControlActions:[String] = {
         return [.findImage,.remakeImage]
     }()
@@ -1024,6 +1054,7 @@ class PTAppConfig {
         let getImageCount = self.getImageCount
         let checkSentence = self.checkSentence
         let setChatData = self.setChatData
+        let totalToken = self.totalToken
         AppDelegate.appDelegate()?.appConfig.cloudSwitch = value
         PTGCDManager.gcdAfter(time: 0.35) {
             self.userIcon = userIcon
@@ -1043,6 +1074,7 @@ class PTAppConfig {
             self.getImageCount = getImageCount
             self.checkSentence = checkSentence
             self.setChatData = setChatData
+            self.totalToken = totalToken
         }
     }
     
