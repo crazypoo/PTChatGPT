@@ -225,9 +225,13 @@ class PTChatMasterControl: PTChatBaseViewController {
             UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "alert_Ask_clean_current_chat_record"),msgColor: .gobalTextColor,okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
                 
             } moreBtn: { index, title in
-                self.currentChatViewController.cleanCurrentTagChatHistory()
-                PTGCDManager.gcdAfter(time: 0.35) {
-                    self.reloadTagChat(index: 0)
+                if self.currentHistoryModel.historyModel.count > 0 {
+                    self.currentChatViewController.cleanCurrentTagChatHistory()
+                    PTGCDManager.gcdAfter(time: 0.35) {
+                        self.reloadTagChat(index: self.segDataArr().firstIndex(where: {$0!.keyName == self.currentHistoryModel.keyName})!)
+                    }
+                } else {
+                    PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_error"))
                 }
             }
         }
@@ -375,19 +379,14 @@ class PTChatMasterControl: PTChatBaseViewController {
             self.coachMarkController.animationDelegate = self
             self.coachMarkController.start(in: .window(over: self))
         } else {
-            self.reloadTagChat(index: 0)
+            self.reloadTagChat(index: self.segDataArr().firstIndex(where: {$0!.keyName == self.currentHistoryModel.keyName})!)
         }
     }
 
     func loadData() {
         self.showDetail()
         
-        var indexPath = IndexPath()
-        self.segDataArr().enumerated().forEach { index,value in
-            if value!.keyName == self.currentHistoryModel.keyName {
-                indexPath = IndexPath.init(row: index, section: 0)
-            }
-        }
+        let indexPath = IndexPath(row: self.segDataArr().firstIndex(where: {$0!.keyName == self.currentHistoryModel.keyName})!, section: 0)
         self.collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .top)
     }
     
@@ -452,25 +451,6 @@ extension PTChatMasterControl:UICollectionViewDelegate,UICollectionViewDataSourc
         return self.mSections[section].rows.count
     }
     
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let itemSec = mSections[indexPath.section]
-        if kind == UICollectionView.elementKindSectionFooter {
-            if itemSec.footerID == PTPopoverFooter.ID {
-                let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: itemSec.footerID!, for: indexPath) as! PTPopoverFooter
-                footer.deleteButton.addActionHandlers { sender in
-//                    if self.deleteAllTagBlock != nil {
-//                        self.deleteAllTagBlock!()
-//                    }
-//                    self.returnFrontVC()
-                }
-                return footer
-            }
-            return UICollectionReusableView()
-        } else {
-            return UICollectionReusableView()
-        }
-    }
-
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let itemSec = mSections[indexPath.section]
         let itemRow = itemSec.rows[indexPath.row]

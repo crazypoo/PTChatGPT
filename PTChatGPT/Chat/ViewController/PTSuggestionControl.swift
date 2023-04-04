@@ -26,7 +26,7 @@ class PTSuggestionControl: PTChatBaseViewController {
         segmentedView.isContentScrollViewClickTransitionAnimationEnabled = true
 
         let lineView = JXSegmentedIndicatorLineView()
-        lineView.indicatorColor = .random
+        lineView.indicatorColor = .orange
         lineView.indicatorWidth = 20
         lineView.indicatorHeight = 5
         segmentedView.indicators = [lineView]

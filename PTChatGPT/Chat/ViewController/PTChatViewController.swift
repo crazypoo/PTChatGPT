@@ -502,9 +502,13 @@ class PTChatViewController: MessagesViewController {
                             UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "alert_Ask_clean_current_chat_record"),msgColor: .gobalTextColor,okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
                                 
                             } moreBtn: { index, title in
-                                self.cleanCurrentTagChatHistory()
-                                PTGCDManager.gcdAfter(time: 0.35) {
-                                    self.refreshViewAndLoadNewData()
+                                if self.historyModel!.historyModel.count > 0 {
+                                    self.cleanCurrentTagChatHistory()
+                                    PTGCDManager.gcdAfter(time: 0.35) {
+                                        self.refreshViewAndLoadNewData()
+                                    }
+                                } else {
+                                    PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_error"))
                                 }
                             }
                         }
