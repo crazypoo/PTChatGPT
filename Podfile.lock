@@ -262,7 +262,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   PooTools:
-    :commit: 4d40060d26ae7d189f57c89d4ec065edd55b9c59
+    :commit: 322c3a06cf24251d4f02e5e22a828cd67c7bdb70
     :git: https://github.com/crazypoo/PTools.git
 
 SPEC CHECKSUMS:
@@ -293,7 +293,7 @@ SPEC CHECKSUMS:
   MBProgressHUD: 3ee5efcc380f6a79a7cc9b363dd669c5e1ae7406
   MJExtension: 21c5f6f8c4d5d8844b7ae8fbae08fed0b501f961
   NotificationBannerSwift: 437e135298d297fcb03f3eec4466f45cdb128d3d
-  PooTools: e88ea3ecea7cd25dc6ee500d560a8b0399f9ce9c
+  PooTools: 3e461e6da3b334b03885a5fa60f0f8e24e96eb23
   pop: d582054913807fd11fd50bfe6a539d91c7e1a55a
   RangeSeekSlider: 650b11fa1edcb92e1e0ede797669d98622570fb5
   SDWebImage: fd7e1a22f00303e058058278639bf6196ee431fe

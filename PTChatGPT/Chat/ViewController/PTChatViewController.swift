@@ -845,6 +845,12 @@ class PTChatViewController: MessagesViewController {
         }
                         
         self.maskView.alpha = 0
+        
+        self.pt_observerLanguage {
+            self.refreshViewAndLoadNewData()
+            self.showEmptyDataSet(currentScroller: self.messagesCollectionView)
+            self.messageInputBar.sendButton.setTitle(PTLanguage.share.text(forKey: "chat_Send"), for: .normal)
+        }
     }
         
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {

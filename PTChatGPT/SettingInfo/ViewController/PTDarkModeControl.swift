@@ -12,6 +12,8 @@ import PooTools
 class PTDarkModeControl: PTChatBaseViewController {
 
     private var darkTime: String = PTDarkModeOption.smartPeelingTimeIntervalValue
+    
+    var themeSetBlock: (()->Void)?
 
     lazy var darkModeControlArr : [[PTFusionCellModel]] = {
         let smart = PTFusionCellModel()
@@ -174,6 +176,9 @@ extension PTDarkModeControl:UICollectionViewDelegate,UICollectionViewDataSource
                 header.selectModeBlock = { mode in
                     PTDarkModeOption.setDarkModeCustom(isLight: mode == .light ? true : false)
                     self.showDetail()
+                    if self.themeSetBlock != nil {
+                        self.themeSetBlock!()
+                    }
                 }
                 return header
             }
@@ -236,6 +241,9 @@ extension PTDarkModeControl:UICollectionViewDelegate,UICollectionViewDataSource
                 } else if cellModel.name == PTLanguage.share.text(forKey: "theme_FollowSystem") {
                     PTDarkModeOption.setDarkModeFollowSystem(isFollowSystem: sender.isOn)
                     self.showDetail()
+                }
+                if self.themeSetBlock != nil {
+                    self.themeSetBlock!()
                 }
             }
             
