@@ -62,6 +62,7 @@ let uAppCount = "uAppCount"
 
 //MARK: 总共用了多少Token
 let uTotalToken = "uTotalToken"
+let uTotalTokenCost = "uTotalTokenCost"
 
 ///是否用自定义域名
 let uUseCustomDomain = "uUseCustomDomain"
@@ -1028,6 +1029,31 @@ class PTAppConfig {
                 AppDelegate.appDelegate()?.cloudStore.synchronize()
             } else {
                 UserDefaults.standard.set(newValue, forKey: uTotalToken)
+            }
+        }
+    }
+    
+    var totalTokenCost:Double {
+        get {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uTotalTokenCost) {
+                    return value as! Double
+                } else {
+                    return 0
+                }
+            } else {
+                if let value = UserDefaults.standard.value(forKey: uTotalTokenCost) {
+                    return value as! Double
+                } else {
+                    return 0
+                }
+            }
+        } set {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uTotalTokenCost)
+                AppDelegate.appDelegate()?.cloudStore.synchronize()
+            } else {
+                UserDefaults.standard.set(newValue, forKey: uTotalTokenCost)
             }
         }
     }

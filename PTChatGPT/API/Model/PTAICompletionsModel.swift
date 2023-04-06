@@ -16,17 +16,11 @@ class PTAICompletionsChoices :PTBaseModel {
     var text: String = ""
 }
 
-class PTAICompletionsUsage :PTBaseModel {
-    var total_tokens: Int = 0
-    var completion_tokens: Int = 0
-    var prompt_tokens: Int = 0
-}
-
 class PTAICompletionsModel :PTChatGPTBaseModel {
     var id: String = ""
     var object: String = ""
     var created: Int = 0
     var model: String = ""
     var choices: [PTAICompletionsChoices]?
-    var usage: PTAICompletionsUsage?
+    var usage: PTReceiveChatUsage?
 }

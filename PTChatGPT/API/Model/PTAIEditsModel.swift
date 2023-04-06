@@ -9,12 +9,6 @@
 import UIKit
 import PooTools
 
-class PTAIEditsUsage :PTBaseModel {
-    var total_tokens: Int = 0
-    var completion_tokens: Int = 0
-    var prompt_tokens: Int = 0
-}
-
 class PTAIEditsChoices :PTBaseModel {
     var index: Int = 0
     var text: String = ""
@@ -23,6 +17,6 @@ class PTAIEditsChoices :PTBaseModel {
 class PTAIEditsModel :PTChatGPTBaseModel {
     var object: String = ""
     var created: Int = 0
-    var usage: PTAIEditsUsage?
+    var usage: PTReceiveChatUsage?
     var choices: [PTAIEditsChoices]?
 }

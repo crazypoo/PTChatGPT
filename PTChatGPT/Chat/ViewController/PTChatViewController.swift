@@ -1254,8 +1254,8 @@ class PTChatViewController: MessagesViewController {
     
     func setTokenButton() {
         if self.tokenButton.isSelected {
-            let money = AppDelegate.appDelegate()!.appConfig.totalToken * 0.000002
-            let moneyString = String(format: "%.6f", money)
+            let money = AppDelegate.appDelegate()!.appConfig.totalTokenCost
+            let moneyString = String(format: "%f", money)
             self.tokenButton.setTitle(moneyString, for: .normal)
         } else {
             let tokenString = String(format: "%.0f", AppDelegate.appDelegate()!.appConfig.totalToken)
@@ -1313,7 +1313,7 @@ extension PTChatViewController {
             make.left.equalToSuperview()
             make.height.equalTo(24)
             make.bottom.equalTo(self.messageInputBar.snp.top).offset(-10)
-            make.width.equalTo(UIView.sizeFor(string: "0.000002", font: self.tokenButton.titleLabel!.font, height: 24, width: CGFloat(MAXFLOAT)).width + UIFont.appfont(size: 13).pointSize + 5 + 10)
+            make.width.equalTo(UIView.sizeFor(string: "0.0000002", font: self.tokenButton.titleLabel!.font, height: 24, width: CGFloat(MAXFLOAT)).width + UIFont.appfont(size: 13).pointSize + 5 + 10)
         }
     }
     
@@ -2698,6 +2698,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                     self.messageList[sectionIndex].sendSuccess = true
                     PTGCDManager.gcdMain {
                         AppDelegate.appDelegate()!.appConfig.totalToken += Double(model?.usage?.total_tokens ?? 0)
+                        AppDelegate.appDelegate()!.appConfig.totalTokenCost += self.tokenCostCalculation(type: .gpt3(.davinci), usageModel: model!.usage!)
                         self.setTokenButton()
                         self.reloadSomeSection(itemIndex: sectionIndex) {
                             self.saveQAndAText(question: model?.choices?.first?.text ?? "", saveModel: saveModel,sendIndex: sectionIndex)
@@ -2739,6 +2740,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                         } else {
                             PTGCDManager.gcdMain {
                                 AppDelegate.appDelegate()!.appConfig.totalToken += Double(model?.usage?.total_tokens ?? 0)
+                                AppDelegate.appDelegate()!.appConfig.totalTokenCost += self.tokenCostCalculation(type: type, usageModel: model!.usage!)
                                 self.setTokenButton()
                                 saveModel.messageSendSuccess = true
                                 self.messageList[sectionIndex].sending = false
@@ -2818,6 +2820,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                 PTGCDManager.gcdBackground {
                     PTGCDManager.gcdMain {
                         AppDelegate.appDelegate()!.appConfig.totalToken += Double(model?.usage?.total_tokens ?? 0)
+                        AppDelegate.appDelegate()!.appConfig.totalTokenCost += self.tokenCostCalculation(type: type, usageModel: model!.usage!)
                         self.setTokenButton()
                         saveModel.messageSendSuccess = true
                         self.messageList[sectionIndex].sending = false
@@ -2830,7 +2833,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
             }
         }
     }
-        
+            
     func saveQAndAText(question:String,saveModel:PTChatModel,sendIndex:Int) {
         let botDate = Date()
         
@@ -2899,10 +2902,51 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                         self.historyModel?.historyModel = self.chatModels
                         self.reloadSomeSection(itemIndex: sendIndex)
                         self.packChatData()
+                        AppDelegate.appDelegate()!.appConfig.totalTokenCost += self.tokenCostImageCalculation(imageCount: urlArr.count)
+                        self.setTokenButton()
                     }
                 }
             }
         }
+    }
+    
+    //MARK: AI定價
+    func tokenCostImageCalculation(imageCount:Int) -> Double {
+        var imageCost:Double = 0
+        switch AppDelegate.appDelegate()!.appConfig.aiDrawSize.width {
+        case 1024:
+            imageCost = Double(imageCount) * 0.02
+        case 512:
+            imageCost = Double(imageCount) * 0.018
+        case 256:
+            imageCost = Double(imageCount) * 0.016
+        default:
+            imageCost = Double(imageCount) * 0.016
+        }
+        return imageCost
+    }
+    
+    func tokenCostCalculation(type:OpenAIModelType,usageModel:PTReceiveChatUsage) -> Double {
+        //https://openai.com/pricing
+        var result:Double = 0
+        switch type {
+        case .chat(.chatgpt432k),.chat(.chatgpt432k0314):
+            result = (0.03 / 1000 * Double(usageModel.prompt_tokens) + 0.06 / 1000 * Double(usageModel.completion_tokens))
+        case .chat(.chatgpt4),.chat(.chatgpt40314):
+            result = (0.06 / 1000 * Double(usageModel.prompt_tokens) + 0.12 / 1000 * Double(usageModel.completion_tokens))
+        case .chat(.chatgpt),.chat(.chatgpt0301):
+            result = (0.002 / 1000 * Double(usageModel.total_tokens))
+        case .gpt3(.ada):
+            result = (0.0004 / 1000 * Double(usageModel.total_tokens))
+        case .gpt3(.babbage):
+            result = (0.0005 / 1000 * Double(usageModel.total_tokens))
+        case .gpt3(.curie):
+            result = (0.002 / 1000 * Double(usageModel.total_tokens))
+        case .gpt3(.davinci):
+            result = (0.02 / 1000 * Double(usageModel.total_tokens))
+        default:break
+        }
+        return result
     }
 }
 
@@ -2937,8 +2981,7 @@ extension PTChatViewController:OSSSpeechDelegate {
             
             let centerY = CGFloat.kSCREEN_HEIGHT / 2
             let textMaxHeight = (centerY - CGFloat.statusBarHeight() - 44 - 5)
-            if textHeight >= textMaxHeight
-            {
+            if textHeight >= textMaxHeight {
                 textHeight = textMaxHeight
             }
             

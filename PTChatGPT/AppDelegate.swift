@@ -294,6 +294,14 @@ extension AppDelegate {
                             let value = AppDelegate.appDelegate()!.cloudStore.object(forKey: key)
                             self.appConfig.totalToken = value as! Double
                         }
+                    case uTotalTokenCost:
+                        if let conflictingValues = self.cloudStore.array(forKey: key) {
+                            let chosenValue = conflictingValues.first
+                            self.appConfig.totalTokenCost = chosenValue as! Double
+                        } else {
+                            let value = AppDelegate.appDelegate()!.cloudStore.object(forKey: key)
+                            self.appConfig.totalTokenCost = value as! Double
+                        }
                     case uUseCustomDomain:
                         if let conflictingValues = self.cloudStore.array(forKey: key) {
                             let chosenValue = conflictingValues.first
