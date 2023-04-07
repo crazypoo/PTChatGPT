@@ -16,9 +16,15 @@ class PTDiffusionViewController: PTChatBaseViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        PTGCDManager.gcdMain {
-            self.diffusion.initModels { progress, step in
-                PTNSLogConsole("\(progress):\(step)")
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        PTGCDManager.gcdBackground {
+            PTGCDManager.gcdMain {
+                self.diffusion.initModels { progress, step in
+                    PTNSLogConsole("\(progress):\(step)")
+                }
             }
         }
     }
