@@ -19,7 +19,7 @@ class PTHelpViewController: PTChatBaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.zx_navTitle = .help
+        self.zx_navTitle = SettingHelp
         // Do any additional setup after loading the view.
         self.view.addSubviews([self.infoLabel])
         self.infoLabel.snp.makeConstraints { make in

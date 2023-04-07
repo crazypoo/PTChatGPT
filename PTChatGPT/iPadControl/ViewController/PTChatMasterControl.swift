@@ -80,12 +80,12 @@ class PTChatMasterControl: PTChatBaseViewController {
                 PHPhotoLibrary.requestAuthorization { blockStatus in
                     if blockStatus == .authorized {
                         PTGCDManager.gcdMain {
-                            self.enterPhotos(string: .userIcon)
+                            self.enterPhotos(string: PTLanguage.share.text(forKey: "about_User_icon"))
                         }
                     }
                 }
             } else if status == .authorized {
-                self.enterPhotos(string: .userIcon)
+                self.enterPhotos(string: PTLanguage.share.text(forKey: "about_User_icon"))
             } else if status == .denied {
                 let messageString = String(format: PTLanguage.share.text(forKey: "alert_Go_to_photo_setting"), kAppName!)
                 PTBaseViewController.gobal_drop(title: messageString)
@@ -413,9 +413,9 @@ class PTChatMasterControl: PTChatBaseViewController {
                 let object:UIImage = try await PTImagePicker.openAlbum()
                 await MainActor.run{
                     switch string {
-                    case .userIcon:
+                    case PTLanguage.share.text(forKey: "about_User_icon"):
                         AppDelegate.appDelegate()!.appConfig.userIcon = object.pngData()!
-                    case .drawRefrence:
+                    case PTLanguage.share.text(forKey: "draw_Reference"):
                         AppDelegate.appDelegate()!.appConfig.drawRefrence = object.pngData()!
                     default:break
                     }

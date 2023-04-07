@@ -120,11 +120,7 @@ class DarkModePickerView: UIView {
     
     //MARK: 弹出时间
     func showTime() {
-        if #available(iOS 13, *) {
-            UIApplication.shared.windows.filter {$0.isKeyWindow}.first?.addSubview(self)
-        } else {
-            UIApplication.shared.keyWindow?.addSubview(self)
-        }
+        AppDelegate.appDelegate()!.window?.addSubview(self)
     }
     
     //MARK: 界面消失

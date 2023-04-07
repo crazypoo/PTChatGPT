@@ -13,7 +13,6 @@ class PTReceiveChatUsage :PTBaseModel {
     var total_tokens: Int = 0
     var completion_tokens: Int = 0
     var prompt_tokens: Int = 0
-
 }
 
 class PTReceiveChatMessage :PTBaseModel {

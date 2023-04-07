@@ -43,7 +43,7 @@ class PTSendChatModel: PTBaseModel {
     var n: Int = 1
     var stream:Bool = false
     var stop: [String]? = nil
-    var max_tokens: Int = 0
+    var max_tokens: Int = 1
     var presence_penalty: Double = 0
     var frequency_penalty: Double = 0
     var logit_bias: [Int: Double]? = nil

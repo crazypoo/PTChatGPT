@@ -23,11 +23,9 @@ let uUserTextColor = "uUserTextColor"
 ///機器人的TextColor key
 let uBotTextColor = "uBotTextColor"
 ///Seg控制器的历史记录Key
-let uSegChatHistory = "uSegChatHistory"
 let uSegChatHistorySaved = "uSegChatHistorySaved"
 let uUserCurrentTag = "uUserCurrentTag"
 ///保存記錄 key
-let uSaveChat = "uSaveChat"
 let uSaveChatSaved = "uSaveChatSaved"
 ///保存的機器人類型
 let uAiModelType = "uAiModelType"
@@ -89,6 +87,8 @@ let ExternalLinksDisclaimer = PTLanguage.share.text(forKey: "disclaimer_External
 let userImageMessageFilePath = FileManager.pt.LibraryDirectory() + "/UserImageMessageFile"
 //MARK: 聊天记录保存的本地地址
 let userChatMessageFilePath = FileManager.pt.LibraryDirectory() + "/UserChatMessageFile"
+//MARK: Token消费记录保存的本地地址
+let userChatCostFilePath = FileManager.pt.LibraryDirectory() + "/UserChatCostFile"
 
 let iPadSplitMainControl:CGFloat = 300
 
@@ -838,40 +838,6 @@ class PTAppConfig {
             }
         }
     }
-
-    //TODO: 下个版本删除
-    var segChatHistory:String {
-        get {
-            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
-                if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uSegChatHistory) {
-                    return value as! String
-                } else {
-                    let baseSub = PTSegHistoryModel()
-                    baseSub.keyName = "Base"
-                    let jsonArr = [baseSub.toJSON()!.toJSON()!]
-                    let dataString = jsonArr.joined(separator: kSeparatorSeg)
-                    return dataString
-                }
-            } else {
-                if let value = UserDefaults.standard.value(forKey: uSegChatHistory) {
-                    return value as! String
-                } else {
-                    let baseSub = PTSegHistoryModel()
-                    baseSub.keyName = "Base"
-                    let jsonArr = [baseSub.toJSON()!.toJSON()!]
-                    let dataString = jsonArr.joined(separator: kSeparatorSeg)
-                    return dataString
-                }
-            }
-        } set {
-            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
-                AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uSegChatHistory)
-                AppDelegate.appDelegate()?.cloudStore.synchronize()
-            } else {
-                UserDefaults.standard.set(newValue, forKey: uSegChatHistory)
-            }
-        }
-    }
     
     func tagDataArr() -> [PTSegHistoryModel?] {
         if let models = [PTSegHistoryModel].deserialize(from: self.setChatData) {
@@ -971,32 +937,6 @@ class PTAppConfig {
             }
         }
     }
-
-    //TODO: 下个版本删除
-    var chatFavourtie:String {
-        get {
-            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
-                if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uSaveChat) {
-                    return value as! String
-                } else {
-                    return ""
-                }
-            } else {
-                if let value = UserDefaults.standard.value(forKey: uSaveChat) {
-                    return value as! String
-                } else {
-                    return ""
-                }
-            }
-        } set {
-            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
-                AppDelegate.appDelegate()?.cloudStore.set(newValue, forKey: uSaveChat)
-                AppDelegate.appDelegate()?.cloudStore.synchronize()
-            } else {
-                UserDefaults.standard.set(newValue, forKey: uSaveChat)
-            }
-        }
-    }
     
     //MARK: 精选数据
     ///精选数据
@@ -1055,6 +995,79 @@ class PTAppConfig {
             } else {
                 UserDefaults.standard.set(newValue, forKey: uTotalTokenCost)
             }
+        }
+    }
+    
+    //MARK: 花费记录
+    var costHistory:[[String:Any]] {
+        get {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                if let icloudURL = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents") {
+                    let fileURL = icloudURL.appendingPathComponent("CostHistoria.json")
+                    do {
+                        let jsonData = try Data(contentsOf: fileURL,options: .mappedIfSafe)
+                        let json = try JSONSerialization.jsonObject(with: jsonData, options: .mutableLeaves)
+                        return json as! [[String : Any]]
+                    } catch {
+                        return [[String : Any]]()
+                    }
+                } else {
+                    return [[String : Any]]()
+                }
+            } else {
+                let filePath = userChatCostFilePath.appending("/CostHistoria.json")
+                let fileURL = URL(fileURLWithPath: filePath)
+
+                do {
+                    let jsonData = try Data(contentsOf: fileURL,options: .mappedIfSafe)
+                    let json = try JSONSerialization.jsonObject(with: jsonData, options: .mutableLeaves)
+                    return json as! [[String : Any]]
+                } catch {
+                    return [[String : Any]]()
+                }
+            }
+        } set {
+            if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
+                if let icloudURL = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents") {
+                    let chatJsonURL = icloudURL.appendingPathComponent("CostHistoria.json")
+                    do {
+                        let jsonData = try JSONSerialization.data(withJSONObject: newValue, options: .prettyPrinted)
+                        try jsonData.write(to: chatJsonURL, options: .atomic)
+                    } catch let error {
+                        PTNSLogConsole("Failed to write json data to iCloud: \(error.localizedDescription)")
+                    }
+                }
+            } else {
+                do {
+                    let filePath = userChatCostFilePath.appendingPathComponent("CostHistoria.json")
+                    if FileManager.pt.judgeFileOrFolderExists(filePath: filePath) {
+                        let fileURL = URL(fileURLWithPath: filePath)
+                        let jsonData = try JSONSerialization.data(withJSONObject: newValue, options: .prettyPrinted)
+                        try jsonData.write(to: fileURL)
+                    } else {
+                        let result = FileManager.pt.createFile(filePath: filePath)
+                        if result.isSuccess {
+                            let fileURL = URL(fileURLWithPath: filePath)
+                            let jsonData = try JSONSerialization.data(withJSONObject: newValue, options: .prettyPrinted)
+                            try jsonData.write(to: fileURL)
+                        } else {
+                            PTNSLogConsole("Failed to write json data to local: \(result.error)")
+                        }
+                    }
+                } catch {
+                    PTNSLogConsole("Failed to write json data to local: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+
+    //MARK: 精选数据
+    ///精选数据
+    func getCostHistoriaData() -> [PTCostMainModel?] {
+        if let models = [PTCostMainModel].deserialize(from: self.costHistory) {
+            return models
+        } else {
+            return [PTCostMainModel?]()
         }
     }
     
@@ -1451,4 +1464,44 @@ class PTAppConfig {
         }
         return nil
     }
+    
+    //MARK: AI定價
+    func tokenCostImageCalculation(imageCount:Int) -> Double {
+        var imageCost:Double = 0
+        switch AppDelegate.appDelegate()!.appConfig.aiDrawSize.width {
+        case 1024:
+            imageCost = Double(imageCount) * 0.02
+        case 512:
+            imageCost = Double(imageCount) * 0.018
+        case 256:
+            imageCost = Double(imageCount) * 0.016
+        default:
+            imageCost = Double(imageCount) * 0.016
+        }
+        return imageCost
+    }
+    
+    func tokenCostCalculation(type:OpenAIModelType,usageModel:PTReceiveChatUsage) -> Double {
+        //https://openai.com/pricing
+        var result:Double = 0
+        switch type {
+        case .chat(.chatgpt432k),.chat(.chatgpt432k0314):
+            result = (0.03 / 1000 * Double(usageModel.prompt_tokens) + 0.06 / 1000 * Double(usageModel.completion_tokens))
+        case .chat(.chatgpt4),.chat(.chatgpt40314):
+            result = (0.06 / 1000 * Double(usageModel.prompt_tokens) + 0.12 / 1000 * Double(usageModel.completion_tokens))
+        case .chat(.chatgpt),.chat(.chatgpt0301):
+            result = (0.002 / 1000 * Double(usageModel.total_tokens))
+        case .gpt3(.ada):
+            result = (0.0004 / 1000 * Double(usageModel.total_tokens))
+        case .gpt3(.babbage):
+            result = (0.0005 / 1000 * Double(usageModel.total_tokens))
+        case .gpt3(.curie):
+            result = (0.002 / 1000 * Double(usageModel.total_tokens))
+        case .gpt3(.davinci):
+            result = (0.02 / 1000 * Double(usageModel.total_tokens))
+        default:break
+        }
+        return result
+    }
+
 }

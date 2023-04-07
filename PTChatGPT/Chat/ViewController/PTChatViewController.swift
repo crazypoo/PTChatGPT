@@ -48,6 +48,7 @@ enum PTChatCase {
 
 class PTChatViewController: MessagesViewController {
                 
+    //MARK: 花费按钮
     lazy var tokenButton:BKLayoutButton = {
         let view = BKLayoutButton()
         view.layoutStyle = .leftImageRightTitle
@@ -62,6 +63,17 @@ class PTChatViewController: MessagesViewController {
         view.addActionHandlers { sender in
             sender.isSelected = !sender.isSelected
             self.setTokenButton()
+        }
+        return view
+    }()
+    
+    //MARK: 花费记录
+    lazy var tokenCostButton : UIButton = {
+        let view = UIButton(type: .custom)
+        view.setImage("⏱️".emojiToImage(emojiFont: .appfont(size: 13)), for: .normal)
+        view.addActionHandlers { sender in
+            let vc = PTCostHistoriaViewController()
+            self.navigationController?.pushViewController(vc)
         }
         return view
     }()
@@ -1308,12 +1320,18 @@ extension PTChatViewController {
         let bottomItems = [self.imageBarButton,self.textImageBarButton,self.inputBarChatSentence,self.tfImageButton,self.tagSuggestionButton, .flexibleSpace]
         messageInputBar.setStackViewItems(bottomItems, forStack: .bottom, animated: false)
         
-        self.view.addSubview(self.tokenButton)
+        self.view.addSubviews([self.tokenButton,self.tokenCostButton])
         self.tokenButton.snp.makeConstraints { make in
             make.left.equalToSuperview()
             make.height.equalTo(24)
             make.bottom.equalTo(self.messageInputBar.snp.top).offset(-10)
             make.width.equalTo(UIView.sizeFor(string: "0.0000002", font: self.tokenButton.titleLabel!.font, height: 24, width: CGFloat(MAXFLOAT)).width + UIFont.appfont(size: 13).pointSize + 5 + 10)
+        }
+        
+        self.tokenCostButton.snp.makeConstraints { make in
+            make.width.height.equalTo(24)
+            make.left.equalTo(self.tokenButton.snp.right).offset(10)
+            make.centerY.equalTo(self.tokenButton)
         }
     }
     
@@ -2167,20 +2185,28 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                 }
             }
             if error != nil {
-                PTGCDManager.gcdMain {
-                    saveModel.messageSendSuccess = false
-                    if resend! {
-                        self.chatModels[indexSection] = saveModel
-                    } else {
-                        self.chatModels.append(saveModel)
-                    }
-                    self.historyModel?.historyModel = self.chatModels
-                    self.refreshViewAndLoadNewData {
-                        self.messageList[indexSection].sending = false
-                        self.messageList[indexSection].sendSuccess = false
-                        self.reloadSomeSection(itemIndex: indexSection) {
-                            self.packChatData()
-                            PTBaseViewController.gobal_drop(title: error!.localizedDescription)
+                PTGCDManager.gcdBackground {
+                    PTGCDManager.gcdMain {
+                        saveModel.messageSendSuccess = false
+                        if resend! {
+                            self.chatModels[indexSection] = saveModel
+                        } else {
+                            self.chatModels.append(saveModel)
+                        }
+                        self.historyModel?.historyModel = self.chatModels
+                        self.refreshViewAndLoadNewData {
+                            PTGCDManager.gcdBackground {
+                                PTGCDManager.gcdMain {
+                                    self.messageList[indexSection].sending = false
+                                    self.messageList[indexSection].sendSuccess = false
+                                    self.reloadSomeSection(itemIndex: indexSection) {
+                                        self.packChatData()
+                                        PTGCDManager.gcdMain {
+                                            PTBaseViewController.gobal_drop(title: error!.localizedDescription)
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -2189,30 +2215,10 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                 self.chatModels.append(saveModel)
                 self.messageList[indexSection].sending = false
                 self.messageList[indexSection].sendSuccess = true
-                PTGCDManager.gcdMain {
-                    self.reloadSomeSection(itemIndex: indexSection) {
-                        PTGCDManager.gcdGroup(label: "AppendImageMessage", threadCount: model!.data!.count) { dispatchSemaphore, dispatchGroup, currentIndex in
-                            PTGCDManager.gcdBackground {
-                                let imageURL = model!.data![currentIndex].url
-                                let date = Date()
-
-                                let botMessage = PTChatModel()
-                                botMessage.messageDateString = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
-                                botMessage.messageType = 2
-                                botMessage.messageMediaURL = imageURL
-                                botMessage.outgoing = false
-                                self.chatModels.append(botMessage)
-                                let message = PTMessageModel(imageURL: URL(string: imageURL)!, user: PTChatData.share.bot, messageId: UUID().uuidString, date: date,sendSuccess: true)
-                                PTGCDManager.gcdMain {
-                                    self.insertMessage(message) {
-                                        dispatchSemaphore.signal()
-                                        dispatchGroup.leave()
-                                    }
-                                }
-                            }
-                        } jobDoneBlock: {
-                            self.historyModel?.historyModel = self.chatModels
-                            self.packChatData()
+                PTGCDManager.gcdBackground {
+                    PTGCDManager.gcdMain {
+                        self.reloadSomeSection(itemIndex: indexSection) {
+                            self.receivedImage(urlArr: model!.data!, saveModel: saveModel, sendIndex: (self.messageList.count - 1))
                         }
                     }
                 }
@@ -2698,7 +2704,17 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                     self.messageList[sectionIndex].sendSuccess = true
                     PTGCDManager.gcdMain {
                         AppDelegate.appDelegate()!.appConfig.totalToken += Double(model?.usage?.total_tokens ?? 0)
-                        AppDelegate.appDelegate()!.appConfig.totalTokenCost += self.tokenCostCalculation(type: .gpt3(.davinci), usageModel: model!.usage!)
+                        AppDelegate.appDelegate()!.appConfig.totalTokenCost += AppDelegate.appDelegate()!.appConfig.tokenCostCalculation(type: .gpt3(.davinci), usageModel: model!.usage!)
+                        
+                        let costModel = PTCostMainModel()
+                        costModel.historyType = 0
+                        costModel.question = str
+                        costModel.answer = model?.choices?.first?.text ?? ""
+                        costModel.tokenUsage = model!.usage!
+                        costModel.costDate = Date().dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+                        costModel.modelName = OpenAIModelType.gpt3(.davinci).modelName
+                        self.costHistoriaSave(model: costModel)
+                        
                         self.setTokenButton()
                         self.reloadSomeSection(itemIndex: sectionIndex) {
                             self.saveQAndAText(question: model?.choices?.first?.text ?? "", saveModel: saveModel,sendIndex: sectionIndex)
@@ -2740,8 +2756,18 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                         } else {
                             PTGCDManager.gcdMain {
                                 AppDelegate.appDelegate()!.appConfig.totalToken += Double(model?.usage?.total_tokens ?? 0)
-                                AppDelegate.appDelegate()!.appConfig.totalTokenCost += self.tokenCostCalculation(type: type, usageModel: model!.usage!)
+                                AppDelegate.appDelegate()!.appConfig.totalTokenCost += AppDelegate.appDelegate()!.appConfig.tokenCostCalculation(type: type, usageModel: model!.usage!)
                                 self.setTokenButton()
+                                
+                                let costModel = PTCostMainModel()
+                                costModel.historyType = 0
+                                costModel.question = str
+                                costModel.answer = model?.choices?.first?.text ?? ""
+                                costModel.tokenUsage = model!.usage!
+                                costModel.costDate = Date().dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+                                costModel.modelName = type.modelName
+                                self.costHistoriaSave(model: costModel)
+
                                 saveModel.messageSendSuccess = true
                                 self.messageList[sectionIndex].sending = false
                                 self.messageList[sectionIndex].sendSuccess = true
@@ -2789,6 +2815,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
         sendChatModel.messages = chat
         sendChatModel.model = type.modelName
         sendChatModel.temperature = (AppDelegate.appDelegate()!.appConfig.aiSmart * 2)
+        sendChatModel.max_tokens = 4096
         
         self.apiShare.sendChat(sendModel: sendChatModel) { model, error in
             PTGCDManager.gcdBackground {
@@ -2797,21 +2824,25 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                 }
             }
             if error != nil {
-                PTGCDManager.gcdMain {
-                    saveModel.messageSendSuccess = false
-                    if resend {
-                        self.chatModels[sectionIndex] = saveModel
-                    } else {
-                        self.chatModels.append(saveModel)
-                    }
-                    self.historyModel?.historyModel = self.chatModels
-                    self.refreshViewAndLoadNewData {
-                        PTGCDManager.gcdMain {
-                            self.messageList[sectionIndex].sending = false
-                            self.messageList[sectionIndex].sendSuccess = false
-                            self.reloadSomeSection(itemIndex: sectionIndex) {
-                                self.packChatData()
-                                PTBaseViewController.gobal_drop(title: error!.localizedDescription)
+                PTGCDManager.gcdBackground {
+                    PTGCDManager.gcdMain {
+                        saveModel.messageSendSuccess = false
+                        if resend {
+                            self.chatModels[sectionIndex] = saveModel
+                        } else {
+                            self.chatModels.append(saveModel)
+                        }
+                        self.historyModel?.historyModel = self.chatModels
+                        self.refreshViewAndLoadNewData {
+                            PTGCDManager.gcdBackground {
+                                PTGCDManager.gcdMain {
+                                    self.messageList[sectionIndex].sending = false
+                                    self.messageList[sectionIndex].sendSuccess = false
+                                    self.reloadSomeSection(itemIndex: sectionIndex) {
+                                        self.packChatData()
+                                        PTBaseViewController.gobal_drop(title: error!.localizedDescription)
+                                    }
+                                }
                             }
                         }
                     }
@@ -2820,8 +2851,18 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                 PTGCDManager.gcdBackground {
                     PTGCDManager.gcdMain {
                         AppDelegate.appDelegate()!.appConfig.totalToken += Double(model?.usage?.total_tokens ?? 0)
-                        AppDelegate.appDelegate()!.appConfig.totalTokenCost += self.tokenCostCalculation(type: type, usageModel: model!.usage!)
+                        AppDelegate.appDelegate()!.appConfig.totalTokenCost += AppDelegate.appDelegate()!.appConfig.tokenCostCalculation(type: type, usageModel: model!.usage!)
                         self.setTokenButton()
+                        
+                        let costModel = PTCostMainModel()
+                        costModel.historyType = 0
+                        costModel.question = str
+                        costModel.answer = model?.choices?.first?.message?.content ?? ""
+                        costModel.tokenUsage = model!.usage!
+                        costModel.costDate = Date().dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+                        costModel.modelName = type.modelName
+                        self.costHistoriaSave(model: costModel)
+
                         saveModel.messageSendSuccess = true
                         self.messageList[sectionIndex].sending = false
                         self.messageList[sectionIndex].sendSuccess = true
@@ -2853,8 +2894,10 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
         self.historyModel?.historyModel = self.chatModels
         self.packChatData()
         self.messagesCollectionView.reloadData {
-            PTGCDManager.gcdMain {
-                self.insertMessage(botMessage)
+            PTGCDManager.gcdBackground {
+                PTGCDManager.gcdMain {
+                    self.insertMessage(botMessage)
+                }
             }
         }
     }
@@ -2902,51 +2945,39 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                         self.historyModel?.historyModel = self.chatModels
                         self.reloadSomeSection(itemIndex: sendIndex)
                         self.packChatData()
-                        AppDelegate.appDelegate()!.appConfig.totalTokenCost += self.tokenCostImageCalculation(imageCount: urlArr.count)
+                        AppDelegate.appDelegate()!.appConfig.totalTokenCost += AppDelegate.appDelegate()!.appConfig.tokenCostImageCalculation(imageCount: urlArr.count)
                         self.setTokenButton()
+                        
+                        var imageSizeType:String = ""
+                        switch AppDelegate.appDelegate()!.appConfig.aiDrawSize.width {
+                        case 1024:
+                            imageSizeType = PTOpenAIImageSize.size1024.rawValue
+                        case 512:
+                            imageSizeType = PTOpenAIImageSize.size512.rawValue
+                        case 256:
+                            imageSizeType = PTOpenAIImageSize.size256.rawValue
+                        default:
+                            imageSizeType = PTOpenAIImageSize.size256.rawValue
+                        }
+
+                        let costModel = PTCostMainModel()
+                        costModel.question = saveModel.messageText
+                        costModel.historyType = 1
+                        costModel.costDate = Date().dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+                        costModel.imageURL = urlArr
+                        costModel.imageSize = imageSizeType
+                        self.costHistoriaSave(model: costModel)
                     }
                 }
             }
         }
     }
-    
-    //MARK: AI定價
-    func tokenCostImageCalculation(imageCount:Int) -> Double {
-        var imageCost:Double = 0
-        switch AppDelegate.appDelegate()!.appConfig.aiDrawSize.width {
-        case 1024:
-            imageCost = Double(imageCount) * 0.02
-        case 512:
-            imageCost = Double(imageCount) * 0.018
-        case 256:
-            imageCost = Double(imageCount) * 0.016
-        default:
-            imageCost = Double(imageCount) * 0.016
-        }
-        return imageCost
-    }
-    
-    func tokenCostCalculation(type:OpenAIModelType,usageModel:PTReceiveChatUsage) -> Double {
-        //https://openai.com/pricing
-        var result:Double = 0
-        switch type {
-        case .chat(.chatgpt432k),.chat(.chatgpt432k0314):
-            result = (0.03 / 1000 * Double(usageModel.prompt_tokens) + 0.06 / 1000 * Double(usageModel.completion_tokens))
-        case .chat(.chatgpt4),.chat(.chatgpt40314):
-            result = (0.06 / 1000 * Double(usageModel.prompt_tokens) + 0.12 / 1000 * Double(usageModel.completion_tokens))
-        case .chat(.chatgpt),.chat(.chatgpt0301):
-            result = (0.002 / 1000 * Double(usageModel.total_tokens))
-        case .gpt3(.ada):
-            result = (0.0004 / 1000 * Double(usageModel.total_tokens))
-        case .gpt3(.babbage):
-            result = (0.0005 / 1000 * Double(usageModel.total_tokens))
-        case .gpt3(.curie):
-            result = (0.002 / 1000 * Double(usageModel.total_tokens))
-        case .gpt3(.davinci):
-            result = (0.02 / 1000 * Double(usageModel.total_tokens))
-        default:break
-        }
-        return result
+        
+    //MARK: 消费记录
+    func costHistoriaSave(model:PTCostMainModel) {
+        var hostoria = AppDelegate.appDelegate()!.appConfig.getCostHistoriaData()
+        hostoria.append(model)
+        AppDelegate.appDelegate()!.appConfig.costHistory = hostoria.kj.JSONObjectArray()
     }
 }
 

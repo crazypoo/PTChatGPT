@@ -41,6 +41,8 @@
 		552B41CA29D14A5200065892 /* AppStoreConnect-Swift-SDK in Frameworks */ = {isa = PBXBuildFile; productRef = 552B41C929D14A5200065892 /* AppStoreConnect-Swift-SDK */; };
 		5539463D29D8794500FFB312 /* PTSendChatModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5539463C29D8794500FFB312 /* PTSendChatModel.swift */; };
 		5539463F29D8822900FFB312 /* PTReceiveChatModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5539463E29D8822900FFB312 /* PTReceiveChatModel.swift */; };
+		5554FE9129DFE99400C29F8A /* PTCostMainModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5554FE9029DFE99400C29F8A /* PTCostMainModel.swift */; };
+		5554FE9329DFF1F400C29F8A /* PTCostHistoriaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5554FE9229DFF1F400C29F8A /* PTCostHistoriaViewController.swift */; };
 		55796A2229BD6DCE00574DD4 /* PTSoundRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55796A2129BD6DCE00574DD4 /* PTSoundRecorder.swift */; };
 		55796A2429BD6E2A00574DD4 /* PTSoundVisualizerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55796A2329BD6E2A00574DD4 /* PTSoundVisualizerView.swift */; };
 		55A5D71829B1D23D00DCA096 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A5D71729B1D23D00DCA096 /* AppDelegate.swift */; };
@@ -78,6 +80,7 @@
 		55D752F929D1FDA2005CE46B /* PTSampleModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D752F829D1FDA2005CE46B /* PTSampleModels.swift */; };
 		55D752FB29D27B54005CE46B /* PTSuggesstionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D752FA29D27B54005CE46B /* PTSuggesstionViewController.swift */; };
 		55D752FD29D280E6005CE46B /* PTSuggesstionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D752FC29D280E6005CE46B /* PTSuggesstionCell.swift */; };
+		55DF4BFC29DFFABF0077F8F7 /* PTCostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DF4BFB29DFFABF0077F8F7 /* PTCostCell.swift */; };
 		55F2099C29D8AEA90034A6AF /* PTChatGPTBaseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F2099B29D8AEA90034A6AF /* PTChatGPTBaseModel.swift */; };
 		55F7A65D29D4012B00CF6272 /* PTSuggestionControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F7A65C29D4012B00CF6272 /* PTSuggestionControl.swift */; };
 		55F7A8C029D6AC7800CF6272 /* PTSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F7A8BF29D6AC7800CF6272 /* PTSplitViewController.swift */; };
@@ -128,6 +131,8 @@
 		552B41C429D135AE00065892 /* PTCheckTestFlight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTCheckTestFlight.swift; sourceTree = "<group>"; };
 		5539463C29D8794500FFB312 /* PTSendChatModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSendChatModel.swift; sourceTree = "<group>"; };
 		5539463E29D8822900FFB312 /* PTReceiveChatModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTReceiveChatModel.swift; sourceTree = "<group>"; };
+		5554FE9029DFE99400C29F8A /* PTCostMainModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTCostMainModel.swift; sourceTree = "<group>"; };
+		5554FE9229DFF1F400C29F8A /* PTCostHistoriaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTCostHistoriaViewController.swift; sourceTree = "<group>"; };
 		55796A2129BD6DCE00574DD4 /* PTSoundRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSoundRecorder.swift; sourceTree = "<group>"; };
 		55796A2329BD6E2A00574DD4 /* PTSoundVisualizerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSoundVisualizerView.swift; sourceTree = "<group>"; };
 		55A5D71429B1D23D00DCA096 /* Chat走啦.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Chat走啦.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -168,6 +173,7 @@
 		55D752F829D1FDA2005CE46B /* PTSampleModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSampleModels.swift; sourceTree = "<group>"; };
 		55D752FA29D27B54005CE46B /* PTSuggesstionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSuggesstionViewController.swift; sourceTree = "<group>"; };
 		55D752FC29D280E6005CE46B /* PTSuggesstionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSuggesstionCell.swift; sourceTree = "<group>"; };
+		55DF4BFB29DFFABF0077F8F7 /* PTCostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTCostCell.swift; sourceTree = "<group>"; };
 		55F2099B29D8AEA90034A6AF /* PTChatGPTBaseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTChatGPTBaseModel.swift; sourceTree = "<group>"; };
 		55F7A65C29D4012B00CF6272 /* PTSuggestionControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSuggestionControl.swift; sourceTree = "<group>"; };
 		55F7A8BF29D6AC7800CF6272 /* PTSplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSplitViewController.swift; sourceTree = "<group>"; };
@@ -303,6 +309,32 @@
 			path = Utils;
 			sourceTree = "<group>";
 		};
+		5554FE8D29DFE94E00C29F8A /* CostHistory */ = {
+			isa = PBXGroup;
+			children = (
+				55DF4BFA29DFFA9D0077F8F7 /* View */,
+				5554FE8F29DFE96600C29F8A /* Model */,
+				5554FE8E29DFE95900C29F8A /* ViewController */,
+			);
+			path = CostHistory;
+			sourceTree = "<group>";
+		};
+		5554FE8E29DFE95900C29F8A /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				5554FE9229DFF1F400C29F8A /* PTCostHistoriaViewController.swift */,
+			);
+			path = ViewController;
+			sourceTree = "<group>";
+		};
+		5554FE8F29DFE96600C29F8A /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				5554FE9029DFE99400C29F8A /* PTCostMainModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		55A5D70B29B1D23D00DCA096 = {
 			isa = PBXGroup;
 			children = (
@@ -324,6 +356,7 @@
 		55A5D71629B1D23D00DCA096 /* PTChatGPT */ = {
 			isa = PBXGroup;
 			children = (
+				5554FE8D29DFE94E00C29F8A /* CostHistory */,
 				552A609929D819A100239210 /* API */,
 				55F7A8BD29D6AC2D00CF6272 /* iPadControl */,
 				55D752F429D1FCED005CE46B /* Resource */,
@@ -453,6 +486,14 @@
 				55D752F829D1FDA2005CE46B /* PTSampleModels.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		55DF4BFA29DFFA9D0077F8F7 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				55DF4BFB29DFFABF0077F8F7 /* PTCostCell.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 		55F7A8BD29D6AC2D00CF6272 /* iPadControl */ = {
@@ -642,6 +683,7 @@
 				55BD5B9929C801700023458A /* PTCoachModel.swift in Sources */,
 				55B2745829CE23EA00E05736 /* StyleTransfererModel.swift in Sources */,
 				55B2745629CE23EA00E05736 /* CartoonGanModel.swift in Sources */,
+				55DF4BFC29DFFABF0077F8F7 /* PTCostCell.swift in Sources */,
 				552A60A129D8390500239210 /* PTAIEditsModel.swift in Sources */,
 				5514B39529BB013000890161 /* DarkModePickerView.swift in Sources */,
 				55BD5B9D29C843EA0023458A /* PTDarkModeHeader.swift in Sources */,
@@ -669,10 +711,12 @@
 				55F7A65D29D4012B00CF6272 /* PTSuggestionControl.swift in Sources */,
 				552A609F29D831BD00239210 /* PTAICompletionsModel.swift in Sources */,
 				55A5D71829B1D23D00DCA096 /* AppDelegate.swift in Sources */,
+				5554FE9129DFE99400C29F8A /* PTCostMainModel.swift in Sources */,
 				5514B38729BAE76E00890161 /* PTShareItem.swift in Sources */,
 				55F7A8C029D6AC7800CF6272 /* PTSplitViewController.swift in Sources */,
 				5520905B29C35903009B30A1 /* PTVoiceActionView.swift in Sources */,
 				55BD5B9229C7E4110023458A /* PTPopoverMenuControl.swift in Sources */,
+				5554FE9329DFF1F400C29F8A /* PTCostHistoriaViewController.swift in Sources */,
 				55D752FB29D27B54005CE46B /* PTSuggesstionViewController.swift in Sources */,
 				55D752F929D1FDA2005CE46B /* PTSampleModels.swift in Sources */,
 				5514B38929BAE7E400890161 /* SwipeCellOption.swift in Sources */,

@@ -35,19 +35,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         FileManager.pt.createFolder(folderPath: userImageMessageFilePath)
         FileManager.pt.createFolder(folderPath: userChatMessageFilePath)
-
-        if let buildVersion = UserDefaults.standard.value(forKey: uAppBuildVersion) {
-            let currentBuild = kAppBuildVersion!
-            let didUpdate = (buildVersion as! String) != currentBuild
-            
-            if didUpdate {
-                self.changeDate()
-            }
-        } else {
-            UserDefaults.standard.set(kAppBuildVersion, forKey: uAppBuildVersion)
-            self.changeDate()
-        }
-
+        FileManager.pt.createFolder(folderPath: userChatCostFilePath)
+        
         var debugDevice = false
         let buglyConfig = BuglyConfig()
 //        buglyConfig.delegate = self
@@ -163,43 +152,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 #endif        
         return true
     }
-    
-    func changeDate() {
-        let dataString = self.appConfig.segChatHistory
-        let chatString = self.appConfig.chatFavourtie
-
-        if !dataString.stringIsEmpty() {
-            
-            var arr = [PTSegHistoryModel]()
-            let dataArr = dataString.components(separatedBy: kSeparatorSeg)
-            dataArr.enumerated().forEach { index,value in
-                let model = PTSegHistoryModel.deserialize(from: value)
-                arr.append(model!)
-            }
-            if arr.count > 1 || arr.first!.historyModel.count > 0 {
-                self.appConfig.setChatData = arr.kj.JSONObjectArray()
-            }
-            
-            self.appConfig.segChatHistory = ""
-        }
         
-        if !chatString.stringIsEmpty() {
-            var arrF = [PTFavouriteModel]()
-            let dataStringF = self.appConfig.chatFavourtie
-            let dataArrF = dataStringF.components(separatedBy: kSeparator)
-            if dataArrF.count > 0 {
-                dataArrF.enumerated().forEach { index,value in
-                    if let model = PTFavouriteModel.deserialize(from: value) {
-                        arrF.append(model)
-                    }
-                }
-                self.appConfig.favouriteChat = arrF.kj.JSONObjectArray()
-            }
-            self.appConfig.chatFavourtie = ""
-        }
-        UserDefaults.standard.set(kAppBuildVersion, forKey: uAppBuildVersion)
-    }
-    
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         let urlStr = url.absoluteString
         if urlStr.hasPrefix("chatzola://") {
