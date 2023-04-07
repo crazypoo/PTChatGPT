@@ -138,50 +138,57 @@ class PTChatViewController: MessagesViewController {
             } cancelBlock: { sheet in
                 
             } otherBlock: { sheet, index in
-                Task.init {
-                    do {
-                        let object:UIImage = try await PTImagePicker.openAlbum()
-                        let date = Date()
-                        let dateString = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
-                        let fileName = "cartoon_\(dateString).png"
-                        
-                        PTGCDManager.gcdBackground {
-                            PTGCDManager.gcdMain {
-                                AppDelegate.appDelegate()!.appConfig.saveUserSendImage(image: object, fileName: fileName) { finish in
-                                    if finish {
-                                        PTGCDManager.gcdMain {
-                                            self.setTypingIndicatorViewHidden(false)
-                                        }
+                switch index {
+                case 0,1:
+                    Task.init {
+                        do {
+                            let object:UIImage = try await PTImagePicker.openAlbum()
+                            let date = Date()
+                            let dateString = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+                            let fileName = "cartoon_\(dateString).png"
+                            
+                            PTGCDManager.gcdBackground {
+                                PTGCDManager.gcdMain {
+                                    AppDelegate.appDelegate()!.appConfig.saveUserSendImage(image: object, fileName: fileName) { finish in
+                                        if finish {
+                                            PTGCDManager.gcdMain {
+                                                self.setTypingIndicatorViewHidden(false)
+                                            }
 
-                                        let saveModel = PTChatModel()
-                                        saveModel.messageType = 2
-                                        saveModel.messageDateString = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
-                                        saveModel.messageSendSuccess = false
-                                        saveModel.localFileName = fileName
-                                        self.chatModels.append(saveModel)
-                                        var message = PTMessageModel(image: object, user: PTChatData.share.user, messageId: UUID().uuidString, date: Date(), sendSuccess: false,fileName: fileName)
-                                        message.sending = true
-                                        self.historyModel?.historyModel = self.chatModels
-                                        PTGCDManager.gcdMain {
-                                            self.insertMessage(message) {
-                                                switch self.cartoonImageModes[index] {
-                                                case PTLanguage.share.text(forKey: "chat_TF_Cartoon"):
-                                                    self.cartoonGanModel.process(object)
-                                                case PTLanguage.share.text(forKey: "chat_TF_Oil_painting"):
-                                                    self.styleTransfererModel.process(object)
-                                                default:break
+                                            let saveModel = PTChatModel()
+                                            saveModel.messageType = 2
+                                            saveModel.messageDateString = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+                                            saveModel.messageSendSuccess = false
+                                            saveModel.localFileName = fileName
+                                            self.chatModels.append(saveModel)
+                                            var message = PTMessageModel(image: object, user: PTChatData.share.user, messageId: UUID().uuidString, date: Date(), sendSuccess: false,fileName: fileName)
+                                            message.sending = true
+                                            self.historyModel?.historyModel = self.chatModels
+                                            PTGCDManager.gcdMain {
+                                                self.insertMessage(message) {
+                                                    switch self.cartoonImageModes[index] {
+                                                    case PTLanguage.share.text(forKey: "chat_TF_Cartoon"):
+                                                        self.cartoonGanModel.process(object)
+                                                    case PTLanguage.share.text(forKey: "chat_TF_Oil_painting"):
+                                                        self.styleTransfererModel.process(object)
+                                                    default:break
+                                                    }
                                                 }
                                             }
                                         }
                                     }
                                 }
                             }
+                        } catch let pickerError as PTImagePicker.PickerError {
+                            pickerError.outPutLog()
                         }
-                    } catch let pickerError as PTImagePicker.PickerError {
-                        pickerError.outPutLog()
+                    }
+                default:
+                    if #available(iOS 15.4, *) {
+                        let vc = PTDiffusionViewController()
+                        self.navigationController?.pushViewController(vc)
                     }
                 }
-                
             } tapBackgroundBlock: { sheet in
                 
             }
@@ -404,7 +411,20 @@ class PTChatViewController: MessagesViewController {
     var maskImage:UIImage?
     
     let cartoonImageModes : [String] = {
-        return [PTLanguage.share.text(forKey: "chat_TF_Cartoon"),PTLanguage.share.text(forKey: "chat_TF_Oil_painting")]
+        
+        if #available(iOS 16.0, *) {
+            if Gobal_device_info.isOneOf([.iPhone13Pro,.iPhone13ProMax,.iPhone14,.iPhone14Pro,.iPhone14ProMax,.iPadPro9Inch, .iPadPro12Inch, .iPadPro12Inch2, .iPadPro10Inch, .iPadPro11Inch, .iPadPro12Inch3, .iPadPro11Inch2, .iPadPro12Inch4, .iPadPro11Inch3, .iPadPro12Inch5, .iPadPro11Inch4, .iPadPro12Inch6]) {
+                return [PTLanguage.share.text(forKey: "chat_TF_Cartoon"),PTLanguage.share.text(forKey: "chat_TF_Oil_painting"),PTLanguage.share.text(forKey: "Stable Diffusion")]
+            } else {
+                return [PTLanguage.share.text(forKey: "chat_TF_Cartoon"),PTLanguage.share.text(forKey: "chat_TF_Oil_painting")]
+            }
+        } else {
+            #if DEBUG
+            return [PTLanguage.share.text(forKey: "chat_TF_Cartoon"),PTLanguage.share.text(forKey: "chat_TF_Oil_painting"),PTLanguage.share.text(forKey: "Stable Diffusion")]
+            #else
+            return [PTLanguage.share.text(forKey: "chat_TF_Cartoon"),PTLanguage.share.text(forKey: "chat_TF_Oil_painting")]
+            #endif
+        }
     }()
     
     private lazy var styleTransfererModel: StyleTransfererModel = {

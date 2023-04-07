@@ -32,7 +32,7 @@ ChatGPT-iOS版,不是SwiftUI,SwiftUI,SwiftUI,😒谁叫我不会.现在已经上
 
 去openai api官网申请token就可以使用
 
-现在支持ChatGPT和DallE
+现在支持ChatGPT和DallE和Stable Diffusion
 
 代码完全开源🤪但是我还没有时间写注释
 
@@ -100,7 +100,7 @@ App主框架使用了自己的工具框架[PTools](https://github.com/crazypoo/P
 #### iCloud
 支持iCloud备份同步
 
-### URL SCHEME
+#### URL SCHEME
 支持URLSCHEME
 
 基础聊天
@@ -115,3 +115,31 @@ chatzola://ChatText=Hola
 如果你有设置标签则可以
 
 chatzola://chatTag=你的标签名字?chatText=Hola
+
+#### Stable Diffusion
+App支持Stable Diffusion画图,但是可能需要机能强大的机器须要15.4之后的系统和3GB内存的设备
+
+但是现在运行该项目,可能比之前复杂,步骤如下:
+
+1.首先须要下载模型[sd-v1-4.ckpt](https://huggingface.co/CompVis/stable-diffusion-v-1-4-original)
+
+2.安装[miniforge](https://github.com/conda-forge/miniforge#homebrew),如果你已经安装了
+
+3.打开到项目的根目录,然后配置PyTorch环境,如果你是Python3,则须要把pip更换成pip3
+
+```bash
+   conda deactivate
+   conda remove -n PTChatGPT --all
+   conda create -n PTChatGPT python=3.10
+   conda activate PTChatGPT
+   pip install torch typing_extensions numpy Pillow requests pytorch_lightning
+```
+
+4.然后使用PyTorch环境来解析刚刚上文提及到的模型配置到项目里面
+
+```bash
+   ./maple-convert.py ~/Downloads/sd-v1-4.ckpt
+```
+          
+ 5.然后就可以运行项目了
+
