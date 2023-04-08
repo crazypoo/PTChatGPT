@@ -7,7 +7,7 @@ import torch as th
 import numpy as np
 
 ckpt = th.load(sys.argv[1], map_location="cpu")
-outpath = Path("PTchatGPT/bins")
+outpath = Path("PTchatGPT/bins1_4")
 outpath.mkdir(exist_ok=True)
 
 # vocab for clip

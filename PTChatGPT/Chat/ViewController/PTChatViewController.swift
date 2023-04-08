@@ -133,7 +133,7 @@ class PTChatViewController: MessagesViewController {
         view.setImage("👨‍🎨".emojiToImage(emojiFont: .appfont(size: 24)), for: .normal)
         view.setSize(CGSize(width: 44, height: 44), animated: false)
         view.addActionHandlers { sender in
-            UIAlertController.baseActionSheet(title: PTLanguage.share.text(forKey: "chat_TF"), titles: self.cartoonImageModes) { sheet in
+            UIAlertController.baseActionSheet(title: "AI Draw",subTitle: PTLanguage.share.text(forKey: "chat_TF"), titles: self.cartoonImageModes) { sheet in
                 
             } cancelBlock: { sheet in
                 
@@ -411,19 +411,14 @@ class PTChatViewController: MessagesViewController {
     var maskImage:UIImage?
     
     let cartoonImageModes : [String] = {
-        
-        if #available(iOS 16.0, *) {
-            if Gobal_device_info.isOneOf([.iPhone13Pro,.iPhone13ProMax,.iPhone14,.iPhone14Pro,.iPhone14ProMax,.iPadPro9Inch, .iPadPro12Inch, .iPadPro12Inch2, .iPadPro10Inch, .iPadPro11Inch, .iPadPro12Inch3, .iPadPro11Inch2, .iPadPro12Inch4, .iPadPro11Inch3, .iPadPro12Inch5, .iPadPro11Inch4, .iPadPro12Inch6]) || Gobal_device_info.isSimulator {
+        if UIApplication.applicationEnvironment() == .appStore || UIApplication.applicationEnvironment() == .testFlight {
+            if Gobal_device_info.isOneOf([.iPhone13Pro,.iPhone13ProMax,.iPhone14Pro,.iPhone14ProMax, .iPadPro12Inch2, .iPadPro10Inch, .iPadPro11Inch, .iPadPro12Inch3, .iPadPro11Inch2, .iPadPro12Inch4, .iPadPro11Inch3, .iPadPro12Inch5, .iPadPro11Inch4, .iPadPro12Inch6,.iPadAir5,.iPadPro12Inch]) || Gobal_device_info.isSimulator {
                 return [PTLanguage.share.text(forKey: "chat_TF_Cartoon"),PTLanguage.share.text(forKey: "chat_TF_Oil_painting"),PTLanguage.share.text(forKey: "Stable Diffusion")]
             } else {
                 return [PTLanguage.share.text(forKey: "chat_TF_Cartoon"),PTLanguage.share.text(forKey: "chat_TF_Oil_painting")]
             }
         } else {
-            #if DEBUG
             return [PTLanguage.share.text(forKey: "chat_TF_Cartoon"),PTLanguage.share.text(forKey: "chat_TF_Oil_painting"),PTLanguage.share.text(forKey: "Stable Diffusion")]
-            #else
-            return [PTLanguage.share.text(forKey: "chat_TF_Cartoon"),PTLanguage.share.text(forKey: "chat_TF_Oil_painting")]
-            #endif
         }
     }()
     
@@ -1001,7 +996,9 @@ class PTChatViewController: MessagesViewController {
         messageInputBar.alpha = 1
         
         if !Gobal_device_info.isPad {
-            self.createHolderView()
+            PTGCDManager.gcdAfter(time: 0.5) {
+                self.createHolderView()
+            }
         }
     }
     
@@ -1024,7 +1021,7 @@ class PTChatViewController: MessagesViewController {
     func whatNews() {
         if WhatsNew.shouldPresent() {
             let whatsNew = WhatsNewViewController(items: [
-                WhatsNewItem.text(title: "聊天", subtitle: "1.完全适配iPad,使用方式更熟悉,更加方便.\n2.用户可以更改名字.\n3.用户现在可以更换自定义ChatGPT的服务器"),
+                WhatsNewItem.text(title: "聊天", subtitle: "1.現在AI可以使用Stable Diffusion畫畫,比ChatGPT本身的畫畫功能更加強大(僅支持內存有6G以上的機型,M1之後的iPad性能會更好)"),
                 WhatsNewItem.text(title: "其他", subtitle: "修复了一些昆虫"),
                 ])
             whatsNew.titleText = "What's New"

@@ -41,6 +41,8 @@
 		552B41CA29D14A5200065892 /* AppStoreConnect-Swift-SDK in Frameworks */ = {isa = PBXBuildFile; productRef = 552B41C929D14A5200065892 /* AppStoreConnect-Swift-SDK */; };
 		5539463D29D8794500FFB312 /* PTSendChatModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5539463C29D8794500FFB312 /* PTSendChatModel.swift */; };
 		5539463F29D8822900FFB312 /* PTReceiveChatModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5539463E29D8822900FFB312 /* PTReceiveChatModel.swift */; };
+		553B54D829E21C05008E9D2C /* bins1_4 in Resources */ = {isa = PBXBuildFile; fileRef = 553B54D629E21C05008E9D2C /* bins1_4 */; };
+		553B54D929E21C05008E9D2C /* bins1_5 in Resources */ = {isa = PBXBuildFile; fileRef = 553B54D729E21C05008E9D2C /* bins1_5 */; };
 		5554FE9129DFE99400C29F8A /* PTCostMainModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5554FE9029DFE99400C29F8A /* PTCostMainModel.swift */; };
 		5554FE9329DFF1F400C29F8A /* PTCostHistoriaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5554FE9229DFF1F400C29F8A /* PTCostHistoriaViewController.swift */; };
 		55796A2229BD6DCE00574DD4 /* PTSoundRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55796A2129BD6DCE00574DD4 /* PTSoundRecorder.swift */; };
@@ -84,7 +86,6 @@
 		55DF4BFC29DFFABF0077F8F7 /* PTCostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DF4BFB29DFFABF0077F8F7 /* PTCostCell.swift */; };
 		55DF5C5129E06EB00077F8F7 /* PTSableDiffusion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DF5C5029E06EB00077F8F7 /* PTSableDiffusion.swift */; };
 		55DF64A429E07DE40077F8F7 /* PTDiffusionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DF64A329E07DE40077F8F7 /* PTDiffusionViewController.swift */; };
-		55DF68BB29E084630077F8F7 /* bins in Resources */ = {isa = PBXBuildFile; fileRef = 55DF68BA29E084620077F8F7 /* bins */; };
 		55F2099C29D8AEA90034A6AF /* PTChatGPTBaseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F2099B29D8AEA90034A6AF /* PTChatGPTBaseModel.swift */; };
 		55F7A65D29D4012B00CF6272 /* PTSuggestionControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F7A65C29D4012B00CF6272 /* PTSuggestionControl.swift */; };
 		55F7A8C029D6AC7800CF6272 /* PTSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F7A8BF29D6AC7800CF6272 /* PTSplitViewController.swift */; };
@@ -135,6 +136,8 @@
 		552B41C429D135AE00065892 /* PTCheckTestFlight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTCheckTestFlight.swift; sourceTree = "<group>"; };
 		5539463C29D8794500FFB312 /* PTSendChatModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSendChatModel.swift; sourceTree = "<group>"; };
 		5539463E29D8822900FFB312 /* PTReceiveChatModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTReceiveChatModel.swift; sourceTree = "<group>"; };
+		553B54D629E21C05008E9D2C /* bins1_4 */ = {isa = PBXFileReference; lastKnownFileType = folder; path = bins1_4; sourceTree = "<group>"; };
+		553B54D729E21C05008E9D2C /* bins1_5 */ = {isa = PBXFileReference; lastKnownFileType = folder; path = bins1_5; sourceTree = "<group>"; };
 		5554FE9029DFE99400C29F8A /* PTCostMainModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTCostMainModel.swift; sourceTree = "<group>"; };
 		5554FE9229DFF1F400C29F8A /* PTCostHistoriaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTCostHistoriaViewController.swift; sourceTree = "<group>"; };
 		55796A2129BD6DCE00574DD4 /* PTSoundRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSoundRecorder.swift; sourceTree = "<group>"; };
@@ -180,7 +183,6 @@
 		55DF4BFB29DFFABF0077F8F7 /* PTCostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTCostCell.swift; sourceTree = "<group>"; };
 		55DF5C5029E06EB00077F8F7 /* PTSableDiffusion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PTSableDiffusion.swift; sourceTree = "<group>"; };
 		55DF64A329E07DE40077F8F7 /* PTDiffusionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTDiffusionViewController.swift; sourceTree = "<group>"; };
-		55DF68BA29E084620077F8F7 /* bins */ = {isa = PBXFileReference; lastKnownFileType = folder; path = bins; sourceTree = "<group>"; };
 		55F2099B29D8AEA90034A6AF /* PTChatGPTBaseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTChatGPTBaseModel.swift; sourceTree = "<group>"; };
 		55F7A65C29D4012B00CF6272 /* PTSuggestionControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSuggestionControl.swift; sourceTree = "<group>"; };
 		55F7A8BF29D6AC7800CF6272 /* PTSplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSplitViewController.swift; sourceTree = "<group>"; };
@@ -364,7 +366,8 @@
 		55A5D71629B1D23D00DCA096 /* PTChatGPT */ = {
 			isa = PBXGroup;
 			children = (
-				55DF68BA29E084620077F8F7 /* bins */,
+				553B54D629E21C05008E9D2C /* bins1_4 */,
+				553B54D729E21C05008E9D2C /* bins1_5 */,
 				55DF542629E06E0B0077F8F7 /* AiDraw */,
 				5554FE8D29DFE94E00C29F8A /* CostHistory */,
 				552A609929D819A100239210 /* API */,
@@ -619,10 +622,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				553B54D829E21C05008E9D2C /* bins1_4 in Resources */,
 				55B2746129CE240E00E05736 /* cartoongan_int8.tflite in Resources */,
 				55B2745F29CE240E00E05736 /* style_transfer_quantized_384.tflite in Resources */,
 				55A5D72429B1D23E00DCA096 /* LaunchScreen.storyboard in Resources */,
-				55DF68BB29E084630077F8F7 /* bins in Resources */,
+				553B54D929E21C05008E9D2C /* bins1_5 in Resources */,
 				55B2746029CE240E00E05736 /* style_predict_quantized_256.tflite in Resources */,
 				5514B39C29BB127F00890161 /* Localizable.strings in Resources */,
 				55A5D72129B1D23E00DCA096 /* Assets.xcassets in Resources */,

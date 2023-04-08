@@ -15,22 +15,22 @@ func makeGraph(synchonize: Bool) -> MPSGraph {
     return graph
 }
 
-func loadConstant(graph: MPSGraph, name: String, shape: [NSNumber], fp32: Bool = false) -> MPSGraphTensor {
+func loadConstant(graph: MPSGraph, name: String, shape: [NSNumber], fp32: Bool = false,modelName:String) -> MPSGraphTensor {
     let numels = shape.map({$0.intValue}).reduce(1, *)
-    let fileUrl: URL = Bundle.main.url(forResource: "bins/" + name + (fp32 ? "_fp32" : ""), withExtension: ".bin")!
+    let fileUrl: URL = Bundle.main.url(forResource: "\(modelName)/" + name + (fp32 ? "_fp32" : ""), withExtension: ".bin")!
     let data: Data = try! Data(contentsOf: fileUrl, options: Data.ReadingOptions.alwaysMapped)
     let expectedCount = numels * (fp32 ? 4 : 2)
     assert(data.count == expectedCount, "Mismatch between byte count of data \(data.count) and expected size \(expectedCount) for \(numels) els in \(fileUrl)")
     return graph.constant(data, shape: shape, dataType: fp32 ? MPSDataType.float32 : MPSDataType.float16)
 }
 
-func makeConv(graph: MPSGraph, xIn: MPSGraphTensor, name: String, outChannels: NSNumber, khw: NSNumber, stride: Int = 1, bias: Bool = true) -> MPSGraphTensor {
-    let w = loadConstant(graph: graph, name: name + ".weight", shape: [outChannels, xIn.shape![3], khw, khw])
+func makeConv(graph: MPSGraph, xIn: MPSGraphTensor, name: String, outChannels: NSNumber, khw: NSNumber, stride: Int = 1, bias: Bool = true,modelName:String) -> MPSGraphTensor {
+    let w = loadConstant(graph: graph, name: name + ".weight", shape: [outChannels, xIn.shape![3], khw, khw],modelName: modelName)
     let p: Int = khw.intValue / 2;
     let convDesc = MPSGraphConvolution2DOpDescriptor(strideInX: stride, strideInY: stride, dilationRateInX: 1, dilationRateInY: 1, groups: 1, paddingLeft: p, paddingRight: p, paddingTop: p, paddingBottom: p, paddingStyle: MPSGraphPaddingStyle.explicit, dataLayout: MPSGraphTensorNamedDataLayout.NHWC, weightsLayout: MPSGraphTensorNamedDataLayout.OIHW)!
     let conv = graph.convolution2D(xIn, weights: w, descriptor: convDesc, name: nil)
     if (bias) {
-        let b = loadConstant(graph: graph, name: name + ".bias", shape: [1, 1, 1, outChannels])
+        let b = loadConstant(graph: graph, name: name + ".bias", shape: [1, 1, 1, outChannels],modelName: modelName)
         return graph.addition(conv, b, name: nil)
     }
     return conv
@@ -41,7 +41,7 @@ func makeUpsampleNearest(graph: MPSGraph, xIn: MPSGraphTensor, scaleFactor: Int=
 }
 
 @available(iOS 15.4, *)
-func makeGroupNorm(graph: MPSGraph, xIn: MPSGraphTensor, name: String) -> MPSGraphTensor {
+func makeGroupNorm(graph: MPSGraph, xIn: MPSGraphTensor, name: String,modelName:String) -> MPSGraphTensor {
     var x = xIn
     if (xIn.shape!.count == 3) {
         x = graph.expandDims(x, axes: [1], name: nil)
@@ -49,8 +49,8 @@ func makeGroupNorm(graph: MPSGraph, xIn: MPSGraphTensor, name: String) -> MPSGra
     let shape = x.shape!
     let nGroups: NSNumber = 32
     let nGrouped: NSNumber = shape[3].floatValue / nGroups.floatValue as NSNumber
-    let gamma = loadConstant(graph: graph, name: name + ".weight", shape: [1, 1, 1, nGroups, nGrouped])
-    let beta = loadConstant(graph: graph, name: name + ".bias", shape: [1, 1, 1, nGroups, nGrouped])
+    let gamma = loadConstant(graph: graph, name: name + ".weight", shape: [1, 1, 1, nGroups, nGrouped],modelName: modelName)
+    let beta = loadConstant(graph: graph, name: name + ".bias", shape: [1, 1, 1, nGroups, nGrouped],modelName: modelName)
     x = graph.reshape(x, shape: [shape[0], shape[1], shape[2], nGroups, nGrouped], name: nil)
     let mean = graph.mean(of: x, axes: [1, 2, 4], name: nil)
     let variance = graph.variance(of: x, axes: [1, 2, 4], name: nil)
@@ -63,38 +63,38 @@ func makeSwish(graph: MPSGraph, xIn: MPSGraphTensor) -> MPSGraphTensor {
 }
 
 @available(iOS 15.4, *)
-func makeGroupNormSwish(graph: MPSGraph, xIn: MPSGraphTensor, name: String) -> MPSGraphTensor {
-    return makeSwish(graph: graph, xIn: makeGroupNorm(graph: graph, xIn: xIn, name: name))
+func makeGroupNormSwish(graph: MPSGraph, xIn: MPSGraphTensor, name: String,modelName:String) -> MPSGraphTensor {
+    return makeSwish(graph: graph, xIn: makeGroupNorm(graph: graph, xIn: xIn, name: name,modelName: modelName))
 }
 
 @available(iOS 15.4, *)
-func makeDecoderResBlock(graph: MPSGraph, xIn: MPSGraphTensor, name: String, outChannels: NSNumber) -> MPSGraphTensor {
+func makeDecoderResBlock(graph: MPSGraph, xIn: MPSGraphTensor, name: String, outChannels: NSNumber,modelName:String) -> MPSGraphTensor {
     var x = xIn
-    x = makeGroupNormSwish(graph: graph, xIn: x, name: name + ".norm1")
-    x = makeConv(graph: graph, xIn: x, name: name + ".conv1", outChannels: outChannels, khw: 3)
-    x = makeGroupNormSwish(graph: graph, xIn: x, name: name + ".norm2")
-    x = makeConv(graph: graph, xIn: x, name: name + ".conv2", outChannels: outChannels, khw: 3)
+    x = makeGroupNormSwish(graph: graph, xIn: x, name: name + ".norm1",modelName: modelName)
+    x = makeConv(graph: graph, xIn: x, name: name + ".conv1", outChannels: outChannels, khw: 3,modelName: modelName)
+    x = makeGroupNormSwish(graph: graph, xIn: x, name: name + ".norm2",modelName: modelName)
+    x = makeConv(graph: graph, xIn: x, name: name + ".conv2", outChannels: outChannels, khw: 3,modelName: modelName)
     if (xIn.shape![3] != outChannels) {
-        let ninShortcut = makeConv(graph: graph, xIn: xIn, name: name + ".nin_shortcut", outChannels: outChannels, khw: 1)
+        let ninShortcut = makeConv(graph: graph, xIn: xIn, name: name + ".nin_shortcut", outChannels: outChannels, khw: 1,modelName: modelName)
         return graph.addition(x, ninShortcut, name: "skip")
     }
     return graph.addition(x, xIn, name: "skip")
 }
 
 @available(iOS 15.4, *)
-func makeDecoderAttention(graph: MPSGraph, xIn: MPSGraphTensor, name: String) -> MPSGraphTensor {
-    var x = makeGroupNorm(graph: graph, xIn: xIn, name: name + ".norm")
+func makeDecoderAttention(graph: MPSGraph, xIn: MPSGraphTensor, name: String,modelName:String) -> MPSGraphTensor {
+    var x = makeGroupNorm(graph: graph, xIn: xIn, name: name + ".norm",modelName: modelName)
     let c = x.shape![3]
     x = graph.reshape(x, shape: [x.shape![0], NSNumber(value:x.shape![1].intValue * x.shape![2].intValue), c], name: nil)
-    let q = makeLinear(graph: graph, xIn: x, name: name + ".q", outChannels: c, bias: false)
-    var k = makeLinear(graph: graph, xIn: x, name: name + ".k", outChannels: c, bias: false)
+    let q = makeLinear(graph: graph, xIn: x, name: name + ".q", outChannels: c, bias: false,modelName: modelName)
+    var k = makeLinear(graph: graph, xIn: x, name: name + ".k", outChannels: c, bias: false,modelName: modelName)
     k = graph.multiplication(k, graph.constant(1.0 / sqrt(c.doubleValue), dataType: MPSDataType.float16), name: nil)
     k = graph.transposeTensor(k, dimension: 1, withDimension: 2, name: nil)
-    let v = makeLinear(graph: graph, xIn: x, name: name + ".v", outChannels: c, bias: false)
+    let v = makeLinear(graph: graph, xIn: x, name: name + ".v", outChannels: c, bias: false,modelName: modelName)
     var att = graph.matrixMultiplication(primary: q, secondary: k, name: nil)
     att = graph.softMax(with: att, axis: 2, name: nil)
     att = graph.matrixMultiplication(primary: att, secondary: v, name: nil)
-    x = makeLinear(graph: graph, xIn: att, name: name + ".proj_out", outChannels: c)
+    x = makeLinear(graph: graph, xIn: att, name: name + ".proj_out", outChannels: c,modelName: modelName)
     x = graph.reshape(x, shape: xIn.shape!, name: nil)
     return graph.addition(x, xIn, name: nil)
 }
@@ -110,104 +110,104 @@ func makeByteConverter(graph: MPSGraph, xIn: MPSGraphTensor) -> MPSGraphTensor {
 }
 
 @available(iOS 15.4, *)
-func makeDecoder(graph: MPSGraph, xIn: MPSGraphTensor) -> MPSGraphTensor {
+func makeDecoder(graph: MPSGraph, xIn: MPSGraphTensor,modelName:String) -> MPSGraphTensor {
     var x = xIn
     let name = "first_stage_model.decoder"
     x = graph.multiplication(x, graph.constant(1 / 0.18215, dataType: MPSDataType.float16), name: "rescale")
-    x = makeConv(graph: graph, xIn: x, name: "first_stage_model.post_quant_conv", outChannels: 4, khw: 1)
-    x = makeConv(graph: graph, xIn: x, name: name + ".conv_in", outChannels: 512, khw: 3)
+    x = makeConv(graph: graph, xIn: x, name: "first_stage_model.post_quant_conv", outChannels: 4, khw: 1,modelName: modelName)
+    x = makeConv(graph: graph, xIn: x, name: name + ".conv_in", outChannels: 512, khw: 3,modelName: modelName)
     
-    x = makeDecoderResBlock(graph: graph, xIn: x, name: name + ".mid.block_1", outChannels: 512)
-    x = makeDecoderAttention(graph: graph, xIn: x, name: name + ".mid.attn_1")
-    x = makeDecoderResBlock(graph: graph, xIn: x, name: name + ".mid.block_2", outChannels: 512)
+    x = makeDecoderResBlock(graph: graph, xIn: x, name: name + ".mid.block_1", outChannels: 512,modelName: modelName)
+    x = makeDecoderAttention(graph: graph, xIn: x, name: name + ".mid.attn_1",modelName: modelName)
+    x = makeDecoderResBlock(graph: graph, xIn: x, name: name + ".mid.block_2", outChannels: 512,modelName: modelName)
     
     // block 3
-    x = makeDecoderResBlock(graph: graph, xIn: x, name: name + ".up.3.block.0", outChannels: 512)
-    x = makeDecoderResBlock(graph: graph, xIn: x, name: name + ".up.3.block.1", outChannels: 512)
-    x = makeDecoderResBlock(graph: graph, xIn: x, name: name + ".up.3.block.2", outChannels: 512)
+    x = makeDecoderResBlock(graph: graph, xIn: x, name: name + ".up.3.block.0", outChannels: 512,modelName: modelName)
+    x = makeDecoderResBlock(graph: graph, xIn: x, name: name + ".up.3.block.1", outChannels: 512,modelName: modelName)
+    x = makeDecoderResBlock(graph: graph, xIn: x, name: name + ".up.3.block.2", outChannels: 512,modelName: modelName)
     x = makeUpsampleNearest(graph: graph, xIn: x)
-    x = makeConv(graph: graph, xIn: x, name: name + ".up.3.upsample.conv", outChannels: 512, khw: 3)
+    x = makeConv(graph: graph, xIn: x, name: name + ".up.3.upsample.conv", outChannels: 512, khw: 3,modelName: modelName)
     
     // block 2
-    x = makeDecoderResBlock(graph: graph, xIn: x, name: name + ".up.2.block.0", outChannels: 512)
-    x = makeDecoderResBlock(graph: graph, xIn: x, name: name + ".up.2.block.1", outChannels: 512)
-    x = makeDecoderResBlock(graph: graph, xIn: x, name: name + ".up.2.block.2", outChannels: 512)
+    x = makeDecoderResBlock(graph: graph, xIn: x, name: name + ".up.2.block.0", outChannels: 512,modelName: modelName)
+    x = makeDecoderResBlock(graph: graph, xIn: x, name: name + ".up.2.block.1", outChannels: 512,modelName: modelName)
+    x = makeDecoderResBlock(graph: graph, xIn: x, name: name + ".up.2.block.2", outChannels: 512,modelName: modelName)
     x = makeUpsampleNearest(graph: graph, xIn: x)
-    x = makeConv(graph: graph, xIn: x, name: name + ".up.2.upsample.conv", outChannels: 512, khw: 3)
+    x = makeConv(graph: graph, xIn: x, name: name + ".up.2.upsample.conv", outChannels: 512, khw: 3,modelName: modelName)
     
     // block 1
-    x = makeDecoderResBlock(graph: graph, xIn: x, name: name + ".up.1.block.0", outChannels: 256)
-    x = makeDecoderResBlock(graph: graph, xIn: x, name: name + ".up.1.block.1", outChannels: 256)
-    x = makeDecoderResBlock(graph: graph, xIn: x, name: name + ".up.1.block.2", outChannels: 256)
+    x = makeDecoderResBlock(graph: graph, xIn: x, name: name + ".up.1.block.0", outChannels: 256,modelName: modelName)
+    x = makeDecoderResBlock(graph: graph, xIn: x, name: name + ".up.1.block.1", outChannels: 256,modelName: modelName)
+    x = makeDecoderResBlock(graph: graph, xIn: x, name: name + ".up.1.block.2", outChannels: 256,modelName: modelName)
     x = makeUpsampleNearest(graph: graph, xIn: x)
-    x = makeConv(graph: graph, xIn: x, name: name + ".up.1.upsample.conv", outChannels: 256, khw: 3)
+    x = makeConv(graph: graph, xIn: x, name: name + ".up.1.upsample.conv", outChannels: 256, khw: 3,modelName: modelName)
     // block 0
-    x = makeDecoderResBlock(graph: graph, xIn: x, name: name + ".up.0.block.0", outChannels: 128)
-    x = makeDecoderResBlock(graph: graph, xIn: x, name: name + ".up.0.block.1", outChannels: 128)
-    x = makeDecoderResBlock(graph: graph, xIn: x, name: name + ".up.0.block.2", outChannels: 128)
+    x = makeDecoderResBlock(graph: graph, xIn: x, name: name + ".up.0.block.0", outChannels: 128,modelName: modelName)
+    x = makeDecoderResBlock(graph: graph, xIn: x, name: name + ".up.0.block.1", outChannels: 128,modelName: modelName)
+    x = makeDecoderResBlock(graph: graph, xIn: x, name: name + ".up.0.block.2", outChannels: 128,modelName: modelName)
     
-    x = makeGroupNormSwish(graph: graph, xIn: x, name: name + ".norm_out")
-    x = makeConv(graph: graph, xIn: x, name: name + ".conv_out", outChannels: 3, khw: 3)
+    x = makeGroupNormSwish(graph: graph, xIn: x, name: name + ".norm_out",modelName: modelName)
+    x = makeConv(graph: graph, xIn: x, name: name + ".conv_out", outChannels: 3, khw: 3,modelName: modelName)
     x = graph.addition(x, graph.constant(1.0, dataType: MPSDataType.float16), name: nil)
     x = graph.multiplication(x, graph.constant(0.5, dataType: MPSDataType.float16), name: nil)
     return makeByteConverter(graph: graph, xIn: x)
 }
 
-func makeLayerNorm(graph: MPSGraph, xIn: MPSGraphTensor, name: String) -> MPSGraphTensor {
+func makeLayerNorm(graph: MPSGraph, xIn: MPSGraphTensor, name: String,modelName:String) -> MPSGraphTensor {
     assert(xIn.shape!.count == 3, "layernorm requires NTC")
-    let gamma = loadConstant(graph: graph, name: name + ".weight", shape: [1, 1, xIn.shape![2]])
-    let beta = loadConstant(graph: graph, name: name + ".bias", shape: [1,  1, xIn.shape![2]])
+    let gamma = loadConstant(graph: graph, name: name + ".weight", shape: [1, 1, xIn.shape![2]],modelName: modelName)
+    let beta = loadConstant(graph: graph, name: name + ".bias", shape: [1,  1, xIn.shape![2]],modelName: modelName)
     let mean = graph.mean(of: xIn, axes: [2], name: nil)
     let variance = graph.variance(of: xIn, axes: [2], name: nil)
     let x = graph.normalize(xIn, mean: mean, variance: variance, gamma: gamma, beta: beta, epsilon: 1e-5, name: nil)
     return graph.reshape(x, shape: xIn.shape!, name: nil)
 }
 
-func makeLinear(graph: MPSGraph, xIn: MPSGraphTensor, name: String, outChannels: NSNumber, bias: Bool = true) -> MPSGraphTensor {
+func makeLinear(graph: MPSGraph, xIn: MPSGraphTensor, name: String, outChannels: NSNumber, bias: Bool = true,modelName:String) -> MPSGraphTensor {
     if (xIn.shape!.count == 2) {
         var x = graph.reshape(xIn, shape: [xIn.shape![0], 1, 1, xIn.shape![1]], name: nil)
-        x = makeConv(graph: graph, xIn: x, name: name, outChannels: outChannels, khw: 1, bias: bias)
+        x = makeConv(graph: graph, xIn: x, name: name, outChannels: outChannels, khw: 1, bias: bias,modelName: modelName)
         return graph.reshape(x, shape: [xIn.shape![0], outChannels], name: nil)
     }
     var x = graph.reshape(xIn, shape: [xIn.shape![0], 1, xIn.shape![1], xIn.shape![2]], name: nil)
-    x = makeConv(graph: graph, xIn: x, name: name, outChannels: outChannels, khw: 1, bias: bias)
+    x = makeConv(graph: graph, xIn: x, name: name, outChannels: outChannels, khw: 1, bias: bias,modelName: modelName)
     return graph.reshape(x, shape: [xIn.shape![0], xIn.shape![1], outChannels], name: nil)
 }
 
-func makeTimeEmbed(graph: MPSGraph, xIn: MPSGraphTensor, name: String) -> MPSGraphTensor {
+func makeTimeEmbed(graph: MPSGraph, xIn: MPSGraphTensor, name: String,modelName:String) -> MPSGraphTensor {
     var x = xIn
-    x = makeLinear(graph: graph, xIn: x, name: name + ".0", outChannels: 1280)
+    x = makeLinear(graph: graph, xIn: x, name: name + ".0", outChannels: 1280,modelName: modelName)
     x = makeSwish(graph: graph, xIn: x)
-    return makeLinear(graph: graph, xIn: x, name: name + ".2", outChannels: 1280)
+    return makeLinear(graph: graph, xIn: x, name: name + ".2", outChannels: 1280,modelName: modelName)
 }
 
 @available(iOS 15.4, *)
-func makeUNetResBlock(graph: MPSGraph, xIn: MPSGraphTensor, embIn: MPSGraphTensor, name: String, inChannels: NSNumber, outChannels: NSNumber) -> MPSGraphTensor {
+func makeUNetResBlock(graph: MPSGraph, xIn: MPSGraphTensor, embIn: MPSGraphTensor, name: String, inChannels: NSNumber, outChannels: NSNumber,modelName:String) -> MPSGraphTensor {
     var x = xIn
-    x = makeGroupNormSwish(graph: graph, xIn: x, name: name + ".in_layers.0")
-    x = makeConv(graph: graph, xIn: x, name: name + ".in_layers.2", outChannels: outChannels, khw: 3)
+    x = makeGroupNormSwish(graph: graph, xIn: x, name: name + ".in_layers.0",modelName: modelName)
+    x = makeConv(graph: graph, xIn: x, name: name + ".in_layers.2", outChannels: outChannels, khw: 3,modelName: modelName)
     var emb = embIn
     emb = makeSwish(graph: graph, xIn: emb)
-    emb = makeLinear(graph: graph, xIn: emb, name: name + ".emb_layers.1", outChannels: outChannels)
+    emb = makeLinear(graph: graph, xIn: emb, name: name + ".emb_layers.1", outChannels: outChannels,modelName: modelName)
     emb = graph.expandDims(emb, axes: [1, 2], name: nil)
     x = graph.addition(x, emb, name: nil)
-    x = makeGroupNormSwish(graph: graph, xIn: x, name: name + ".out_layers.0")
-    x = makeConv(graph: graph, xIn: x, name: name + ".out_layers.3", outChannels: outChannels, khw: 3)
+    x = makeGroupNormSwish(graph: graph, xIn: x, name: name + ".out_layers.0",modelName: modelName)
+    x = makeConv(graph: graph, xIn: x, name: name + ".out_layers.3", outChannels: outChannels, khw: 3,modelName: modelName)
     
     var skip = xIn
     if (inChannels != outChannels) {
-        skip = makeConv(graph: graph, xIn: xIn, name: name + ".skip_connection", outChannels: outChannels, khw: 1)
+        skip = makeConv(graph: graph, xIn: xIn, name: name + ".skip_connection", outChannels: outChannels, khw: 1,modelName: modelName)
     }
     return graph.addition(x, skip, name: nil)
 }
 
-func makeCrossAttention(graph: MPSGraph, xIn: MPSGraphTensor, name: String, context: MPSGraphTensor?, saveMemory: Bool) -> MPSGraphTensor {
+func makeCrossAttention(graph: MPSGraph, xIn: MPSGraphTensor, name: String, context: MPSGraphTensor?, saveMemory: Bool,modelName:String) -> MPSGraphTensor {
     let c = xIn.shape![2]
     let (nHeads, dHead) = (NSNumber(8), NSNumber(value: c.intValue / 8))
-    var q = makeLinear(graph: graph, xIn: xIn, name: name + ".to_q", outChannels: c, bias: false)
+    var q = makeLinear(graph: graph, xIn: xIn, name: name + ".to_q", outChannels: c, bias: false,modelName: modelName)
     let context = context ?? xIn
-    var k = makeLinear(graph: graph, xIn: context, name: name + ".to_k", outChannels: c, bias: false)
-    var v = makeLinear(graph: graph, xIn: context, name: name + ".to_v", outChannels: c, bias: false)
+    var k = makeLinear(graph: graph, xIn: context, name: name + ".to_k", outChannels: c, bias: false,modelName: modelName)
+    var v = makeLinear(graph: graph, xIn: context, name: name + ".to_v", outChannels: c, bias: false,modelName: modelName)
     let n = xIn.shape![0]
     let hw = xIn.shape![1]
     let t = context.shape![1]
@@ -244,7 +244,7 @@ func makeCrossAttention(graph: MPSGraph, xIn: MPSGraphTensor, name: String, cont
         att = graph.transposeTensor(att, dimension: 1, withDimension: 2, name: nil)
     }
     att = graph.reshape(att, shape: xIn.shape!, name: nil)
-    return makeLinear(graph: graph, xIn: att, name: name + ".to_out.0", outChannels: c)
+    return makeLinear(graph: graph, xIn: att, name: name + ".to_out.0", outChannels: c,modelName: modelName)
 }
 
 func makeGelu(graph: MPSGraph, xIn: MPSGraphTensor) -> MPSGraphTensor {
@@ -256,63 +256,63 @@ func makeGelu(graph: MPSGraph, xIn: MPSGraphTensor) -> MPSGraphTensor {
     return graph.multiplication(xIn, x, name: nil)
 }
 
-func makeFeedForward(graph: MPSGraph, xIn: MPSGraphTensor, name: String) -> MPSGraphTensor {
+func makeFeedForward(graph: MPSGraph, xIn: MPSGraphTensor, name: String,modelName:String) -> MPSGraphTensor {
     assert(xIn.shape!.count == 3)
     let dim = xIn.shape![2]
     let dimMult = dim.intValue * 4
     let dimProj = NSNumber(value: dimMult * 2)
-    let proj = makeLinear(graph: graph, xIn: xIn, name: name + ".0.proj", outChannels: dimProj)
+    let proj = makeLinear(graph: graph, xIn: xIn, name: name + ".0.proj", outChannels: dimProj,modelName: modelName)
     var x = graph.sliceTensor(proj, dimension: 2, start: 0, length: dimMult, name: nil)
     var gate = graph.sliceTensor(proj, dimension: 2, start: dimMult, length: dimMult, name: nil)
     gate = makeGelu(graph: graph, xIn: gate)
     x = graph.multiplication(x, gate, name: nil)
-    return makeLinear(graph: graph, xIn: x, name: name + ".2", outChannels: dim)
+    return makeLinear(graph: graph, xIn: x, name: name + ".2", outChannels: dim,modelName: modelName)
 }
 
-func makeBasicTransformerBlock(graph: MPSGraph, xIn: MPSGraphTensor, name: String, contextIn: MPSGraphTensor, saveMemory: Bool) -> MPSGraphTensor {
+func makeBasicTransformerBlock(graph: MPSGraph, xIn: MPSGraphTensor, name: String, contextIn: MPSGraphTensor, saveMemory: Bool,modelName:String) -> MPSGraphTensor {
     var x = xIn
-    var attn1 = makeLayerNorm(graph: graph, xIn: x, name: name + ".norm1")
-    attn1 = makeCrossAttention(graph: graph, xIn: attn1, name: name + ".attn1", context: nil, saveMemory: saveMemory)
+    var attn1 = makeLayerNorm(graph: graph, xIn: x, name: name + ".norm1",modelName: modelName)
+    attn1 = makeCrossAttention(graph: graph, xIn: attn1, name: name + ".attn1", context: nil, saveMemory: saveMemory,modelName: modelName)
     x = graph.addition(attn1, x, name: nil)
-    var attn2 = makeLayerNorm(graph: graph, xIn: x, name: name + ".norm2")
-    attn2 = makeCrossAttention(graph: graph, xIn: attn2, name: name + ".attn2", context: contextIn, saveMemory: saveMemory)
+    var attn2 = makeLayerNorm(graph: graph, xIn: x, name: name + ".norm2",modelName: modelName)
+    attn2 = makeCrossAttention(graph: graph, xIn: attn2, name: name + ".attn2", context: contextIn, saveMemory: saveMemory,modelName: modelName)
     x = graph.addition(attn2, x, name: nil)
-    var ff = makeLayerNorm(graph: graph, xIn: x, name: name + ".norm3")
-    ff = makeFeedForward(graph: graph, xIn: ff, name: name + ".ff.net")
+    var ff = makeLayerNorm(graph: graph, xIn: x, name: name + ".norm3",modelName: modelName)
+    ff = makeFeedForward(graph: graph, xIn: ff, name: name + ".ff.net",modelName: modelName)
     return graph.addition(ff, x, name: nil)
 }
 
 @available(iOS 15.4, *)
-func makeSpatialTransformerBlock(graph: MPSGraph, xIn: MPSGraphTensor, name: String, contextIn: MPSGraphTensor, saveMemory: Bool) -> MPSGraphTensor {
+func makeSpatialTransformerBlock(graph: MPSGraph, xIn: MPSGraphTensor, name: String, contextIn: MPSGraphTensor, saveMemory: Bool,modelName:String) -> MPSGraphTensor {
     let n, h, w, c: NSNumber
     (n, h, w, c) = (xIn.shape![0], xIn.shape![1], xIn.shape![2], xIn.shape![3])
     var x = xIn
-    x = makeGroupNorm(graph: graph, xIn: x, name: name + ".norm")
-    x = makeConv(graph: graph, xIn: x, name: name + ".proj_in", outChannels: c, khw: 1)
+    x = makeGroupNorm(graph: graph, xIn: x, name: name + ".norm",modelName: modelName)
+    x = makeConv(graph: graph, xIn: x, name: name + ".proj_in", outChannels: c, khw: 1,modelName: modelName)
     x = graph.reshape(x, shape: [n, (h.intValue * w.intValue) as NSNumber, c], name: nil)
-    x = makeBasicTransformerBlock(graph: graph, xIn: x, name: name + ".transformer_blocks.0", contextIn: contextIn, saveMemory: saveMemory)
+    x = makeBasicTransformerBlock(graph: graph, xIn: x, name: name + ".transformer_blocks.0", contextIn: contextIn, saveMemory: saveMemory,modelName: modelName)
     x = graph.reshape(x, shape: [n, h, w, c], name: nil)
-    x = makeConv(graph: graph, xIn: x, name: name + ".proj_out", outChannels: c, khw: 1)
+    x = makeConv(graph: graph, xIn: x, name: name + ".proj_out", outChannels: c, khw: 1,modelName: modelName)
     return graph.addition(x, xIn, name: nil)
 }
 
 @available(iOS 15.4, *)
-func makeOutputBlock(graph: MPSGraph, xIn: MPSGraphTensor, embIn: MPSGraphTensor, condIn: MPSGraphTensor, inChannels: NSNumber, outChannels: NSNumber, dHead: NSNumber, name: String, saveMemory: Bool, spatialTransformer: Bool = true, upsample: Bool = false) -> MPSGraphTensor {
+func makeOutputBlock(graph: MPSGraph, xIn: MPSGraphTensor, embIn: MPSGraphTensor, condIn: MPSGraphTensor, inChannels: NSNumber, outChannels: NSNumber, dHead: NSNumber, name: String, saveMemory: Bool, spatialTransformer: Bool = true, upsample: Bool = false,modelName:String) -> MPSGraphTensor {
     var x = xIn
-    x = makeUNetResBlock(graph: graph, xIn: x, embIn: embIn, name: name + ".0", inChannels: inChannels, outChannels: outChannels)
+    x = makeUNetResBlock(graph: graph, xIn: x, embIn: embIn, name: name + ".0", inChannels: inChannels, outChannels: outChannels,modelName: modelName)
     if (spatialTransformer) {
-        x = makeSpatialTransformerBlock(graph: graph, xIn: x, name: name + ".1", contextIn: condIn, saveMemory: saveMemory)
+        x = makeSpatialTransformerBlock(graph: graph, xIn: x, name: name + ".1", contextIn: condIn, saveMemory: saveMemory,modelName: modelName)
     }
     if (upsample) {
         x = makeUpsampleNearest(graph: graph, xIn: x)
-        x = makeConv(graph: graph, xIn: x, name: name + (spatialTransformer ? ".2" : ".1") + ".conv", outChannels: outChannels, khw: 3)
+        x = makeConv(graph: graph, xIn: x, name: name + (spatialTransformer ? ".2" : ".1") + ".conv", outChannels: outChannels, khw: 3,modelName: modelName)
     }
     return x
 }
 
 @available(iOS 15.4, *)
-func makeUNetAnUnexpectedJourney(graph: MPSGraph, xIn: MPSGraphTensor, tembIn: MPSGraphTensor, condIn: MPSGraphTensor, name: String, saveMemory: Bool = true) -> [MPSGraphTensor] {
-    let emb = makeTimeEmbed(graph: graph, xIn: tembIn, name: name + ".time_embed")
+func makeUNetAnUnexpectedJourney(graph: MPSGraph, xIn: MPSGraphTensor, tembIn: MPSGraphTensor, condIn: MPSGraphTensor, name: String, saveMemory: Bool = true,modelName:String) -> [MPSGraphTensor] {
+    let emb = makeTimeEmbed(graph: graph, xIn: tembIn, name: name + ".time_embed",modelName: modelName)
     
     var savedInputs = [MPSGraphTensor]()
     var x = xIn
@@ -324,122 +324,122 @@ func makeUNetAnUnexpectedJourney(graph: MPSGraph, xIn: MPSGraphTensor, tembIn: M
     }
     
     // input blocks
-    x = makeConv(graph: graph, xIn: x, name: name + ".input_blocks.0.0", outChannels: 320, khw: 3)
+    x = makeConv(graph: graph, xIn: x, name: name + ".input_blocks.0.0", outChannels: 320, khw: 3,modelName: modelName)
     savedInputs.append(x)
     
-    x = makeUNetResBlock(graph: graph, xIn: x, embIn: emb, name: name + ".input_blocks.1.0", inChannels: 320, outChannels: 320)
-    x = makeSpatialTransformerBlock(graph: graph, xIn: x, name: name + ".input_blocks.1.1", contextIn: condIn, saveMemory: saveMemory)
+    x = makeUNetResBlock(graph: graph, xIn: x, embIn: emb, name: name + ".input_blocks.1.0", inChannels: 320, outChannels: 320,modelName: modelName)
+    x = makeSpatialTransformerBlock(graph: graph, xIn: x, name: name + ".input_blocks.1.1", contextIn: condIn, saveMemory: saveMemory,modelName: modelName)
     savedInputs.append(x)
     
-    x = makeUNetResBlock(graph: graph, xIn: x, embIn: emb, name: name + ".input_blocks.2.0", inChannels: 320, outChannels: 320)
-    x = makeSpatialTransformerBlock(graph: graph, xIn: x, name: name + ".input_blocks.2.1", contextIn: condIn, saveMemory: saveMemory)
-    savedInputs.append(x)
-    
-    // downsample
-    x = makeConv(graph: graph, xIn: x, name: name + ".input_blocks.3.0.op", outChannels: 320, khw: 3, stride: 2)
-    savedInputs.append(x)
-    
-    x = makeUNetResBlock(graph: graph, xIn: x, embIn: emb, name: name + ".input_blocks.4.0", inChannels: 320, outChannels: 640)
-    x = makeSpatialTransformerBlock(graph: graph, xIn: x, name: name + ".input_blocks.4.1", contextIn: condIn, saveMemory: saveMemory)
-    savedInputs.append(x)
-    
-    x = makeUNetResBlock(graph: graph, xIn: x, embIn: emb, name: name + ".input_blocks.5.0", inChannels: 640, outChannels: 640)
-    x = makeSpatialTransformerBlock(graph: graph, xIn: x, name: name + ".input_blocks.5.1", contextIn: condIn, saveMemory: saveMemory)
+    x = makeUNetResBlock(graph: graph, xIn: x, embIn: emb, name: name + ".input_blocks.2.0", inChannels: 320, outChannels: 320,modelName: modelName)
+    x = makeSpatialTransformerBlock(graph: graph, xIn: x, name: name + ".input_blocks.2.1", contextIn: condIn, saveMemory: saveMemory,modelName: modelName)
     savedInputs.append(x)
     
     // downsample
-    x = makeConv(graph: graph, xIn: x, name: name + ".input_blocks.6.0.op", outChannels: 640, khw: 3, stride: 2)
+    x = makeConv(graph: graph, xIn: x, name: name + ".input_blocks.3.0.op", outChannels: 320, khw: 3, stride: 2,modelName: modelName)
     savedInputs.append(x)
     
-    x = makeUNetResBlock(graph: graph, xIn: x, embIn: emb, name: name + ".input_blocks.7.0", inChannels: 640, outChannels: 1280)
-    x = makeSpatialTransformerBlock(graph: graph, xIn: x, name: name + ".input_blocks.7.1", contextIn: condIn, saveMemory: saveMemory)
+    x = makeUNetResBlock(graph: graph, xIn: x, embIn: emb, name: name + ".input_blocks.4.0", inChannels: 320, outChannels: 640,modelName: modelName)
+    x = makeSpatialTransformerBlock(graph: graph, xIn: x, name: name + ".input_blocks.4.1", contextIn: condIn, saveMemory: saveMemory,modelName: modelName)
     savedInputs.append(x)
     
-    x = makeUNetResBlock(graph: graph, xIn: x, embIn: emb, name: name + ".input_blocks.8.0", inChannels: 1280, outChannels: 1280)
-    x = makeSpatialTransformerBlock(graph: graph, xIn: x, name: name + ".input_blocks.8.1", contextIn: condIn, saveMemory: saveMemory)
+    x = makeUNetResBlock(graph: graph, xIn: x, embIn: emb, name: name + ".input_blocks.5.0", inChannels: 640, outChannels: 640,modelName: modelName)
+    x = makeSpatialTransformerBlock(graph: graph, xIn: x, name: name + ".input_blocks.5.1", contextIn: condIn, saveMemory: saveMemory,modelName: modelName)
     savedInputs.append(x)
     
     // downsample
-    x = makeConv(graph: graph, xIn: x, name: name + ".input_blocks.9.0.op", outChannels: 1280, khw: 3, stride: 2)
+    x = makeConv(graph: graph, xIn: x, name: name + ".input_blocks.6.0.op", outChannels: 640, khw: 3, stride: 2,modelName: modelName)
     savedInputs.append(x)
     
-    x = makeUNetResBlock(graph: graph, xIn: x, embIn: emb, name: name + ".input_blocks.10.0", inChannels: 1280, outChannels: 1280)
+    x = makeUNetResBlock(graph: graph, xIn: x, embIn: emb, name: name + ".input_blocks.7.0", inChannels: 640, outChannels: 1280,modelName: modelName)
+    x = makeSpatialTransformerBlock(graph: graph, xIn: x, name: name + ".input_blocks.7.1", contextIn: condIn, saveMemory: saveMemory,modelName: modelName)
     savedInputs.append(x)
     
-    x = makeUNetResBlock(graph: graph, xIn: x, embIn: emb, name: name + ".input_blocks.11.0", inChannels: 1280, outChannels: 1280)
+    x = makeUNetResBlock(graph: graph, xIn: x, embIn: emb, name: name + ".input_blocks.8.0", inChannels: 1280, outChannels: 1280,modelName: modelName)
+    x = makeSpatialTransformerBlock(graph: graph, xIn: x, name: name + ".input_blocks.8.1", contextIn: condIn, saveMemory: saveMemory,modelName: modelName)
+    savedInputs.append(x)
+    
+    // downsample
+    x = makeConv(graph: graph, xIn: x, name: name + ".input_blocks.9.0.op", outChannels: 1280, khw: 3, stride: 2,modelName: modelName)
+    savedInputs.append(x)
+    
+    x = makeUNetResBlock(graph: graph, xIn: x, embIn: emb, name: name + ".input_blocks.10.0", inChannels: 1280, outChannels: 1280,modelName: modelName)
+    savedInputs.append(x)
+    
+    x = makeUNetResBlock(graph: graph, xIn: x, embIn: emb, name: name + ".input_blocks.11.0", inChannels: 1280, outChannels: 1280,modelName: modelName)
     savedInputs.append(x)
     
     // middle blocks
-    x = makeUNetResBlock(graph: graph, xIn: x, embIn: emb, name: name + ".middle_block.0", inChannels: 1280, outChannels: 1280)
-    x = makeSpatialTransformerBlock(graph: graph, xIn: x, name: name + ".middle_block.1", contextIn: condIn, saveMemory: saveMemory)
-    x = makeUNetResBlock(graph: graph, xIn: x, embIn: emb, name: name + ".middle_block.2", inChannels: 1280, outChannels: 1280)
+    x = makeUNetResBlock(graph: graph, xIn: x, embIn: emb, name: name + ".middle_block.0", inChannels: 1280, outChannels: 1280,modelName: modelName)
+    x = makeSpatialTransformerBlock(graph: graph, xIn: x, name: name + ".middle_block.1", contextIn: condIn, saveMemory: saveMemory,modelName: modelName)
+    x = makeUNetResBlock(graph: graph, xIn: x, embIn: emb, name: name + ".middle_block.2", inChannels: 1280, outChannels: 1280,modelName: modelName)
     
     return savedInputs + [emb] + [x]
 }
 
 @available(iOS 15.4, *)
-func makeUNetTheDesolationOfSmaug(graph: MPSGraph, savedInputsIn: [MPSGraphTensor], name: String, saveMemory: Bool = true) -> [MPSGraphTensor] {
+func makeUNetTheDesolationOfSmaug(graph: MPSGraph, savedInputsIn: [MPSGraphTensor], name: String, saveMemory: Bool = true,modelName:String) -> [MPSGraphTensor] {
     var savedInputs = savedInputsIn
     let condIn = savedInputs.popLast()!
     var x = savedInputs.popLast()!
     let emb = savedInputs.popLast()!
     // output blocks
     x = graph.concatTensors([x, savedInputs.popLast()!], dimension: 3, name: nil)
-    x = makeOutputBlock(graph: graph, xIn: x, embIn: emb, condIn: condIn, inChannels: 2560, outChannels: 1280, dHead: 160, name: name + ".output_blocks.0", saveMemory: saveMemory, spatialTransformer: false, upsample: false)
+    x = makeOutputBlock(graph: graph, xIn: x, embIn: emb, condIn: condIn, inChannels: 2560, outChannels: 1280, dHead: 160, name: name + ".output_blocks.0", saveMemory: saveMemory, spatialTransformer: false, upsample: false,modelName: modelName)
     
     x = graph.concatTensors([x, savedInputs.popLast()!], dimension: 3, name: nil)
-    x = makeOutputBlock(graph: graph, xIn: x, embIn: emb, condIn: condIn, inChannels: 2560, outChannels: 1280, dHead: 160, name: name + ".output_blocks.1", saveMemory: saveMemory, spatialTransformer: false, upsample: false)
+    x = makeOutputBlock(graph: graph, xIn: x, embIn: emb, condIn: condIn, inChannels: 2560, outChannels: 1280, dHead: 160, name: name + ".output_blocks.1", saveMemory: saveMemory, spatialTransformer: false, upsample: false,modelName: modelName)
     
     // upsample
     x = graph.concatTensors([x, savedInputs.popLast()!], dimension: 3, name: nil)
-    x = makeOutputBlock(graph: graph, xIn: x, embIn: emb, condIn: condIn, inChannels: 2560, outChannels: 1280, dHead: 160, name: name + ".output_blocks.2", saveMemory: saveMemory, spatialTransformer: false, upsample: true)
+    x = makeOutputBlock(graph: graph, xIn: x, embIn: emb, condIn: condIn, inChannels: 2560, outChannels: 1280, dHead: 160, name: name + ".output_blocks.2", saveMemory: saveMemory, spatialTransformer: false, upsample: true,modelName: modelName)
     
     x = graph.concatTensors([x, savedInputs.popLast()!], dimension: 3, name: nil)
-    x = makeOutputBlock(graph: graph, xIn: x, embIn: emb, condIn: condIn, inChannels: 2560, outChannels: 1280, dHead: 160, name: name + ".output_blocks.3", saveMemory: saveMemory, spatialTransformer: true, upsample: false)
+    x = makeOutputBlock(graph: graph, xIn: x, embIn: emb, condIn: condIn, inChannels: 2560, outChannels: 1280, dHead: 160, name: name + ".output_blocks.3", saveMemory: saveMemory, spatialTransformer: true, upsample: false,modelName: modelName)
     
     x = graph.concatTensors([x, savedInputs.popLast()!], dimension: 3, name: nil)
-    x = makeOutputBlock(graph: graph, xIn: x, embIn: emb, condIn: condIn, inChannels: 2560, outChannels: 1280, dHead: 160, name: name + ".output_blocks.4", saveMemory: saveMemory, spatialTransformer: true, upsample: false)
+    x = makeOutputBlock(graph: graph, xIn: x, embIn: emb, condIn: condIn, inChannels: 2560, outChannels: 1280, dHead: 160, name: name + ".output_blocks.4", saveMemory: saveMemory, spatialTransformer: true, upsample: false,modelName: modelName)
     
     return savedInputs + [emb] + [x]
 }
 
 @available(iOS 15.4, *)
-func makeUNetTheBattleOfTheFiveArmies(graph: MPSGraph, savedInputsIn: [MPSGraphTensor], name: String, saveMemory: Bool = true) -> MPSGraphTensor {
+func makeUNetTheBattleOfTheFiveArmies(graph: MPSGraph, savedInputsIn: [MPSGraphTensor], name: String, saveMemory: Bool = true,modelName:String) -> MPSGraphTensor {
     var savedInputs = savedInputsIn
     let condIn = savedInputs.popLast()!
     var x = savedInputs.popLast()!
     let emb = savedInputs.popLast()!
     // upsample
     x = graph.concatTensors([x, savedInputs.popLast()!], dimension: 3, name: nil)
-    x = makeOutputBlock(graph: graph, xIn: x, embIn: emb, condIn: condIn, inChannels: 1920, outChannels: 1280, dHead: 160, name: name + ".output_blocks.5", saveMemory: saveMemory, spatialTransformer: true, upsample: true)
+    x = makeOutputBlock(graph: graph, xIn: x, embIn: emb, condIn: condIn, inChannels: 1920, outChannels: 1280, dHead: 160, name: name + ".output_blocks.5", saveMemory: saveMemory, spatialTransformer: true, upsample: true,modelName: modelName)
     
     x = graph.concatTensors([x, savedInputs.popLast()!], dimension: 3, name: nil)
-    x = makeOutputBlock(graph: graph, xIn: x, embIn: emb, condIn: condIn, inChannels: 1920, outChannels: 640, dHead: 80, name: name + ".output_blocks.6", saveMemory: saveMemory, spatialTransformer: true, upsample: false)
+    x = makeOutputBlock(graph: graph, xIn: x, embIn: emb, condIn: condIn, inChannels: 1920, outChannels: 640, dHead: 80, name: name + ".output_blocks.6", saveMemory: saveMemory, spatialTransformer: true, upsample: false,modelName: modelName)
     
     x = graph.concatTensors([x, savedInputs.popLast()!], dimension: 3, name: nil)
-    x = makeOutputBlock(graph: graph, xIn: x, embIn: emb, condIn: condIn, inChannels: 1280, outChannels: 640, dHead: 80, name: name + ".output_blocks.7", saveMemory: saveMemory, spatialTransformer: true, upsample: false)
+    x = makeOutputBlock(graph: graph, xIn: x, embIn: emb, condIn: condIn, inChannels: 1280, outChannels: 640, dHead: 80, name: name + ".output_blocks.7", saveMemory: saveMemory, spatialTransformer: true, upsample: false,modelName: modelName)
     
     // upsample
     x = graph.concatTensors([x, savedInputs.popLast()!], dimension: 3, name: nil)
-    x = makeOutputBlock(graph: graph, xIn: x, embIn: emb, condIn: condIn, inChannels: 960, outChannels: 640, dHead: 80, name: name + ".output_blocks.8", saveMemory: saveMemory, spatialTransformer: true, upsample: true)
+    x = makeOutputBlock(graph: graph, xIn: x, embIn: emb, condIn: condIn, inChannels: 960, outChannels: 640, dHead: 80, name: name + ".output_blocks.8", saveMemory: saveMemory, spatialTransformer: true, upsample: true,modelName: modelName)
     
     x = graph.concatTensors([x, savedInputs.popLast()!], dimension: 3, name: nil)
-    x = makeOutputBlock(graph: graph, xIn: x, embIn: emb, condIn: condIn, inChannels: 960, outChannels: 320, dHead: 40, name: name + ".output_blocks.9", saveMemory: saveMemory, spatialTransformer: true, upsample: false)
+    x = makeOutputBlock(graph: graph, xIn: x, embIn: emb, condIn: condIn, inChannels: 960, outChannels: 320, dHead: 40, name: name + ".output_blocks.9", saveMemory: saveMemory, spatialTransformer: true, upsample: false,modelName: modelName)
     
     x = graph.concatTensors([x, savedInputs.popLast()!], dimension: 3, name: nil)
-    x = makeOutputBlock(graph: graph, xIn: x, embIn: emb, condIn: condIn, inChannels: 640, outChannels: 320, dHead: 40, name: name + ".output_blocks.10", saveMemory: saveMemory, spatialTransformer: true, upsample: false)
+    x = makeOutputBlock(graph: graph, xIn: x, embIn: emb, condIn: condIn, inChannels: 640, outChannels: 320, dHead: 40, name: name + ".output_blocks.10", saveMemory: saveMemory, spatialTransformer: true, upsample: false,modelName: modelName)
     
     x = graph.concatTensors([x, savedInputs.popLast()!], dimension: 3, name: nil)
-    x = makeOutputBlock(graph: graph, xIn: x, embIn: emb, condIn: condIn, inChannels: 640, outChannels: 320, dHead: 40, name: name + ".output_blocks.11", saveMemory: saveMemory, spatialTransformer: true, upsample: false)
+    x = makeOutputBlock(graph: graph, xIn: x, embIn: emb, condIn: condIn, inChannels: 640, outChannels: 320, dHead: 40, name: name + ".output_blocks.11", saveMemory: saveMemory, spatialTransformer: true, upsample: false,modelName: modelName)
     
     // out
-    x = makeGroupNormSwish(graph: graph, xIn: x, name: "model.diffusion_model.out.0")
-    return makeConv(graph: graph, xIn: x, name: "model.diffusion_model.out.2", outChannels: 4, khw: 3)
+    x = makeGroupNormSwish(graph: graph, xIn: x, name: "model.diffusion_model.out.0",modelName: modelName)
+    return makeConv(graph: graph, xIn: x, name: "model.diffusion_model.out.2", outChannels: 4, khw: 3,modelName: modelName)
 }
 
-func makeTimeFeatures(graph: MPSGraph, tIn: MPSGraphTensor) -> MPSGraphTensor {
+func makeTimeFeatures(graph: MPSGraph, tIn: MPSGraphTensor,modelName:String) -> MPSGraphTensor {
     var temb = graph.cast(tIn, to: MPSDataType.float32, name: "temb")
-    var coeffs = loadConstant(graph: graph, name: "temb_coefficients", shape: [160], fp32: true)
+    var coeffs = loadConstant(graph: graph, name: "temb_coefficients", shape: [160], fp32: true,modelName: modelName)
     coeffs = graph.cast(coeffs, to: MPSDataType.float32, name: "coeffs")
     temb = graph.multiplication(temb, coeffs, name: nil)
     temb = graph.concatTensors([graph.cos(with: temb, name: nil), graph.sin(with: temb, name: nil)], dimension: 0, name: nil)
@@ -452,7 +452,7 @@ func makeSqrtOneMinus(graph: MPSGraph, xIn: MPSGraphTensor) -> MPSGraphTensor {
 }
 
 @available(iOS 15.4, *)
-func makeDiffusionStep(graph: MPSGraph, xIn: MPSGraphTensor, etaUncondIn: MPSGraphTensor, etaCondIn: MPSGraphTensor, tIn: MPSGraphTensor, tPrevIn: MPSGraphTensor, guidanceScaleIn: MPSGraphTensor) -> MPSGraphTensor {
+func makeDiffusionStep(graph: MPSGraph, xIn: MPSGraphTensor, etaUncondIn: MPSGraphTensor, etaCondIn: MPSGraphTensor, tIn: MPSGraphTensor, tPrevIn: MPSGraphTensor, guidanceScaleIn: MPSGraphTensor,modelName:String) -> MPSGraphTensor {
     
     // superconditioning
     var deltaCond = graph.multiplication(graph.subtraction(etaCondIn, etaUncondIn, name: nil), guidanceScaleIn, name: nil)
@@ -460,7 +460,7 @@ func makeDiffusionStep(graph: MPSGraph, xIn: MPSGraphTensor, etaUncondIn: MPSGra
     let eta = graph.addition(etaUncondIn, deltaCond, name: nil)
     
     // scheduler conditioning
-    let alphasCumprod = loadConstant(graph: graph, name: "alphas_cumprod", shape: [1000])
+    let alphasCumprod = loadConstant(graph: graph, name: "alphas_cumprod", shape: [1000],modelName: modelName)
     let alphaIn = graph.gatherAlongAxis(0, updates: alphasCumprod, indices: tIn, name: nil)
     let alphasCumprodPrev = graph.concatTensors([graph.constant(1, dataType: MPSDataType.float16), alphasCumprod], dimension: 0, name: nil)
     let tPrevInOffset = graph.reLU(with: graph.addition(tPrevIn, graph.constant(1, dataType: MPSDataType.int32), name: nil), name: nil)
@@ -476,6 +476,8 @@ func makeDiffusionStep(graph: MPSGraph, xIn: MPSGraphTensor, etaUncondIn: MPSGra
 }
 
 class BPETokenizer {
+    var modelName:String = ""
+
     // why didn't they just byte-encode
     func whitespaceClean(s: String) -> String { return s.components(separatedBy: .whitespacesAndNewlines).filter { !$0.isEmpty }.joined(separator: " ").trimmingCharacters(in: .whitespacesAndNewlines) }
     
@@ -485,7 +487,9 @@ class BPETokenizer {
     var bytesToUnicode = [Int:Character]()
     var ranks = [String:Int]()
     var vocab: [String:Int]
-    public init() {
+    
+    public init(modelName:String) {
+        self.modelName = modelName
         var vocabList = [String]()
         for i in Array(33...126) + Array(161...172) + Array(174...255) {
             bytesToUnicode[i] = Character(Unicode.Scalar(i)!)
@@ -497,7 +501,7 @@ class BPETokenizer {
             vocabList.append(String(bytesToUnicode[i]!))
         }
         vocabList += vocabList.map({$0 + "</w>"})
-        let vocabFile = try! String(contentsOf: Bundle.main.url(forResource: "bins/bpe_simple_vocab_16e6", withExtension: "txt")!)
+        let vocabFile = try! String(contentsOf: Bundle.main.url(forResource: "\(modelName)/bpe_simple_vocab_16e6", withExtension: "txt")!)
         for (i, m) in vocabFile.split(separator: "\n")[1..<48_895].enumerated() {
             ranks[String(m)] = i
             vocabList.append(m.split(separator: " ").joined(separator: ""))
@@ -562,13 +566,13 @@ class BPETokenizer {
     }
 }
 
-func makeTextAttention(graph: MPSGraph, xIn: MPSGraphTensor, name: String) -> MPSGraphTensor {
+func makeTextAttention(graph: MPSGraph, xIn: MPSGraphTensor, name: String,modelName:String) -> MPSGraphTensor {
     let nHeads: NSNumber = 12
     let dHead: NSNumber = 64
     let c: NSNumber = 768
-    var q = makeLinear(graph: graph, xIn: xIn, name: name + ".q_proj", outChannels: c)
-    var k = makeLinear(graph: graph, xIn: xIn, name: name + ".k_proj", outChannels: c)
-    var v = makeLinear(graph: graph, xIn: xIn, name: name + ".v_proj", outChannels: c)
+    var q = makeLinear(graph: graph, xIn: xIn, name: name + ".q_proj", outChannels: c,modelName: modelName)
+    var k = makeLinear(graph: graph, xIn: xIn, name: name + ".k_proj", outChannels: c,modelName: modelName)
+    var v = makeLinear(graph: graph, xIn: xIn, name: name + ".v_proj", outChannels: c,modelName: modelName)
     
     let n = xIn.shape![0]
     let t = xIn.shape![1]
@@ -582,55 +586,55 @@ func makeTextAttention(graph: MPSGraph, xIn: MPSGraphTensor, name: String) -> MP
     
     var att = graph.matrixMultiplication(primary: q, secondary: graph.transposeTensor(k, dimension: 2, withDimension: 3, name: nil), name: nil)
     att = graph.multiplication(att, graph.constant(1.0 / sqrt(dHead.doubleValue), dataType: MPSDataType.float16), name: nil)
-    att = graph.addition(att, loadConstant(graph: graph, name: "causal_mask", shape: [1, 1, 77, 77]), name: nil)
+    att = graph.addition(att, loadConstant(graph: graph, name: "causal_mask", shape: [1, 1, 77, 77],modelName: modelName), name: nil)
     att = graph.softMax(with: att, axis: 3, name: nil)
     att = graph.matrixMultiplication(primary: att, secondary: v, name: nil)
     att = graph.transposeTensor(att, dimension: 1, withDimension: 2, name: nil)
     att = graph.reshape(att, shape: [n, t, c], name: nil)
-    return makeLinear(graph: graph, xIn: att, name: name + ".out_proj", outChannels: c)
+    return makeLinear(graph: graph, xIn: att, name: name + ".out_proj", outChannels: c,modelName: modelName)
 }
 
-func makeTextEncoderLayer(graph: MPSGraph, xIn: MPSGraphTensor, name: String) -> MPSGraphTensor {
+func makeTextEncoderLayer(graph: MPSGraph, xIn: MPSGraphTensor, name: String,modelName:String) -> MPSGraphTensor {
     var x = xIn
-    x = makeLayerNorm(graph: graph, xIn: x, name: name + ".layer_norm1")
-    x = makeTextAttention(graph: graph, xIn: x, name: name + ".self_attn")
+    x = makeLayerNorm(graph: graph, xIn: x, name: name + ".layer_norm1",modelName: modelName)
+    x = makeTextAttention(graph: graph, xIn: x, name: name + ".self_attn",modelName: modelName)
     x = graph.addition(x, xIn, name: nil)
     let skip = x
-    x = makeLayerNorm(graph: graph, xIn: x, name: name + ".layer_norm2")
-    x = makeLinear(graph: graph, xIn: x, name: name + ".mlp.fc1", outChannels: 3072)
+    x = makeLayerNorm(graph: graph, xIn: x, name: name + ".layer_norm2",modelName: modelName)
+    x = makeLinear(graph: graph, xIn: x, name: name + ".mlp.fc1", outChannels: 3072,modelName: modelName)
     x = makeGelu(graph: graph, xIn: x)
-    x = makeLinear(graph: graph, xIn: x, name: name + ".mlp.fc2", outChannels: 768)
+    x = makeLinear(graph: graph, xIn: x, name: name + ".mlp.fc2", outChannels: 768,modelName: modelName)
     return graph.addition(x, skip, name: nil)
 }
 
-func makeTextEncoder(graph: MPSGraph, xIn: MPSGraphTensor, name: String) -> MPSGraphTensor {
+func makeTextEncoder(graph: MPSGraph, xIn: MPSGraphTensor, name: String,modelName:String) -> MPSGraphTensor {
     var x = xIn
     for i in 0..<12 {
-        x = makeTextEncoderLayer(graph: graph, xIn: x, name: name + ".layers.\(i)")
+        x = makeTextEncoderLayer(graph: graph, xIn: x, name: name + ".layers.\(i)",modelName: modelName)
     }
     return x
 }
 
 @available(iOS 15.4, *)
-func makeTextEmbeddings(graph: MPSGraph, xIn: MPSGraphTensor, name: String) -> MPSGraphTensor {
-    var tokenEmbeddings = loadConstant(graph: graph, name: name + ".token_embedding.weight", shape: [1, 49408, 768])
+func makeTextEmbeddings(graph: MPSGraph, xIn: MPSGraphTensor, name: String,modelName:String) -> MPSGraphTensor {
+    var tokenEmbeddings = loadConstant(graph: graph, name: name + ".token_embedding.weight", shape: [1, 49408, 768],modelName: modelName)
     tokenEmbeddings = graph.broadcast(tokenEmbeddings, shape: [2, 49408, 768], name: nil)
-    let positionEmbeddings = loadConstant(graph: graph, name: name + ".position_embedding.weight", shape: [1, 77, 768])
+    let positionEmbeddings = loadConstant(graph: graph, name: name + ".position_embedding.weight", shape: [1, 77, 768],modelName: modelName)
     var embeddings = graph.broadcast(graph.expandDims(xIn, axes: [2], name: nil), shape: [2, 77, 768], name: nil)
     embeddings = graph.gatherAlongAxis(1, updates: tokenEmbeddings, indices: embeddings, name: nil)
     return graph.addition(embeddings, positionEmbeddings, name: nil)
 }
 
 @available(iOS 15.4, *)
-func makeTextGuidance(graph: MPSGraph, xIn: MPSGraphTensor, name: String) -> MPSGraphTensor {
-    var x = makeTextEmbeddings(graph: graph, xIn: xIn, name: name + ".embeddings")
-    x = makeTextEncoder(graph: graph, xIn: x, name: name + ".encoder")
-    return makeLayerNorm(graph: graph, xIn: x, name: name + ".final_layer_norm")
+func makeTextGuidance(graph: MPSGraph, xIn: MPSGraphTensor, name: String,modelName:String) -> MPSGraphTensor {
+    var x = makeTextEmbeddings(graph: graph, xIn: xIn, name: name + ".embeddings",modelName: modelName)
+    x = makeTextEncoder(graph: graph, xIn: x, name: name + ".encoder",modelName: modelName)
+    return makeLayerNorm(graph: graph, xIn: x, name: name + ".final_layer_norm",modelName: modelName)
 }
 
-func makeAuxUpsampler(graph: MPSGraph, xIn: MPSGraphTensor) -> MPSGraphTensor {
+func makeAuxUpsampler(graph: MPSGraph, xIn: MPSGraphTensor,modelName:String) -> MPSGraphTensor {
     var x = xIn
-    x = makeConv(graph: graph, xIn: xIn, name: "aux_output_conv", outChannels: 3, khw: 1)
+    x = makeConv(graph: graph, xIn: xIn, name: "aux_output_conv", outChannels: 3, khw: 1,modelName: modelName)
     x = makeUpsampleNearest(graph: graph, xIn: x, scaleFactor: 8)
     return makeByteConverter(graph: graph, xIn: x)
 }
@@ -678,20 +682,22 @@ class PTSableDiffusion {
     var width: NSNumber = 64
     var height: NSNumber = 64
     
-    public init(saveMemoryButBeSlower: Bool = true) {
+    var modelName:String = ""
+    
+    public init(modelName:String,saveMemoryButBeSlower: Bool = true) {
         saveMemory = saveMemoryButBeSlower
         device = MTLCreateSystemDefaultDevice()!
         graphDevice = MPSGraphDevice(mtlDevice: device)
         commandQueue = device.makeCommandQueue()!
         shouldSynchronize = !device.hasUnifiedMemory
-        
+        self.modelName = modelName
         // text tokenization
-        tokenizer = BPETokenizer()
+        tokenizer = BPETokenizer(modelName: modelName)
         
         // time embedding
         tembGraph = makeGraph(synchonize: shouldSynchronize)
         tembTIn = tembGraph.placeholder(shape: [1], dataType: MPSDataType.int32, name: nil)
-        tembOut = makeTimeFeatures(graph: tembGraph, tIn: tembTIn)
+        tembOut = makeTimeFeatures(graph: tembGraph, tIn: tembTIn,modelName: modelName)
         
         // diffusion
         diffGraph = makeGraph(synchonize: shouldSynchronize)
@@ -701,8 +707,8 @@ class PTSableDiffusion {
         diffTIn = diffGraph.placeholder(shape: [1], dataType: MPSDataType.int32, name: nil)
         diffTPrevIn = diffGraph.placeholder(shape: [1], dataType: MPSDataType.int32, name: nil)
         diffGuidanceScaleIn = diffGraph.placeholder(shape: [1], dataType: MPSDataType.float32, name: nil)
-        diffOut = makeDiffusionStep(graph: diffGraph, xIn: diffXIn, etaUncondIn: diffEtaUncondIn, etaCondIn: diffEtaCondIn, tIn: diffTIn, tPrevIn: diffTPrevIn, guidanceScaleIn: diffGraph.cast(diffGuidanceScaleIn, to: MPSDataType.float16, name: "this string must not be the empty string"))
-        diffAuxOut = makeAuxUpsampler(graph: diffGraph, xIn: diffOut)
+        diffOut = makeDiffusionStep(graph: diffGraph, xIn: diffXIn, etaUncondIn: diffEtaUncondIn, etaCondIn: diffEtaCondIn, tIn: diffTIn, tPrevIn: diffTPrevIn, guidanceScaleIn: diffGraph.cast(diffGuidanceScaleIn, to: MPSDataType.float16, name: "this string must not be the empty string"),modelName: modelName)
+        diffAuxOut = makeAuxUpsampler(graph: diffGraph, xIn: diffOut,modelName: modelName)
     }
     
     public func initModels(completion: (Float, String)->()) {
@@ -723,7 +729,7 @@ class PTSableDiffusion {
     private func initTextGuidance() {
         let graph = makeGraph(synchonize: shouldSynchronize)
         let textGuidanceIn = graph.placeholder(shape: [2, 77], dataType: MPSDataType.int32, name: nil)
-        let textGuidanceOut = makeTextGuidance(graph: graph, xIn: textGuidanceIn, name: "cond_stage_model.transformer.text_model")
+        let textGuidanceOut = makeTextGuidance(graph: graph, xIn: textGuidanceIn, name: "cond_stage_model.transformer.text_model",modelName: self.modelName)
         let textGuidanceOut0 = graph.sliceTensor(textGuidanceOut, dimension: 0, start: 0, length: 1, name: nil)
         let textGuidanceOut1 = graph.sliceTensor(textGuidanceOut, dimension: 0, start: 1, length: 1, name: nil)
         textGuidanceExecutable = graph.compile(with: graphDevice, feeds: [textGuidanceIn: MPSGraphShapedType(shape: textGuidanceIn.shape, dataType: MPSDataType.int32)], targetTensors: [textGuidanceOut0, textGuidanceOut1], targetOperations: nil, compilationDescriptor: nil)
@@ -734,7 +740,7 @@ class PTSableDiffusion {
         let xIn = graph.placeholder(shape: [1, height, width, 4], dataType: MPSDataType.float16, name: nil)
         let condIn = graph.placeholder(shape: [saveMemory ? 1 : 2, 77, 768], dataType: MPSDataType.float16, name: nil)
         let tembIn = graph.placeholder(shape: [1, 320], dataType: MPSDataType.float16, name: nil)
-        let unetOuts = makeUNetAnUnexpectedJourney(graph: graph, xIn: xIn, tembIn: tembIn, condIn: condIn, name: "model.diffusion_model", saveMemory: saveMemory)
+        let unetOuts = makeUNetAnUnexpectedJourney(graph: graph, xIn: xIn, tembIn: tembIn, condIn: condIn, name: "model.diffusion_model", saveMemory: saveMemory,modelName: self.modelName)
         let unetFeeds = [xIn, condIn, tembIn].reduce(into: [:], {$0[$1] = MPSGraphShapedType(shape: $1.shape!, dataType: $1.dataType)})
         unetAnUnexpectedJourneyExecutable = graph.compile(with: graphDevice, feeds: unetFeeds, targetTensors: unetOuts, targetOperations: nil, compilationDescriptor: nil)
         anUnexpectedJourneyShapes = unetOuts.map{$0.shape!}
@@ -749,7 +755,7 @@ class PTSableDiffusion {
             theDesolationOfSmaugIndices[placeholders[i]] = i
         }
         let feeds = placeholders.reduce(into: [:], {$0[$1] = MPSGraphShapedType(shape: $1.shape!, dataType: $1.dataType)})
-        let unetOuts = makeUNetTheDesolationOfSmaug(graph: graph, savedInputsIn: placeholders, name: "model.diffusion_model", saveMemory: saveMemory)
+        let unetOuts = makeUNetTheDesolationOfSmaug(graph: graph, savedInputsIn: placeholders, name: "model.diffusion_model", saveMemory: saveMemory,modelName: self.modelName)
         unetTheDesolationOfSmaugExecutable = graph.compile(with: graphDevice, feeds: feeds, targetTensors: unetOuts, targetOperations: nil, compilationDescriptor: nil)
         theDesolationOfSmaugShapes = unetOuts.map{$0.shape!}
     }
@@ -763,7 +769,7 @@ class PTSableDiffusion {
             theBattleOfTheFiveArmiesIndices[unetPlaceholders[i]] = i
         }
         let feeds = unetPlaceholders.reduce(into: [:], {$0[$1] = MPSGraphShapedType(shape: $1.shape!, dataType: $1.dataType)})
-        let unetOut = makeUNetTheBattleOfTheFiveArmies(graph: graph, savedInputsIn: unetPlaceholders, name: "model.diffusion_model", saveMemory: saveMemory)
+        let unetOut = makeUNetTheBattleOfTheFiveArmies(graph: graph, savedInputsIn: unetPlaceholders, name: "model.diffusion_model", saveMemory: saveMemory,modelName: self.modelName)
         unetTheBattleOfTheFiveArmiesExecutable = graph.compile(with: graphDevice, feeds: feeds, targetTensors: [unetOut], targetOperations: nil, compilationDescriptor: nil)
     }
     
@@ -785,7 +791,7 @@ class PTSableDiffusion {
         let x = xIn
         let decoderGraph = makeGraph(synchonize: shouldSynchronize)
         let decoderIn = decoderGraph.placeholder(shape: x.shape, dataType: MPSDataType.float16, name: nil)
-        let decoderOut = makeDecoder(graph: decoderGraph, xIn: decoderIn)
+        let decoderOut = makeDecoder(graph: decoderGraph, xIn: decoderIn,modelName: self.modelName)
         return decoderGraph.run(with: commandQueue, feeds: [decoderIn: x], targetTensors: [decoderOut], targetOperations: nil)[decoderOut]!
     }
     

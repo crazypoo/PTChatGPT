@@ -89,4 +89,5 @@ fastlane/test_output
 
 iOSInjectionProject/
 Pods/
-PTChatGPT/bins/
+PTChatGPT/bins1_4/
+PTChatGPT/bins1_5/
