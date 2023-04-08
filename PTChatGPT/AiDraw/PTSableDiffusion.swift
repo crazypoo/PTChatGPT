@@ -1,11 +1,13 @@
+//
+//  PTSableDiffusion.swift
+//  PTChatGPT
+//
+//  Created by 邓杰豪 on 8/4/23.
+//  Copyright © 2023 SexyBoy. All rights reserved.
+//
+
 import MetalPerformanceShadersGraph
 import Foundation
-
-// Maple Diffusion implements stable diffusion (original v1.4 model)
-// inference via MPSGraph. iOS has a hard memory limit of 4GB (with
-// a special entitlement), so this implementation trades off latency
-// for memory usage in many places (tagged with MEM-HACK) in order to
-// stay under the limit and minimize probability of oom.
 
 func makeGraph(synchonize: Bool) -> MPSGraph {
     let graph = MPSGraph()
@@ -634,7 +636,7 @@ func makeAuxUpsampler(graph: MPSGraph, xIn: MPSGraphTensor) -> MPSGraphTensor {
 }
 
 @available(iOS 15.4, *)
-class MapleDiffusion {
+class PTSableDiffusion {
     let device: MTLDevice
     let graphDevice: MPSGraphDevice
     let commandQueue: MTLCommandQueue

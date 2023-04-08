@@ -413,7 +413,7 @@ class PTChatViewController: MessagesViewController {
     let cartoonImageModes : [String] = {
         
         if #available(iOS 16.0, *) {
-            if Gobal_device_info.isOneOf([.iPhone13Pro,.iPhone13ProMax,.iPhone14,.iPhone14Pro,.iPhone14ProMax,.iPadPro9Inch, .iPadPro12Inch, .iPadPro12Inch2, .iPadPro10Inch, .iPadPro11Inch, .iPadPro12Inch3, .iPadPro11Inch2, .iPadPro12Inch4, .iPadPro11Inch3, .iPadPro12Inch5, .iPadPro11Inch4, .iPadPro12Inch6]) {
+            if Gobal_device_info.isOneOf([.iPhone13Pro,.iPhone13ProMax,.iPhone14,.iPhone14Pro,.iPhone14ProMax,.iPadPro9Inch, .iPadPro12Inch, .iPadPro12Inch2, .iPadPro10Inch, .iPadPro11Inch, .iPadPro12Inch3, .iPadPro11Inch2, .iPadPro12Inch4, .iPadPro11Inch3, .iPadPro12Inch5, .iPadPro11Inch4, .iPadPro12Inch6]) || Gobal_device_info.isSimulator {
                 return [PTLanguage.share.text(forKey: "chat_TF_Cartoon"),PTLanguage.share.text(forKey: "chat_TF_Oil_painting"),PTLanguage.share.text(forKey: "Stable Diffusion")]
             } else {
                 return [PTLanguage.share.text(forKey: "chat_TF_Cartoon"),PTLanguage.share.text(forKey: "chat_TF_Oil_painting")]

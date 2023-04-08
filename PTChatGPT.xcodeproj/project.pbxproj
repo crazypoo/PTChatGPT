@@ -81,7 +81,7 @@
 		55D752FB29D27B54005CE46B /* PTSuggesstionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D752FA29D27B54005CE46B /* PTSuggesstionViewController.swift */; };
 		55D752FD29D280E6005CE46B /* PTSuggesstionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D752FC29D280E6005CE46B /* PTSuggesstionCell.swift */; };
 		55DF4BFC29DFFABF0077F8F7 /* PTCostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DF4BFB29DFFABF0077F8F7 /* PTCostCell.swift */; };
-		55DF5C5129E06EB00077F8F7 /* MapleDiffusion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DF5C5029E06EB00077F8F7 /* MapleDiffusion.swift */; };
+		55DF5C5129E06EB00077F8F7 /* PTSableDiffusion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DF5C5029E06EB00077F8F7 /* PTSableDiffusion.swift */; };
 		55DF64A429E07DE40077F8F7 /* PTDiffusionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DF64A329E07DE40077F8F7 /* PTDiffusionViewController.swift */; };
 		55DF68BB29E084630077F8F7 /* bins in Resources */ = {isa = PBXBuildFile; fileRef = 55DF68BA29E084620077F8F7 /* bins */; };
 		55F2099C29D8AEA90034A6AF /* PTChatGPTBaseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F2099B29D8AEA90034A6AF /* PTChatGPTBaseModel.swift */; };
@@ -177,7 +177,7 @@
 		55D752FA29D27B54005CE46B /* PTSuggesstionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSuggesstionViewController.swift; sourceTree = "<group>"; };
 		55D752FC29D280E6005CE46B /* PTSuggesstionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSuggesstionCell.swift; sourceTree = "<group>"; };
 		55DF4BFB29DFFABF0077F8F7 /* PTCostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTCostCell.swift; sourceTree = "<group>"; };
-		55DF5C5029E06EB00077F8F7 /* MapleDiffusion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapleDiffusion.swift; sourceTree = "<group>"; };
+		55DF5C5029E06EB00077F8F7 /* PTSableDiffusion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PTSableDiffusion.swift; sourceTree = "<group>"; };
 		55DF64A329E07DE40077F8F7 /* PTDiffusionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTDiffusionViewController.swift; sourceTree = "<group>"; };
 		55DF68BA29E084620077F8F7 /* bins */ = {isa = PBXFileReference; lastKnownFileType = folder; path = bins; sourceTree = "<group>"; };
 		55F2099B29D8AEA90034A6AF /* PTChatGPTBaseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTChatGPTBaseModel.swift; sourceTree = "<group>"; };
@@ -508,7 +508,7 @@
 		55DF542629E06E0B0077F8F7 /* AiDraw */ = {
 			isa = PBXGroup;
 			children = (
-				55DF5C5029E06EB00077F8F7 /* MapleDiffusion.swift */,
+				55DF5C5029E06EB00077F8F7 /* PTSableDiffusion.swift */,
 			);
 			path = AiDraw;
 			sourceTree = "<group>";
@@ -746,7 +746,7 @@
 				5539463F29D8822900FFB312 /* PTReceiveChatModel.swift in Sources */,
 				55796A2229BD6DCE00574DD4 /* PTSoundRecorder.swift in Sources */,
 				5512AB7C29B470310059D840 /* PTAudioPlayer.swift in Sources */,
-				55DF5C5129E06EB00077F8F7 /* MapleDiffusion.swift in Sources */,
+				55DF5C5129E06EB00077F8F7 /* PTSableDiffusion.swift in Sources */,
 				5520905929C3587C009B30A1 /* PTBaseMaskView.swift in Sources */,
 				5514B37429B9D50D00890161 /* PTChatModel.swift in Sources */,
 				55A5D80129B1F29800DCA096 /* PTMessageModel.swift in Sources */,
@@ -970,6 +970,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SFU2CNYFPC;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = PTChatGPT/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
