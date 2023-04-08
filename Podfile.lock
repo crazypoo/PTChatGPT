@@ -40,6 +40,7 @@ PODS:
   - JXPagingView/Paging (2.1.2)
   - JXSegmentedView (1.3.0)
   - KakaJSON (1.1.2)
+  - KDCircularProgress (1.5.4)
   - LifetimeTracker (1.8.1)
   - LookinServer (1.1.5):
     - LookinServer/Core (= 1.1.5)
@@ -198,6 +199,7 @@ DEPENDENCIES:
   - HyperioniOS/Measurements
   - HyperioniOS/SlowAnimations
   - InAppViewDebugger
+  - KDCircularProgress
   - LifetimeTracker
   - LookinServer
   - PooTools/CheckUpdate (from `https://github.com/crazypoo/PTools.git`)
@@ -243,6 +245,7 @@ SPEC REPOS:
     - JXPagingView
     - JXSegmentedView
     - KakaJSON
+    - KDCircularProgress
     - LifetimeTracker
     - LookinServer
     - LXFProtocolTool
@@ -310,6 +313,7 @@ SPEC CHECKSUMS:
   JXPagingView: 90924b364a2ff7e94db534fad1fa50925ff69ee4
   JXSegmentedView: fec0d335355b6e019c494fe2e030bde8a36d2df6
   KakaJSON: cc5ff50a8c1cfbb09413db8496cb709a209e6137
+  KDCircularProgress: 98200c6b8e85d22bc04eb644721d3b1e12b0686b
   LifetimeTracker: be33b0d89357dd2f381eb8aca636d184b538d5e9
   LookinServer: 2893f2bae53cbf3fd49bbe1a8ea1745582ef1317
   LXFProtocolTool: 8d1e53c010f6941c273b9908be24bfc20d1ce2f2
@@ -347,6 +351,6 @@ SPEC CHECKSUMS:
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
   ZXNavigationBar: a8ceb13fe37f9ca894cf6ae22d805cbdbb9ad6b1
 
-PODFILE CHECKSUM: fab98ab7e140dfd8c37421f5a2f0ec302d0071d9
+PODFILE CHECKSUM: af1f87a497ffdaa5559aa0444ad5be8dd7e44a29
 
 COCOAPODS: 1.12.0

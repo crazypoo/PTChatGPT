@@ -45,6 +45,7 @@
 		5554FE9329DFF1F400C29F8A /* PTCostHistoriaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5554FE9229DFF1F400C29F8A /* PTCostHistoriaViewController.swift */; };
 		55796A2229BD6DCE00574DD4 /* PTSoundRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55796A2129BD6DCE00574DD4 /* PTSoundRecorder.swift */; };
 		55796A2429BD6E2A00574DD4 /* PTSoundVisualizerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55796A2329BD6E2A00574DD4 /* PTSoundVisualizerView.swift */; };
+		55833D3029E13C2F004B754D /* GradientProgressView in Frameworks */ = {isa = PBXBuildFile; productRef = 55833D2F29E13C2F004B754D /* GradientProgressView */; };
 		55A5D71829B1D23D00DCA096 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A5D71729B1D23D00DCA096 /* AppDelegate.swift */; };
 		55A5D71F29B1D23D00DCA096 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 55A5D71D29B1D23D00DCA096 /* Main.storyboard */; };
 		55A5D72129B1D23E00DCA096 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55A5D72029B1D23E00DCA096 /* Assets.xcassets */; };
@@ -196,6 +197,7 @@
 				5503C51629CB273A00B00BE1 /* MessageKit in Frameworks */,
 				552B41CA29D14A5200065892 /* AppStoreConnect-Swift-SDK in Frameworks */,
 				552A609629D7EACF00239210 /* OSSSpeechKit in Frameworks */,
+				55833D3029E13C2F004B754D /* GradientProgressView in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -562,6 +564,7 @@
 				5503C51529CB273A00B00BE1 /* MessageKit */,
 				552B41C929D14A5200065892 /* AppStoreConnect-Swift-SDK */,
 				552A609529D7EACF00239210 /* OSSSpeechKit */,
+				55833D2F29E13C2F004B754D /* GradientProgressView */,
 			);
 			productName = PTChatGPT;
 			productReference = 55A5D71429B1D23D00DCA096 /* Chat走啦.app */;
@@ -600,6 +603,7 @@
 				5503C51429CB273A00B00BE1 /* XCRemoteSwiftPackageReference "MessageKit" */,
 				552B41C829D14A5200065892 /* XCRemoteSwiftPackageReference "appstoreconnect-swift-sdk" */,
 				552A609429D7EACF00239210 /* XCRemoteSwiftPackageReference "OSSSpeechKit" */,
+				55833D2E29E13C2F004B754D /* XCRemoteSwiftPackageReference "GradientProgressView" */,
 			);
 			productRefGroup = 55A5D71529B1D23D00DCA096 /* Products */;
 			projectDirPath = "";
@@ -1047,6 +1051,14 @@
 				minimumVersion = 2.3.0;
 			};
 		};
+		55833D2E29E13C2F004B754D /* XCRemoteSwiftPackageReference "GradientProgressView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/moliya/GradientProgressView";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1064,6 +1076,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 552B41C829D14A5200065892 /* XCRemoteSwiftPackageReference "appstoreconnect-swift-sdk" */;
 			productName = "AppStoreConnect-Swift-SDK";
+		};
+		55833D2F29E13C2F004B754D /* GradientProgressView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 55833D2E29E13C2F004B754D /* XCRemoteSwiftPackageReference "GradientProgressView" */;
+			productName = GradientProgressView;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

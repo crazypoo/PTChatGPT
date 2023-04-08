@@ -10,6 +10,15 @@
       }
     },
     {
+      "identity" : "gradientprogressview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/moliya/GradientProgressView",
+      "state" : {
+        "revision" : "751692d1c731618227a0017df98f1a3581ff8992",
+        "version" : "1.5.0"
+      }
+    },
+    {
       "identity" : "inputbaraccessoryview",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nathantannar4/InputBarAccessoryView",

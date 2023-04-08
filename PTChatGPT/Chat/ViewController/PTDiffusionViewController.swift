@@ -10,6 +10,7 @@ import UIKit
 import PooTools
 import SwiftSpinner
 import TextFieldEffects
+import KDCircularProgress
 
 @available(iOS 15.4, *)
 class PTDiffusionViewController: PTChatBaseViewController {
@@ -42,7 +43,7 @@ class PTDiffusionViewController: PTChatBaseViewController {
     ///扩展字段,这里是添加AI避免的操作(Option)
     lazy var negativeText : HoshiTextField = {
         let view = HoshiTextField()
-        view.placeholder = "扩展内容"
+        view.placeholder = "请输入你须要AI注意的地方"
         view.borderInactiveColor = .lightGray
         view.borderActiveColor = .orange
         view.placeholderColor = .lightGray
@@ -130,6 +131,14 @@ class PTDiffusionViewController: PTChatBaseViewController {
                     
                     self.dispatchQueue.async {
                         self.diffusion.generate(prompt: self.promptString, negativePrompt: self.negativeString, seed: Int.random(in: 1..<Int.max), steps: Int(self.stepValue), guidanceScale: self.accuracyValue) { image, progress, info in
+                            
+                            PTGCDManager.gcdBackground {
+                                PTGCDManager.gcdMain {
+                                    self.progress.angle = (Double(progress) * 360)
+                                    sender.setTitle(info, for: .selected)
+                                }
+                            }
+                            
                             PTNSLogConsole("当前进度\(progress)\n输出信息\(info)")
                             if image != nil {
                                 PTGCDManager.gcdBackground {
@@ -141,6 +150,7 @@ class PTDiffusionViewController: PTChatBaseViewController {
                                 if progress >= 1 {
                                     PTGCDManager.gcdBackground {
                                         PTGCDManager.gcdMain {
+                                            sender.setTitle("", for: .selected)
                                             sender.isSelected = false
                                         }
                                     }
@@ -153,6 +163,21 @@ class PTDiffusionViewController: PTChatBaseViewController {
         }
         view.isSelected = false
         view.isUserInteractionEnabled = true
+        return view
+    }()
+    
+    lazy var progress :KDCircularProgress = {
+        let view = KDCircularProgress()
+        view.set(colors: UIColor.green)
+        view.startAngle = -90
+        view.progressThickness = 0.2
+        view.trackThickness = 0.6
+        view.clockwise = true
+        view.trackColor = .lightGray
+        view.gradientRotateSpeed = 2
+        view.roundedCorners = false
+        view.glowMode = .forward
+        view.glowAmount = 0.9
         return view
     }()
 
@@ -193,7 +218,7 @@ class PTDiffusionViewController: PTChatBaseViewController {
 
         // Do any additional setup after loading the view.
         
-        self.view.addSubviews([self.showImageView,self.promptText,self.negativeText,self.accuracySlider,self.accuracyTitle,self.createStepSlider,self.stepTitle,self.createButton])
+        self.view.addSubviews([self.showImageView,self.promptText,self.negativeText,self.accuracySlider,self.accuracyTitle,self.createStepSlider,self.stepTitle,self.createButton,self.progress])
         self.showImageView.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(CGFloat.kNavBarHeight_Total + 10)
             make.left.right.equalToSuperview().inset(5)
@@ -236,23 +261,36 @@ class PTDiffusionViewController: PTChatBaseViewController {
         }
         
         self.createButton.snp.makeConstraints { make in
-            make.left.right.equalToSuperview().inset(64)
-            make.height.equalTo(34)
+            make.right.equalToSuperview().inset(PTAppBaseConfig.share.defaultViewSpace)
+            make.left.equalToSuperview().inset(0)
+            make.top.equalTo(self.createStepSlider.snp.bottom).offset(10)
             make.bottom.equalToSuperview().inset(CGFloat.kTabbarSaveAreaHeight + 10)
         }
+
+        self.viewDidLayoutSubviews()
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        self.createButton.snp.updateConstraints { make in
+            make.left.equalToSuperview().inset(self.createButton.frame.height + 20)
+        }
+        
+        self.progress.snp.makeConstraints { make in
+            make.left.equalToSuperview().inset(10)
+            make.right.equalTo(self.createButton.snp.left).offset(-10)
+            make.top.bottom.equalTo(self.createButton)
+        }
     }
 }
 
+@available(iOS 15.4, *)
 extension  PTDiffusionViewController : UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
         if textField == self.promptText {
-            self.promptString = textField.text
+            self.promptString = textField.text ?? ""
         } else if textField == self.negativeText {
-            self.negativeString = textField.text
+            self.negativeString = textField.text ?? ""
         }
     }
 }
