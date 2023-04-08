@@ -263,19 +263,30 @@ class PTDiffusionViewController: PTChatBaseViewController {
         moreButton.setMidSpacing(5)
         moreButton.titleLabel?.font = .appfont(size: 14,bold: true)
         moreButton.setTitleColor(.gobalTextColor, for: .normal)
-        moreButton.setTitle("v1.4", for: .normal)
-        moreButton.setTitle("v1.5", for: .selected)
+        moreButton.setTitle("V1.4", for: .normal)
         moreButton.layoutStyle = .leftImageRightTitle
         moreButton.setImage(UIImage(systemName: "chevron.up.chevron.down")!.withRenderingMode(.automatic), for: .normal)
         moreButton.addActionHandlers { sender in
-            sender.isSelected = !sender.isSelected
-            if sender.isSelected {
-                self.modelName = "bins1_4"
-            } else {
-                self.modelName = "bins1_5"
+            let arr = ["V1.4","V1.5","MoDi"]
+            UIAlertController.baseActionSheet(title: "AI Model", titles: arr) { sheet in
+                
+            } cancelBlock: { sheet in
+                
+            } otherBlock: { sheet, index in
+                switch index {
+                case 0:
+                    self.modelName = "bins1_4"
+                case 1:
+                    self.modelName = "bins1_5"
+                case 2:
+                    self.modelName = "bins_cartoon"
+                default:break
+                }
+                sender.setTitle(arr[index], for: .normal)
+            } tapBackgroundBlock: { sheet in
+                
             }
         }
-        moreButton.isSelected = true
 //        let photoImage = UIButton(type: .custom)
 //        photoImage.setImage(UIImage(systemName: "photo.fill.on.rectangle.fill")?.withTintColor(.gobalTextColor, renderingMode: .automatic), for: .normal)
 //        photoImage.addActionHandlers { sender in
