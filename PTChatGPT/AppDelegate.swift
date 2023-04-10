@@ -36,7 +36,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         FileManager.pt.createFolder(folderPath: userImageMessageFilePath)
         FileManager.pt.createFolder(folderPath: userChatMessageFilePath)
         FileManager.pt.createFolder(folderPath: userChatCostFilePath)
-        
+                
+        PTNSLogConsole(FileManager.pt.getAllFileNames(folderPath: FileManager.pt.TmpDirectory())!)
         var debugDevice = false
         let buglyConfig = BuglyConfig()
 //        buglyConfig.delegate = self
@@ -149,7 +150,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             HyperionManager.sharedInstance().attach(to: self.window)
             HyperionManager.sharedInstance().togglePluginDrawer()
         }
-#endif        
+#endif
         return true
     }
         
@@ -220,7 +221,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         return false
     }
-    
 }
 
 //MARK: Appdelegate EX

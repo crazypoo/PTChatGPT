@@ -1,157 +1,317 @@
 "chat_Send" = "Send";
+
 "chat_Read" = "Read";
+
 "chat_User" = "User";
+
 "about_Main_Theme" = "Theme";
+
 "about_Main_Speech" = "Speech";
+
 "about_Main_Other" = "Other";
+
 "about_Setting" = "Setting";
+
 "about_Color" = "Color";
+
 "about_Language" = "Language";
+
 "about_SavedChat" = "Selected Q&A";
+
 "about_DeleteAllChat" = "Delete all dialogue records";
+
 "about_APIAIType" = "AI type";
+
 "about_APIAIToken" = "AI token";
+
 "about_GetAPIAIToken" = "Get AI API token";
+
 "about_Forum" = "Forum";
+
 "about_Rate" = "Rate";
+
 "about_Share" = "Share";
+
 "about_Version" = "Version";
+
 "color_Setting" = "Color setting";
+
 "button_Cancel" = "Cancel";
+
 "button_Confirm" = "Confirm";
+
 "theme_Title" = "Theme setting";
+
 "theme_MT" = "Manual setting";
+
 "theme_Black" = "Charm Black";
+
 "theme_FollowSystem" = "Follow system";
+
 "theme_Night" = "Night theme";
+
 "theme_Smart" = "Smart";
+
 "theme_SmartInfo" = "After entering the set period, the App will automatically switch to the night theme of Charm Black, and switch to the original theme when the theme time is over";
+
 "theme_SystemInfo" = "When enabled, it will follow the system to open or close the night theme";
+
 "theme_Time" = "Theme time";
+
 "theme_White" = "Simple White";
+
 "selected_List" = "Selected Q&A List";
+
 "cell_Delete" = "Delete";
+
 "cell_Delete_one_cell" = "Do you confirm the deletion of this information?";
+
 "alert_Info" = "Prompt";
+
 "alert_Delete_done" = "Successfully deleted";
+
 "chat_Delete_all_chat" = "Do you confirm the deletion of all dialogue records?";
+
 "alert_Input_token" = "Please enter API token";
+
 "alert_Token_error" = "Wrong Token";
+
 "chat_Thinking" = "Thinking......";
+
 "button_Long_tap" = "Long press to start recording";
+
 "button_Long_tap_end" = "Release and end";
+
 "button_Long_tap_cancel" = "Cancel the recording";
+
 "button_Long_tap_release" = "Send voice";
+
 "alert_Save_Q&A" = "Do you want to save the result of this problem and the corresponding problem?";
+
 "alert_Error_same" = "Duplicate content cannot be saved.";
+
 "alert_Save_success" = "Saved successfully";
+
 "chat_Edit" = "Please enter the content modified for this";
+
 "chat_Sending" = "Sending......";
+
 "first_Title" = "Get OpenAI API key";
+
 "first_Info_title" = "To use the app, you must generate a token to access the OpenAI API";
+
 "first_Info_info" = "This app was not made by OpeanAI. This is an independent and completely free project that connects to OpenAI's public API. The app is not affiliated with OpenAI in any way, and if OpenAI would like to request closure of the project they could contact me";
+
 "first_Paste" = "Paste your Token";
+
 "first_Go_get_api_token" = "Get API token";
+
 "first_Disclaimer" = "Disclaimer";
+
 "first_Start" = "Start using";
+
 "first_Disclaimer_info" = "By continuing you agree to have read the disclaimer";
+
 "first_Select_speech_language" = "Please select the native language of your voice input, default Chinese (Simplified)";
+
 "disclaimer_App" = "App disclaimer";
+
 "disclaimer_External" = "External links disclaimer";
+
 "disclaimer_App_Info" = "The information provided by Zola AI Chat on our mobile application is for general informational purposes only.  All information on our mobile application is provided in good faith, however we make no representation or warranty of any kind, express or implied, regarding the accuracy, adequacy, validity, reliability, availability, or completeness of any information on our mobile application.  UNDER NO CIRCUMSTANCE SHALL WE HAVE ANY LIABILITY TO YOU FOR ANY LOSS OR DAMAGE OF ANY KIND INCURRED AS A RESULT OF THE USE OF OUR MOBILE APPLICATION OR RELIANCE ON ANY INFORMATION PROVIDED ON OUR MOBILE APPLICATION.  YOUR USE OF OUR MOBILE APPLICATION AND YOUR RELIANCE ON ANY INFORMATION ON OUR MOBILE APPLICATION IS SOLELY AT YOUR OWN RISK.";
+
 "disclaimer_External_info" = "Our mobile application may contain (or you may be sent through our mobile application) links to other websites or content belonging to or originating from third parties or links to websites and features in banners or other advertising. Such external links are not investigated, monitored, or checked for accuracy, adequacy, validity, reliability, availability, or completeness by us. WE DO NOT WARRANT, ENDORSE, GUARANTEE, OR ASSUME RESPONSIBILITY FOR THE ACCURACY OR RELIABILITY OF ANY INFORMATION OFFERED BY THIRD-PARTY WEBSITES LINKED THROUGH THE SITE OR ANY WEBSITE OR FEATURE LINKED IN ANY BANNER OR OTHER ADVERTISING. WE WILL NOT BE A PARTY TO OR IN ANY WAY BE RESPONSIBLE FOR MONITORING ANY TRANSACTION BETWEEN YOU AND THIRD-PARTY PROVIDERS OF PRODUCTS OR SERVICES.";
+
 "picker_And" = "~";
+
 "chat_Select" = "There is no selection record for the time being. Click me to ask questions!";
+
 "color_Bubble_user" = "User bubble color";
+
 "color_Bubble_bot" = "Bot bubble color";
+
 "color_Text_bot" = "Bot text color";
+
 "color_Text_user" = "User text color";
+
 "about_AI_smart" = "AI smart";
+
 "about_User_icon" = "User icon";
+
 "alert_No_photo_library" = "Due to system reasons, the album cannot be accessed.";
+
 "alert_Go_to_photo_setting" = "[Go to: Settings - Privacy - Photos - %@] Allow apps to access";
+
 "about_Delete_all_voice_file" = "Delete all speech file";
+
 "alert_Can_not_send_voice" = "You are not authorized to use the voice input function.";
+
 "about_Draw_image_size" = "Draw image size";
+
 "size_Wrong" = "There is an error in Size. Please check it and try again.Max 1024 X 1024";
+
 "chat_Delete_all_voice_file" = "Are you sure to delete all voice files?";
+
 "chat_Empty" = "There is no dialogue record for the time being. Click here to start.";
+
 "color_Wave" = "Wave color";
+
 "chat_Copy" = "Copy";
+
 "chat_Edit_question" = "Corrected content";
+
 "chat_Speak_text" = "Turn into voice playback";
+
 "chat_Favourite" = "Selected";
+
 "alert_Option_title" = "Options";
+
 "alert_Select_option" = "Please select the functions you need.";
+
 "alert_Copy_done" = "Successful replication";
+
 "voice_Cancel_send" = "Cancel send";
+
 "voice_Change_to_text" = "Send it to text";
+
 "alert_Tag_set" = "Please enter the label you want to create.";
+
 "alert_Input_error" = "The input content is wrong.";
+
 "alert_Delete_error" = "Deletion failed";
+
 "chat_Resend" = "Resend";
+
 "alert_Save_error" = "Failed to save";
+
 "alert_AI_Set" = "AI person setting";
+
 "alert_Add_tag" = "Add tag";
+
 "alert_Delete_current_history" = "Clear the current record";
+
 "alert_Ask_clean_current_chat_record" = "Do you want to clear the current record?";
+
 "appUseInfo_Title_view" = "Click here to change the chat theme you set. Click to expand and swipe left to delete a certain label.";
+
 "appUseInfo_Option" = "Click here to get more functions.";
+
 "appUseInfo_Setting" = "Click here to set up more settings for the App.";
+
 "appUseInfo_Next" = "Next";
+
 "appUseInfo_Finish" = "Finish";
+
 "alert_Time_set_error" = "The start time must be less than the end time";
+
 "chat_Send_error" = "Failed to send";
+
 "alert_Edit_ai" = "Change the content";
+
 "alert_Edit_error" = "Editing failed";
+
 "chat_Get_image_count" = "Get the number of pictures";
+
 "chat_Edit_message" = "Modification:";
+
 "chat_Looking_for" = "Looking for similar";
+
 "chat_Paint_image" = "Create pictures";
+
 "chat_Check_sentence" = "There is inappropriate, inappropriate or sensitive content in the data in the article, such as curses, spam, hate speech, pornographic content, etc.";
+
 "chat_TF" = "Select the mode of TensorFlowLite / Stable Diffusion to generate pictures";
+
 "chat_TF_Cartoon" = "Cartoon";
+
 "chat_TF_Oil_painting" = "Oil painting";
+
 "draw_Reference" = "Oil painting reference";
+
 "setting_Tool" = "Tool";
+
 "setting_Reset" = "Reset all settings";
+
 "alert_Reset_all_setting" = "Are you sure to reset all settings?";
+
 "about_Help" = "Help";
+
 "help_Base" = "Base";
+
 "help_Other" = "Other tags";
+
 "help_And" = "Or";
+
 "alert_TF" = "We sincerely invite you to participate in our TestFlight version to get new functions faster.";
+
 "bot_Suggesstion" = "AI person setting";
+
 "bot_Suggesstion_import_msg" = "Do you want to introduce the setting?";
+
 "bot_Suggesstion_import" = "Import";
+
 "suggesstion_AI_draw" = "AI generates oil painting pictures according to the corresponding color/generates animation style pictures directly according to the pictures/use Stable Diffusion to generate pictures according to needs";
+
 "suggesstion_Sentence_switch" = "Sensitive statement filter switch";
+
 "suggesstion_PS" = "Modify the picture according to the original picture, mask picture and PS requirements";
+
 "suggesstion_Like" = "Find similar pictures according to pictures";
+
 "suggesstion_Content_draw" = "AI draws pictures according to needs";
+
 "suggesstion_Text_draw" = "Draw pictures according to the text description.";
+
 "alert_delete_all_tag" = "Do you want to delete all tags?";
+
 "alert_cannot_delete_tag" = "There are no other tags to delete for the time being.";
+
 "appUseInfo_AddTag" = "Click here to add tags.";
+
 "appUseInfo_Clean_chat" = "Click here to clear the current chat record.";
+
 "appUseInfo_Deleta_all_tag" = "Click here to delete all the labels.";
+
 "appUseInfo_Tags" = "Here is the list of tag themes. You can have the option to edit and delete when you slide left.";
+
 "appUseInfo_Icon" = "Click here to change the user avatar.";
+
 "alert_Name_edit_title" = "Edit user name";
+
 "alert_Name_edit_placeholder" = "Please enter your user name";
+
 "appUseInfo_User_name" = "Click here to edit your username.";
+
 "about_User_name" = "User name";
+
 "about_AI_name" = "AI name";
+
 "alert_AI_name_edit" = "Please enter the AI name";
+
 "about_Use_custom_domain_switch" = "Custom server";
+
 "about_Use_custom_domain_address" = "Server address";
+
 "alert_Enter_domain" = "Please enter the server address";
+
 "alert_Domain_error" = "Please enter the correct server address";
+
 "cost_Title" = "Token spending record";
+
 "cost_Empty" = "There is no Token consumption record for the time being.";
+
 "diffusion_Prompt" = "Please enter the main requirements";
+
 "diffusion_Attention" = "Please enter what you need AI attention to.";
+
 "diffusion_Accuracy" = "Fineness";
+
 "diffusion_Draw_step" = "Painting steps";
+
 "diffusion_Draw" = "Generate pictures";
+
 "diffusion_Init" = "The painter is being initialized...";
+
+"download_Start" = "Do not leave the current page during the download process to avoid downloading failure.";
+
+"download_Unzip" = "Unziping.......";

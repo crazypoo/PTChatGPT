@@ -41,9 +41,6 @@
 		552B41CA29D14A5200065892 /* AppStoreConnect-Swift-SDK in Frameworks */ = {isa = PBXBuildFile; productRef = 552B41C929D14A5200065892 /* AppStoreConnect-Swift-SDK */; };
 		5539463D29D8794500FFB312 /* PTSendChatModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5539463C29D8794500FFB312 /* PTSendChatModel.swift */; };
 		5539463F29D8822900FFB312 /* PTReceiveChatModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5539463E29D8822900FFB312 /* PTReceiveChatModel.swift */; };
-		553B54D829E21C05008E9D2C /* bins1_4 in Resources */ = {isa = PBXBuildFile; fileRef = 553B54D629E21C05008E9D2C /* bins1_4 */; };
-		553B54D929E21C05008E9D2C /* bins1_5 in Resources */ = {isa = PBXBuildFile; fileRef = 553B54D729E21C05008E9D2C /* bins1_5 */; };
-		553B54DB29E228A2008E9D2C /* bins_cartoon in Resources */ = {isa = PBXBuildFile; fileRef = 553B54DA29E228A2008E9D2C /* bins_cartoon */; };
 		5554FE9129DFE99400C29F8A /* PTCostMainModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5554FE9029DFE99400C29F8A /* PTCostMainModel.swift */; };
 		5554FE9329DFF1F400C29F8A /* PTCostHistoriaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5554FE9229DFF1F400C29F8A /* PTCostHistoriaViewController.swift */; };
 		55796A2229BD6DCE00574DD4 /* PTSoundRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55796A2129BD6DCE00574DD4 /* PTSoundRecorder.swift */; };
@@ -69,6 +66,8 @@
 		55B2746129CE240E00E05736 /* cartoongan_int8.tflite in Resources */ = {isa = PBXBuildFile; fileRef = 55B2745E29CE240E00E05736 /* cartoongan_int8.tflite */; };
 		55B2746329CE24DA00E05736 /* Data+Array+Convert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B2746229CE24DA00E05736 /* Data+Array+Convert.swift */; };
 		55B2746529CE250D00E05736 /* TFLiteExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B2746429CE250D00E05736 /* TFLiteExtension.swift */; };
+		55B69D9C29E2B76800468222 /* PTStableDiffusionModelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B69D9B29E2B76800468222 /* PTStableDiffusionModelCell.swift */; };
+		55B69D9E29E2F53500468222 /* PTDownloadModelModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B69D9D29E2F53500468222 /* PTDownloadModelModel.swift */; };
 		55BD5B7C29C613070023458A /* PTSettingFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BD5B7B29C613070023458A /* PTSettingFooter.swift */; };
 		55BD5B8A29C6AE2C0023458A /* PTSegHistoryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BD5B8929C6AE2C0023458A /* PTSegHistoryModel.swift */; };
 		55BD5B8E29C7074B0023458A /* PTPopoverControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BD5B8D29C7074A0023458A /* PTPopoverControl.swift */; };
@@ -137,9 +136,6 @@
 		552B41C429D135AE00065892 /* PTCheckTestFlight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTCheckTestFlight.swift; sourceTree = "<group>"; };
 		5539463C29D8794500FFB312 /* PTSendChatModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSendChatModel.swift; sourceTree = "<group>"; };
 		5539463E29D8822900FFB312 /* PTReceiveChatModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTReceiveChatModel.swift; sourceTree = "<group>"; };
-		553B54D629E21C05008E9D2C /* bins1_4 */ = {isa = PBXFileReference; lastKnownFileType = folder; path = bins1_4; sourceTree = "<group>"; };
-		553B54D729E21C05008E9D2C /* bins1_5 */ = {isa = PBXFileReference; lastKnownFileType = folder; path = bins1_5; sourceTree = "<group>"; };
-		553B54DA29E228A2008E9D2C /* bins_cartoon */ = {isa = PBXFileReference; lastKnownFileType = folder; path = bins_cartoon; sourceTree = "<group>"; };
 		5554FE9029DFE99400C29F8A /* PTCostMainModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTCostMainModel.swift; sourceTree = "<group>"; };
 		5554FE9229DFF1F400C29F8A /* PTCostHistoriaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTCostHistoriaViewController.swift; sourceTree = "<group>"; };
 		55796A2129BD6DCE00574DD4 /* PTSoundRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSoundRecorder.swift; sourceTree = "<group>"; };
@@ -166,6 +162,8 @@
 		55B2745E29CE240E00E05736 /* cartoongan_int8.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; path = cartoongan_int8.tflite; sourceTree = "<group>"; };
 		55B2746229CE24DA00E05736 /* Data+Array+Convert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+Array+Convert.swift"; sourceTree = "<group>"; };
 		55B2746429CE250D00E05736 /* TFLiteExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TFLiteExtension.swift; sourceTree = "<group>"; };
+		55B69D9B29E2B76800468222 /* PTStableDiffusionModelCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTStableDiffusionModelCell.swift; sourceTree = "<group>"; };
+		55B69D9D29E2F53500468222 /* PTDownloadModelModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTDownloadModelModel.swift; sourceTree = "<group>"; };
 		55BD5B7B29C613070023458A /* PTSettingFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSettingFooter.swift; sourceTree = "<group>"; };
 		55BD5B8929C6AE2C0023458A /* PTSegHistoryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSegHistoryModel.swift; sourceTree = "<group>"; };
 		55BD5B8D29C7074A0023458A /* PTPopoverControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTPopoverControl.swift; sourceTree = "<group>"; };
@@ -258,6 +256,7 @@
 				55BD5B9E29C850AC0023458A /* PTDarkSmartFooter.swift */,
 				55BD5B7B29C613070023458A /* PTSettingFooter.swift */,
 				5514B37C29BA102400890161 /* PTSettingHeader.swift */,
+				55B69D9B29E2B76800468222 /* PTStableDiffusionModelCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -266,6 +265,7 @@
 			isa = PBXGroup;
 			children = (
 				5514B37F29BA112A00890161 /* PTSettingModels.swift */,
+				55B69D9D29E2F53500468222 /* PTDownloadModelModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -368,9 +368,6 @@
 		55A5D71629B1D23D00DCA096 /* PTChatGPT */ = {
 			isa = PBXGroup;
 			children = (
-				553B54DA29E228A2008E9D2C /* bins_cartoon */,
-				553B54D629E21C05008E9D2C /* bins1_4 */,
-				553B54D729E21C05008E9D2C /* bins1_5 */,
 				55DF542629E06E0B0077F8F7 /* AiDraw */,
 				5554FE8D29DFE94E00C29F8A /* CostHistory */,
 				552A609929D819A100239210 /* API */,
@@ -625,13 +622,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				553B54D829E21C05008E9D2C /* bins1_4 in Resources */,
 				55B2746129CE240E00E05736 /* cartoongan_int8.tflite in Resources */,
 				55B2745F29CE240E00E05736 /* style_transfer_quantized_384.tflite in Resources */,
 				55A5D72429B1D23E00DCA096 /* LaunchScreen.storyboard in Resources */,
-				553B54D929E21C05008E9D2C /* bins1_5 in Resources */,
 				55B2746029CE240E00E05736 /* style_predict_quantized_256.tflite in Resources */,
-				553B54DB29E228A2008E9D2C /* bins_cartoon in Resources */,
 				5514B39C29BB127F00890161 /* Localizable.strings in Resources */,
 				55A5D72129B1D23E00DCA096 /* Assets.xcassets in Resources */,
 				55D752F629D1FCF8005CE46B /* SampleJson.json in Resources */,
@@ -760,7 +754,9 @@
 				5512AB7C29B470310059D840 /* PTAudioPlayer.swift in Sources */,
 				55DF5C5129E06EB00077F8F7 /* PTSableDiffusion.swift in Sources */,
 				5520905929C3587C009B30A1 /* PTBaseMaskView.swift in Sources */,
+				55B69D9E29E2F53500468222 /* PTDownloadModelModel.swift in Sources */,
 				5514B37429B9D50D00890161 /* PTChatModel.swift in Sources */,
+				55B69D9C29E2B76800468222 /* PTStableDiffusionModelCell.swift in Sources */,
 				55A5D80129B1F29800DCA096 /* PTMessageModel.swift in Sources */,
 				5514B37829B9F87C00890161 /* PTSettingListViewController.swift in Sources */,
 				55B2746329CE24DA00E05736 /* Data+Array+Convert.swift in Sources */,

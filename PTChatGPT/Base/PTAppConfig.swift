@@ -1071,6 +1071,72 @@ class PTAppConfig {
         }
     }
     
+    //MARK: 下载记录
+    var downloadInfomation:[[String:Any]] {
+        get {
+            let filePath = FileManager.pt.TmpDirectory().appendingPathComponent("AIModelJson.json")
+            let fileURL = URL(fileURLWithPath: filePath)
+
+            do {
+                let jsonData = try Data(contentsOf: fileURL,options: .mappedIfSafe)
+                let json = try JSONSerialization.jsonObject(with: jsonData, options: .mutableLeaves)
+                return json as! [[String : Any]]
+            } catch {
+
+                let modi = PTDownloadModelModel()
+                modi.name = "MoDi"
+                modi.url = "https://iphj6g.ch.files.1drv.com/y4mOzzLFLtDYYk3pyVUTHyrafIsOzbjHxr1DE1GUWJ8zAoL9WiwlPvMpQFj6CrhbjBo1Mp5rvO1LalLWmTNF4SrbaDNXPEJwGTtFlUXMFyFrtYWXfXHkjw9Ojdq-3MmyuinHV6yGaADPh708EgZdK8NeN6AKcwpRMfxelui3SCmvFMEitkjA8N1hUdvx1IvSdn9ik86Lg5vb-9IJz_dT04TCQ"
+                modi.folderName = "bins_cartoon"
+                
+                let model1_4 = PTDownloadModelModel()
+                model1_4.name = "V1.4"
+                model1_4.url = "https://vlvxjq.ch.files.1drv.com/y4mmhEzgftFiI8HsW7N3M3NIr7ZzJ3gV37H7rJKgZT-AI1uXfSUFz09eipBxKnXgLMQ617IAZ9yN3jqJlnYsDwqj1uB4jaTuG4_NZJ8BTXNw2RoW8IiDtyO1aVkPk97sOvmONW86Dle-1z0c1eQIyqMUrMnssFo1Q6owkNP4NpiMOj4hRVGDpl7YHyEIW8a1PT32hxS-cnnjK5CtD4z0OiIdQ"
+                model1_4.folderName = "bins1_4"
+
+                let model1_5 = PTDownloadModelModel()
+                model1_5.name = "V1.5"
+                model1_5.url = "https://wcoyma.ch.files.1drv.com/y4mOdda6SfhrNB_h8hCJl3LDtq1i4M-ILTl0z9_0S78xLjCqhUntyGCHs6EJdfZQ3K92pw4Qd04EIznvAq5QVxJLYlrjaj34jpAUL-m3SvnTIkFBcbbaITo7obii1rJw7TammE4LA1P4OwavpgfDMS7lnnYmONISarnHWThm5Qh1Obl-se1hT-sIukwtWzWhDs5jvo94csyg--yXR2MU0pxeA"
+                model1_5.folderName = "bins1_5"
+
+                let modelTest = PTDownloadModelModel()
+                modelTest.name = "TEST"
+                modelTest.url = "https://9d7a0g.ch.files.1drv.com/y4mYr491C4NT_VEphAv_VLrRSrNVdTx3Qc2LPE2aA3HQeSwxNULfuBZMKCMPJoQR8ycJtunyaBHgPsABkNXzW0p9P6IIz2G5hdM5yNmRp44EUolJQf2oqmUNZXQHpXbhkGb_ab708MFVkf-KMWQRCq29GymC_Oje7PFk7Ow_ulRuJMDIEfdyLmIveffvW8QjlGKnXjc5meVut_GUCJ9mchQiA"
+                modelTest.folderName = "JKSwiftExtension-master"
+           
+                var packData = [[String:Any]]()
+                
+                if self.canUseStableDiffusionModel() {
+                    packData = [modi.toJSON()!,model1_4.toJSON()!,model1_5.toJSON()!,modelTest.toJSON()!]
+                } else {
+                    packData = [modi.toJSON()!,model1_4.toJSON()!,model1_5.toJSON()!]
+                }
+                self.downloadInfomation = packData
+
+                return packData
+            }
+        } set {
+            do {
+                
+                let filePath = FileManager.pt.TmpDirectory().appendingPathComponent("AIModelJson.json")
+                let fileURL = URL(fileURLWithPath: filePath)
+                let jsonData = try JSONSerialization.data(withJSONObject: newValue, options: .prettyPrinted)
+                try jsonData.write(to: fileURL)
+            } catch {
+                PTNSLogConsole("Have file failed to write json data to local: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    //MARK: 获取下载模型信息
+    ///获取下载模型信息
+    func getDownloadInfomation() -> [PTDownloadModelModel?] {
+        if let models = [PTDownloadModelModel].deserialize(from: self.downloadInfomation) {
+            return models
+        } else {
+            return [PTDownloadModelModel?]()
+        }
+    }
+    
     let imageControlActions:[String] = {
         return [.findImage,.remakeImage]
     }()
@@ -1504,4 +1570,16 @@ class PTAppConfig {
         return result
     }
 
+    //MARK: 是否能使用AI
+    func canUseStableDiffusionModel() -> Bool {
+        if UIApplication.applicationEnvironment() == .appStore || UIApplication.applicationEnvironment() == .testFlight {
+            if Gobal_device_info.isOneOf([.iPhone13Pro,.iPhone13ProMax,.iPhone14Pro,.iPhone14ProMax, .iPadPro12Inch2, .iPadPro10Inch, .iPadPro11Inch, .iPadPro12Inch3, .iPadPro11Inch2, .iPadPro12Inch4, .iPadPro11Inch3, .iPadPro12Inch5, .iPadPro11Inch4, .iPadPro12Inch6,.iPadAir5,.iPadPro12Inch]) || Gobal_device_info.isSimulator {
+                return true
+            } else {
+                return false
+            }
+        } else {
+            return true
+        }
+    }
 }

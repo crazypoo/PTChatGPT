@@ -119,7 +119,7 @@ chatzola://chatTag=你的标签名字?chatText=Hola
 #### Stable Diffusion
 App支持Stable Diffusion画图,但是可能需要机能强大的机器须要15.4之后的系统和6GB内存的设备,如果想知道自己測試的機型支持不支持,可以查看[blakespot.com](https://blakespot.com/ios_device_specifications_grid.html)
 
-但是现在运行该项目,可能比之前复杂,步骤如下:
+~~但是现在运行该项目,可能比之前复杂~~如果符合机型就可以在App的设置里面下载模型使用.如果是需要使用自己的模型,可以按照一下步骤生成须要的文件步骤如下:
 
 1.首先须要下载模型[sd-v1-5.ckpt](https://huggingface.co/runwayml/stable-diffusion-v1-5)
 
@@ -138,7 +138,7 @@ App支持Stable Diffusion画图,但是可能需要机能强大的机器须要15.
 4.然后使用PyTorch环境来解析刚刚上文提及到的模型配置到项目里面
 
 ```bash
-   ./maple-convert.py ~/Downloads/sd-v1-4.ckpt
+   ./maple-convert.py ~/Downloads/sd-v1-5.ckpt
 ```
           
  5.然后就可以运行项目了

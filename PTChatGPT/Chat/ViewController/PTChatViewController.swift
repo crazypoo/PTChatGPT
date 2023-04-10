@@ -411,14 +411,10 @@ class PTChatViewController: MessagesViewController {
     var maskImage:UIImage?
     
     let cartoonImageModes : [String] = {
-        if UIApplication.applicationEnvironment() == .appStore || UIApplication.applicationEnvironment() == .testFlight {
-            if Gobal_device_info.isOneOf([.iPhone13Pro,.iPhone13ProMax,.iPhone14Pro,.iPhone14ProMax, .iPadPro12Inch2, .iPadPro10Inch, .iPadPro11Inch, .iPadPro12Inch3, .iPadPro11Inch2, .iPadPro12Inch4, .iPadPro11Inch3, .iPadPro12Inch5, .iPadPro11Inch4, .iPadPro12Inch6,.iPadAir5,.iPadPro12Inch]) || Gobal_device_info.isSimulator {
-                return [PTLanguage.share.text(forKey: "chat_TF_Cartoon"),PTLanguage.share.text(forKey: "chat_TF_Oil_painting"),PTLanguage.share.text(forKey: "Stable Diffusion")]
-            } else {
-                return [PTLanguage.share.text(forKey: "chat_TF_Cartoon"),PTLanguage.share.text(forKey: "chat_TF_Oil_painting")]
-            }
-        } else {
+        if AppDelegate.appDelegate()!.appConfig.canUseStableDiffusionModel() {
             return [PTLanguage.share.text(forKey: "chat_TF_Cartoon"),PTLanguage.share.text(forKey: "chat_TF_Oil_painting"),PTLanguage.share.text(forKey: "Stable Diffusion")]
+        } else {
+            return [PTLanguage.share.text(forKey: "chat_TF_Cartoon"),PTLanguage.share.text(forKey: "chat_TF_Oil_painting")]
         }
     }()
     
@@ -826,9 +822,9 @@ class PTChatViewController: MessagesViewController {
             self.navigationItem.titleView = self.titleButton
             
 #if DEBUG
-            AppDelegate.appDelegate()!.appConfig.firstCoach = true
-            UserDefaults.standard.removeObject(forKey: "LatestAppVersionPresented")
-            UserDefaults.standard.synchronize()
+//            AppDelegate.appDelegate()!.appConfig.firstCoach = true
+//            UserDefaults.standard.removeObject(forKey: "LatestAppVersionPresented")
+//            UserDefaults.standard.synchronize()
 
 //            let baseSub = PTSegHistoryModel()
 //            baseSub.keyName = "Base"

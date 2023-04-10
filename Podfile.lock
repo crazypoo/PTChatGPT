@@ -122,6 +122,9 @@ PODS:
   - PooTools/Slider (3.0.9):
     - PooTools/Core
     - RangeSeekSlider
+  - PooTools/ZipArchive (3.0.9):
+    - PooTools/Core
+    - SSZipArchive
   - pop (1.0.12)
   - RangeSeekSlider (1.8.0)
   - SDWebImage (5.15.5):
@@ -131,6 +134,7 @@ PODS:
     - SJAttributesStringMaker/Deprecated (= 2.1.1)
   - SJAttributesStringMaker/Deprecated (2.1.1)
   - SnapKit (5.6.0)
+  - SSZipArchive (2.4.3)
   - SwiftDate (7.0.0)
   - SwifterSwift (5.2.0):
     - SwifterSwift/AppKit (= 5.2.0)
@@ -214,6 +218,7 @@ DEPENDENCIES:
   - PooTools/PagingControl (from `https://github.com/crazypoo/PTools.git`)
   - PooTools/Picker (from `https://github.com/crazypoo/PTools.git`)
   - PooTools/Slider (from `https://github.com/crazypoo/PTools.git`)
+  - PooTools/ZipArchive (from `https://github.com/crazypoo/PTools.git`)
   - SwiftLint
   - SwiftSpinner
   - Swinject
@@ -260,6 +265,7 @@ SPEC REPOS:
     - SDWebImage
     - SJAttributesStringMaker
     - SnapKit
+    - SSZipArchive
     - SwiftDate
     - SwifterSwift
     - SwiftLint
@@ -288,7 +294,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   PooTools:
-    :commit: 15034b8d0980ed90598f3328b5e0d24a162ff891
+    :commit: e6eaa1a775b875b11d1bc65cfd18153b23649185
     :git: https://github.com/crazypoo/PTools.git
 
 SPEC CHECKSUMS:
@@ -329,6 +335,7 @@ SPEC CHECKSUMS:
   SDWebImage: fd7e1a22f00303e058058278639bf6196ee431fe
   SJAttributesStringMaker: 8b5f54c487cc88fa26d2f540166cd43dfceca816
   SnapKit: e01d52ebb8ddbc333eefe2132acf85c8227d9c25
+  SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef
   SwiftDate: bbc26e26fc8c0c33fbee8c140c5e8a68293a148a
   SwifterSwift: 334181863c416882d97b7a60c05054d9e4d799e2
   SwiftLint: 1b7561918a19e23bfed960e40759086e70f4dba5
@@ -351,6 +358,6 @@ SPEC CHECKSUMS:
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
   ZXNavigationBar: a8ceb13fe37f9ca894cf6ae22d805cbdbb9ad6b1
 
-PODFILE CHECKSUM: af1f87a497ffdaa5559aa0444ad5be8dd7e44a29
+PODFILE CHECKSUM: 6243e7c07947877380ba606224f5bd46d78b6842
 
 COCOAPODS: 1.12.0

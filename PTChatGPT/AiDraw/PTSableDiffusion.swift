@@ -8,6 +8,7 @@
 
 import MetalPerformanceShadersGraph
 import Foundation
+import PooTools
 
 func makeGraph(synchonize: Bool) -> MPSGraph {
     let graph = MPSGraph()
@@ -17,7 +18,8 @@ func makeGraph(synchonize: Bool) -> MPSGraph {
 
 func loadConstant(graph: MPSGraph, name: String, shape: [NSNumber], fp32: Bool = false,modelName:String) -> MPSGraphTensor {
     let numels = shape.map({$0.intValue}).reduce(1, *)
-    let fileUrl: URL = Bundle.main.url(forResource: "\(modelName)/" + name + (fp32 ? "_fp32" : ""), withExtension: ".bin")!
+    let filePath = FileManager.pt.TmpDirectory().appendingPathComponent(modelName).appendingPathComponent("\(name + (fp32 ? "_fp32" : "")).bin")
+    let fileUrl: URL = URL(fileURLWithPath: filePath)
     let data: Data = try! Data(contentsOf: fileUrl, options: Data.ReadingOptions.alwaysMapped)
     let expectedCount = numels * (fp32 ? 4 : 2)
     assert(data.count == expectedCount, "Mismatch between byte count of data \(data.count) and expected size \(expectedCount) for \(numels) els in \(fileUrl)")
@@ -501,7 +503,9 @@ class BPETokenizer {
             vocabList.append(String(bytesToUnicode[i]!))
         }
         vocabList += vocabList.map({$0 + "</w>"})
-        let vocabFile = try! String(contentsOf: Bundle.main.url(forResource: "\(modelName)/bpe_simple_vocab_16e6", withExtension: "txt")!)
+        
+        let filePath = FileManager.pt.TmpDirectory().appendingPathComponent(modelName).appendingPathComponent("bpe_simple_vocab_16e6.txt")
+        let vocabFile = try! String(contentsOf: URL(fileURLWithPath: filePath))
         for (i, m) in vocabFile.split(separator: "\n")[1..<48_895].enumerated() {
             ranks[String(m)] = i
             vocabList.append(m.split(separator: " ").joined(separator: ""))

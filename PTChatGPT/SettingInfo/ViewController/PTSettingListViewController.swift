@@ -46,6 +46,9 @@ class PTChatPanelLayout: FloatingPanelLayout {
 
 class PTSettingListViewController: PTChatBaseViewController {
 
+    ///获取下载信息
+    var downloadInfo = AppDelegate.appDelegate()!.appConfig.getDownloadInfomation()
+    
     lazy var currentSettingViewController:PTSettingListViewController = {
         if let splitViewController = self.splitViewController,
             let detailViewController = splitViewController.viewControllers.last as? PTNavController {
@@ -372,6 +375,21 @@ class PTSettingListViewController: PTChatBaseViewController {
             apiMain.models = [aiName,aiType,aiSmart,drawSize,imageCount,drawSample,aiToken,getApiToken,domainSwitch,domainAddress]
         }
         
+        let stableDiffusionMain = PTSettingModels()
+        stableDiffusionMain.name = PTLanguage.share.text(forKey: "Stable Diffusion Model")
+
+        var diffusionModels = [PTFusionCellModel]()
+        self.downloadInfo.enumerated().forEach { index,value in
+            let modiModel = PTFusionCellModel()
+            modiModel.name = value!.name
+            modiModel.nameColor = .gobalTextColor
+            modiModel.content = value!.folderName
+            modiModel.cellFont = nameFont
+            diffusionModels.append(modiModel)
+        }
+        
+        stableDiffusionMain.models = diffusionModels
+
         let toolMain = PTSettingModels()
         toolMain.name = PTLanguage.share.text(forKey: "setting_Tool")
         
@@ -436,7 +454,11 @@ class PTSettingListViewController: PTChatBaseViewController {
         } else if self.user.senderId == PTChatData.share.user.senderId {
             return [themeMain,speechMain]
         } else {
-            return [cloudMain,themeMain,speechMain,chatMain,apiMain,toolMain,otherMain]
+            if AppDelegate.appDelegate()!.appConfig.canUseStableDiffusionModel() {
+                return [cloudMain,themeMain,speechMain,chatMain,apiMain,stableDiffusionMain,toolMain,otherMain]
+            } else {
+                return [cloudMain,themeMain,speechMain,chatMain,apiMain,toolMain,otherMain]
+            }
         }
     }
     
@@ -576,9 +598,11 @@ class PTSettingListViewController: PTChatBaseViewController {
         self.aboutModels().enumerated().forEach { (index,value) in
             var rows = [PTRows]()
             value.models.enumerated().forEach { (subIndex,subValue) in
-                
                 if subValue.name == PTLanguage.share.text(forKey: "about_AI_smart") {
                     let row_List = PTRows.init(title: subValue.name, placeholder: subValue.content,cls: PTAISmartCell.self, ID: PTAISmartCell.ID, dataModel: subValue)
+                    rows.append(row_List)
+                } else if subValue.name == PTLanguage.share.text(forKey: "MoDi") || subValue.name == PTLanguage.share.text(forKey: "V1.4") || subValue.name == PTLanguage.share.text(forKey: "V1.5") || subValue.name == PTLanguage.share.text(forKey: "TEST") {
+                    let row_List = PTRows.init(cls: PTStableDiffusionModelCell.self, ID: PTStableDiffusionModelCell.ID, dataModel: subValue)
                     rows.append(row_List)
                 } else {
                     let row_List = PTRows.init(title: subValue.name, placeholder: subValue.content,cls: PTFusionCell.self, ID: PTFusionCell.ID, dataModel: subValue)
@@ -705,6 +729,37 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                     realSmart = 1
                 }
                 AppDelegate.appDelegate()!.appConfig.aiSmart = Double(realSmart)
+            }
+            return cell
+        } else if itemRow.ID == PTStableDiffusionModelCell.ID {
+            let cellModel = self.downloadInfo[indexPath.row]
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTStableDiffusionModelCell
+            cell.contentView.backgroundColor = .gobalCellBackgroundColor
+            cell.cellModel = cellModel
+            cell.lineView.isHidden = (itemSec.rows.count - 1) == indexPath.row
+            cell.downloadFinishBlock = {
+                #if DEBUG
+                self.downloadInfo[indexPath.row]!.loadFinish = indexPath.row == (self.downloadInfo.count - 1) ? false : true
+                #else
+                self.downloadInfo[indexPath.row]!.loadFinish = true
+                #endif
+                
+                AppDelegate.appDelegate()!.appConfig.downloadInfomation = self.downloadInfo.kj.JSONObjectArray()
+            }
+            if itemSec.rows.count == 1 {
+                PTGCDManager.gcdMain {
+                    cell.contentView.viewCornerRectCorner(cornerRadii:5,corner:.allCorners)
+                }
+            } else {
+                if indexPath.row == 0 {
+                    PTGCDManager.gcdMain {
+                        cell.contentView.viewCornerRectCorner(cornerRadii: 5,corner:[.topLeft,.topRight])
+                    }
+                } else if indexPath.row == (itemSec.rows.count - 1) {
+                    PTGCDManager.gcdMain {
+                        cell.contentView.viewCornerRectCorner(cornerRadii: 5,corner:[.bottomLeft,.bottomRight])
+                    }
+                }
             }
             return cell
         } else {

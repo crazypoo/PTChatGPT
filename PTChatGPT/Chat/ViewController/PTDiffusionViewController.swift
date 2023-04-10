@@ -148,66 +148,68 @@ class PTDiffusionViewController: PTChatBaseViewController {
         view.addActionHandlers { sender in
             self.promptText.resignFirstResponder()
             self.negativeText.resignFirstResponder()
-            sender.isSelected = !sender.isSelected
-            if sender.isSelected {
-                if self.promptString.stringIsEmpty() {
-                    PTGCDManager.gcdMain {
-                        PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "diffusion_Prompt"))
-                        sender.isUserInteractionEnabled = true
-                        sender.isSelected = !sender.isSelected
-                    }
-                } else {
-                    PTGCDManager.gcdBackground {
+            if self.getModel().count > 0 {
+                sender.isSelected = !sender.isSelected
+                if sender.isSelected {
+                    if self.promptString.stringIsEmpty() {
                         PTGCDManager.gcdMain {
-                            sender.isUserInteractionEnabled = false
+                            PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "diffusion_Prompt"))
+                            sender.isUserInteractionEnabled = true
+                            sender.isSelected = !sender.isSelected
                         }
-                    }
-
-                    self.dispatchQueue.async {
+                    } else {
                         PTGCDManager.gcdBackground {
                             PTGCDManager.gcdMain {
-                                SwiftSpinner.show(PTLanguage.share.text(forKey: "diffusion_Init"))
+                                sender.isUserInteractionEnabled = false
                             }
                         }
-                        self.diffusion = PTSableDiffusion(modelName: self.modelName,saveMemoryButBeSlower: true)
-                        self.diffusion?.initModels { progress, step in
+
+                        self.dispatchQueue.async {
                             PTGCDManager.gcdBackground {
                                 PTGCDManager.gcdMain {
-                                    SwiftSpinner.show("\(step)")
+                                    SwiftSpinner.show(PTLanguage.share.text(forKey: "diffusion_Init"))
                                 }
                             }
-                            if progress >= 1 {
-                                PTGCDManager.gcdAfter(time: 1) {
-                                    PTGCDManager.gcdBackground {
-                                        PTGCDManager.gcdMain {
-                                            SwiftSpinner.hide {
-                                                self.dispatchQueue.async {
-                                                    self.diffusion!.generate(prompt: self.promptString, negativePrompt: self.negativeString, seed: Int.random(in: 1..<Int.max), steps: Int(self.stepValue), guidanceScale: self.accuracyValue/*,imgGuidance:self.referenceImage*/) { image, progress, info in
-                                                        
-                                                        PTGCDManager.gcdBackground {
-                                                            PTGCDManager.gcdMain {
-                                                                self.progress.angle = (Double(progress) * 360)
-                                                                sender.setTitle(info, for: .selected)
-                                                            }
-                                                        }
-                                                        
-                                                        PTNSLogConsole("当前进度\(progress)\n输出信息\(info)")
-                                                        if image != nil {
+                            self.diffusion = PTSableDiffusion(modelName: self.modelName,saveMemoryButBeSlower: true)
+                            self.diffusion?.initModels { progress, step in
+                                PTGCDManager.gcdBackground {
+                                    PTGCDManager.gcdMain {
+                                        SwiftSpinner.show("\(step)")
+                                    }
+                                }
+                                if progress >= 1 {
+                                    PTGCDManager.gcdAfter(time: 1) {
+                                        PTGCDManager.gcdBackground {
+                                            PTGCDManager.gcdMain {
+                                                SwiftSpinner.hide {
+                                                    self.dispatchQueue.async {
+                                                        self.diffusion!.generate(prompt: self.promptString, negativePrompt: self.negativeString, seed: Int.random(in: 1..<Int.max), steps: Int(self.stepValue), guidanceScale: self.accuracyValue/*,imgGuidance:self.referenceImage*/) { image, progress, info in
+                                                            
                                                             PTGCDManager.gcdBackground {
                                                                 PTGCDManager.gcdMain {
-                                                                    self.showImageView.setImage(UIImage(cgImage: image!), for: .normal)
+                                                                    self.progress.angle = (Double(progress) * 360)
+                                                                    sender.setTitle(info, for: .selected)
                                                                 }
                                                             }
                                                             
-                                                            if progress >= 1 {
+                                                            PTNSLogConsole("当前进度\(progress)\n输出信息\(info)")
+                                                            if image != nil {
                                                                 PTGCDManager.gcdBackground {
                                                                     PTGCDManager.gcdMain {
-                                                                        self.referenceImage = nil
-                                                                        self.progress.angle = 0
-                                                                        self.showImageView.isUserInteractionEnabled = true
-                                                                        sender.setTitle("", for: .selected)
-                                                                        sender.isSelected = false
-                                                                        sender.isUserInteractionEnabled = true
+                                                                        self.showImageView.setImage(UIImage(cgImage: image!), for: .normal)
+                                                                    }
+                                                                }
+                                                                
+                                                                if progress >= 1 {
+                                                                    PTGCDManager.gcdBackground {
+                                                                        PTGCDManager.gcdMain {
+                                                                            self.referenceImage = nil
+                                                                            self.progress.angle = 0
+                                                                            self.showImageView.isUserInteractionEnabled = true
+                                                                            sender.setTitle("", for: .selected)
+                                                                            sender.isSelected = false
+                                                                            sender.isUserInteractionEnabled = true
+                                                                        }
                                                                     }
                                                                 }
                                                             }
@@ -222,6 +224,8 @@ class PTDiffusionViewController: PTChatBaseViewController {
                         }
                     }
                 }
+            } else {
+                PTBaseViewController.gobal_drop(title: "请先App的设置内下载模型")
             }
         }
         view.isSelected = false
@@ -243,7 +247,7 @@ class PTDiffusionViewController: PTChatBaseViewController {
         view.glowAmount = 0.9
         return view
     }()
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     }
@@ -259,32 +263,39 @@ class PTDiffusionViewController: PTChatBaseViewController {
         
         self.zx_navTitle = "Stable Diffusion"
         
+        var buttonName = ""
+        if self.getModel().count > 0 {
+            buttonName = self.getModel().first!.first!
+        } else {
+            buttonName = ""
+        }
+        
         let moreButton = BKLayoutButton()
         moreButton.setMidSpacing(5)
         moreButton.titleLabel?.font = .appfont(size: 14,bold: true)
         moreButton.setTitleColor(.gobalTextColor, for: .normal)
-        moreButton.setTitle("V1.4", for: .normal)
+        moreButton.setTitle(buttonName, for: .normal)
         moreButton.layoutStyle = .leftImageRightTitle
         moreButton.setImage(UIImage(systemName: "chevron.up.chevron.down")!.withRenderingMode(.automatic), for: .normal)
         moreButton.addActionHandlers { sender in
-            let arr = ["V1.4","V1.5","MoDi"]
-            UIAlertController.baseActionSheet(title: "AI Model", titles: arr) { sheet in
-                
-            } cancelBlock: { sheet in
-                
-            } otherBlock: { sheet, index in
-                switch index {
-                case 0:
-                    self.modelName = "bins1_4"
-                case 1:
-                    self.modelName = "bins1_5"
-                case 2:
-                    self.modelName = "bins_cartoon"
-                default:break
+            let modelArr = self.getModel()
+            if modelArr.count > 0 {
+                var arr = [String]()
+                modelArr.enumerated().forEach { index,value in
+                    arr.append(value[0])
                 }
-                sender.setTitle(arr[index], for: .normal)
-            } tapBackgroundBlock: { sheet in
-                
+                UIAlertController.baseActionSheet(title: "AI Model", titles: arr) { sheet in
+                    
+                } cancelBlock: { sheet in
+                    
+                } otherBlock: { sheet, index in
+                    self.modelName = modelArr[index][1]
+                    sender.setTitle(arr[index], for: .normal)
+                } tapBackgroundBlock: { sheet in
+                    
+                }
+            } else {
+                PTBaseViewController.gobal_drop(title: "请先App的设置内下载模型")
             }
         }
 //        let photoImage = UIButton(type: .custom)
@@ -373,6 +384,17 @@ class PTDiffusionViewController: PTChatBaseViewController {
             make.right.equalTo(self.createButton.snp.left).offset(-10)
             make.top.bottom.equalTo(self.createButton)
         }
+    }
+    
+    func getModel() -> [[String]] {
+        var arrs = [[String]]()
+        let info = AppDelegate.appDelegate()!.appConfig.getDownloadInfomation()
+        info.enumerated().forEach { index,value in
+            if value!.loadFinish {
+                arrs.append([value!.name,value!.folderName])
+            }
+        }
+        return arrs
     }
     
     private func resize(_ image: CGImage) -> CGImage? {
