@@ -151,6 +151,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             HyperionManager.sharedInstance().togglePluginDrawer()
         }
 #endif
+        
+//        PTGCDManager.gcdAfter(time: 10) {
+//            UIApplication.pt.changeAppIcon(with: "AppIcon1")
+//        }
         return true
     }
         
