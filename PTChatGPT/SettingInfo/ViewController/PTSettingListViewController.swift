@@ -15,6 +15,7 @@ import ZXNavigationBar
 import FDFullscreenPopGesture
 import SwiftSpinner
 import OSSSpeechKit
+import GCDWebServer
 
 //MARK: iCloud
 let SettingCloudString = "iCloud"
@@ -46,6 +47,9 @@ class PTChatPanelLayout: FloatingPanelLayout {
 
 class PTSettingListViewController: PTChatBaseViewController {
 
+    var canOpenWebServer:Bool = false
+    var webServerIsRunning:Bool = false
+    var webServer:GCDWebUploader?
     ///获取下载信息
     var downloadInfo = AppDelegate.appDelegate()!.appConfig.getDownloadInfomation()
     
@@ -389,6 +393,25 @@ class PTSettingListViewController: PTChatBaseViewController {
         }
         
         stableDiffusionMain.models = diffusionModels
+        
+        let localUploadMain = PTSettingModels()
+        localUploadMain.name = PTLanguage.share.text(forKey: "about_Local_network")
+
+        let localUpload = PTFusionCellModel()
+        localUpload.name = PTLanguage.share.text(forKey: "about_Local_upload")
+        localUpload.haveSwitch = true
+        localUpload.nameColor = .gobalTextColor
+        localUpload.cellFont = nameFont
+        localUpload.switchTinColor = switchColor
+
+        let modelEdit = PTFusionCellModel()
+        modelEdit.name = PTLanguage.share.text(forKey: "about_Local_model")
+        modelEdit.haveDisclosureIndicator = true
+        modelEdit.nameColor = .gobalTextColor
+        modelEdit.disclosureIndicatorImage = disclosureIndicatorImageName
+        modelEdit.cellFont = nameFont
+
+        localUploadMain.models = [localUpload,modelEdit]
 
         let toolMain = PTSettingModels()
         toolMain.name = PTLanguage.share.text(forKey: "setting_Tool")
@@ -455,7 +478,7 @@ class PTSettingListViewController: PTChatBaseViewController {
             return [themeMain,speechMain]
         } else {
             if AppDelegate.appDelegate()!.appConfig.canUseStableDiffusionModel() {
-                return [cloudMain,themeMain,speechMain,chatMain,apiMain,stableDiffusionMain,toolMain,otherMain]
+                return [cloudMain,themeMain,speechMain,chatMain,apiMain,stableDiffusionMain,localUploadMain,toolMain,otherMain]
             } else {
                 return [cloudMain,themeMain,speechMain,chatMain,apiMain,toolMain,otherMain]
             }
@@ -548,6 +571,17 @@ class PTSettingListViewController: PTChatBaseViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
     }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        if self.canOpenWebServer && self.webServerIsRunning {
+            PTGCDManager.gcdBackground {
+                PTGCDManager.gcdMain {
+                    self.webServer!.stop()
+                }
+            }
+        }
+    }
 
     init(user:PTChatUser) {
         super.init(nibName: nil, bundle: nil)
@@ -561,6 +595,12 @@ class PTSettingListViewController: PTChatBaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        NotificationCenter.default.addObserver(self, selector: #selector(self.reloadCellData), name: NSNotification.Name(nRefreshSetting), object: nil)
+        
+        if AppDelegate.appDelegate()!.appConfig.canUseStableDiffusionModel() {
+            FileManager.pt.createFolder(folderPath: uploadFilePath)
+        }
+                
         if self.user.senderId == PTChatData.share.bot.senderId {
             self.zx_navTitle = "ZolaAi " + PTLanguage.share.text(forKey: "about_Setting")
         } else if self.user.senderId == PTChatData.share.user.senderId {
@@ -590,6 +630,23 @@ class PTSettingListViewController: PTChatBaseViewController {
                 }
             }
         }
+        
+        XMNetWorkStatus.shared.netWork { status in
+            switch status {
+            case .wifi:
+                self.canOpenWebServer = true
+            default:
+                self.webServerIsRunning = false
+                self.canOpenWebServer = false
+                self.webServer?.stop()
+                self.showDetail()
+            }
+        }
+    }
+    
+    func reloadCellData() {
+        self.downloadInfo = AppDelegate.appDelegate()!.appConfig.getDownloadInfomation()
+        self.showDetail()
     }
     
     func showDetail() {
@@ -700,6 +757,34 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                 cell.dataContent.valueSwitch.isOn = AppDelegate.appDelegate()!.appConfig.useCustomDomain
                 cell.dataContent.valueSwitch.addSwitchAction { sender in
                     AppDelegate.appDelegate()?.appConfig.useCustomDomain = sender.isOn
+                }
+            } else if itemRow.title == PTLanguage.share.text(forKey: "about_Local_upload") {
+                cell.dataContent.valueSwitch.isOn = self.webServerIsRunning
+                cell.dataContent.valueSwitch.addSwitchAction { sender in
+                    if self.canOpenWebServer {
+                        self.webServerIsRunning = sender.isOn
+                        if sender.isOn {
+                            self.webServer = GCDWebUploader(uploadDirectory: uploadFilePath)
+                            self.webServer!.delegate = self
+                            self.webServer!.allowHiddenItems = false
+                            self.webServer.run { server in
+                                if self.webServer!.start() {
+                                    let ipString = self.webServer!.serverURL!.absoluteString
+                                    let msg = String(format: PTLanguage.share.text(forKey: "alert_Local_wifi"), ipString)
+                                    UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: msg,msgColor: .gobalTextColor,cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"))
+                                }
+                            }
+                        } else {
+                            PTGCDManager.gcdBackground {
+                                PTGCDManager.gcdMain {
+                                    self.webServer!.stop()
+                                }
+                            }
+                        }
+                    } else {
+                        cell.dataContent.valueSwitch.isOn = false
+                        PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Plz_connect_wifi"))
+                    }
                 }
             }
             
@@ -986,15 +1071,15 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                 
             } moreBtn: { index, title in
                 PTGCDManager.gcdMain {
-                    SwiftSpinner.show("正在重置設定")
+                    SwiftSpinner.show(PTLanguage.share.text(forKey: "about_Reset_ing"))
                     AppDelegate.appDelegate()!.appConfig.mobileDataReset(delegate:self) {
-                        SwiftSpinner.show("清空聊天記錄中")
+                        SwiftSpinner.show(PTLanguage.share.text(forKey: "about_Reset_chat"))
                     } resetChat: {
-                        SwiftSpinner.show("刪除圖片緩存中")
+                        SwiftSpinner.show(PTLanguage.share.text(forKey: "about_Reset_photo"))
                     } resetVoiceFile: {
-                        SwiftSpinner.show("刪除語音緩存中")
+                        SwiftSpinner.show(PTLanguage.share.text(forKey: "about_Reset_voice"))
                     } resetImage: {
-                        SwiftSpinner.show("完成!")
+                        SwiftSpinner.show(PTLanguage.share.text(forKey: "about_Reset_done"))
 
                         PTGCDManager.gcdAfter(time: 1) {
                             SwiftSpinner.hide() {
@@ -1010,6 +1095,9 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
         } else if itemRow.title == PTLanguage.share.text(forKey: "about_Help") {
             let vc = PTHelpViewController()
             self.navigationController?.pushViewController(vc, animated: true)
+        } else if itemRow.title == PTLanguage.share.text(forKey: "about_Local_model") {
+            let vc = PTLocalFileViewController()
+            self.navigationController?.pushViewController(vc)
         }
     }
 }
@@ -1060,5 +1148,23 @@ extension PTSettingListViewController {
         let layout = PTChatPanelLayout()
         layout.viewHeight = CGFloat.kTabbarSaveAreaHeight + CGFloat.ScaleW(w: 44) + CGFloat.ScaleW(w: 10) + CGFloat.ScaleW(w: 44) * 3 + CGFloat.ScaleW(w: 34) + CGFloat.ScaleW(w: 10) + CGFloat.ScaleW(w: 24) + CGFloat.ScaleW(w: 13)
         return layout
+    }
+}
+
+extension PTSettingListViewController:GCDWebUploaderDelegate {
+    func webUploader(_ uploader: GCDWebUploader, didUploadFileAtPath path: String) {
+        PTNSLogConsole("[UPLOAD] \(path)")
+    }
+    
+    func webUploader(_ uploader: GCDWebUploader, didMoveItemFromPath fromPath: String, toPath: String) {
+        PTNSLogConsole("[MOVE] \(fromPath) -> \(toPath)")
+    }
+    
+    func webUploader(_ uploader: GCDWebUploader, didDeleteItemAtPath path: String) {
+        PTNSLogConsole("[DELETE] \(path)")
+    }
+    
+    func webUploader(_ uploader: GCDWebUploader, didCreateDirectoryAtPath path: String) {
+        PTNSLogConsole("[CREATE] \(path)")
     }
 }

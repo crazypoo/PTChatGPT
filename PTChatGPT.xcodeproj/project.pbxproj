@@ -28,6 +28,9 @@
 		5514B39C29BB127F00890161 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5514B39E29BB127F00890161 /* Localizable.strings */; };
 		5520905929C3587C009B30A1 /* PTBaseMaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5520905829C3587C009B30A1 /* PTBaseMaskView.swift */; };
 		5520905B29C35903009B30A1 /* PTVoiceActionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5520905A29C35903009B30A1 /* PTVoiceActionView.swift */; };
+		5526D05729E41D9D00585EC8 /* PTLocalFileModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5526D05229E41D9D00585EC8 /* PTLocalFileModel.swift */; };
+		5526D05829E41D9D00585EC8 /* PTLocalFileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5526D05429E41D9D00585EC8 /* PTLocalFileViewController.swift */; };
+		5526D05929E41D9D00585EC8 /* PTLocalFileCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5526D05629E41D9D00585EC8 /* PTLocalFileCell.swift */; };
 		55278F3229BB7BF100615B0D /* PTAISmartCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55278F3129BB7BF100615B0D /* PTAISmartCell.swift */; };
 		552A609629D7EACF00239210 /* OSSSpeechKit in Frameworks */ = {isa = PBXBuildFile; productRef = 552A609529D7EACF00239210 /* OSSSpeechKit */; };
 		552A609829D7F0E200239210 /* PTChatApiFunction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552A609729D7F0E200239210 /* PTChatApiFunction.swift */; };
@@ -125,6 +128,9 @@
 		5514B3AF29BB139800890161 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
 		5520905829C3587C009B30A1 /* PTBaseMaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTBaseMaskView.swift; sourceTree = "<group>"; };
 		5520905A29C35903009B30A1 /* PTVoiceActionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTVoiceActionView.swift; sourceTree = "<group>"; };
+		5526D05229E41D9D00585EC8 /* PTLocalFileModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PTLocalFileModel.swift; sourceTree = "<group>"; };
+		5526D05429E41D9D00585EC8 /* PTLocalFileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PTLocalFileViewController.swift; sourceTree = "<group>"; };
+		5526D05629E41D9D00585EC8 /* PTLocalFileCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PTLocalFileCell.swift; sourceTree = "<group>"; };
 		55278F3129BB7BF100615B0D /* PTAISmartCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTAISmartCell.swift; sourceTree = "<group>"; };
 		552A609729D7F0E200239210 /* PTChatApiFunction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTChatApiFunction.swift; sourceTree = "<group>"; };
 		552A609C29D819F500239210 /* PTAIModerationdModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTAIModerationdModel.swift; sourceTree = "<group>"; };
@@ -280,6 +286,40 @@
 			path = Tools;
 			sourceTree = "<group>";
 		};
+		5526D05029E41D9D00585EC8 /* LocalFile */ = {
+			isa = PBXGroup;
+			children = (
+				5526D05129E41D9D00585EC8 /* Model */,
+				5526D05329E41D9D00585EC8 /* ViewController */,
+				5526D05529E41D9D00585EC8 /* Views */,
+			);
+			path = LocalFile;
+			sourceTree = "<group>";
+		};
+		5526D05129E41D9D00585EC8 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				5526D05229E41D9D00585EC8 /* PTLocalFileModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		5526D05329E41D9D00585EC8 /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				5526D05429E41D9D00585EC8 /* PTLocalFileViewController.swift */,
+			);
+			path = ViewController;
+			sourceTree = "<group>";
+		};
+		5526D05529E41D9D00585EC8 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				5526D05629E41D9D00585EC8 /* PTLocalFileCell.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		552A609929D819A100239210 /* API */ = {
 			isa = PBXGroup;
 			children = (
@@ -369,20 +409,21 @@
 			isa = PBXGroup;
 			children = (
 				55DF542629E06E0B0077F8F7 /* AiDraw */,
-				5554FE8D29DFE94E00C29F8A /* CostHistory */,
 				552A609929D819A100239210 /* API */,
-				55F7A8BD29D6AC2D00CF6272 /* iPadControl */,
-				55D752F429D1FCED005CE46B /* Resource */,
 				55A5D71729B1D23D00DCA096 /* AppDelegate.swift */,
 				55A5D72029B1D23E00DCA096 /* Assets.xcassets */,
 				55A5D7FF29B1EFA000DCA096 /* Base */,
 				55B2744F29CE23EA00E05736 /* CartoonGanModel */,
 				55A5D7F429B1DFCD00DCA096 /* Chat */,
+				5554FE8D29DFE94E00C29F8A /* CostHistory */,
 				55A5D72529B1D23E00DCA096 /* Info.plist */,
+				55F7A8BD29D6AC2D00CF6272 /* iPadControl */,
 				55A5D72229B1D23E00DCA096 /* LaunchScreen.storyboard */,
+				5526D05029E41D9D00585EC8 /* LocalFile */,
 				5514B39E29BB127F00890161 /* Localizable.strings */,
 				55A5D71D29B1D23D00DCA096 /* Main.storyboard */,
 				55C6BCCE29C4602B00A6B668 /* PTChatGPT.entitlements */,
+				55D752F429D1FCED005CE46B /* Resource */,
 				55A5D80329B2429300DCA096 /* SettingInfo */,
 				5514B38529BAE76600890161 /* Tools */,
 			);
@@ -699,6 +740,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5526D05829E41D9D00585EC8 /* PTLocalFileViewController.swift in Sources */,
 				55ADCD9229D6BB500092F3D4 /* PTChatMasterControl.swift in Sources */,
 				5509372D29DD1C82007FA668 /* PTClampedProperyWrapper.swift in Sources */,
 				552B41C329D1358300065892 /* PTApp3PartyKey.swift in Sources */,
@@ -716,6 +758,7 @@
 				55BD5B8A29C6AE2C0023458A /* PTSegHistoryModel.swift in Sources */,
 				55796A2429BD6E2A00574DD4 /* PTSoundVisualizerView.swift in Sources */,
 				55BD5B9F29C850AC0023458A /* PTDarkSmartFooter.swift in Sources */,
+				5526D05929E41D9D00585EC8 /* PTLocalFileCell.swift in Sources */,
 				55BD5BAF29CA13BA0023458A /* PTPopoverFooter.swift in Sources */,
 				55BD5BA129C85F9E0023458A /* PTDarkFollowSystemFooter.swift in Sources */,
 				552B41C129D0A25C00065892 /* PTHelpViewController.swift in Sources */,
@@ -761,6 +804,7 @@
 				5514B37829B9F87C00890161 /* PTSettingListViewController.swift in Sources */,
 				55B2746329CE24DA00E05736 /* Data+Array+Convert.swift in Sources */,
 				552A60A629D85EF100239210 /* PTImageGeneration.swift in Sources */,
+				5526D05729E41D9D00585EC8 /* PTLocalFileModel.swift in Sources */,
 				55DF64A429E07DE40077F8F7 /* PTDiffusionViewController.swift in Sources */,
 				5514B37629B9F5AC00890161 /* PTAppConfig.swift in Sources */,
 				5514B37129B9CBFD00890161 /* PTChatCustomCell.swift in Sources */,

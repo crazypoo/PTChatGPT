@@ -1,317 +1,172 @@
 "chat_Send" = "Enviar";
-
 "chat_Read" = "Leer";
-
 "chat_User" = "Usuario";
-
 "about_Main_Theme" = "Tema";
-
 "about_Main_Speech" = "Discurso";
-
 "about_Main_Other" = "Otro";
-
 "about_Setting" = "Contexto";
-
 "about_Color" = "Colorido";
-
 "about_Language" = "Idioma";
-
 "about_SavedChat" = "Preguntas y respuestas seleccionadas";
-
 "about_DeleteAllChat" = "Eliminar todos los registros de diálogo";
-
 "about_APIAIType" = "Tipo AI";
-
 "about_APIAIToken" = "AI token";
-
 "about_GetAPIAIToken" = "Obtener el token de la API de AI";
-
 "about_Forum" = "Foro";
-
 "about_Rate" = "Ritmo";
-
 "about_Share" = "Parte";
-
 "about_Version" = "Variante";
-
 "color_Setting" = "Configuración de color";
-
 "button_Cancel" = "Cancelar";
-
 "button_Confirm" = "Confirmar";
-
 "theme_Title" = "Configuración del tema";
-
 "theme_MT" = "Configuración manual";
-
 "theme_Black" = "Charm Black";
-
 "theme_FollowSystem" = "Seguir el sistema";
-
 "theme_Night" = "Tema nocturno";
-
 "theme_Smart" = "Inteligente";
-
 "theme_SmartInfo" = "Después de entrar en el período establecido, la aplicación cambiará automáticamente al tema nocturno de Charm Black, y cambiará al tema original cuando termine la hora del tema";
-
 "theme_SystemInfo" = "Cuando se habilita, seguirá el sistema para abrir o cerrar el tema nocturno";
-
 "theme_Time" = "Timpo del tema";
-
 "theme_White" = "Simple White";
-
 "selected_List" = "Lista de preguntas y respuestas seleccionada";
-
 "cell_Delete" = "Eliminar";
-
 "cell_Delete_one_cell" = "¿Confirma la eliminación de esta información?";
-
 "alert_Info" = "Símbolo del sistema";
-
 "alert_Delete_done" = "Eliminado con éxito";
-
 "chat_Delete_all_chat" = "¿Confirmas la eliminación de todos los registros de diálogo?";
-
 "alert_Input_token" = "Por favor, introduzca el token API";
-
 "alert_Token_error" = "Token incorrecta";
-
 "chat_Thinking" = "Pensante......";
-
 "button_Long_tap" = "Mantén pulsado para comenzar a grabar";
-
 "button_Long_tap_end" = "Soltar y terminar";
-
 "button_Long_tap_cancel" = "Cancelar la grabación";
-
 "button_Long_tap_release" = "Enviar voz";
-
 "alert_Save_Q&A" = "¿Quieres guardar el resultado de este problema y el problema correspondiente?";
-
 "alert_Error_same" = "El contenido duplicado no se puede guardar.";
-
 "alert_Save_success" = "Guardado con éxito";
-
 "chat_Edit" = "Por favor, introduzca el contenido modificado para esto";
-
 "chat_Sending" = "Enviando......";
-
 "first_Title" = "Obtener la clave API de OpenAI";
-
 "first_Info_title" = "Para usar la aplicación, debe generar un token para acceder a la API de OpenAI";
-
 "first_Info_info" = "Esta aplicación no fue hecha por OpeanAI. Este es un proyecto independiente y completamente gratuito que se conecta a la API pública de OpenAI. La aplicación no está afiliada a OpenAI de ninguna manera, y si a OpenAI le gustaría solicitar el cierre del proyecto, podrían ponerse en contacto conmigo";
-
 "first_Paste" = "Pega tu token";
-
 "first_Go_get_api_token" = "Obtener token API";
-
 "first_Disclaimer" = "Negación de responsabilidad";
-
 "first_Start" = "Empieza a usar";
-
 "first_Disclaimer_info" = "Al continuar, aceptas haber leído el descargo de responsabilidad";
-
 "first_Select_speech_language" = "Por favor, seleccione el idioma nativo de su entrada de voz, chino predeterminado (simplificado)";
-
 "disclaimer_App" = "Descargo de responsabilidad de la aplicación";
-
 "disclaimer_External" = "Descargo de responsabilidad de enlaces externos";
-
 "disclaimer_App_Info" = "La información proporcionada por Chat Zola en nuestra aplicación móvil es solo para fines informativos generales. Toda la información en nuestra aplicación móvil se proporciona de buena fe, sin embargo, no hacemos ninguna representación o garantía de ningún tipo, expresa o implícita, con respecto a la exactitud, adecuación, validez, fiabilidad, disponibilidad o integridad de cualquier información en nuestra aplicación móvil. BAJO NINGUNA CIRCUNSTANCIA TENDREMOS NINGUNA RESPONSABILIDAD ANTE USTED POR CUALQUIER PÉRDIDA O DAÑO DE CUALQUIER TIPO INCURRIDO COMO RESULTADO DEL USO DE NUESTRA APLICACIÓN MÓVIL O LA CONFIANZA EN CUALQUIER INFORMACIÓN PROPORCIONADA EN NUESTRA APLICACIÓN MÓVIL. SU USO DE NUESTRA APLICACIÓN MÓVIL Y SU CONFIANZA EN CUALQUIER INFORMACIÓN DE NUESTRA APLICACIÓN MÓVIL ES BAJO SU PROPIO RIESGO.";
-
 "disclaimer_External_info" = "Nuestra aplicación móvil puede contener (o puede ser enviado a través de nuestra aplicación móvil) enlaces a otros sitios web o contenido que pertenezca o que se origine de terceros o enlaces a sitios web y características en banners u otra publicidad. Dichos enlaces externos no son investigados, monitoreados o verificados por nuestra exactitud, adecuación, validez, fiabilidad, disponibilidad o integridad. NO GARANTIZAMOS, RESPALDAMOS, GARANTIZAMOS NI ASUMIMOS LA RESPONSABILIDAD POR LA EXACTITUD O FIABILIDAD DE CUALQUIER INFORMACIÓN OFRECIDA POR SITIOS WEB DE TERCEROS ENLAZADOS A TRAVÉS DEL SITIO O CUALQUIER SITIO WEB O FUNCIÓN ENLAZADA EN CUALQUIER BANNER U OTRA PUBLICIDAD. NO SEREMOS PARTE NI DE NINGUNA MANERA SEREMOS RESPONSABLES DE SUPERVISAR CUALQUIER TRANSACCIÓN ENTRE USTED Y LOS PROVEEDORES";
-
 "picker_And" = "~";
-
 "chat_Select" = "No hay registro de selección por el momento. ¡Haz clic en mí para hacer preguntas!";
-
 "color_Bubble_user" = "Color de la burbuja del usuario";
-
 "color_Bubble_bot" = "Color de la burbuja del bot";
-
 "color_Text_bot" = "Color del texto del bot";
-
 "color_Text_user" = "Color del texto del usuario";
-
 "about_AI_smart" = "AI inteligente";
-
 "about_User_icon" = "Icono de usuario";
-
 "alert_No_photo_library" = "Debido a razones del sistema, no se puede acceder al álbum.";
-
 "alert_Go_to_photo_setting" = "[Ir : Configuración - Privacidad y seguridad - Fotos - %@] Permitir que las aplicaciones accedan";
-
 "about_Delete_all_voice_file" = "Eliminar todo el archivo de voz";
-
 "alert_Can_not_send_voice" = "No está autorizado a utilizar la función de entrada de voz.";
-
 "about_Draw_image_size" = "Dibuja el tamaño de la imagen";
-
 "size_Wrong" = "Hay un error en el tamaño. Por favor, compruébalo e inténtalo de nuevo.Max 1024 X 1024";
-
 "chat_Delete_all_voice_file" = "¿Estás seguro de eliminar todos los archivos de voz?";
-
 "chat_Empty" = "No hay registro de diálogo por el momento. Haga clic aquí para comenzar.";
-
 "color_Wave" = "Color de onda";
-
 "chat_Copy" = "Couplicate";
-
 "chat_Edit_question" = "Contenido corregido";
-
 "chat_Speak_text" = "Convertirse en reproducción de voz";
-
 "chat_Favourite" = "Seleccionado";
-
 "alert_Option_title" = "Opciones";
-
 "alert_Select_option" = "Seleccione las funciones que necesita.";
-
 "alert_Copy_done" = "Replicación exitosa";
-
 "voice_Cancel_send" = "Cancelar envío";
-
 "voice_Change_to_text" = "Envíalo a un mensaje de texto";
-
 "alert_Tag_set" = "Introduzca la etiqueta que desea crear.";
-
 "alert_Input_error" = "El contenido de entrada es incorrecto.";
-
 "alert_Delete_error" = "Error en la eliminación";
-
 "chat_Resend" = "Reenviar";
-
 "alert_Save_error" = "No se pudo guardar";
-
 "alert_AI_Set" = "Configuración de la persona de IA";
-
 "alert_Add_tag" = "Añadir etiqueta";
-
 "alert_Delete_current_history" = "Borrar el registro actual";
-
 "alert_Ask_clean_current_chat_record" = "¿Quieres borrar el registro actual?";
-
 "appUseInfo_Title_view" = "Haga clic aquí para cambiar el tema de chat que estableció. Haga clic para expandir y deslice el dedo hacia la izquierda para eliminar una etiqueta determinada.";
-
 "appUseInfo_Option" = "Haga clic aquí para obtener más funciones.";
-
 "appUseInfo_Setting" = "Haga clic aquí para configurar más configuraciones para la aplicación.";
-
 "appUseInfo_Next" = "Siguiente";
-
 "appUseInfo_Finish" = "Conclusión";
-
 "alert_Time_set_error" = "La hora de inicio debe ser menor que la hora de finalización";
-
 "chat_Send_error" = "No se pudo enviar";
-
 "alert_Edit_ai" = "Cambiar el contenido";
-
 "alert_Edit_error" = "Error en la edición";
-
 "chat_Get_image_count" = "Obtén el número de fotos";
-
 "chat_Edit_message" = "Modificación:";
-
 "chat_Looking_for" = "Buscando algo similar";
-
 "chat_Paint_image" = "Crear imágenes";
-
 "chat_Check_sentence" = "Hay contenido inapropiado, inapropiado o sensible en los datos del artículo, como maldiciones, spam, discurso de odio, contenido pornográfico, etc.";
-
 "chat_TF" = "Seleccione el modo de TensorFlowLite / Stable Diffusionpara generar imágenes";
-
 "chat_TF_Cartoon" = "Dibujos animados";
-
 "chat_TF_Oil_painting" = "Pintura al óleo";
-
 "draw_Reference" = "Referencia de pintura al óleo";
-
 "setting_Tool" = "Herramienta";
-
 "setting_Reset" = "Restablecer todos los ajustes";
-
 "alert_Reset_all_setting" = "¿Estás seguro de restablecer todos los ajustes?";
-
 "about_Help" = "Ayuda";
-
 "help_Base" = "Fundamentos";
-
 "help_Other" = "Otras etiquetas";
-
 "help_And" = "Oregón";
-
 "alert_TF" = "Le invitamos sinceramente a participar en nuestra versión de TestFlight para obtener nuevas funciones más rápido.";
-
 "bot_Suggesstion" = "Configuración de la persona de IA";
-
 "bot_Suggesstion_import_msg" = "¿Quieres presentar el entorno?";
-
 "bot_Suggesstion_import" = "Importación";
-
 "suggesstion_AI_draw" = "La IA genera imágenes de pintura al óleo de acuerdo con el color correspondiente/genera imágenes de estilo de animación directamente de acuerdo con las imágenes/utiliza la difusión estable para generar imágenes de acuerdo con las necesidades";
-
 "suggesstion_Sentence_switch" = "Interruptor de filtro de declaración sensible";
-
 "suggesstion_PS" = "Modifique la imagen de acuerdo con la imagen original, la imagen de la máscara y los requisitos de PS";
-
 "suggesstion_Like" = "Encuentra imágenes similares según las imágenes";
-
 "suggesstion_Content_draw" = "La IA dibuja imágenes según las necesidades";
-
 "suggesstion_Text_draw" = "Dibuja imágenes de acuerdo con la descripción del texto.";
-
 "alert_delete_all_tag" = "¿Quieres eliminar todas las etiquetas?";
-
 "alert_cannot_delete_tag" = "No hay otras etiquetas que eliminar por el momento.";
-
 "appUseInfo_AddTag" = "Haga clic aquí para añadir etiquetas.";
-
 "appUseInfo_Clean_chat" = "Haga clic aquí para borrar el registro de chat actual.";
-
 "appUseInfo_Deleta_all_tag" = "Haga clic aquí para eliminar todas las etiquetas.";
-
 "appUseInfo_Tags" = "Aquí está la lista de temas de etiquetas. Puedes tener la opción de editar y eliminar cuando deslices a la izquierda.";
-
 "appUseInfo_Icon" = "Haga clic aquí para cambiar el avatar del usuario.";
-
 "alert_Name_edit_title" = "Editar nombre de usuario";
-
 "alert_Name_edit_placeholder" = "Introduce tu nombre de usuario";
-
 "appUseInfo_User_name" = "Haga clic aquí para editar su nombre de usuario.";
-
 "about_User_name" = "Nombre de usuario";
-
 "about_AI_name" = "Nombre de la AI";
-
 "alert_AI_name_edit" = "Por favor, introduzca el nombre de AI";
-
 "about_Use_custom_domain_switch" = "Servidor personalizado";
-
 "about_Use_custom_domain_address" = "Dirección del servidor";
-
 "alert_Enter_domain" = "Introduzca la dirección del servidor";
-
 "alert_Domain_error" = "Por favor, introduzca la dirección de servidor correcta";
-
 "cost_Title" = "Registro de consumo de tokens";
-
 "cost_Empty" = "No hay ningún registro de consumo de tokens por el momento.";
-
 "diffusion_Prompt" = "Por favor, introduzca los requisitos principales";
-
 "diffusion_Attention" = "Por favor, introduzca a qué necesita atención de AI.";
-
 "diffusion_Accuracy" = "Finura";
-
 "diffusion_Draw_step" = "Pasos de pintura";
-
 "diffusion_Draw" = "Generar imágenes";
-
 "diffusion_Init" = "El pintor se está inicializando...";
-
 "download_Start" = "No salga de la página actual durante el proceso de descarga para evitar errores en la descarga.";
-
 "download_Unzip" = "Descomprimir...";
+"local_File_title" = "Cargar la navegación de documentos";
+"local_Empty" = "No hay ningún documento de carga por el momento.";
+"about_Local_network" = "Red local";
+"about_Local_upload" = "Carga de documentos locales";
+"about_Local_model" = "Gestión de modelos";
+"about_Reset_ing" = "Restablecer la configuración";
+"about_Reset_chat" = "Borrar el registro del chat";
+"about_Reset_photo" = "Eliminar la imagen en almacenamiento lento";
+"about_Reset_voice" = "Eliminar la caché de voz";
+"about_Reset_done" = "¡Hecho!";
+"alert_Local_wifi" = "Por favor, introduzca la siguiente URL en el navegador del ordenador\n\(%@)\n Mantenga el ordenador y el teléfono móvil en el mismo WIFI\n No salga de esta página durante el proceso de transmisión.";
+"alert_Plz_connect_wifi" = "Por favor, conéctese primero a WIFI";
+"alert_No_diffusion_model" = "Por favor, descargue primero el modelo en la configuración de la aplicación.";

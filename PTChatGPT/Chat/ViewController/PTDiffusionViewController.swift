@@ -23,7 +23,16 @@ class PTDiffusionViewController: PTChatBaseViewController {
     
     var diffusion : PTSableDiffusion?
     
-    var modelName:String = "bins1_4"
+    var modelName:String {
+        get {
+            if self.getModel().count > 0 {
+                return self.getModel()[0][1]
+            }
+            return ""
+        } set {
+            let _ = newValue
+        }
+    }
     
     lazy var showImageView : UIButton = {
         let view = UIButton(type: .custom)
@@ -225,7 +234,7 @@ class PTDiffusionViewController: PTChatBaseViewController {
                     }
                 }
             } else {
-                PTBaseViewController.gobal_drop(title: "请先App的设置内下载模型")
+                PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_No_diffusion_model"))
             }
         }
         view.isSelected = false
@@ -295,7 +304,7 @@ class PTDiffusionViewController: PTChatBaseViewController {
                     
                 }
             } else {
-                PTBaseViewController.gobal_drop(title: "请先App的设置内下载模型")
+                PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_No_diffusion_model"))
             }
         }
 //        let photoImage = UIButton(type: .custom)
@@ -321,29 +330,34 @@ class PTDiffusionViewController: PTChatBaseViewController {
             make.bottom.equalToSuperview().inset(5)
         }
         
-        self.view.addSubviews([self.showImageView,self.promptText,self.negativeText,self.accuracySlider,self.accuracyTitle,self.createStepSlider,self.stepTitle,self.createButton,self.progress])
-        self.showImageView.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(CGFloat.kNavBarHeight_Total + 10)
-            make.left.right.equalToSuperview().inset(5)
-            make.height.equalTo(self.showImageView.snp.width)
+        self.view.addSubviews([self.createButton,self.progress,self.showImageView,self.promptText,self.negativeText,self.accuracySlider,self.accuracyTitle,self.createStepSlider,self.stepTitle])
+        self.createButton.snp.makeConstraints { make in
+            make.right.equalToSuperview().inset(PTAppBaseConfig.share.defaultViewSpace)
+            make.left.equalToSuperview().inset(64)
+            make.bottom.equalToSuperview().inset(CGFloat.kTabbarSaveAreaHeight + 10)
+            make.height.equalTo(44)
         }
-        self.showImageView.viewCorner(borderWidth: 1,borderColor: .lightGray)
-        
-        self.promptText.snp.makeConstraints { make in
-            make.top.equalTo(self.showImageView.snp.bottom).offset(10)
-            make.left.right.equalTo(self.showImageView)
-            make.height.equalTo(54)
-        }
-        
-        self.negativeText.snp.makeConstraints { make in
-            make.left.right.height.equalTo(self.promptText)
-            make.top.equalTo(self.promptText.snp.bottom).offset(10)
+
+        self.progress.snp.makeConstraints { make in
+            make.left.equalToSuperview().inset(10)
+            make.right.equalTo(self.createButton.snp.left).offset(-10)
+            make.top.bottom.equalTo(self.createButton)
         }
         
+        self.createStepSlider.snp.makeConstraints { make in
+            make.left.right.height.equalTo(self.accuracySlider)
+            make.bottom.equalTo(self.createButton.snp.top).offset(-10)
+        }
+        
+        self.stepTitle.snp.makeConstraints { make in
+            make.left.right.equalTo(self.accuracyTitle)
+            make.top.bottom.equalTo(self.createStepSlider)
+        }
+
         self.accuracySlider.snp.makeConstraints { make in
             make.right.equalToSuperview().inset(30)
             make.left.equalToSuperview().inset(100)
-            make.top.equalTo(self.negativeText.snp.bottom).offset(10)
+            make.bottom.equalTo(self.createStepSlider.snp.top).offset(-10)
             make.height.equalTo(64)
         }
         
@@ -352,38 +366,28 @@ class PTDiffusionViewController: PTChatBaseViewController {
             make.right.equalTo(self.accuracySlider.snp.left)
             make.top.bottom.equalTo(self.accuracySlider)
         }
-        
-        self.createStepSlider.snp.makeConstraints { make in
-            make.left.right.height.equalTo(self.accuracySlider)
-            make.top.equalTo(self.accuracySlider.snp.bottom).offset(10)
-        }
-        
-        self.stepTitle.snp.makeConstraints { make in
-            make.left.right.equalTo(self.accuracyTitle)
-            make.top.bottom.equalTo(self.createStepSlider)
-        }
-        
-        self.createButton.snp.makeConstraints { make in
-            make.right.equalToSuperview().inset(PTAppBaseConfig.share.defaultViewSpace)
-            make.left.equalToSuperview().inset(0)
-            make.top.equalTo(self.createStepSlider.snp.bottom).offset(10)
-            make.bottom.equalToSuperview().inset(CGFloat.kTabbarSaveAreaHeight + 10)
+
+        self.negativeText.snp.makeConstraints { make in
+            make.left.right.height.equalTo(self.promptText)
+            make.bottom.equalTo(self.accuracySlider.snp.top).offset(-10)
         }
 
-        self.viewDidLayoutSubviews()
+        self.promptText.snp.makeConstraints { make in
+            make.bottom.equalTo(self.negativeText.snp.top).offset(-10)
+            make.left.right.equalTo(self.showImageView)
+            make.height.equalTo(54)
+        }
+                                
+        self.showImageView.snp.makeConstraints { make in
+            make.top.equalToSuperview().inset(CGFloat.kNavBarHeight_Total + 10)
+            make.left.right.equalToSuperview().inset(5)
+            make.bottom.equalTo(self.promptText.snp.top).offset(-10)
+        }
+        self.showImageView.viewCorner(borderWidth: 1,borderColor: .lightGray)
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        self.createButton.snp.updateConstraints { make in
-            make.left.equalToSuperview().inset(self.createButton.frame.height + 20)
-        }
-        
-        self.progress.snp.makeConstraints { make in
-            make.left.equalToSuperview().inset(10)
-            make.right.equalTo(self.createButton.snp.left).offset(-10)
-            make.top.bottom.equalTo(self.createButton)
-        }
     }
     
     func getModel() -> [[String]] {

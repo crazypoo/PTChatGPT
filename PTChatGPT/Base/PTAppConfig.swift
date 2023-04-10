@@ -90,6 +90,8 @@ let userChatMessageFilePath = FileManager.pt.LibraryDirectory() + "/UserChatMess
 //MARK: Token消费记录保存的本地地址
 let userChatCostFilePath = FileManager.pt.LibraryDirectory() + "/UserChatCostFile"
 
+let uploadFilePath = FileManager.pt.LibraryDirectory() + "/UploadFile"
+
 let iPadSplitMainControl:CGFloat = 300
 
 extension UIColor {
@@ -1573,7 +1575,7 @@ class PTAppConfig {
     //MARK: 是否能使用AI
     func canUseStableDiffusionModel() -> Bool {
         if UIApplication.applicationEnvironment() == .appStore || UIApplication.applicationEnvironment() == .testFlight {
-            if Gobal_device_info.isOneOf([.iPhone13Pro,.iPhone13ProMax,.iPhone14Pro,.iPhone14ProMax, .iPadPro12Inch2, .iPadPro10Inch, .iPadPro11Inch, .iPadPro12Inch3, .iPadPro11Inch2, .iPadPro12Inch4, .iPadPro11Inch3, .iPadPro12Inch5, .iPadPro11Inch4, .iPadPro12Inch6,.iPadAir5,.iPadPro12Inch]) || Gobal_device_info.isSimulator {
+            if Gobal_device_info.isOneOf([.iPhone13Pro,.iPhone13ProMax,.iPhone14Pro,.iPhone14ProMax, .iPadPro10Inch, .iPadPro11Inch, .iPadPro12Inch3, .iPadPro12Inch4, .iPadPro11Inch3, .iPadPro12Inch5, .iPadPro11Inch4, .iPadPro12Inch6,.iPadAir5,.iPadPro12Inch]) || Gobal_device_info.isSimulator {
                 return true
             } else {
                 return false

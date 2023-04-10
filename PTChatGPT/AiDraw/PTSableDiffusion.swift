@@ -18,7 +18,7 @@ func makeGraph(synchonize: Bool) -> MPSGraph {
 
 func loadConstant(graph: MPSGraph, name: String, shape: [NSNumber], fp32: Bool = false,modelName:String) -> MPSGraphTensor {
     let numels = shape.map({$0.intValue}).reduce(1, *)
-    let filePath = FileManager.pt.TmpDirectory().appendingPathComponent(modelName).appendingPathComponent("\(name + (fp32 ? "_fp32" : "")).bin")
+    let filePath = uploadFilePath.appendingPathComponent(modelName).appendingPathComponent("\(name + (fp32 ? "_fp32" : "")).bin")
     let fileUrl: URL = URL(fileURLWithPath: filePath)
     let data: Data = try! Data(contentsOf: fileUrl, options: Data.ReadingOptions.alwaysMapped)
     let expectedCount = numels * (fp32 ? 4 : 2)
@@ -504,7 +504,7 @@ class BPETokenizer {
         }
         vocabList += vocabList.map({$0 + "</w>"})
         
-        let filePath = FileManager.pt.TmpDirectory().appendingPathComponent(modelName).appendingPathComponent("bpe_simple_vocab_16e6.txt")
+        let filePath = uploadFilePath.appendingPathComponent(modelName).appendingPathComponent("bpe_simple_vocab_16e6.txt")
         let vocabFile = try! String(contentsOf: URL(fileURLWithPath: filePath))
         for (i, m) in vocabFile.split(separator: "\n")[1..<48_895].enumerated() {
             ranks[String(m)] = i

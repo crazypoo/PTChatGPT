@@ -72,7 +72,7 @@ class PTStableDiffusionModelCell: PTBaseNormalCell {
                     PTGCDManager.gcdBackground {
                         PTGCDManager.gcdMain {
                             self.progressInfoLabel.text = PTLanguage.share.text(forKey: "download_Unzip")
-                            SSZipArchive.unzipFile(atPath: tempFile, toDestination: FileManager.pt.TmpDirectory(), overwrite: false, password: nil) { entry, zipInfo, entryNumber, total in
+                            SSZipArchive.unzipFile(atPath: tempFile, toDestination: uploadFilePath, overwrite: false, password: nil) { entry, zipInfo, entryNumber, total in
                                 PTGCDManager.gcdBackground {
                                     PTGCDManager.gcdMain {
                                         self.progressView.progress = Float(entryNumber/total)
@@ -113,7 +113,7 @@ class PTStableDiffusionModelCell: PTBaseNormalCell {
                                 try data.write(to: URL(fileURLWithPath: tempFile),options: .atomic)
                                 PTNSLogConsole("文件写入成功")
                                 self.progressInfoLabel.text = PTLanguage.share.text(forKey: "download_Unzip")
-                                SSZipArchive.unzipFile(atPath: tempFile, toDestination: FileManager.pt.TmpDirectory(), overwrite: false, password: nil) { entry, zipInfo, entryNumber, total in
+                                SSZipArchive.unzipFile(atPath: tempFile, toDestination: uploadFilePath, overwrite: false, password: nil) { entry, zipInfo, entryNumber, total in
                                     PTGCDManager.gcdBackground {
                                         PTGCDManager.gcdMain {
                                             self.progressView.progress = Float(entryNumber/total)
