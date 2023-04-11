@@ -26,7 +26,6 @@
 		5514B39529BB013000890161 /* DarkModePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B39129BB013000890161 /* DarkModePickerView.swift */; };
 		5514B39929BB024D00890161 /* HSNavControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B39829BB024D00890161 /* HSNavControl.swift */; };
 		5514B39C29BB127F00890161 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5514B39E29BB127F00890161 /* Localizable.strings */; };
-		5520905929C3587C009B30A1 /* PTBaseMaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5520905829C3587C009B30A1 /* PTBaseMaskView.swift */; };
 		5520905B29C35903009B30A1 /* PTVoiceActionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5520905A29C35903009B30A1 /* PTVoiceActionView.swift */; };
 		5526D05729E41D9D00585EC8 /* PTLocalFileModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5526D05229E41D9D00585EC8 /* PTLocalFileModel.swift */; };
 		5526D05829E41D9D00585EC8 /* PTLocalFileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5526D05429E41D9D00585EC8 /* PTLocalFileViewController.swift */; };
@@ -126,7 +125,6 @@
 		5514B3AD29BB139800890161 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Main.strings; sourceTree = "<group>"; };
 		5514B3AE29BB139800890161 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		5514B3AF29BB139800890161 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
-		5520905829C3587C009B30A1 /* PTBaseMaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTBaseMaskView.swift; sourceTree = "<group>"; };
 		5520905A29C35903009B30A1 /* PTVoiceActionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTVoiceActionView.swift; sourceTree = "<group>"; };
 		5526D05229E41D9D00585EC8 /* PTLocalFileModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PTLocalFileModel.swift; sourceTree = "<group>"; };
 		5526D05429E41D9D00585EC8 /* PTLocalFileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PTLocalFileViewController.swift; sourceTree = "<group>"; };
@@ -281,7 +279,6 @@
 			children = (
 				5514B38829BAE7E400890161 /* SwipeCellOption.swift */,
 				5514B38629BAE76D00890161 /* PTShareItem.swift */,
-				5520905829C3587C009B30A1 /* PTBaseMaskView.swift */,
 			);
 			path = Tools;
 			sourceTree = "<group>";
@@ -796,7 +793,6 @@
 				55796A2229BD6DCE00574DD4 /* PTSoundRecorder.swift in Sources */,
 				5512AB7C29B470310059D840 /* PTAudioPlayer.swift in Sources */,
 				55DF5C5129E06EB00077F8F7 /* PTSableDiffusion.swift in Sources */,
-				5520905929C3587C009B30A1 /* PTBaseMaskView.swift in Sources */,
 				55B69D9E29E2F53500468222 /* PTDownloadModelModel.swift in Sources */,
 				5514B37429B9D50D00890161 /* PTChatModel.swift in Sources */,
 				55B69D9C29E2B76800468222 /* PTStableDiffusionModelCell.swift in Sources */,

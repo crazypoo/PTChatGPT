@@ -29,6 +29,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let cloudStore = NSUbiquitousKeyValueStore.default
     let query = NSMetadataQuery()
 
+    private var maskView : PTDevMaskView?
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
                 
@@ -155,6 +157,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        PTGCDManager.gcdAfter(time: 10) {
 //            UIApplication.pt.changeAppIcon(with: "AppIcon1")
 //        }
+        self.createMaskView()
         return true
     }
         
@@ -224,6 +227,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return true
         }
         return false
+    }
+    
+    func createMaskView() {
+        #if DEBUG
+        let config = PTDevMaskConfig()
+        config.isMask = false
+        self.maskView = PTDevMaskView(config:config)
+        self.window?.addSubview(self.maskView!)
+        self.maskView!.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        
+        #endif
     }
 }
 
