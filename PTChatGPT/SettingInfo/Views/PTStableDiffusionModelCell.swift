@@ -37,7 +37,7 @@ class PTStableDiffusionModelCell: PTBaseNormalCell {
     
     lazy var lineView : UIView = {
         let view = UIView()
-        view.backgroundColor = .lightGray
+        view.backgroundColor = UIColor(hexString: "#E8E8E8")
         return view
     }()
     

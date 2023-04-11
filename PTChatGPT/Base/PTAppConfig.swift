@@ -1133,6 +1133,18 @@ class PTAppConfig {
     ///获取下载模型信息
     func getDownloadInfomation() -> [PTDownloadModelModel?] {
         if let models = [PTDownloadModelModel].deserialize(from: self.downloadInfomation) {
+            
+            if models.count > 0 {
+                for (index,value) in models.enumerated() {
+                    if !FileManager.pt.judgeFileOrFolderExists(filePath: uploadFilePath.appendingPathComponent(value!.folderName)) {
+                        models[index]?.loadFinish = false
+                    }
+                }
+                self.downloadInfomation = models.kj.JSONObjectArray()
+                if let newModels = [PTDownloadModelModel].deserialize(from: self.downloadInfomation) {
+                    return newModels
+                }
+            }
             return models
         } else {
             return [PTDownloadModelModel?]()
