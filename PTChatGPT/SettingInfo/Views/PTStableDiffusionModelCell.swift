@@ -69,33 +69,9 @@ class PTStableDiffusionModelCell: PTBaseNormalCell {
                 let tempFile = FileManager.pt.TmpDirectory().appendingPathComponent("\(self.cellModel!.folderName).zip")
                 
                 if FileManager.pt.judgeFileOrFolderExists(filePath: tempFile) {
-                    PTGCDManager.gcdBackground {
-                        PTGCDManager.gcdMain {
-                            self.progressInfoLabel.text = PTLanguage.share.text(forKey: "download_Unzip")
-                            SSZipArchive.unzipFile(atPath: tempFile, toDestination: uploadFilePath, overwrite: false, password: nil) { entry, zipInfo, entryNumber, total in
-                                PTGCDManager.gcdBackground {
-                                    PTGCDManager.gcdMain {
-                                        self.progressView.progress = Float(entryNumber/total)
-                                        self.progressInfoLabel.text = "🗃️:\(entryNumber) / \(total)"
-                                    }
-                                }
-                            } completionHandler: { entry, finish, error in
-                                if error != nil {
-                                    PTNSLogConsole("unzip error")
-                                } else {
-                                    if finish {
-                                        FileManager.pt.removefile(filePath: tempFile)
-                                        PTNSLogConsole("unzip finish")
-                                        self.progressView.isHidden = true
-                                        self.progressInfoLabel.isHidden = true
-                                        sender.isEnabled = false
-                                        if self.downloadFinishBlock != nil {
-                                            self.downloadFinishBlock!()
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                    PTGCDManager.gcdAfter(time: 0.5) {
+                        self.progressInfoLabel.text = PTLanguage.share.text(forKey: "download_Unzip")
+                        self.unzipFunction(tempFileUrl: tempFile)
                     }
                 } else {
                     self.downLoad = PTFileDownloadApi(fileUrl: self.cellModel!.url, saveFilePath: userChatCostFilePath) { bytesRead, totalBytesRead, progress in
@@ -103,46 +79,25 @@ class PTStableDiffusionModelCell: PTBaseNormalCell {
                         self.progressInfoLabel.text = "\(bytesRead) / \(totalBytesRead)"
                     } success: { reponse in
                         let result = (reponse as! AFDownloadResponse<Data>)
-                        
-                        sender.isEnabled = false
-                        
-                        
+                                                
                         switch result.result {
                         case .success(let data):
                             do {
                                 try data.write(to: URL(fileURLWithPath: tempFile),options: .atomic)
                                 PTNSLogConsole("文件写入成功")
-                                self.progressInfoLabel.text = PTLanguage.share.text(forKey: "download_Unzip")
-                                SSZipArchive.unzipFile(atPath: tempFile, toDestination: uploadFilePath, overwrite: false, password: nil) { entry, zipInfo, entryNumber, total in
-                                    PTGCDManager.gcdBackground {
-                                        PTGCDManager.gcdMain {
-                                            self.progressView.progress = Float(entryNumber/total)
-                                            self.progressInfoLabel.text = "🗃️:\(entryNumber) / \(total)"
-                                        }
-                                    }
-                                } completionHandler: { entry, finish, error in
-                                    if error != nil {
-                                        PTNSLogConsole("unzip error")
-                                    } else {
-                                        if finish {
-                                            FileManager.pt.removefile(filePath: tempFile)
-                                            PTNSLogConsole("unzip finish")
-                                            self.progressView.isHidden = true
-                                            self.progressInfoLabel.isHidden = true
-                                            sender.isEnabled = false
-                                            if self.downloadFinishBlock != nil {
-                                                self.downloadFinishBlock!()
-                                            }
-                                        }
-                                    }
+                                PTGCDManager.gcdAfter(time: 0.5) {
+                                    self.progressInfoLabel.text = PTLanguage.share.text(forKey: "download_Unzip")
+                                    self.unzipFunction(tempFileUrl: tempFile)
                                 }
                             } catch {
+                                sender.isSelected = false
                                 PTNSLogConsole("写入文件失败\(error.localizedDescription)")
                             }
                         default:break
                         }
 
                     } fail: { error in
+                        sender.isSelected = false
                         PTNSLogConsole("下载失败\(error!.localizedDescription)")
                     }
                 }
@@ -200,5 +155,41 @@ class PTStableDiffusionModelCell: PTBaseNormalCell {
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func unzipFunction(tempFileUrl:String) {
+        PTGCDManager.gcdAfter(time: 1) {
+            PTGCDManager.gcdBackground {
+                PTGCDManager.gcdMain {
+                    SSZipArchive.unzipFile(atPath: tempFileUrl, toDestination: uploadFilePath, overwrite: true, password: nil) { entry, zipInfo, entryNumber, total in
+                        PTGCDManager.gcdMain {
+                            PTNSLogConsole("\(entryNumber)\\\\\(total)")
+                            self.progressView.progress = Float(entryNumber/total)
+                            self.progressInfoLabel.text = "🗃️:\(entryNumber) / \(total)"
+                        }
+                    } completionHandler: { entry, finish, error in
+                        if error != nil {
+                            self.downLoadStatus.isSelected = false
+                            PTNSLogConsole("unzip error")
+                        } else {
+                            if finish {
+                                PTNSLogConsole("unzip finish")
+                                self.progressInfoLabel.text = "OK......"
+                                FileManager.pt.removefile(filePath: tempFileUrl)
+                                PTGCDManager.gcdAfter(time: 0.5) {
+                                    self.progressView.isHidden = true
+                                    self.progressInfoLabel.text = ""
+                                    self.progressInfoLabel.isHidden = true
+                                    self.downLoadStatus.isEnabled = false
+                                }
+                                if self.downloadFinishBlock != nil {
+                                    self.downloadFinishBlock!()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
