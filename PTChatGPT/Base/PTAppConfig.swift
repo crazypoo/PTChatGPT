@@ -1138,6 +1138,8 @@ class PTAppConfig {
                 for (index,value) in models.enumerated() {
                     if !FileManager.pt.judgeFileOrFolderExists(filePath: uploadFilePath.appendingPathComponent(value!.folderName)) {
                         models[index]?.loadFinish = false
+                    } else {
+                        models[index]?.loadFinish = true
                     }
                 }
                 self.downloadInfomation = models.kj.JSONObjectArray()
