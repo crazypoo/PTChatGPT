@@ -46,6 +46,7 @@ PODS:
   - JXSegmentedView (1.3.0)
   - KakaJSON (1.1.2)
   - KDCircularProgress (1.5.4)
+  - Kingfisher (7.6.2)
   - LifetimeTracker (1.8.1)
   - LookinServer (1.1.5):
     - LookinServer/Core (= 1.1.5)
@@ -65,12 +66,12 @@ PODS:
   - PhoneNumberKit/PhoneNumberKitCore (3.3.4)
   - PhoneNumberKit/UIKit (3.3.4):
     - PhoneNumberKit/PhoneNumberKitCore
-  - PooTools/CheckUpdate (3.0.10):
+  - PooTools/CheckUpdate (3.1.3):
     - PooTools/Core
-  - PooTools/ColorPicker (3.0.10):
+  - PooTools/ColorPicker (3.1.3):
     - ChromaColorPicker
     - PooTools/Core
-  - PooTools/Core (3.0.10):
+  - PooTools/Core (3.1.3):
     - Alamofire
     - CocoaLumberjack/Swift
     - DeviceKit
@@ -81,12 +82,12 @@ PODS:
     - HandyJSON
     - IQKeyboardManager
     - KakaJSON
+    - Kingfisher
     - LXFProtocolTool/LXFEmptyDataSetable
     - MBProgressHUD
     - MJExtension
     - NotificationBannerSwift
     - pop
-    - SDWebImage
     - SJAttributesStringMaker
     - SnapKit
     - SwiftDate
@@ -99,46 +100,43 @@ PODS:
     - YYCategories
     - YYText
     - ZXNavigationBar
-  - PooTools/DarkModeSetting (3.0.10):
+  - PooTools/DarkModeSetting (3.1.3):
     - PooTools/Core
-  - PooTools/GCDWebServer (3.0.10):
+  - PooTools/GCDWebServer (3.1.3):
     - GCDWebServer
     - GCDWebServer/WebUploader
     - PooTools/Core
-  - PooTools/ImagePicker (3.0.10):
+  - PooTools/ImagePicker (3.1.3):
     - PooTools/Core
     - TZImagePickerController
-  - PooTools/Input (3.0.10):
+  - PooTools/Input (3.1.3):
     - CRBoxInputView
     - PhoneNumberKit
     - PooTools/Core
     - TextFieldEffects
     - "UITextField+Shake"
-  - PooTools/Instructions (3.0.10):
+  - PooTools/Instructions (3.1.3):
     - Instructions
     - PooTools/Core
-  - PooTools/LanguageSetting (3.0.10):
+  - PooTools/LanguageSetting (3.1.3):
     - PooTools/Core
-  - PooTools/MediaViewer (3.0.10):
+  - PooTools/MediaViewer (3.1.3):
     - PooTools/Core
-  - PooTools/PagingControl (3.0.10):
+  - PooTools/PagingControl (3.1.3):
     - JXPagingView/Paging
     - JXSegmentedView
     - PooTools/Core
-  - PooTools/Picker (3.0.10):
+  - PooTools/Picker (3.1.3):
     - BRPickerView
     - PooTools/Core
-  - PooTools/Slider (3.0.10):
+  - PooTools/Slider (3.1.3):
     - PooTools/Core
     - RangeSeekSlider
-  - PooTools/ZipArchive (3.0.10):
+  - PooTools/ZipArchive (3.1.3):
     - PooTools/Core
     - SSZipArchive
   - pop (1.0.12)
   - RangeSeekSlider (1.8.0)
-  - SDWebImage (5.15.5):
-    - SDWebImage/Core (= 5.15.5)
-  - SDWebImage/Core (5.15.5)
   - SJAttributesStringMaker (2.1.1):
     - SJAttributesStringMaker/Deprecated (= 2.1.1)
   - SJAttributesStringMaker/Deprecated (2.1.1)
@@ -262,6 +260,7 @@ SPEC REPOS:
     - JXSegmentedView
     - KakaJSON
     - KDCircularProgress
+    - Kingfisher
     - LifetimeTracker
     - LookinServer
     - LXFProtocolTool
@@ -273,7 +272,6 @@ SPEC REPOS:
     - PhoneNumberKit
     - pop
     - RangeSeekSlider
-    - SDWebImage
     - SJAttributesStringMaker
     - SnapKit
     - SSZipArchive
@@ -305,7 +303,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   PooTools:
-    :commit: 6468be4c992ce1a6b9734b6eae825919bd122d86
+    :commit: 12816f89cab05f9e21ad1db154bbe7f1d570fe7f
     :git: https://github.com/crazypoo/PTools.git
 
 SPEC CHECKSUMS:
@@ -332,6 +330,7 @@ SPEC CHECKSUMS:
   JXSegmentedView: fec0d335355b6e019c494fe2e030bde8a36d2df6
   KakaJSON: cc5ff50a8c1cfbb09413db8496cb709a209e6137
   KDCircularProgress: 98200c6b8e85d22bc04eb644721d3b1e12b0686b
+  Kingfisher: 6c5449c6450c5239166510ba04afe374a98afc4f
   LifetimeTracker: be33b0d89357dd2f381eb8aca636d184b538d5e9
   LookinServer: 2893f2bae53cbf3fd49bbe1a8ea1745582ef1317
   LXFProtocolTool: 8d1e53c010f6941c273b9908be24bfc20d1ce2f2
@@ -341,10 +340,9 @@ SPEC CHECKSUMS:
   MJExtension: 21c5f6f8c4d5d8844b7ae8fbae08fed0b501f961
   NotificationBannerSwift: 437e135298d297fcb03f3eec4466f45cdb128d3d
   PhoneNumberKit: 441e8b26ec88d598e3591de9061eff18f5dd12e8
-  PooTools: 7e8881de4b7dec3446ccedb85cae3bb62459dd2a
+  PooTools: d630ccb4bdfd1890752a4f65de57ba9af06d57b0
   pop: d582054913807fd11fd50bfe6a539d91c7e1a55a
   RangeSeekSlider: 650b11fa1edcb92e1e0ede797669d98622570fb5
-  SDWebImage: fd7e1a22f00303e058058278639bf6196ee431fe
   SJAttributesStringMaker: 8b5f54c487cc88fa26d2f540166cd43dfceca816
   SnapKit: e01d52ebb8ddbc333eefe2132acf85c8227d9c25
   SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef

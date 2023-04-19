@@ -10,7 +10,6 @@ import MessageKit
 import InputBarAccessoryView
 import PooTools
 import MapKit
-import SDWebImage
 import AVFAudio
 import LXFProtocolTool
 import SwifterSwift
@@ -19,6 +18,7 @@ import WhatsNew
 import SwiftSpinner
 import OSSSpeechKit
 import Alamofire
+import Kingfisher
 
 fileprivate extension String {
     static let saveNavTitle = PTLanguage.share.text(forKey: "about_SavedChat")
@@ -1564,9 +1564,9 @@ extension PTChatViewController: MessagesDisplayDelegate {
 
     func configureMediaMessageImageView(_ imageView: UIImageView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
         if case MessageKind.photo(let media) = message.kind, let imageURL = media.url {
-            imageView.sd_setImage(with: imageURL)
+            imageView.kf.setImage(with: imageURL)
         } else {
-//            imageView.kf.cancelDownloadTask()
+            imageView.kf.cancelDownloadTask()
         }
     }
     
@@ -1923,15 +1923,14 @@ extension PTChatViewController:MessageCellDelegate {
             viewer.viewMoreActionBlock = { index in
                 self.messageInputBar.alpha = 1
                 PTNSLogConsole("\(image.image as Any)\\\\.\(String(describing: image.url))")
-                SDWebImageManager.shared.loadImage(with: image.url) { one, two, url in
-                    
-                } completed: { images, data, error, catchType, finish, url in
-                    if finish {
+                ImageDownloader.default.downloadImage(with: image.url!, options: PTAppBaseConfig.share.gobalWebImageLoadOption()) { result in
+                    switch result {
+                    case .success(let value):
                         switch AppDelegate.appDelegate()!.appConfig.imageControlActions[index] {
                         case .remakeImage:
                             self.chatCase = .draw(type: .edit)
                             self.setEditImageBar()
-                            self.editMainImageButton.setImage(images, for: .normal)
+                            self.editMainImageButton.setImage(value.image, for: .normal)
                         case .findImage:
                             let date = Date()
 
@@ -1940,7 +1939,7 @@ extension PTChatViewController:MessageCellDelegate {
                             saveModel.messageDateString = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
                             saveModel.messageSendSuccess = false
                             saveModel.messageMediaURL = image.url!.absoluteString
-                            
+
                             var message = PTMessageModel(imageURL: image.url!, user: PTChatData.share.user, messageId: UUID().uuidString, date: date,sendSuccess: false)
                             message.sending = true
                             self.insertMessage(message) {
@@ -1948,12 +1947,14 @@ extension PTChatViewController:MessageCellDelegate {
                                 self.messageList[(self.messageList.count - 1)].sendSuccess = false
                                 self.reloadSomeSection(itemIndex: (self.messageList.count - 1)) {
                                     PTNSLogConsole("开始发送")
-                                    self.userSendImage(imageObject: images!, saveModel: saveModel)
+                                    self.userSendImage(imageObject: value.image, saveModel: saveModel)
                                 }
                             }
                         default:
                             break
                         }
+                    case .failure(let error):
+                        PTNSLogConsole(error.localizedDescription)
                     }
                 }
             }

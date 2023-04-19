@@ -105,7 +105,7 @@ class PTSaveChatViewController: PTChatBaseViewController {
                 let disclosureIndicatorImageName = UIImage(systemName: "chevron.right")!.withTintColor(.gobalTextColor,renderingMode: .alwaysOriginal)
                 let cellModel = PTFusionCellModel()
                 cellModel.name = value!.chatContent
-                cellModel.haveDisclosureIndicator = true
+                cellModel.accessoryType = .DisclosureIndicator
                 cellModel.nameColor = .gobalTextColor
                 cellModel.disclosureIndicatorImage = disclosureIndicatorImageName
                 let row_List = PTRows.init(cls: PTFusionSwipeCell.self, ID: PTFusionSwipeCell.ID, dataModel: cellModel)

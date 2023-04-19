@@ -19,13 +19,13 @@ class PTDarkModeControl: PTChatBaseViewController {
         let smart = PTFusionCellModel()
         smart.name = PTLanguage.share.text(forKey: "theme_Smart")
         smart.nameColor = .gobalTextColor
-        smart.haveSwitch = true
+        smart.accessoryType = .Switch
         
         let followSystem = PTFusionCellModel()
         followSystem.name = PTLanguage.share.text(forKey: "theme_FollowSystem")
         followSystem.nameColor = .gobalTextColor
-        followSystem.haveSwitch = true
-        
+        followSystem.accessoryType = .Switch
+
         return [[smart],[followSystem]]
     }()
     
