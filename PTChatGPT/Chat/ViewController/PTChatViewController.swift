@@ -20,7 +20,6 @@ import OSSSpeechKit
 import Alamofire
 import Kingfisher
 import AttributedString
-import SJAttributesStringMaker
 
 fileprivate extension String {
     static let saveNavTitle = PTLanguage.share.text(forKey: "about_SavedChat")
@@ -917,23 +916,26 @@ class PTChatViewController: MessagesViewController {
                         }
                         
                         let textString = !value.starString.stringIsEmpty() ? value.starString : value.messageText
-                                                
-                        let att = NSMutableAttributedString.sj.makeText { make in
-                            make.append(textString).textColor(AppDelegate.appDelegate()!.appConfig.userTextColor)
-                            make.append("\n")
-                            make.append { imageMake in
-                                imageMake.image = mainImage
-                                imageMake.bounds = CGRect(x: 0, y: 0, width: 100, height: 100)
-                            }
-                            if maskImage != nil {
-                                make.append { imageMake in
-                                    imageMake.image = maskImage
-                                    imageMake.bounds = CGRect(x: 0, y: 0, width: 100, height: 100)
-                                }
-                            }
+                                  
+                        var total:ASAttributedString = ASAttributedString("")
+                        
+                        let attMain:ASAttributedString = """
+                        \(wrap: .embedding("""
+                        \("\(textString)",.foreground(AppDelegate.appDelegate()!.appConfig.userTextColor))
+                        \(.image(mainImage,.custom(size:.init(width:100,height:100))))
+                        """))
+                        """
+                        total += attMain
+                        if maskImage != nil {
+                            let attMask:ASAttributedString = """
+                            \(wrap: .embedding("""
+                            \(.image(maskImage!,.custom(size:.init(width:100,height:100))))
+                            """))
+                            """
+                            total += attMask
                         }
                         
-                        let message = PTMessageModel(attributedText: att, user: messageSender, messageId: UUID().uuidString, date: value.messageDateString.toDate()!.date, sendSuccess: value.messageSendSuccess)
+                        let message = PTMessageModel(attributedText: total.value, user: messageSender, messageId: UUID().uuidString, date: value.messageDateString.toDate()!.date, sendSuccess: value.messageSendSuccess)
                         self.messageList.append(message)
                     } else {
                         let textString = !value.starString.stringIsEmpty() ? value.starString : value.messageText
@@ -1749,13 +1751,23 @@ extension PTChatViewController:MessagesDataSource {
     func messageBottomLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
         let dateString = formatter.string(from: message.sentDate)
         let messageModel = self.messageList[indexPath.section]
-        let arr = NSAttributedString.sj.makeText { make in
-            make.append(dateString).font(UIFont.preferredFont(forTextStyle: .caption2)).textColor(.gobalTextColor).alignment((message.sender.senderId == PTChatData.share.bot.senderId ? .left : .right)).lineSpacing(4)
-            if !messageModel.correctionText.nsString.stringIsEmpty() {
-                make.append("\n\((PTLanguage.share.text(forKey: "chat_Edit_message") + messageModel.correctionText))").font(UIFont.preferredFont(forTextStyle: .caption2)).textColor(.gobalTextColor).alignment(/*(message.sender.senderId == PTChatData.share.bot.senderId ? .left : .right)*/.left).lineSpacing(4).backgroundColor(.black.withAlphaComponent(0.05))
-            }
+                
+        var totalAtt:ASAttributedString = ASAttributedString("")
+        let attMain:ASAttributedString = """
+        \(wrap: .embedding("""
+        \("\(dateString)",.paragraph(.alignment((message.sender.senderId == PTChatData.share.bot.senderId ? .left : .right)),.lineSpacing(4)),.foreground(.gobalTextColor),.font(UIFont.preferredFont(forTextStyle: .caption2)))
+        """))
+        """
+        totalAtt += attMain
+        if !messageModel.correctionText.nsString.stringIsEmpty() {
+            let attEdit:ASAttributedString = """
+            \(wrap: .embedding("""
+            \("\((PTLanguage.share.text(forKey: "chat_Edit_message") + messageModel.correctionText))",.paragraph(.alignment(.left),.lineSpacing(4)),.foreground(.gobalTextColor),.font(UIFont.preferredFont(forTextStyle: .caption2)),.background(.black.withAlphaComponent(0.05))))
+            """))
+            """
+            totalAtt += attEdit
         }
-        return arr
+        return totalAtt.value
     }
 
     func textCell(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UICollectionViewCell? {
@@ -2128,21 +2140,25 @@ extension PTChatViewController:MessageCellDelegate {
                                                 PTBaseViewController.gobal_drop(title: error!.localizedDescription)
                                             }
                                         } else {
-                                            let att = NSMutableAttributedString.sj.makeText { make in
-                                                make.append(saveModel.messageText.replaceStringWithAsterisk()).textColor(AppDelegate.appDelegate()!.appConfig.userTextColor)
-                                                make.append("\n")
-                                                make.append { imageMake in
-                                                    imageMake.image = AppDelegate.appDelegate()!.appConfig.getMessageImage(name: saveModel.editMainName)
-                                                    imageMake.bounds = CGRect(x: 0, y: 0, width: 100, height: 100)
-                                                }
-                                                if !saveModel.editMaskName.stringIsEmpty() {
-                                                    make.append { imageMake in
-                                                        imageMake.image = AppDelegate.appDelegate()!.appConfig.getMessageImage(name: saveModel.editMaskName)
-                                                        imageMake.bounds = CGRect(x: 0, y: 0, width: 100, height: 100)
-                                                    }
-                                                }
+                                            var total:ASAttributedString = ASAttributedString("")
+
+                                            let attMain:ASAttributedString = """
+                                            \(wrap: .embedding("""
+                                            \("\(saveModel.messageText.replaceStringWithAsterisk())",.foreground(AppDelegate.appDelegate()!.appConfig.userTextColor))
+                                            \(.image(AppDelegate.appDelegate()!.appConfig.getMessageImage(name: saveModel.editMainName),.custom(size:.init(width:100,height:100))))
+                                            """))
+                                            """
+                                            total += attMain
+                                            if !saveModel.editMaskName.stringIsEmpty() {
+                                                let attMask:ASAttributedString = """
+                                                \(wrap: .embedding("""
+                                                \(.image(AppDelegate.appDelegate()!.appConfig.getMessageImage(name: saveModel.editMaskName),.custom(size:.init(width:100,height:100))))
+                                                """))
+                                                """
+                                                total += attMask
                                             }
-                                            self.messageList[(self.messageList.count - 1)].kind = .attributedText(att)
+
+                                            self.messageList[(self.messageList.count - 1)].kind = .attributedText(total.value)
                                             self.messageList[(self.messageList.count - 1)].sendSuccess = true
                                             self.chatModels[self.chatModels.count - 1].starString = saveModel.messageText.replaceStringWithAsterisk()
                                             self.chatModels[self.chatModels.count - 1].messageSendSuccess = true
@@ -2479,22 +2495,17 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                                         saveModel.starString = str.replaceStringWithAsterisk()
                                     }
                                     
-                                    let att = NSMutableAttributedString.sj.makeText { make in
-                                        make.append(str.replaceStringWithAsterisk()).textColor(AppDelegate.appDelegate()!.appConfig.userTextColor)
-                                        make.append("\n")
-                                        make.append { imageMake in
-                                            imageMake.image = self.mainImage
-                                            imageMake.bounds = CGRect(x: 0, y: 0, width: 100, height: 100)
-                                        }
-                                        make.append { imageMake in
-                                            imageMake.image = self.maskImage
-                                            imageMake.bounds = CGRect(x: 0, y: 0, width: 100, height: 100)
-                                        }
-                                    }
+                                    let attMain:ASAttributedString = """
+                                    \(wrap: .embedding("""
+                                    \("\(str.replaceStringWithAsterisk())",.foreground(AppDelegate.appDelegate()!.appConfig.userTextColor))
+                                    \(.image(self.mainImage!,.custom(size:.init(width:100,height:100))))                                    \(.image(self.maskImage!,.custom(size:.init(width:100,height:100))))
+
+                                    """))
+                                    """
                                     self.mainImage = nil
                                     self.maskImage = nil
                                     
-                                    var message = PTMessageModel(attributedText: att, user: PTChatData.share.user, messageId: UUID().uuidString, date: date, sendSuccess: true)
+                                    var message = PTMessageModel(attributedText: attMain.value, user: PTChatData.share.user, messageId: UUID().uuidString, date: date, sendSuccess: true)
                                     message.sending = true
                                     PTGCDManager.gcdMain {
                                         self.insertMessage(message) {
@@ -2548,18 +2559,18 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                         }
                         self.chatModels.append(saveModel)
                         
-                        let att = NSMutableAttributedString.sj.makeText { make in
-                            make.append(str.replaceStringWithAsterisk()).textColor(AppDelegate.appDelegate()!.appConfig.userTextColor)
-                            make.append("\n")
-                            make.append { imageMake in
-                                imageMake.image = self.mainImage
-                                imageMake.bounds = CGRect(x: 0, y: 0, width: 100, height: 100)
-                            }
-                        }
+
+                        let attMain:ASAttributedString = """
+                        \(wrap: .embedding("""
+                        \("\(str.replaceStringWithAsterisk())",.foreground(AppDelegate.appDelegate()!.appConfig.userTextColor))
+                        \(.image(self.mainImage!,.custom(size:.init(width:100,height:100))))
+                        """))
+                        """
+                        
                         self.mainImage = nil
                         self.maskImage = nil
                         
-                        var message = PTMessageModel(attributedText: att, user: PTChatData.share.user, messageId: UUID().uuidString, date: date, sendSuccess: true)
+                        var message = PTMessageModel(attributedText: attMain.value, user: PTChatData.share.user, messageId: UUID().uuidString, date: date, sendSuccess: true)
                         message.sending = true
                         PTGCDManager.gcdMain {
                             self.insertMessage(message) {
