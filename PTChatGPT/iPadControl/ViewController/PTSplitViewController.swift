@@ -60,7 +60,10 @@ class PTSplitViewController: UISplitViewController {
                     self.currentChatViewController.showKeyboard()
                     NotificationCenter.default.post(name: NSNotification.Name(rawValue: nSetKey), object: nil)
                 }
-                PTFloatingPanelFuction.floatPanel_VC(vc:keySetting,panGesDelegate:self,currentViewController:self)
+                PTFloatingPanelFuction.floatPanel_VC(vc:keySetting,panGesDelegate:self,currentViewController:self) {
+                    self.currentChatViewController.showKeyboard()
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: nSetKey), object: nil)
+                }
             }
         } else {
             NotificationCenter.default.post(name: NSNotification.Name(nPadReloadKey), object: nil)
@@ -70,6 +73,6 @@ class PTSplitViewController: UISplitViewController {
 
 extension PTSplitViewController:UIGestureRecognizerDelegate {
     open func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        false
+        true
     }
 }

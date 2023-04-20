@@ -1000,7 +1000,9 @@ class PTChatViewController: MessagesViewController {
         keySetting.skipBlock = {
             self.firstCoach()
         }
-        PTFloatingPanelFuction.floatPanel_VC(vc:keySetting,panGesDelegate:self,currentViewController:self)
+        PTFloatingPanelFuction.floatPanel_VC(vc:keySetting,panGesDelegate:self,currentViewController:self) {
+            self.firstCoach()
+        }
         #else
         if !Gobal_device_info.isPad {
             if AppDelegate.appDelegate()!.appConfig.firstUseApp {
@@ -1009,7 +1011,9 @@ class PTChatViewController: MessagesViewController {
                 keySetting.skipBlock = {
                     self.firstCoach()
                 }
-                PTFloatingPanelFuction.floatPanel_VC(vc:keySetting,panGesDelegate:self,currentViewController:self)
+                PTFloatingPanelFuction.floatPanel_VC(vc:keySetting,panGesDelegate:self,currentViewController:self) {
+                    self.firstCoach()
+                }
             } else {
                 PTGCDManager.gcdAfter(time: 0.5) {
                     self.createHolderView()
@@ -3117,7 +3121,7 @@ extension PTChatViewController:LXFEmptyDataSetable {
 
 extension PTChatViewController {
     open func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        false
+        true
     }
 }
 
