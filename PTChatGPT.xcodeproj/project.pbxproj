@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		55024D1429F0E7D000244E44 /* KMFloatingPanelLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55024D1329F0E7D000244E44 /* KMFloatingPanelLayout.swift */; };
 		5503C51629CB273A00B00BE1 /* MessageKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5503C51529CB273A00B00BE1 /* MessageKit */; };
 		5509372D29DD1C82007FA668 /* PTClampedProperyWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5509372C29DD1C82007FA668 /* PTClampedProperyWrapper.swift */; };
 		5512AB7C29B470310059D840 /* PTAudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5512AB7B29B470310059D840 /* PTAudioPlayer.swift */; };
@@ -96,6 +97,7 @@
 
 /* Begin PBXFileReference section */
 		372877C61B4F76BA38F0C55D /* Pods_PTChatGPT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PTChatGPT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		55024D1329F0E7D000244E44 /* KMFloatingPanelLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KMFloatingPanelLayout.swift; sourceTree = "<group>"; };
 		5509372C29DD1C82007FA668 /* PTClampedProperyWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PTClampedProperyWrapper.swift; sourceTree = "<group>"; };
 		5512AB7B29B470310059D840 /* PTAudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTAudioPlayer.swift; sourceTree = "<group>"; };
 		5514B37029B9CBFD00890161 /* PTChatCustomCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTChatCustomCell.swift; sourceTree = "<group>"; };
@@ -216,6 +218,40 @@
 				372877C61B4F76BA38F0C55D /* Pods_PTChatGPT.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		55024D0F29F0E16400244E44 /* SetKey */ = {
+			isa = PBXGroup;
+			children = (
+				55024D1229F0E18400244E44 /* Model */,
+				55024D1129F0E17E00244E44 /* Views */,
+				55024D1029F0E16F00244E44 /* ViewController */,
+			);
+			path = SetKey;
+			sourceTree = "<group>";
+		};
+		55024D1029F0E16F00244E44 /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				5514B38C29BAFA6A00890161 /* PTDisclaimerViewController.swift */,
+				55A5D80529B242CF00DCA096 /* PTSettingViewController.swift */,
+			);
+			path = ViewController;
+			sourceTree = "<group>";
+		};
+		55024D1129F0E17E00244E44 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				55024D1329F0E7D000244E44 /* KMFloatingPanelLayout.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		55024D1229F0E18400244E44 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		5512AB7A29B470160059D840 /* Function */ = {
@@ -405,6 +441,7 @@
 		55A5D71629B1D23D00DCA096 /* PTChatGPT */ = {
 			isa = PBXGroup;
 			children = (
+				55024D0F29F0E16400244E44 /* SetKey */,
 				55DF542629E06E0B0077F8F7 /* AiDraw */,
 				552A609929D819A100239210 /* API */,
 				55A5D71729B1D23D00DCA096 /* AppDelegate.swift */,
@@ -482,10 +519,8 @@
 			children = (
 				5514B38129BA14C400890161 /* PTColorSettingViewController.swift */,
 				55BD5B9A29C8424A0023458A /* PTDarkModeControl.swift */,
-				5514B38C29BAFA6A00890161 /* PTDisclaimerViewController.swift */,
 				5514B38329BA233A00890161 /* PTSaveChatViewController.swift */,
 				5514B37729B9F87C00890161 /* PTSettingListViewController.swift */,
-				55A5D80529B242CF00DCA096 /* PTSettingViewController.swift */,
 				552B41C029D0A25C00065892 /* PTHelpViewController.swift */,
 			);
 			path = ViewController;
@@ -774,6 +809,7 @@
 				55A5D7FE29B1EEF400DCA096 /* PTChatData.swift in Sources */,
 				55F7A65D29D4012B00CF6272 /* PTSuggestionControl.swift in Sources */,
 				552A609F29D831BD00239210 /* PTAICompletionsModel.swift in Sources */,
+				55024D1429F0E7D000244E44 /* KMFloatingPanelLayout.swift in Sources */,
 				55A5D71829B1D23D00DCA096 /* AppDelegate.swift in Sources */,
 				5554FE9129DFE99400C29F8A /* PTCostMainModel.swift in Sources */,
 				5514B38729BAE76E00890161 /* PTShareItem.swift in Sources */,

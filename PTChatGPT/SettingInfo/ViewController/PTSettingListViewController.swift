@@ -891,11 +891,15 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
             let apiToken = AppDelegate.appDelegate()!.appConfig.apiToken
             UIAlertController.base_textfiele_alertVC(title:textKey,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey], textFieldTexts: [apiToken], keyboardType: [.default],textFieldDelegate: self) { result in
                 let newToken:String? = result[textKey]!
+                #if DEBUG
+                AppDelegate.appDelegate()!.appConfig.apiToken = (newToken ?? "")
+                #else
                 if (newToken ?? "").stringIsEmpty() || !(newToken ?? "").nsString.contains("sk-") {
                     PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Token_error"))
                 } else {
                     AppDelegate.appDelegate()!.appConfig.apiToken = newToken!
                 }
+                #endif
             }
         } else if itemRow.title == PTLanguage.share.text(forKey: "about_Use_custom_domain_address") {
             let textKey = PTLanguage.share.text(forKey: "alert_Enter_domain")

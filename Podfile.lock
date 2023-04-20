@@ -1,5 +1,6 @@
 PODS:
   - Alamofire (5.6.4)
+  - AttributedString (3.3.5)
   - BRPickerView (2.8.0):
     - BRPickerView/AddressPickerView (= 2.8.0)
     - BRPickerView/Base (= 2.8.0)
@@ -203,6 +204,7 @@ PODS:
   - ZXNavigationBar (1.4.1)
 
 DEPENDENCIES:
+  - AttributedString
   - Bugly
   - FLEX
   - HyperioniOS/AttributesInspector
@@ -238,6 +240,7 @@ DEPENDENCIES:
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - Alamofire
+    - AttributedString
     - BRPickerView
     - Bugly
     - ChromaColorPicker
@@ -303,11 +306,12 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   PooTools:
-    :commit: 12816f89cab05f9e21ad1db154bbe7f1d570fe7f
+    :commit: 560be2308c0c4761c428ba20db0a1291bd0cd607
     :git: https://github.com/crazypoo/PTools.git
 
 SPEC CHECKSUMS:
   Alamofire: 4e95d97098eacb88856099c4fc79b526a299e48c
+  AttributedString: 6d2d9d65310119556c3b5c6e4ea8d1ca339b703c
   BRPickerView: a0ff460bf092bc069db5a54153395b1f7e8f5300
   Bugly: b8715e6ec4004b7f7fbffab0643ba80545aee3da
   ChromaColorPicker: 307585f2dc23d4d72f24cad320c1e08825cb5c09
@@ -368,6 +372,6 @@ SPEC CHECKSUMS:
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
   ZXNavigationBar: a8ceb13fe37f9ca894cf6ae22d805cbdbb9ad6b1
 
-PODFILE CHECKSUM: ec3973362582d6fb8f9ea2b82855e88410937ab3
+PODFILE CHECKSUM: 74576264e529409dd2edf1b73f33e183d0a64202
 
 COCOAPODS: 1.12.0

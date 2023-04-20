@@ -69,6 +69,9 @@ let uCustomDomain = "uCustomDomain"
 
 let uAppBuildVersion = "uAppBuildVersion"
 
+let nSetKey = "nSetKey"
+let nPadReloadKey = "nPadReloadKey"
+
 let kSeparator = "[,]"
 let kSeparatorSeg = "[::]"
 

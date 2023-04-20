@@ -295,9 +295,8 @@ class PTChatMasterControl: PTChatBaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if !AppDelegate.appDelegate()!.appConfig.apiToken.stringIsEmpty() {
-            NotificationCenter.default.addObserver(self, selector: #selector(self.adHide(notifi:)), name: NSNotification.Name(rawValue: PLaunchAdSkipNotification), object: nil)
-        }
+        NotificationCenter.default.addObserver(self, selector: #selector(self.adHide(notifi:)), name: NSNotification.Name(rawValue: nSetKey), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.reloadSelect(notifi:)), name: NSNotification.Name(rawValue: nPadReloadKey), object: nil)
 
         self.view.backgroundColor = .gobalBackgroundColor
         
@@ -367,10 +366,17 @@ class PTChatMasterControl: PTChatBaseViewController {
     }
     
     @objc func adHide(notifi:Notification) {
-        PTNSLogConsole("广告隐藏")
+        PTNSLogConsole("iPad广告隐藏")
         self.createHolderView()
     }
 
+    @objc func reloadSelect(notifi:Notification) {
+        
+        let currentTag = AppDelegate.appDelegate()!.appConfig.currentSelectTag
+        
+        self.reloadTagChat(index: self.segDataArr().firstIndex(where: {$0?.keyName == currentTag}) ?? 0)
+    }
+    
     func createHolderView() {
         if AppDelegate.appDelegate()!.appConfig.firstCoach {
             self.coachMarkController.overlay.isUserInteractionEnabled = true
@@ -475,8 +481,7 @@ extension PTChatMasterControl:UICollectionViewDelegate,UICollectionViewDataSourc
     }
 }
 
-extension PTChatMasterControl:SwipeCollectionViewCellDelegate
-{
+extension PTChatMasterControl:SwipeCollectionViewCellDelegate {
     func swipe_cell_configure(action: SwipeAction, with descriptor: ActionDescriptor,buttonDisplayMode: ButtonDisplayMode? = PTSaveChatViewController.swipe_cell_buttonDisplayMode(),buttonStyle: ButtonStyle? = PTSaveChatViewController.swipe_cell_buttonStyle()) {
        action.title = descriptor.title(forDisplayMode: buttonDisplayMode!)
        action.image = descriptor.image(forStyle: buttonStyle!, displayMode: buttonDisplayMode!)

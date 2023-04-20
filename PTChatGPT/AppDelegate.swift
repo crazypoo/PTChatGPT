@@ -93,18 +93,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                           
         PTNSLogConsole("\(self.appConfig.apiToken)")
         
-        
-        var viewC:UIViewController!
-        if self.appConfig.apiToken.stringIsEmpty() {
-            viewC = PTSettingViewController()
+        var viewC:UIViewController!        
+        PTNSLogConsole(self.appConfig.tagDataArr())
+        if Gobal_device_info.isPad {
+            viewC = PTSplitViewController()
         } else {
-            PTNSLogConsole(self.appConfig.tagDataArr())
-            if Gobal_device_info.isPad {
-                viewC = PTSplitViewController()
-            } else {
-                viewC = PTChatViewController(historyModel: PTSegHistoryModel())
-            }
+            viewC = PTChatViewController(historyModel: PTSegHistoryModel())
         }
+
         self.window = UIWindow.init(frame: UIScreen.main.bounds)
         if Gobal_device_info.isPad {
             self.window?.rootViewController = viewC
@@ -123,7 +119,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         PTLaunchAdMonitor.showAt(path: ["https://avatars.githubusercontent.com/u/1111976?v=4"], onView: self.window!, timeInterval: 2, param: ["URLS":myGithubUrl], year: "2023", skipFont: .appfont(size: skipFont), comName: "Crazypoo", comNameFont: .appfont(size: fontSize)) {
         }
-        
+                
 #if DEBUG
         self.devFunction.createLabBtn()
         self.devFunction.goToAppDevVC = {

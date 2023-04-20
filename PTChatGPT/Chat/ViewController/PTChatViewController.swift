@@ -790,7 +790,10 @@ class PTChatViewController: MessagesViewController {
         
         if !AppDelegate.appDelegate()!.appConfig.apiToken.stringIsEmpty() {
             NotificationCenter.default.addObserver(self, selector: #selector(self.showURLNotifi(notifi:)), name: NSNotification.Name(rawValue: PLaunchAdDetailDisplayNotification), object: nil)
-            NotificationCenter.default.addObserver(self, selector: #selector(self.adHide(notifi:)), name: NSNotification.Name(rawValue: PLaunchAdSkipNotification), object: nil)
+        } else {
+            if !Gobal_device_info.isPad {
+                NotificationCenter.default.addObserver(self, selector: #selector(self.adHide(notifi:)), name: NSNotification.Name(rawValue: PLaunchAdSkipNotification), object: nil)
+            }
         }
         
         self.configureMessageCollectionView()
@@ -843,6 +846,7 @@ class PTChatViewController: MessagesViewController {
             }
             
             self.configureMessageInputBar()
+
             self.speechKit.delegate = self
                         
             PTGCDManager.gcdBackground {
@@ -991,16 +995,37 @@ class PTChatViewController: MessagesViewController {
         PTNSLogConsole("广告隐藏")
         messageInputBar.alpha = 1
         
+        #if DEBUG
+        let keySetting = PTSettingViewController()
+        keySetting.skipBlock = {
+            self.firstCoach()
+        }
+        PTFloatingPanelFuction.floatPanel_VC(vc:keySetting,panGesDelegate:self,currentViewController:self)
+        #else
         if !Gobal_device_info.isPad {
-            PTGCDManager.gcdAfter(time: 0.5) {
-                self.createHolderView()
+            if AppDelegate.appDelegate()!.appConfig.firstUseApp {
+                AppDelegate.appDelegate()!.appConfig.firstUseApp = false
+                let keySetting = PTSettingViewController()
+                keySetting.skipBlock = {
+                    self.firstCoach()
+                }
+                PTFloatingPanelFuction.floatPanel_VC(vc:keySetting,panGesDelegate:self,currentViewController:self)
+            } else {
+                PTGCDManager.gcdAfter(time: 0.5) {
+                    self.createHolderView()
+                }
             }
         }
+        #endif
     }
     
     //MARK: 第一次使用的提示
     ///第一次使用的提示
     func createHolderView() {
+        self.firstCoach()
+    }
+    
+    func firstCoach() {
         if AppDelegate.appDelegate()!.appConfig.firstCoach {
             self.coachMarkController.overlay.isUserInteractionEnabled = true
             self.coachMarkController.delegate = self
@@ -1032,12 +1057,7 @@ class PTChatViewController: MessagesViewController {
                 StatusBarManager.shared.style = PTDarkModeOption.isLight ? .lightContent : .darkContent
                 self.setNeedsStatusBarAppearanceUpdate()
 
-                self.messageInputBar.alpha = 1
-                self.messageInputBar.isHidden = false
-                self.view.addSubview(self.messageInputBar)
-                self.messageInputBar.snp.makeConstraints { make in
-                    make.left.right.bottom.equalToSuperview()
-                }
+                self.showKeyboard()
                                 
                 self.loadViewData()
                 PTGCDManager.gcdAfter(time: 1) {
@@ -1049,6 +1069,15 @@ class PTChatViewController: MessagesViewController {
             PTGCDManager.gcdAfter(time: 1) {
                 self.checkTF()
             }
+        }
+    }
+    
+    func showKeyboard() {
+        self.messageInputBar.alpha = 1
+        self.messageInputBar.isHidden = false
+        self.view.addSubview(self.messageInputBar)
+        self.messageInputBar.snp.makeConstraints { make in
+            make.left.right.bottom.equalToSuperview()
         }
     }
     
@@ -1091,12 +1120,7 @@ class PTChatViewController: MessagesViewController {
         
         let currentTag = AppDelegate.appDelegate()!.appConfig.currentSelectTag
         
-        for (index,value) in arr!.enumerated() {
-            if value?.keyName == currentTag {
-                self.historyModel = arr![index]
-                break
-            }
-        }
+        self.historyModel = arr![arr?.firstIndex(where: {$0?.keyName == currentTag}) ?? 0]
         
         self.setTitleViewFrame(withModel: self.historyModel!)
     }
@@ -1294,13 +1318,7 @@ class PTChatViewController: MessagesViewController {
 extension PTChatViewController {
     //MARK: KEYBOARD
     func baseInputBar() {
-        if AppDelegate.appDelegate()!.appConfig.firstUseApp {
-            self.createHolderView()
-            AppDelegate.appDelegate()!.appConfig.firstUseApp = false
-            messageInputBar.alpha = 1
-        } else {
-            messageInputBar.alpha = 0
-        }
+        messageInputBar.alpha = 1
         messageInputBar.delegate = self
         messageInputBar.backgroundView.backgroundColor = .gobalBackgroundColor
     }
