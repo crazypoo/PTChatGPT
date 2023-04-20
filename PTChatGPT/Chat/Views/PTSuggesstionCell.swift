@@ -8,6 +8,7 @@
 
 import UIKit
 import PooTools
+import AttributedString
 
 class PTSuggesstionCell: PTBaseNormalCell {
     static let ID = "PTSuggesstionCell"
@@ -18,12 +19,15 @@ class PTSuggesstionCell: PTBaseNormalCell {
 
     var cellModel:PTSampleModels? {
         didSet {
-            let att = NSMutableAttributedString.sj.makeText { make in
-                make.append(self.cellModel!.keyName).lineSpacing(5).font(PTSuggesstionCell.titleFont).textColor(.white).alignment(.left)
-                make.append("\n\(self.cellModel!.who.stringIsEmpty() ? "@anonymous" : self.cellModel!.who)").lineSpacing(5).font(PTSuggesstionCell.nameFont).textColor(.white).alignment(.left)
-                make.append("\n\(self.cellModel!.systemContent)").lineSpacing(5).font(PTSuggesstionCell.infoFont).textColor(.white).alignment(.left)
-            }
-            self.infoLaebl.attributedText = att
+            
+            let att:ASAttributedString = """
+            \(wrap: .embedding("""
+            \("\(self.cellModel!.keyName)",.paragraph(.alignment(.left),.lineSpacing(5)),.foreground(.white),.font(PTSuggesstionCell.titleFont))
+            \("\(self.cellModel!.who.stringIsEmpty() ? "@anonymous" : self.cellModel!.who)",.paragraph(.alignment(.left),.lineSpacing(5)),.foreground(.white),.font(PTSuggesstionCell.nameFont))
+            \("\(self.cellModel!.systemContent)",.paragraph(.alignment(.left),.lineSpacing(5)),.foreground(.white),.font(PTSuggesstionCell.infoFont))
+            """),.paragraph(.alignment(.left)))
+            """
+            self.infoLaebl.attributed.text = att
 
             self.addButton.isHidden = self.cellModel!.imported
         }

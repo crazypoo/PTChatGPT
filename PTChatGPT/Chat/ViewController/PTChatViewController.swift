@@ -19,6 +19,8 @@ import SwiftSpinner
 import OSSSpeechKit
 import Alamofire
 import Kingfisher
+import AttributedString
+import SJAttributesStringMaker
 
 fileprivate extension String {
     static let saveNavTitle = PTLanguage.share.text(forKey: "about_SavedChat")
@@ -915,6 +917,7 @@ class PTChatViewController: MessagesViewController {
                         }
                         
                         let textString = !value.starString.stringIsEmpty() ? value.starString : value.messageText
+                                                
                         let att = NSMutableAttributedString.sj.makeText { make in
                             make.append(textString).textColor(AppDelegate.appDelegate()!.appConfig.userTextColor)
                             make.append("\n")

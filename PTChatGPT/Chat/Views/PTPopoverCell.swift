@@ -8,6 +8,7 @@
 
 import UIKit
 import PooTools
+import AttributedString
 
 class PTPopoverCell: PTBaseSwipeCell {
     static let ID = "PTPopoverCell"
@@ -15,11 +16,13 @@ class PTPopoverCell: PTBaseSwipeCell {
     var cellModel:PTSegHistoryModel? {
         didSet {
             if !self.cellModel!.systemContent.stringIsEmpty() {
-                let att = NSMutableAttributedString.sj.makeText { make in
-                    make.append(self.cellModel!.keyName).font(.appfont(size: 14)).textColor(.gobalTextColor).alignment(.left).lineSpacing(5)
-                    make.append("\n\(self.cellModel!.systemContent)").font(.appfont(size: 12)).textColor(.lightGray).alignment(.left)
-                }
-                self.nameLabel.attributedText = att
+                let att:ASAttributedString = """
+                \(wrap: .embedding("""
+                \("\(self.cellModel!.keyName)",.paragraph(.alignment(.left),.lineSpacing(5)),.foreground(.gobalTextColor),.font(.appfont(size: 14)))
+                \("\(self.cellModel!.systemContent)",.paragraph(.alignment(.left),.lineSpacing(5)),.foreground(.lightGray),.font(.appfont(size: 12)))
+                """),.paragraph(.alignment(.left)))
+                """
+                self.nameLabel.attributed.text = att
             } else {
                 self.nameLabel.text = self.cellModel!.keyName
             }

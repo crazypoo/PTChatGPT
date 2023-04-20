@@ -16,6 +16,7 @@ import FDFullscreenPopGesture
 import SwiftSpinner
 import OSSSpeechKit
 import GCDWebServer
+import AttributedString
 
 //MARK: iCloud
 let SettingCloudString = "iCloud"
@@ -132,11 +133,9 @@ class PTSettingListViewController: PTChatBaseViewController {
         return picker
     }()
         
-    func cellContentAtt(content:String) -> NSMutableAttributedString {
-        let att = NSMutableAttributedString.sj.makeText { make in
-            make.append(content).font(.appfont(size: 14)).alignment(.right).textColor(.gobalTextColor)
-        }
-        return att as! NSMutableAttributedString
+    func cellContentAtt(content:String) -> ASAttributedString {
+        let att:ASAttributedString = .init("\(content)",.paragraph(.alignment(.right)),.foreground(.gobalTextColor),.font(.appfont(size: 14)))
+        return att
     }
     
     func aboutModels() -> [PTSettingModels] {

@@ -8,6 +8,7 @@
 
 import UIKit
 import PooTools
+import AttributedString
 
 class PTDisclaimerViewController: PTChatBaseViewController {
 
@@ -43,12 +44,11 @@ class PTDisclaimerViewController: PTChatBaseViewController {
             make.top.equalTo(0)
         }
         
-        self.infoLabel.attributedText = NSMutableAttributedString.sj.makeText({ make in
-            make.append(firstTitle).alignment(.center).font(.appfont(size: 18,bold: true)).textColor(.gobalTextColor)
-            make.append("\n" + AppDisclaimer).alignment(.left).font(.appfont(size: 16)).textColor(.gobalTextColor)
-            make.append("\n" + secondTitle).alignment(.center).font(.appfont(size: 18,bold: true)).textColor(.gobalTextColor)
-            make.append("\n" + ExternalLinksDisclaimer).alignment(.left).font(.appfont(size: 16)).textColor(.gobalTextColor)
-        })
+        let firstTitleAtt:ASAttributedString = .init("\(firstTitle)",.paragraph(.alignment(.center)),.foreground(.gobalTextColor),.font(.appfont(size: 18,bold: true)))
+        let appDisclaimerAtt:ASAttributedString = .init("\n\(AppDisclaimer)",.paragraph(.alignment(.left)),.foreground(.gobalTextColor),.font(.appfont(size: 16)))
+        let secondTitleAtt:ASAttributedString = .init("\n\(secondTitle)",.paragraph(.alignment(.center)),.foreground(.gobalTextColor),.font(.appfont(size: 18,bold: true)))
+        let externalLinksDisclaimerAtt:ASAttributedString = .init("\n\(ExternalLinksDisclaimer)",.paragraph(.alignment(.left)),.foreground(.gobalTextColor),.font(.appfont(size: 16)))
+        self.infoLabel.attributed.text = firstTitleAtt + appDisclaimerAtt + secondTitleAtt + externalLinksDisclaimerAtt
         
         let firstTitleHeight = UIView.sizeFor(string: firstTitle, font: .appfont(size: 18,bold: true), height: CGFloat(MAXFLOAT), width: CGFloat.kSCREEN_WIDTH - PTAppBaseConfig.share.defaultViewSpace * 2).height
         let firstInfoHeight = UIView.sizeFor(string: AppDisclaimer, font: .appfont(size: 16),lineSpacing: 3, height: CGFloat(MAXFLOAT), width: CGFloat.kSCREEN_WIDTH - PTAppBaseConfig.share.defaultViewSpace * 2).height

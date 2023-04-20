@@ -74,6 +74,7 @@ PODS:
     - PooTools/Core
   - PooTools/Core (3.1.3):
     - Alamofire
+    - AttributedString
     - CocoaLumberjack/Swift
     - DeviceKit
     - EmptyDataSet-Swift
@@ -89,7 +90,6 @@ PODS:
     - MJExtension
     - NotificationBannerSwift
     - pop
-    - SJAttributesStringMaker
     - SnapKit
     - SwiftDate
     - SwifterSwift
@@ -204,7 +204,6 @@ PODS:
   - ZXNavigationBar (1.4.1)
 
 DEPENDENCIES:
-  - AttributedString
   - Bugly
   - FLEX
   - HyperioniOS/AttributesInspector
@@ -229,6 +228,7 @@ DEPENDENCIES:
   - PooTools/Picker (from `https://github.com/crazypoo/PTools.git`)
   - PooTools/Slider (from `https://github.com/crazypoo/PTools.git`)
   - PooTools/ZipArchive (from `https://github.com/crazypoo/PTools.git`)
+  - SJAttributesStringMaker
   - SwiftLint
   - SwiftSpinner
   - Swinject
@@ -306,7 +306,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   PooTools:
-    :commit: 560be2308c0c4761c428ba20db0a1291bd0cd607
+    :commit: a02d2675b4a77d2674af180853df6e9b04f7add8
     :git: https://github.com/crazypoo/PTools.git
 
 SPEC CHECKSUMS:
@@ -344,7 +344,7 @@ SPEC CHECKSUMS:
   MJExtension: 21c5f6f8c4d5d8844b7ae8fbae08fed0b501f961
   NotificationBannerSwift: 437e135298d297fcb03f3eec4466f45cdb128d3d
   PhoneNumberKit: 441e8b26ec88d598e3591de9061eff18f5dd12e8
-  PooTools: d630ccb4bdfd1890752a4f65de57ba9af06d57b0
+  PooTools: e73cfcdc11db13045e97e30ba0db8f2a93228dc7
   pop: d582054913807fd11fd50bfe6a539d91c7e1a55a
   RangeSeekSlider: 650b11fa1edcb92e1e0ede797669d98622570fb5
   SJAttributesStringMaker: 8b5f54c487cc88fa26d2f540166cd43dfceca816
@@ -372,6 +372,6 @@ SPEC CHECKSUMS:
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
   ZXNavigationBar: a8ceb13fe37f9ca894cf6ae22d805cbdbb9ad6b1
 
-PODFILE CHECKSUM: 74576264e529409dd2edf1b73f33e183d0a64202
+PODFILE CHECKSUM: 88220afa06bc2709eb4952c0c657ee7ca78219d4
 
 COCOAPODS: 1.12.0

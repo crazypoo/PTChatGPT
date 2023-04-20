@@ -49,7 +49,7 @@ target 'PTChatGPT' do
   pod 'TensorFlowLiteSwift', '~> 2.3.0', :subspecs => ['Metal']
   pod 'SwiftSpinner'
   pod 'KDCircularProgress'
-  pod 'AttributedString'
+  pod 'SJAttributesStringMaker'
   
   pod 'SwiftLint'
   pod 'Swinject'

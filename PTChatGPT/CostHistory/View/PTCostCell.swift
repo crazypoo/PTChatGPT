@@ -8,6 +8,7 @@
 
 import UIKit
 import PooTools
+import SJAttributesStringMaker
 
 class PTCostCell: PTBaseNormalCell {
     static let ID = "PTCostCell"

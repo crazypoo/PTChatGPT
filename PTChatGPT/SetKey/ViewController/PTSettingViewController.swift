@@ -13,6 +13,7 @@ import BRPickerView
 import OSSSpeechKit
 import FloatingPanel
 import AttributedString
+import SJAttributesStringMaker
 
 class PTSettingViewController: PTChatBaseViewController {
 

@@ -8,6 +8,7 @@
 
 import UIKit
 import PooTools
+import AttributedString
 
 class PTHelpViewController: PTChatBaseViewController {
 
@@ -27,17 +28,18 @@ class PTHelpViewController: PTChatBaseViewController {
             make.top.equalToSuperview().inset(CGFloat.kNavBarHeight_Total)
         }
         
-        let att = NSMutableAttributedString.sj.makeText { make in
-            make.append("URL SCHEME").alignment(.left).font(.appfont(size: 24,bold: true)).textColor(.gobalTextColor).lineSpacing(15)
-            make.append("\n\(PTLanguage.share.text(forKey: "help_Base")):").alignment(.left).font(.appfont(size: 20,bold: true)).textColor(.gobalTextColor).lineSpacing(5)
-            make.append("\nchatzola://chatTag=Base&chatText=Hola").alignment(.left).font(.appfont(size: 20,bold: true)).textColor(.gobalTextColor).lineSpacing(5)
-            make.append("\n\(PTLanguage.share.text(forKey: "help_And"))").alignment(.left).font(.appfont(size: 20,bold: true)).textColor(.gobalTextColor).lineSpacing(5)
-            make.append("\nchatzola://chatText=Hola").alignment(.left).font(.appfont(size: 20,bold: true)).textColor(.gobalTextColor).lineSpacing(5)
-            
-            make.append("\n").alignment(.left).font(.appfont(size: 20,bold: true)).textColor(.gobalTextColor).lineSpacing(15)
-            make.append("\n\(PTLanguage.share.text(forKey: "help_Other")):").alignment(.left).font(.appfont(size: 20,bold: true)).textColor(.gobalTextColor).lineSpacing(5)
-            make.append("\nchatzola://chatTag=XXXXXXXXXXXXXXXXXXXXX&chatText=Hola").alignment(.left).font(.appfont(size: 20,bold: true)).textColor(.gobalTextColor).lineSpacing(5)
-        }
-        self.infoLabel.attributedText = att
+        let att:ASAttributedString = """
+        \(wrap: .embedding("""
+        \("URL SCHEME",.paragraph(.alignment(.left),.lineSpacing(15)),.foreground(.gobalTextColor),.font(.appfont(size: 24,bold: true)))
+        \("\(PTLanguage.share.text(forKey: "help_Base")):",.paragraph(.alignment(.left),.lineSpacing(5)),.foreground(.gobalTextColor),.font(.appfont(size: 20,bold: true)))
+        \("chatzola://chatTag=Base&chatText=Hola",.paragraph(.alignment(.left),.lineSpacing(5)),.foreground(.gobalTextColor),.font(.appfont(size: 20,bold: true)))
+        \("\(PTLanguage.share.text(forKey: "help_And"))",.paragraph(.alignment(.left),.lineSpacing(5)),.foreground(.gobalTextColor),.font(.appfont(size: 20,bold: true)))
+        \("chatzola://chatText=Hola",.paragraph(.alignment(.left),.lineSpacing(5)),.foreground(.gobalTextColor),.font(.appfont(size: 20,bold: true)))
+        
+        \("\(PTLanguage.share.text(forKey: "help_Other")):",.paragraph(.alignment(.left),.lineSpacing(5)),.foreground(.gobalTextColor),.font(.appfont(size: 20,bold: true)))
+        \("chatzola://chatTag=XXXXXXXXXXXXXXXXXXXXX&chatText=Hola",.paragraph(.alignment(.left),.lineSpacing(5)),.foreground(.gobalTextColor),.font(.appfont(size: 20,bold: true)))
+        """),.paragraph(.alignment(.left)))
+        """        
+        self.infoLabel.attributed.text = att
     }
 }
