@@ -63,24 +63,14 @@ class PTSettingViewController: PTChatBaseViewController {
         return view
     }()
         
-    lazy var disclaimerButton:UIButton = {
+    lazy var disclaimerButton:UILabel = {
         
-        let att = NSMutableAttributedString.sj.makeText { make in
-            make.append(PTLanguage.share.text(forKey: "first_Disclaimer")).font(.appfont(size: 14)).textColor(.systemBlue).alignment(.center).underLine { underMake in
-                underMake.color = .systemBlue
-                underMake.style = .single
-            }
-        }
+        let att:ASAttributedString = ASAttributedString.init("\(PTLanguage.share.text(forKey: "first_Disclaimer"))",.paragraph(.alignment(.center)),.foreground(.systemBlue),.font(.appfont(size: 14)),.action(self.disclaimerClick),.underline(.single,color: .systemBlue))
         
-        let button = UIButton(type: .custom)
-        button.setAttributedTitle(att, for: .normal)
-        button.addActionHandlers { sender in
-            self.token.resignFirstResponder()
-            let vc = PTDisclaimerViewController()
-            let nav = PTNavController(rootViewController: vc)
-            self.present(nav, animated: true)
-        }
-        return button
+        let view = UILabel()
+        view.numberOfLines = 0
+        view.attributed.text = att
+        return view
     }()
     
     lazy var gogogoButton:UIButton = {
@@ -232,6 +222,12 @@ class PTSettingViewController: PTChatBaseViewController {
         }
     }
 
+    func disclaimerClick() {
+        self.token.resignFirstResponder()
+        let vc = PTDisclaimerViewController()
+        let nav = PTNavController(rootViewController: vc)
+        self.present(nav, animated: true)
+    }
 }
 
 extension PTSettingViewController:UITextFieldDelegate {

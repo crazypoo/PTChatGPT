@@ -1153,11 +1153,14 @@ class PTChatViewController: MessagesViewController {
             } else {
                 self.titleButton.isUserInteractionEnabled = false
             }
-            let att = NSMutableAttributedString.sj.makeText { make in
-                make.append(model.keyName).font(.appfont(size: 17)).textColor(.gobalTextColor).alignment(.center).lineSpacing(5)
-                make.append("\n\(model.systemContent)").font(.appfont(size: 14)).textColor(.lightGray).alignment(.center)
-            }
-            self.titleButton.setAttributedTitle(att, for: .normal)
+            
+            let att:ASAttributedString = """
+            \(wrap: .embedding("""
+            \("\(model.keyName)",.paragraph(.alignment(.center),.lineSpacing(5)),.foreground(.gobalTextColor),.font(.appfont(size: 17)))
+            \("\(model.systemContent)",.paragraph(.alignment(.center),.lineSpacing(5)),.foreground(.lightGray),.font(.appfont(size: 14)))
+            """),.paragraph(.alignment(.left)))
+            """
+            self.titleButton.setAttributedTitle(att.value, for: .normal)
         }
     }
     

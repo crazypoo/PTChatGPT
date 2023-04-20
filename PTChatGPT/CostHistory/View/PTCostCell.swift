@@ -8,7 +8,7 @@
 
 import UIKit
 import PooTools
-import SJAttributesStringMaker
+import AttributedString
 
 class PTCostCell: PTBaseNormalCell {
     static let ID = "PTCostCell"
@@ -22,28 +22,29 @@ class PTCostCell: PTBaseNormalCell {
                 textFont = .appfont(size: 14)
             }
 
-            let attTime = NSMutableAttributedString.sj.makeText { make in
-                make.append(("⏰" + self.cellModel!.costDate)).font(textFont).alignment(.left).textColor(.gobalTextColor).lineSpacing(5)
-                var questionType = ""
-                var answer = ""
-                switch self.cellModel!.historyType {
-                case 0:
-                    let aiType:OpenAIModelType = AppDelegate.appDelegate()!.appConfig.getAIMpdelType(typeString: self.cellModel!.modelName)
-                    let cost = String(format: "%f", AppDelegate.appDelegate()!.appConfig.tokenCostCalculation(type: aiType, usageModel: self.cellModel!.tokenUsage))
-                    questionType = "📝"
-                    answer = "🤖:\(self.cellModel!.modelName)\n✏️:\(self.cellModel!.tokenUsage.prompt_tokens)\n🖊️:\(self.cellModel!.tokenUsage.completion_tokens)\n🟰:\(self.cellModel!.tokenUsage.total_tokens)\n💸:\(cost)"
-                case 1:
-                    let cost = String(format: "%f", AppDelegate.appDelegate()!.appConfig.tokenCostImageCalculation(imageCount: self.cellModel!.imageURL.count))
-                    questionType = "🎨"
-                    answer = "🏞️:\(self.cellModel!.imageURL.count)\n📏:\(self.cellModel!.imageSize)\n💸:\(cost)"
-                default:break
-                }
-                make.append("\n\(questionType)").font(.appfont(size: 14)).alignment(.left).textColor(.gobalTextColor).lineSpacing(5)
-                make.append("\n\(answer)").font(.appfont(size: 14)).alignment(.left).textColor(.gobalTextColor).lineSpacing(5)
-
-                
+            var questionType = ""
+            var answer = ""
+            switch self.cellModel!.historyType {
+            case 0:
+                let aiType:OpenAIModelType = AppDelegate.appDelegate()!.appConfig.getAIMpdelType(typeString: self.cellModel!.modelName)
+                let cost = String(format: "%f", AppDelegate.appDelegate()!.appConfig.tokenCostCalculation(type: aiType, usageModel: self.cellModel!.tokenUsage))
+                questionType = "📝"
+                answer = "🤖:\(self.cellModel!.modelName)\n✏️:\(self.cellModel!.tokenUsage.prompt_tokens)\n🖊️:\(self.cellModel!.tokenUsage.completion_tokens)\n🟰:\(self.cellModel!.tokenUsage.total_tokens)\n💸:\(cost)"
+            case 1:
+                let cost = String(format: "%f", AppDelegate.appDelegate()!.appConfig.tokenCostImageCalculation(imageCount: self.cellModel!.imageURL.count))
+                questionType = "🎨"
+                answer = "🏞️:\(self.cellModel!.imageURL.count)\n📏:\(self.cellModel!.imageSize)\n💸:\(cost)"
+            default:break
             }
-            self.timeLabelAndQ.attributedText = attTime
+
+            let att:ASAttributedString = """
+            \(wrap: .embedding("""
+            \("⏰\(self.cellModel!.costDate)",.paragraph(.alignment(.left),.lineSpacing(5)),.foreground(.gobalTextColor),.font(textFont))
+            \("\(questionType)",.paragraph(.alignment(.left),.lineSpacing(5)),.foreground(.gobalTextColor),.font(.appfont(size: 14)))
+            \("\(answer)",.paragraph(.alignment(.left),.lineSpacing(5)),.foreground(.gobalTextColor),.font(.appfont(size: 14)))
+            """),.paragraph(.alignment(.left)))
+            """
+            self.timeLabelAndQ.attributed.text = att
         }
     }
     
