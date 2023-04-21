@@ -49,6 +49,12 @@ enum PTChatCase {
 
 class PTChatViewController: MessagesViewController {
                 
+    enum ChatIsFlag {
+        case YES
+        case NO
+        case PASS
+    }
+    
     //MARK: 花费按钮
     lazy var tokenButton:BKLayoutButton = {
         let view = BKLayoutButton()
@@ -2092,7 +2098,7 @@ extension PTChatViewController:MessageCellDelegate {
                             self.checkSentence(checkWork: text) { useCheckApi, isFlagged, error in
                                 if useCheckApi {
                                     if isFlagged {
-                                        self.sendTextFunction(str: text, saveModel: saveModel, sectionIndex: (self.messageList.count - 1),resend: true)
+                                        self.sendTextFunction(str: text, saveModel: saveModel, sectionIndex: (self.messageList.count - 1),resend: true,flagType: .YES)
                                     } else {
                                         if error != nil {
                                             self.messageList[(self.messageList.count - 1)].sending = false
@@ -2118,7 +2124,7 @@ extension PTChatViewController:MessageCellDelegate {
                                         }
                                     }
                                 } else {
-                                    self.sendTextFunction(str: text, saveModel: saveModel, sectionIndex: (self.messageList.count - 1),resend: true)
+                                    self.sendTextFunction(str: text, saveModel: saveModel, sectionIndex: (self.messageList.count - 1),resend: true,flagType: .PASS)
                                 }
                             }
                         case .attributedText(_):
@@ -2173,7 +2179,7 @@ extension PTChatViewController:MessageCellDelegate {
                                 }
                             }
                         case .audio(_):
-                            self.sendTextFunction(str: saveModel.messageText, saveModel: saveModel, sectionIndex: (self.messageList.count - 1),resend: true)
+                            self.sendTextFunction(str: saveModel.messageText, saveModel: saveModel, sectionIndex: (self.messageList.count - 1),resend: true,flagType: .PASS)
                         case .photo(_):
                             self.userSendImage(imageObject: AppDelegate.appDelegate()!.appConfig.getMessageImage(name: saveModel.localFileName), saveModel: saveModel,resend: true)
                         default:
@@ -2389,12 +2395,12 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                 self.checkSentence(checkWork: str) { useCheckApi, isFlagged, error in
                     if useCheckApi {
                         if isFlagged {
-                            PTNSLogConsole("YES")
+                            PTNSLogConsole("讲粗口:YES")
                             PTGCDManager.gcdBackground {
                                 PTGCDManager.gcdMain {
                                     switch self.chatCase {
                                     case .draw(type: .edit):
-                                        self.attMessageSend(date: date, saveModel: saveModel, str: str,isFlagged: true, error: nil,sendToServices: false)
+                                        self.attMessageSend(date: date, saveModel: saveModel, str: str,isFlagged: .YES, error: nil,sendToServices: false)
                                     default:
                                         message.kind = .text(str.replaceStringWithAsterisk())
                                         message.sendSuccess = true
@@ -2413,11 +2419,11 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                                 }
                             }
                         } else {
-                            PTNSLogConsole("NO")
+                            PTNSLogConsole("讲粗口:NO")
                             if error != nil {
                                 switch self.chatCase {
                                 case .draw(type: .edit):
-                                    self.attMessageSend(date: date, saveModel: saveModel, str: str,isFlagged: false, error: error!,sendToServices: false)
+                                    self.attMessageSend(date: date, saveModel: saveModel, str: str,isFlagged: .NO, error: error!,sendToServices: false)
                                 default:
                                     self.insertMessage(message) {
                                         PTGCDManager.gcdMain {
@@ -2438,12 +2444,12 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                             } else {
                                 switch self.chatCase {
                                 case .draw(type: .edit):
-                                    self.sendTextFunction(str: str, saveModel: saveModel, sectionIndex: (self.messageList.count - 1))
+                                    self.sendTextFunction(str: str, saveModel: saveModel, sectionIndex: (self.messageList.count - 1),flagType: .NO)
                                 default:
                                     PTGCDManager.gcdBackground {
                                         PTGCDManager.gcdMain {
                                             self.insertMessage(message) {
-                                                self.sendTextFunction(str: str, saveModel: saveModel, sectionIndex: (self.messageList.count - 1))
+                                                self.sendTextFunction(str: str, saveModel: saveModel, sectionIndex: (self.messageList.count - 1),flagType: .NO)
                                             }
                                         }
                                     }
@@ -2451,15 +2457,16 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                             }
                         }
                     } else {
-                        PTNSLogConsole("PASS")
+                        PTNSLogConsole("讲粗口:PASS")
                         switch self.chatCase {
                         case .draw(type: .edit):
-                            self.sendTextFunction(str: str, saveModel: saveModel, sectionIndex: (self.messageList.count - 1))
+                            PTNSLogConsole("<<<<<<<<<><<<>>>>>>>><<\(str)")
+                            self.sendTextFunction(str: str, saveModel: saveModel, sectionIndex: (self.messageList.count - 1),flagType: .PASS)
                         default:
                             PTGCDManager.gcdBackground {
                                 PTGCDManager.gcdMain {
                                     self.insertMessage(message) {
-                                        self.sendTextFunction(str: str, saveModel: saveModel, sectionIndex: (self.messageList.count - 1))
+                                        self.sendTextFunction(str: str, saveModel: saveModel, sectionIndex: (self.messageList.count - 1),flagType: .PASS)
                                     }
                                 }
                             }
@@ -2473,7 +2480,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
         }
     }
     
-    func attMessageSend (date:Date,saveModel:PTChatModel,str:String,isFlagged:Bool,error:AFError?,sendToServices:Bool) {
+    func attMessageSend (date:Date,saveModel:PTChatModel,str:String,isFlagged:ChatIsFlag,error:AFError?,sendToServices:Bool) {
         self.chatCase = .chat(type: .normal)
         let dateString = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
         let mainName = "main_\(dateString).png"
@@ -2491,14 +2498,17 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                                     saveModel.messageText = str
                                     saveModel.editMainName = mainName
                                     saveModel.editMaskName = maskName
-                                    if isFlagged {
+                                    switch isFlagged {
+                                    case .YES:
                                         saveModel.starString = str.replaceStringWithAsterisk()
+                                    default:
+                                        saveModel.starString = ""
                                     }
-                                    
+
                                     let attMain:ASAttributedString = """
                                     \(wrap: .embedding("""
-                                    \("\(str.replaceStringWithAsterisk())",.foreground(AppDelegate.appDelegate()!.appConfig.userTextColor))
-                                    \(.image(self.mainImage!,.custom(size:.init(width:100,height:100))))                                    \(.image(self.maskImage!,.custom(size:.init(width:100,height:100))))
+                                    \("\(!saveModel.starString.stringIsEmpty() ? str.replaceStringWithAsterisk() : str)",.foreground(AppDelegate.appDelegate()!.appConfig.userTextColor))
+                                    \(.image(self.mainImage!,.custom(size:.init(width:100,height:100))))\(.image(self.maskImage!,.custom(size:.init(width:100,height:100))))
 
                                     """))
                                     """
@@ -2509,7 +2519,6 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                                     message.sending = true
                                     PTGCDManager.gcdMain {
                                         self.insertMessage(message) {
-                                            self.chatCase = .chat(type: .normal)
                                             if sendToServices {
                                                 self.chatModels.append(saveModel)
                                                 self.messageList[(self.messageList.count - 1)].sending = true
@@ -2554,8 +2563,11 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                         saveModel.messageSendSuccess = true
                         saveModel.messageText = str
                         saveModel.editMainName = mainName
-                        if isFlagged {
+                        switch isFlagged {
+                        case .YES:
                             saveModel.starString = str.replaceStringWithAsterisk()
+                        default:
+                            saveModel.starString = ""
                         }
                         self.chatModels.append(saveModel)
                         
@@ -2652,11 +2664,8 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                 PTGCDManager.gcdMain {
                     self.setTypingIndicatorViewHidden(true)
                     saveModel.messageSendSuccess = false
-                    if resend! {
-                        self.chatModels[self.chatModels.count - 1] = saveModel
-                    } else {
-                        self.chatModels.append(saveModel)
-                    }
+                    self.chatModels[self.chatModels.count - 1] = saveModel
+
                     self.historyModel?.historyModel = self.chatModels
                     self.refreshViewAndLoadNewData {
                         self.messageList[(self.messageList.count - 1)].sending = false
@@ -2716,7 +2725,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
     }
     
     //MARK: 發送文字內容
-    func sendTextFunction(str:String,saveModel:PTChatModel,sectionIndex:Int,resend:Bool? = false) {
+    func sendTextFunction(str:String,saveModel:PTChatModel,sectionIndex:Int,resend:Bool? = false,flagType:ChatIsFlag) {
         self.setTypingIndicatorViewHidden(false)
         switch self.chatCase {
         case .chat(type:.edit):
@@ -2846,12 +2855,9 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
             self.drawImage(str: str,saveModel: saveModel,indexSection: sectionIndex,resend: resend)
         case .draw(type: .edit):
             PTNSLogConsole("我要PS")
-            
-            self.chatCase = .chat(type: .normal)
-            
             let date = Date()
             
-            self.attMessageSend(date: date, saveModel: saveModel, str: str,isFlagged: false, error: nil, sendToServices: true)
+            self.attMessageSend(date: date, saveModel: saveModel, str: str,isFlagged: flagType, error: nil, sendToServices: true)
         }
     }
     
@@ -3107,7 +3113,7 @@ extension PTChatViewController:OSSSpeechDelegate {
                 self.maskView.translateLabel.text = ""
             } else {
                 self.insertMessage(voiceMessage)
-                self.sendTextFunction(str: text, saveModel: saveModel, sectionIndex: self.messageList.count - 1)
+                self.sendTextFunction(str: text, saveModel: saveModel, sectionIndex: self.messageList.count - 1,flagType: .PASS)
             }
             self.messagesCollectionView.scrollToLastItem(animated: true)
             self.sendTranslateText = false
