@@ -1554,7 +1554,6 @@ extension PTChatViewController {
             default:
                 break
             }
-
         }
     }
 }

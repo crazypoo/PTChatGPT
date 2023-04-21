@@ -32,7 +32,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>20230421103737</string>
+	<string>20230421224847</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -44,6 +44,8 @@
 	<array>
 		<string>_adhp._tcp</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>To change user icon,we need to access the camera</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>I want to access the local network so that you can have a better experience.</string>
 	<key>NSMicrophoneUsageDescription</key>
