@@ -44,7 +44,10 @@ target 'PTChatGPT' do
   pod 'PooTools/Input', :git => 'https://github.com/crazypoo/PTools.git'
   pod 'PooTools/ZipArchive', :git => 'https://github.com/crazypoo/PTools.git'
   pod 'PooTools/GCDWebServer', :git => 'https://github.com/crazypoo/PTools.git'
-
+  pod 'PooTools/DEBUG', :git => 'https://github.com/crazypoo/PTools.git'
+  pod 'PooTools/ListEmptyData', :git => 'https://github.com/crazypoo/PTools.git'
+  pod 'PooTools/FloatPanel', :git => 'https://github.com/crazypoo/PTools.git'
+  
   pod 'WhatsNew'
   pod 'TensorFlowLiteSwift', '~> 2.3.0', :subspecs => ['Metal']
   pod 'SwiftSpinner'

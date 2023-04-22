@@ -140,7 +140,15 @@ class PTChatViewController: MessagesViewController {
         view.setImage("👨‍🎨".emojiToImage(emojiFont: .appfont(size: 24)), for: .normal)
         view.setSize(CGSize(width: 44, height: 44), animated: false)
         view.addActionHandlers { sender in
-            UIAlertController.baseActionSheet(title: "AI Draw",subTitle: PTLanguage.share.text(forKey: "chat_TF"), titles: self.cartoonImageModes) { sheet in
+            
+            var actionSheetOption = ""
+            if AppDelegate.appDelegate()!.appConfig.canUseStableDiffusionModel() {
+                actionSheetOption = PTLanguage.share.text(forKey: "chat_TF")
+            } else {
+                actionSheetOption = PTLanguage.share.text(forKey: "chat_TF_no_sd")
+            }
+            
+            UIAlertController.baseActionSheet(title: "AI Draw",subTitle: actionSheetOption, titles: self.cartoonImageModes) { sheet in
                 
             } cancelBlock: { sheet in
                 
@@ -797,6 +805,9 @@ class PTChatViewController: MessagesViewController {
         
         if !AppDelegate.appDelegate()!.appConfig.apiToken.stringIsEmpty() {
             NotificationCenter.default.addObserver(self, selector: #selector(self.showURLNotifi(notifi:)), name: NSNotification.Name(rawValue: PLaunchAdDetailDisplayNotification), object: nil)
+            if !Gobal_device_info.isPad {
+                NotificationCenter.default.addObserver(self, selector: #selector(self.adHide(notifi:)), name: NSNotification.Name(rawValue: PLaunchAdSkipNotification), object: nil)
+            }
         } else {
             if !Gobal_device_info.isPad {
                 NotificationCenter.default.addObserver(self, selector: #selector(self.adHide(notifi:)), name: NSNotification.Name(rawValue: PLaunchAdSkipNotification), object: nil)
