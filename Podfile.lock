@@ -1,17 +1,17 @@
 PODS:
   - Alamofire (5.6.4)
   - AttributedString (3.3.5)
-  - BRPickerView (2.8.0):
-    - BRPickerView/AddressPickerView (= 2.8.0)
-    - BRPickerView/Base (= 2.8.0)
-    - BRPickerView/DatePickerView (= 2.8.0)
-    - BRPickerView/StringPickerView (= 2.8.0)
-  - BRPickerView/AddressPickerView (2.8.0):
+  - BRPickerView (2.8.1):
+    - BRPickerView/AddressPickerView (= 2.8.1)
+    - BRPickerView/Base (= 2.8.1)
+    - BRPickerView/DatePickerView (= 2.8.1)
+    - BRPickerView/StringPickerView (= 2.8.1)
+  - BRPickerView/AddressPickerView (2.8.1):
     - BRPickerView/Base
-  - BRPickerView/Base (2.8.0)
-  - BRPickerView/DatePickerView (2.8.0):
+  - BRPickerView/Base (2.8.1)
+  - BRPickerView/DatePickerView (2.8.1):
     - BRPickerView/Base
-  - BRPickerView/StringPickerView (2.8.0):
+  - BRPickerView/StringPickerView (2.8.1):
     - BRPickerView/Base
   - Bugly (2.5.93)
   - ChromaColorPicker (2.0.2)
@@ -67,12 +67,12 @@ PODS:
   - PhoneNumberKit/PhoneNumberKitCore (3.3.4)
   - PhoneNumberKit/UIKit (3.3.4):
     - PhoneNumberKit/PhoneNumberKitCore
-  - PooTools/CheckUpdate (3.1.3):
+  - PooTools/CheckUpdate (3.1.5):
     - PooTools/Core
-  - PooTools/ColorPicker (3.1.3):
+  - PooTools/ColorPicker (3.1.5):
     - ChromaColorPicker
     - PooTools/Core
-  - PooTools/Core (3.1.3):
+  - PooTools/Core (3.1.5):
     - Alamofire
     - AttributedString
     - CocoaLumberjack/Swift
@@ -98,48 +98,48 @@ PODS:
     - YYCategories
     - YYText
     - ZXNavigationBar
-  - PooTools/DarkModeSetting (3.1.3):
+  - PooTools/DarkModeSetting (3.1.5):
     - PooTools/Core
-  - PooTools/DEBUG (3.1.3):
+  - PooTools/DEBUG (3.1.5):
     - PooTools/Core
-  - PooTools/FloatPanel (3.1.3):
+  - PooTools/FloatPanel (3.1.5):
     - FloatingPanel
     - PooTools/Core
-  - PooTools/GCDWebServer (3.1.3):
+  - PooTools/GCDWebServer (3.1.5):
     - GCDWebServer
     - GCDWebServer/WebUploader
     - PooTools/Core
-  - PooTools/ImagePicker (3.1.3):
+  - PooTools/ImagePicker (3.1.5):
     - PooTools/Core
     - TZImagePickerController
-  - PooTools/Input (3.1.3):
+  - PooTools/Input (3.1.5):
     - CRBoxInputView
     - PhoneNumberKit
     - PooTools/Core
     - TextFieldEffects
     - "UITextField+Shake"
-  - PooTools/Instructions (3.1.3):
+  - PooTools/Instructions (3.1.5):
     - Instructions
     - PooTools/Core
-  - PooTools/LanguageSetting (3.1.3):
+  - PooTools/LanguageSetting (3.1.5):
     - PooTools/Core
-  - PooTools/ListEmptyData (3.1.3):
+  - PooTools/ListEmptyData (3.1.5):
     - EmptyDataSet-Swift
     - LXFProtocolTool/LXFEmptyDataSetable
     - PooTools/Core
-  - PooTools/MediaViewer (3.1.3):
+  - PooTools/MediaViewer (3.1.5):
     - PooTools/Core
-  - PooTools/PagingControl (3.1.3):
+  - PooTools/PagingControl (3.1.5):
     - JXPagingView/Paging
     - JXSegmentedView
     - PooTools/Core
-  - PooTools/Picker (3.1.3):
+  - PooTools/Picker (3.1.5):
     - BRPickerView
     - PooTools/Core
-  - PooTools/Slider (3.1.3):
+  - PooTools/Slider (3.1.5):
     - PooTools/Core
     - RangeSeekSlider
-  - PooTools/ZipArchive (3.1.3):
+  - PooTools/ZipArchive (3.1.5):
     - PooTools/Core
     - SSZipArchive
   - pop (1.0.12)
@@ -310,13 +310,13 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   PooTools:
-    :commit: 2f67327321abbedb22e5adaa0b5e3807d91fddd0
+    :commit: 5bc420ccc347e70dc2e0058464dfba7bc37bbdbc
     :git: https://github.com/crazypoo/PTools.git
 
 SPEC CHECKSUMS:
   Alamofire: 4e95d97098eacb88856099c4fc79b526a299e48c
   AttributedString: 6d2d9d65310119556c3b5c6e4ea8d1ca339b703c
-  BRPickerView: a0ff460bf092bc069db5a54153395b1f7e8f5300
+  BRPickerView: 2531a2d4d0fea0b57a1c738de215af0f88863a2f
   Bugly: b8715e6ec4004b7f7fbffab0643ba80545aee3da
   ChromaColorPicker: 307585f2dc23d4d72f24cad320c1e08825cb5c09
   CocoaLumberjack: 78abfb691154e2a9df8ded4350d504ee19d90732
@@ -348,7 +348,7 @@ SPEC CHECKSUMS:
   MJExtension: 21c5f6f8c4d5d8844b7ae8fbae08fed0b501f961
   NotificationBannerSwift: 437e135298d297fcb03f3eec4466f45cdb128d3d
   PhoneNumberKit: 441e8b26ec88d598e3591de9061eff18f5dd12e8
-  PooTools: aab5227b7244f5c10d35fce21a26626f17fd7008
+  PooTools: b298fa5afae90ab250d9550087eaa6be8e2b2810
   pop: d582054913807fd11fd50bfe6a539d91c7e1a55a
   RangeSeekSlider: 650b11fa1edcb92e1e0ede797669d98622570fb5
   SnapKit: e01d52ebb8ddbc333eefe2132acf85c8227d9c25
@@ -377,4 +377,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: ca413b1a68cb02cdc8057ee01b9d14a07d14eff6
 
-COCOAPODS: 1.12.0
+COCOAPODS: 1.12.1

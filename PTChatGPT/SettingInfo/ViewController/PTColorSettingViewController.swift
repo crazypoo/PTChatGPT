@@ -12,15 +12,12 @@ import ChromaColorPicker
 
 class PTColorSettingViewController: PTChatBaseViewController {
 
-    let colorPicker = ChromaColorPicker()
-    let brightnessSlider = ChromaBrightnessSlider()
-    var userBubbleHandle = ChromaColorHandle()
-    var botBubbleHandle = ChromaColorHandle()
-    var userTextHandle = ChromaColorHandle()
-    var botTextHandle = ChromaColorHandle()
-    var waveHandle = ChromaColorHandle()
+    private var currentColorName:String = ""
+    
+    func aboutModels() -> [PTSettingModels] {
+        
+        let disclosureIndicatorImageName = UIImage(systemName: "chevron.right")!.withTintColor(.gobalTextColor,renderingMode: .alwaysOriginal)
 
-    lazy var aboutModels : [PTSettingModels] = {
         let colorMain = PTSettingModels()
         colorMain.name = PTLanguage.share.text(forKey: "alert_Info")
         
@@ -28,26 +25,41 @@ class PTColorSettingViewController: PTChatBaseViewController {
         userBubbleInfo.name = PTLanguage.share.text(forKey: "color_Bubble_user")
         userBubbleInfo.nameColor = .gobalTextColor
         userBubbleInfo.leftImage = UIImage(systemName: "bubble.left.fill")!.withRenderingMode(.automatic)
+        userBubbleInfo.accessoryType = .DisclosureIndicator
+        userBubbleInfo.contentIcon = AppDelegate.appDelegate()?.appConfig.userBubbleColor.createImageWithColor().transformImage(size: CGSizeMake(44, 44))
+        userBubbleInfo.disclosureIndicatorImage = disclosureIndicatorImageName
         
         let botBubbleInfo = PTFusionCellModel()
         botBubbleInfo.name = PTLanguage.share.text(forKey: "color_Bubble_bot")
         botBubbleInfo.nameColor = .gobalTextColor
         botBubbleInfo.leftImage = UIImage(systemName: "bubble.right.fill")!.withRenderingMode(.automatic)
-        
+        botBubbleInfo.accessoryType = .DisclosureIndicator
+        botBubbleInfo.disclosureIndicatorImage = disclosureIndicatorImageName
+        botBubbleInfo.contentIcon = AppDelegate.appDelegate()?.appConfig.botBubbleColor.createImageWithColor().transformImage(size: CGSizeMake(44, 44))
+
         let userTextInfo = PTFusionCellModel()
         userTextInfo.name = PTLanguage.share.text(forKey: "color_Text_user")
         userTextInfo.nameColor = .gobalTextColor
         userTextInfo.leftImage = UIImage(systemName: "plus.bubble.fill")!.withRenderingMode(.automatic)
-        
+        userTextInfo.accessoryType = .DisclosureIndicator
+        userTextInfo.disclosureIndicatorImage = disclosureIndicatorImageName
+        userTextInfo.contentIcon = AppDelegate.appDelegate()?.appConfig.userTextColor.createImageWithColor().transformImage(size: CGSizeMake(44, 44))
+
         let botTextInfo = PTFusionCellModel()
         botTextInfo.name = PTLanguage.share.text(forKey: "color_Text_bot")
         botTextInfo.nameColor = .gobalTextColor
         botTextInfo.leftImage = UIImage(systemName: "text.bubble.fill")!.withRenderingMode(.automatic)
+        botTextInfo.accessoryType = .DisclosureIndicator
+        botTextInfo.disclosureIndicatorImage = disclosureIndicatorImageName
+        botTextInfo.contentIcon = AppDelegate.appDelegate()?.appConfig.botTextColor.createImageWithColor().transformImage(size: CGSizeMake(44, 44))
 
         let waveInfo = PTFusionCellModel()
         waveInfo.name = PTLanguage.share.text(forKey: "color_Wave")
         waveInfo.nameColor = .gobalTextColor
         waveInfo.leftImage = UIImage(systemName: "waveform")!.withRenderingMode(.automatic)
+        waveInfo.accessoryType = .DisclosureIndicator
+        waveInfo.disclosureIndicatorImage = disclosureIndicatorImageName
+        waveInfo.contentIcon = AppDelegate.appDelegate()?.appConfig.waveColor.createImageWithColor().transformImage(size: CGSizeMake(44, 44))
 
         if self.user.senderId == PTChatData.share.bot.senderId {
             colorMain.models = [botBubbleInfo,botTextInfo]
@@ -58,7 +70,7 @@ class PTColorSettingViewController: PTChatBaseViewController {
         }
         
         return [colorMain]
-    }()
+    }
                 
     var mSections = [PTSection]()
     func comboLayout()->UICollectionViewCompositionalLayout {
@@ -79,13 +91,13 @@ class PTColorSettingViewController: PTChatBaseViewController {
         var bannerGroupSize : NSCollectionLayoutSize
         var customers = [NSCollectionLayoutGroupCustomItem]()
         var groupH:CGFloat = 0
-        var cellHeight:CGFloat = 0
-        var screenW:CGFloat = 0
+        var cellHeight:CGFloat = 54
+        var screenW:CGFloat = CGFloat.kSCREEN_WIDTH
         if Gobal_device_info.isPad {
-            cellHeight = 64
-            screenW = 400
+            cellHeight = 54
+            screenW = CGFloat.kSCREEN_WIDTH - iPadSplitMainControl
         } else {
-            cellHeight = CGFloat.ScaleW(w: 54)
+            cellHeight = 54
             screenW = CGFloat.kSCREEN_WIDTH
         }
         sectionModel.rows.enumerated().forEach { (index,model) in
@@ -147,48 +159,21 @@ class PTColorSettingViewController: PTChatBaseViewController {
             self.isModalInPresentation = true
             self.zx_navFixFrame = CGRect(x: 0, y: 0, width: 400, height: 54)
         }
-        self.setupColorPicker()
-        self.setupBrightnessSlider()
-        self.setupColorPickerHandles()
         
-        self.view.addSubviews([self.colorPicker,self.brightnessSlider,self.collectionView])
-        self.colorPicker.snp.makeConstraints { make in
-            if Gobal_device_info.isPad {
-                make.left.right.equalToSuperview().inset(88)
-            } else {
-                make.left.right.equalToSuperview().inset(30)
-            }
-            make.height.equalTo(self.colorPicker.snp.width)
-            make.top.equalToSuperview().inset(CGFloat.kNavBarHeight_Total + 10)
-        }
-        self.brightnessSlider.snp.makeConstraints { make in
-            make.left.right.equalTo(self.colorPicker)
-            make.height.equalTo(28)
-            make.top.equalTo(self.colorPicker.snp.bottom).offset(20)
-        }
+        self.view.addSubviews([self.collectionView])
         
         self.collectionView.snp.makeConstraints { make in
             make.left.right.bottom.equalToSuperview()
-            make.top.equalTo(self.brightnessSlider.snp.bottom)
-        }
-                
-        if Gobal_device_info.isPad {
-            let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: nil)
-            panGestureRecognizer.delegate = self
-            self.colorPicker.addGestureRecognizer(panGestureRecognizer)
+            make.top.equalToSuperview().inset(CGFloat.kNavBarHeight_Total)
         }
 
         self.showDetail()
-    }
-    
-    override func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
     }
 
     func showDetail() {
         mSections.removeAll()
 
-        self.aboutModels.enumerated().forEach { (index,value) in
+        self.aboutModels().enumerated().forEach { (index,value) in
             var rows = [PTRows]()
             value.models.enumerated().forEach { (subIndex,subValue) in
                 let row_List = PTRows.init(title: subValue.name, placeholder: subValue.content,cls: PTFusionCell.self, ID: PTFusionCell.ID, dataModel: subValue)
@@ -201,95 +186,43 @@ class PTColorSettingViewController: PTChatBaseViewController {
         self.collectionView.pt_register(by: mSections)
         self.collectionView.reloadData()
     }
-
-    func setupColorPicker() {
-        self.colorPicker.delegate = self
-        self.colorPicker.translatesAutoresizingMaskIntoConstraints = false
-    }
-    
-    func setupBrightnessSlider() {
-        self.brightnessSlider.connect(to: self.colorPicker)
-        self.brightnessSlider.trackColor = UIColor.blue
-        self.brightnessSlider.translatesAutoresizingMaskIntoConstraints = false
-    }
-
-    func botColorSet() {
-        self.botBubbleHandle = self.colorPicker.addHandle(at: AppDelegate.appDelegate()!.appConfig.botBubbleColor)
-        let botBubbleImageView = UIImageView(image: UIImage(systemName: "bubble.right.fill")?.withRenderingMode(.alwaysTemplate))
-        botBubbleImageView.contentMode = .scaleAspectFit
-        botBubbleImageView.tintColor = .white
-        self.botBubbleHandle.accessoryView = botBubbleImageView
-        self.botBubbleHandle.accessoryViewEdgeInsets = UIEdgeInsets(top: 0, left: 4, bottom: 4, right: 4)
-
-        self.botTextHandle = self.colorPicker.addHandle(at: AppDelegate.appDelegate()!.appConfig.botTextColor)
-        let botTextImageView = UIImageView(image: UIImage(systemName: "text.bubble.fill")?.withRenderingMode(.alwaysTemplate))
-        botTextImageView.contentMode = .scaleAspectFit
-        botTextImageView.tintColor = .white
-        self.botTextHandle.accessoryView = botTextImageView
-        self.botTextHandle.accessoryViewEdgeInsets = UIEdgeInsets(top: 0, left: 4, bottom: 4, right: 4)
-    }
-    
-    func userColorSet() {
-        self.userBubbleHandle = self.colorPicker.addHandle(at: AppDelegate.appDelegate()!.appConfig.userBubbleColor)
-        let userBubbleImageView = UIImageView(image: UIImage(systemName: "bubble.left.fill")?.withRenderingMode(.automatic))
-        userBubbleImageView.contentMode = .scaleAspectFit
-        userBubbleImageView.tintColor = .white
-        self.userBubbleHandle.accessoryView = userBubbleImageView
-        self.userBubbleHandle.accessoryViewEdgeInsets = UIEdgeInsets(top: 0, left: 4, bottom: 4, right: 4)
-
-        self.userTextHandle = self.colorPicker.addHandle(at: AppDelegate.appDelegate()!.appConfig.userTextColor)
-        let userTextImageView = UIImageView(image: UIImage(systemName: "plus.bubble.fill")?.withRenderingMode(.alwaysTemplate))
-        userTextImageView.contentMode = .scaleAspectFit
-        userTextImageView.tintColor = .white
-        self.userTextHandle.accessoryView = userTextImageView
-        self.userTextHandle.accessoryViewEdgeInsets = UIEdgeInsets(top: 0, left: 4, bottom: 4, right: 4)
-
-        self.waveHandle = self.colorPicker.addHandle(at: AppDelegate.appDelegate()!.appConfig.waveColor)
-        let waveImageView = UIImageView(image: UIImage(systemName: "waveform")?.withRenderingMode(.alwaysTemplate))
-        waveImageView.contentMode = .scaleAspectFit
-        waveImageView.tintColor = .white
-        self.waveHandle.accessoryView = waveImageView
-        self.waveHandle.accessoryViewEdgeInsets = UIEdgeInsets(top: 0, left: 4, bottom: 4, right: 4)
-    }
-    
-    func setupColorPickerHandles() {
-        if self.user.senderId == PTChatData.share.bot.senderId {
-            self.botColorSet()
-        } else if self.user.senderId == PTChatData.share.user.senderId {
-            self.userColorSet()
+                
+    func colorPicker(color:UIColor) {
+        let colorPicker = UIColorPickerViewController()
+        colorPicker.delegate = self
+        
+        // 设置预选颜色
+        colorPicker.selectedColor = color
+        
+        // 显示 alpha 通道
+        colorPicker.supportsAlpha = true
+        
+        colorPicker.modalPresentationStyle = .fullScreen
+        // 呈现颜色选择器
+        if Gobal_device_info.isPad {
+            colorPicker.modalPresentationStyle = .formSheet
+            colorPicker.preferredContentSize = CGSize(width: 400, height: CGFloat.kSCREEN_HEIGHT)
+            self.splitViewController?.present(colorPicker, animated: true)
         } else {
-            self.userColorSet()
-            self.botColorSet()
+            colorPicker.modalPresentationStyle = .formSheet
+            self.present(colorPicker, animated: true)
         }
     }
     
-    func createImageInfo(image:UIImage,info:String)->BKLayoutButton {
-        let view = BKLayoutButton()
-        view.setImage(image, for: .normal)
-        view.layoutStyle = .leftImageRightTitle
-        view.setMidSpacing(CGFloat.ScaleW(w: 5))
-        view.setImageSize(CGSize(width: 18, height: 15))
-        view.titleLabel?.font = .appfont(size: 14)
-        view.setTitleColor(.gobalTextColor, for: .normal)
-        view.setTitle(info, for: .normal)
-        view.isUserInteractionEnabled = false
-        return view
-    }
-}
-
-extension PTColorSettingViewController:ChromaColorPickerDelegate {
-    func colorPickerHandleDidChange(_ colorPicker: ChromaColorPicker, handle: ChromaColorHandle, to color: UIColor) {
-        if handle == self.botBubbleHandle {
-            AppDelegate.appDelegate()?.appConfig.botBubbleColor = color
-        } else if handle == self.userBubbleHandle {
-            AppDelegate.appDelegate()?.appConfig.userBubbleColor = color
-        } else if handle == self.userTextHandle {
-            AppDelegate.appDelegate()?.appConfig.userTextColor = color
-        } else if handle == self.botTextHandle {
-            AppDelegate.appDelegate()?.appConfig.botTextColor = color
-        } else if handle == self.waveHandle {
-            AppDelegate.appDelegate()?.appConfig.waveColor = color
+    func colorPickerSelectedColor(selectedColor:UIColor) {
+        if self.currentColorName == PTLanguage.share.text(forKey: "color_Bubble_user") {
+            AppDelegate.appDelegate()!.appConfig.userBubbleColor = selectedColor
+        } else if self.currentColorName == PTLanguage.share.text(forKey: "color_Bubble_bot") {
+            AppDelegate.appDelegate()!.appConfig.botBubbleColor = selectedColor
+        } else if self.currentColorName == PTLanguage.share.text(forKey: "color_Text_user") {
+            AppDelegate.appDelegate()!.appConfig.userTextColor = selectedColor
+        } else if self.currentColorName == PTLanguage.share.text(forKey: "color_Text_bot") {
+            AppDelegate.appDelegate()!.appConfig.botTextColor = selectedColor
+        } else if self.currentColorName == PTLanguage.share.text(forKey: "color_Wave") {
+            AppDelegate.appDelegate()!.appConfig.waveColor = selectedColor
         }
+        
+        self.showDetail()
     }
 }
 
@@ -305,16 +238,42 @@ extension PTColorSettingViewController:UICollectionViewDelegate,UICollectionView
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let itemSec = mSections[indexPath.section]
         let itemRow = itemSec.rows[indexPath.row]
-        if itemRow.ID == PTFusionCell.ID {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTFusionCell
-            cell.cellModel = (itemRow.dataModel as! PTFusionCellModel)
-            cell.dataContent.lineView.isHidden = indexPath.row == (itemSec.rows.count - 1) ? true : false
-            cell.dataContent.topLineView.isHidden = true
-            return cell
-        } else {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CELL", for: indexPath)
-            cell.backgroundColor = .random
-            return cell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTFusionCell
+        cell.cellModel = (itemRow.dataModel as! PTFusionCellModel)
+        cell.dataContent.lineView.isHidden = indexPath.row == (itemSec.rows.count - 1) ? true : false
+        cell.dataContent.topLineView.isHidden = true
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let itemSec = mSections[indexPath.section]
+        let itemRow = itemSec.rows[indexPath.row]
+        if itemRow.title == PTLanguage.share.text(forKey: "color_Bubble_user") {
+            self.colorPicker(color: AppDelegate.appDelegate()!.appConfig.userBubbleColor)
+        } else if itemRow.title == PTLanguage.share.text(forKey: "color_Bubble_bot") {
+            self.colorPicker(color: AppDelegate.appDelegate()!.appConfig.botBubbleColor)
+        } else if itemRow.title == PTLanguage.share.text(forKey: "color_Text_user") {
+            self.colorPicker(color: AppDelegate.appDelegate()!.appConfig.userTextColor)
+        } else if itemRow.title == PTLanguage.share.text(forKey: "color_Text_bot") {
+            self.colorPicker(color: AppDelegate.appDelegate()!.appConfig.botTextColor)
+        } else if itemRow.title == PTLanguage.share.text(forKey: "color_Wave") {
+            self.colorPicker(color: AppDelegate.appDelegate()!.appConfig.waveColor)
         }
+
+        self.currentColorName = itemRow.title
+    }
+}
+
+extension PTColorSettingViewController: UIColorPickerViewControllerDelegate {
+    func colorPickerViewControllerDidFinish(_ viewController: UIColorPickerViewController) {
+        // 用户完成选择后执行的操作
+        let selectedColor = viewController.selectedColor
+        self.colorPickerSelectedColor(selectedColor: selectedColor)
+    }
+    
+    func colorPickerViewControllerDidSelectColor(_ viewController: UIColorPickerViewController) {
+        // 当用户选择颜色时执行的操作
+        let selectedColor = viewController.selectedColor
+        self.colorPickerSelectedColor(selectedColor: selectedColor)
     }
 }

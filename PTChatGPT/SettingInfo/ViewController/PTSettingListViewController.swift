@@ -856,15 +856,7 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
         let itemRow = itemSec.rows[indexPath.row]
         if itemRow.title == PTLanguage.share.text(forKey: "about_Color") {
             let vc = PTColorSettingViewController(user: self.user)
-            let nav = PTNavController(rootViewController: vc)
-            if Gobal_device_info.isPad {
-                nav.modalPresentationStyle = .formSheet
-                nav.preferredContentSize = CGSize(width: 400, height: CGFloat.kSCREEN_HEIGHT)
-                self.splitViewController?.present(nav, animated: true)
-            } else {
-                nav.modalPresentationStyle = .fullScreen
-                self.navigationController?.present(nav, animated: true)
-            }
+            self.navigationController?.pushViewController(vc)
         } else if itemRow.title == PTLanguage.share.text(forKey: "about_SavedChat") {
             let vc = PTSaveChatViewController()
             self.navigationController?.pushViewController(vc)
