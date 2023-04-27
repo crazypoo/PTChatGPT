@@ -44,7 +44,7 @@ App主框架使用了自己的工具框架[PTools](https://github.com/crazypoo/P
 
 聊天列表使用了最新版本的[MessageKit](https://github.com/MessageKit/MessageKit)
 
-对于聊天列表的设置,我用了[ChromaColorPicker](https://github.com/joncardasis/ChromaColorPicker) ,来进行颜色设置
+~~对于聊天列表的设置,我用了[ChromaColorPicker](https://github.com/joncardasis/ChromaColorPicker) ,来进行颜色设置~~ 该用了iOS14更好用的UIColorPickerController了
 
 ~~AI的API我是使用了自己魔改版的[OpenAISwift](https://github.com/adamrushy/OpenAISwift)(因为他不支持获取图片和模型太少,現在我又懒得改🤪)和[OpenAIKit](https://github.com/MarcoDotIO/OpenAIKit)~~ 现在已经改成自己的接口请求方式,完全可以摆脱第三方库的限制
 
