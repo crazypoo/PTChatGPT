@@ -1818,7 +1818,8 @@ extension PTChatViewController:MessageCellDelegate {
     }
 
     func didTapMessage(in cell: MessageCollectionViewCell) {
-        
+        PTNSLogConsole("didTapMessage")
+
         self.messageInputBar.inputTextView.resignFirstResponder()
         
         let indexPath = self.messagesCollectionView.indexPath(for: cell)
@@ -1945,6 +1946,34 @@ extension PTChatViewController:MessageCellDelegate {
                     self.messageInputBar.alpha = 1
                 }
             }
+        case .attributedText(_):
+            let hisModel = self.historyModel!.historyModel[indexPath!.section]
+            
+            var viewModels = [PTViewerModel]()
+            
+            if !hisModel.editMainName.stringIsEmpty() {
+                let viewerModel = PTViewerModel()
+                viewerModel.imageURL = AppDelegate.appDelegate()!.appConfig.getMessageImage(name: hisModel.editMainName)
+                viewerModel.imageShowType = .Normal
+                viewModels.append(viewerModel)
+            }
+            
+            if !hisModel.editMaskName.stringIsEmpty() {
+                let viewerModel = PTViewerModel()
+                viewerModel.imageURL = AppDelegate.appDelegate()!.appConfig.getMessageImage(name: hisModel.editMaskName)
+                viewerModel.imageShowType = .Normal
+                viewModels.append(viewerModel)
+            }
+
+            let config = PTViewerConfig()
+            config.actionType = .Empty
+            config.closeViewerImage = UIImage(systemName: "chevron.left")!.withTintColor(.white, renderingMode: .automatic)
+            config.moreActionImage = UIImage(systemName: "ellipsis")!.withRenderingMode(.automatic)
+            config.mediaData = viewModels
+            
+            let viewer = PTMediaViewer(viewConfig: config)
+            viewer.showImageViewer()
+
         default:
             break
         }
@@ -1969,6 +1998,7 @@ extension PTChatViewController:MessageCellDelegate {
             config.moreActionImage = UIImage(systemName: "ellipsis")!.withRenderingMode(.automatic)
             config.mediaData = [viewerModel]
             config.moreActionEX = AppDelegate.appDelegate()!.appConfig.imageControlActions
+            config.iCloudDocumentName = "Documents"
             let viewer = PTMediaViewer(viewConfig: config)
             viewer.showImageViewer()
             viewer.viewSaveImageBlock = { finish in

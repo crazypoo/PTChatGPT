@@ -24,7 +24,7 @@ class PTAISmartCell: PTBaseNormalCell {
         
         var smartValue = Float(1 - AppDelegate.appDelegate()!.appConfig.aiSmart)
         if smartValue <= 0 {
-            smartValue = 0.1
+            smartValue = 1
         }
         let slider = PTSlider(showTitle: true, titleIsValue: false)
         slider.maximumValue = 1
