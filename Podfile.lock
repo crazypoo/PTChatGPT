@@ -58,7 +58,7 @@ PODS:
   - Masonry (1.1.0)
   - MBProgressHUD (1.2.0)
   - MJExtension (3.4.1)
-  - NotificationBannerSwift (3.2.0):
+  - NotificationBannerSwift (3.2.1):
     - MarqueeLabel (~> 4.3.0)
     - SnapKit (~> 5.6.0)
   - PhoneNumberKit (3.3.4):
@@ -67,79 +67,86 @@ PODS:
   - PhoneNumberKit/PhoneNumberKitCore (3.3.4)
   - PhoneNumberKit/UIKit (3.3.4):
     - PhoneNumberKit/PhoneNumberKitCore
-  - PooTools/CheckUpdate (3.1.5):
-    - PooTools/Core
-  - PooTools/ColorPicker (3.1.5):
+  - PooTools/CheckUpdate (3.2.0):
+    - PooTools/NetWork
+  - PooTools/ColorPicker (3.2.0):
     - ChromaColorPicker
     - PooTools/Core
-  - PooTools/Core (3.1.5):
-    - Alamofire
+  - PooTools/Core (3.2.0):
     - AttributedString
     - CocoaLumberjack/Swift
     - DeviceKit
     - FDFullscreenPopGesture
     - FluentDarkModeKit
-    - HandyJSON
     - IQKeyboardManager
-    - KakaJSON
     - Kingfisher
-    - MBProgressHUD
-    - MJExtension
-    - NotificationBannerSwift
     - pop
     - SnapKit
     - SwiftDate
     - SwifterSwift
-    - SwiftyJSON
-    - SwipeCellKit
     - UIColor_Hex_Swift
     - "UIViewController+Swizzled"
     - WZLBadge
-    - YYCategories
     - YYText
-    - ZXNavigationBar
-  - PooTools/DarkModeSetting (3.1.5):
+  - PooTools/DarkModeSetting (3.2.0):
     - PooTools/Core
-  - PooTools/DEBUG (3.1.5):
+  - PooTools/DEBUG (3.2.0):
     - PooTools/Core
-  - PooTools/FloatPanel (3.1.5):
+  - PooTools/FloatPanel (3.2.0):
     - FloatingPanel
     - PooTools/Core
-  - PooTools/GCDWebServer (3.1.5):
+  - PooTools/GCDWebServer (3.2.0):
     - GCDWebServer
     - GCDWebServer/WebUploader
     - PooTools/Core
-  - PooTools/ImagePicker (3.1.5):
+  - PooTools/ImagePicker (3.2.0):
     - PooTools/Core
     - TZImagePickerController
-  - PooTools/Input (3.1.5):
+  - PooTools/Input (3.2.0):
     - CRBoxInputView
     - PhoneNumberKit
     - PooTools/Core
     - TextFieldEffects
     - "UITextField+Shake"
-  - PooTools/Instructions (3.1.5):
+  - PooTools/Instructions (3.2.0):
     - Instructions
     - PooTools/Core
-  - PooTools/LanguageSetting (3.1.5):
+  - PooTools/LanguageSetting (3.2.0):
     - PooTools/Core
-  - PooTools/ListEmptyData (3.1.5):
+  - PooTools/ListEmptyData (3.2.0):
     - EmptyDataSet-Swift
     - LXFProtocolTool/LXFEmptyDataSetable
     - PooTools/Core
-  - PooTools/MediaViewer (3.1.5):
+  - PooTools/MediaViewer (3.2.0):
     - PooTools/Core
-  - PooTools/PagingControl (3.1.5):
+  - PooTools/NavBarController (3.2.0):
+    - PooTools/Core
+    - ZXNavigationBar
+  - PooTools/NetWork (3.2.0):
+    - Alamofire
+    - HandyJSON
+    - KakaJSON
+    - MBProgressHUD
+    - MJExtension
+    - PooTools/Core
+    - SwiftyJSON
+  - PooTools/NotificationBanner (3.2.0):
+    - NotificationBannerSwift
+    - PooTools/Core
+  - PooTools/PagingControl (3.2.0):
     - JXPagingView/Paging
     - JXSegmentedView
     - PooTools/Core
-  - PooTools/Picker (3.1.5):
+  - PooTools/Picker (3.2.0):
     - BRPickerView
     - PooTools/Core
-  - PooTools/Slider (3.1.5):
+  - PooTools/Slider (3.2.0):
     - PooTools/Core
     - RangeSeekSlider
-  - PooTools/ZipArchive (3.1.5):
+  - PooTools/SwipeCell (3.2.0):
+    - PooTools/Core
+    - SwipeCellKit
+  - PooTools/ZipArchive (3.2.0):
     - PooTools/Core
     - SSZipArchive
   - pop (1.0.12)
@@ -200,9 +207,6 @@ PODS:
   - WoodPeckeriOS (1.3.3)
   - WZLBadge (1.2.6)
   - YCSymbolTracker (0.1.3)
-  - YYCategories (1.0.4):
-    - YYCategories/no-arc (= 1.0.4)
-  - YYCategories/no-arc (1.0.4)
   - YYText (1.0.7)
   - ZXNavigationBar (1.4.1)
 
@@ -230,9 +234,13 @@ DEPENDENCIES:
   - PooTools/LanguageSetting (from `https://github.com/crazypoo/PTools.git`)
   - PooTools/ListEmptyData (from `https://github.com/crazypoo/PTools.git`)
   - PooTools/MediaViewer (from `https://github.com/crazypoo/PTools.git`)
+  - PooTools/NavBarController (from `https://github.com/crazypoo/PTools.git`)
+  - PooTools/NetWork (from `https://github.com/crazypoo/PTools.git`)
+  - PooTools/NotificationBanner (from `https://github.com/crazypoo/PTools.git`)
   - PooTools/PagingControl (from `https://github.com/crazypoo/PTools.git`)
   - PooTools/Picker (from `https://github.com/crazypoo/PTools.git`)
   - PooTools/Slider (from `https://github.com/crazypoo/PTools.git`)
+  - PooTools/SwipeCell (from `https://github.com/crazypoo/PTools.git`)
   - PooTools/ZipArchive (from `https://github.com/crazypoo/PTools.git`)
   - SwiftLint
   - SwiftSpinner
@@ -300,7 +308,6 @@ SPEC REPOS:
     - WoodPeckeriOS
     - WZLBadge
     - YCSymbolTracker
-    - YYCategories
     - YYText
     - ZXNavigationBar
 
@@ -310,7 +317,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   PooTools:
-    :commit: 5bc420ccc347e70dc2e0058464dfba7bc37bbdbc
+    :commit: 05b2dd7b9b35e5f69a93773ee38a8951670a363a
     :git: https://github.com/crazypoo/PTools.git
 
 SPEC CHECKSUMS:
@@ -346,9 +353,9 @@ SPEC CHECKSUMS:
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
   MBProgressHUD: 3ee5efcc380f6a79a7cc9b363dd669c5e1ae7406
   MJExtension: 21c5f6f8c4d5d8844b7ae8fbae08fed0b501f961
-  NotificationBannerSwift: 437e135298d297fcb03f3eec4466f45cdb128d3d
+  NotificationBannerSwift: dce54ded532b26e30cd8e7f4d80e124a0f2ba7d1
   PhoneNumberKit: 441e8b26ec88d598e3591de9061eff18f5dd12e8
-  PooTools: b298fa5afae90ab250d9550087eaa6be8e2b2810
+  PooTools: 78b6e91fb463e54837b9afe7e61e645a257a9cd6
   pop: d582054913807fd11fd50bfe6a539d91c7e1a55a
   RangeSeekSlider: 650b11fa1edcb92e1e0ede797669d98622570fb5
   SnapKit: e01d52ebb8ddbc333eefe2132acf85c8227d9c25
@@ -371,10 +378,9 @@ SPEC CHECKSUMS:
   WoodPeckeriOS: 6c067b9de7c2d4143ec1c66bac5aa2120327f759
   WZLBadge: 9ec779dcfd94c825518b395e8315fccaabff1bfa
   YCSymbolTracker: e54ceb577959656caa1ec397372de6bc3c46ec0d
-  YYCategories: 6bcd4314c6661a561410dce4a793379ebd306abd
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
   ZXNavigationBar: a8ceb13fe37f9ca894cf6ae22d805cbdbb9ad6b1
 
-PODFILE CHECKSUM: ca413b1a68cb02cdc8057ee01b9d14a07d14eff6
+PODFILE CHECKSUM: 58814f91e33a3fe3e4fa1c2ea7804bc6b3fc1947
 
 COCOAPODS: 1.12.1

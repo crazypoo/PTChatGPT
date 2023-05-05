@@ -1068,8 +1068,7 @@ class PTChatViewController: MessagesViewController {
     func whatNews() {
         if WhatsNew.shouldPresent() {
             let whatsNew = WhatsNewViewController(items: [
-                WhatsNewItem.text(title: "聊天", subtitle: "1.現在AI可以使用Stable Diffusion畫畫,比ChatGPT本身的畫畫功能更加強大(僅支持內存有6G以上的機型,M1之後的iPad性能會更好)"),
-                WhatsNewItem.text(title: "其他", subtitle: "修复了一些昆虫"),
+                WhatsNewItem.text(title: "其他", subtitle: "修复了一些昆虫")
                 ])
             whatsNew.titleText = "What's New"
             whatsNew.itemSubtitleColor = .lightGray

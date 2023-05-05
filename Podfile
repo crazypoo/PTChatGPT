@@ -47,7 +47,11 @@ target 'PTChatGPT' do
   pod 'PooTools/DEBUG', :git => 'https://github.com/crazypoo/PTools.git'
   pod 'PooTools/ListEmptyData', :git => 'https://github.com/crazypoo/PTools.git'
   pod 'PooTools/FloatPanel', :git => 'https://github.com/crazypoo/PTools.git'
-  
+  pod 'PooTools/NetWork', :git => 'https://github.com/crazypoo/PTools.git'
+  pod 'PooTools/SwipeCell', :git => 'https://github.com/crazypoo/PTools.git'
+  pod 'PooTools/NotificationBanner', :git => 'https://github.com/crazypoo/PTools.git'
+  pod 'PooTools/NavBarController', :git => 'https://github.com/crazypoo/PTools.git'
+
   pod 'WhatsNew'
   pod 'TensorFlowLiteSwift', '~> 2.3.0', :subspecs => ['Metal']
   pod 'SwiftSpinner'

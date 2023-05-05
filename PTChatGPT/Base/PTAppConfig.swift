@@ -464,10 +464,10 @@ class PTAppConfig {
             }
         } set {
             if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
-                AppDelegate.appDelegate()?.cloudStore.set(newValue.hexString(), forKey: uUserBubbleColor)
+                AppDelegate.appDelegate()?.cloudStore.set(newValue.hexString, forKey: uUserBubbleColor)
                 AppDelegate.appDelegate()?.cloudStore.synchronize()
             } else {
-                UserDefaults.standard.set(newValue.hexString(), forKey: uUserBubbleColor)
+                UserDefaults.standard.set(newValue.hexString, forKey: uUserBubbleColor)
             }
         }
     }
@@ -489,10 +489,10 @@ class PTAppConfig {
             }
         } set {
             if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
-                AppDelegate.appDelegate()?.cloudStore.set(newValue.hexString(), forKey: uBotBubbleColor)
+                AppDelegate.appDelegate()?.cloudStore.set(newValue.hexString, forKey: uBotBubbleColor)
                 AppDelegate.appDelegate()?.cloudStore.synchronize()
             } else {
-                UserDefaults.standard.set(newValue.hexString(), forKey: uBotBubbleColor)
+                UserDefaults.standard.set(newValue.hexString, forKey: uBotBubbleColor)
             }
         }
     }
@@ -516,10 +516,10 @@ class PTAppConfig {
             }
         } set {
             if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
-                AppDelegate.appDelegate()?.cloudStore.set(newValue.hexString(), forKey: uUserTextColor)
+                AppDelegate.appDelegate()?.cloudStore.set(newValue.hexString, forKey: uUserTextColor)
                 AppDelegate.appDelegate()?.cloudStore.synchronize()
             } else {
-                UserDefaults.standard.set(newValue.hexString(), forKey: uUserTextColor)
+                UserDefaults.standard.set(newValue.hexString, forKey: uUserTextColor)
             }
         }
     }
@@ -541,10 +541,10 @@ class PTAppConfig {
             }
         } set {
             if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
-                AppDelegate.appDelegate()?.cloudStore.set(newValue.hexString(), forKey: uBotTextColor)
+                AppDelegate.appDelegate()?.cloudStore.set(newValue.hexString, forKey: uBotTextColor)
                 AppDelegate.appDelegate()?.cloudStore.synchronize()
             } else {
-                UserDefaults.standard.set(newValue.hexString(), forKey: uBotTextColor)
+                UserDefaults.standard.set(newValue.hexString, forKey: uBotTextColor)
             }
         }
     }
@@ -568,10 +568,10 @@ class PTAppConfig {
             }
         } set {
             if AppDelegate.appDelegate()!.appConfig.cloudSwitch {
-                AppDelegate.appDelegate()?.cloudStore.set(newValue.hexString(), forKey: uWaveColor)
+                AppDelegate.appDelegate()?.cloudStore.set(newValue.hexString, forKey: uWaveColor)
                 AppDelegate.appDelegate()?.cloudStore.synchronize()
             } else {
-                UserDefaults.standard.set(newValue.hexString(), forKey: uWaveColor)
+                UserDefaults.standard.set(newValue.hexString, forKey: uWaveColor)
             }
         }
     }

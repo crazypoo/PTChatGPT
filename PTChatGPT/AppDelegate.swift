@@ -101,7 +101,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             viewC = PTChatViewController(historyModel: PTSegHistoryModel())
         }
 
+        #if DEBUG
+        self.window = TouchInspectorWindow(frame: UIScreen.main.bounds)
+        (self.window as! TouchInspectorWindow).showTouches = self.devFunction.touchesType
+        (self.window as! TouchInspectorWindow).showHitTesting = self.devFunction.touchesTestHit
+        #else
         self.window = UIWindow.init(frame: UIScreen.main.bounds)
+        #endif
+        
         if Gobal_device_info.isPad {
             self.window?.rootViewController = viewC
         } else {
@@ -147,6 +154,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.devFunction.HyperioniOS = {
             HyperionManager.sharedInstance().attach(to: self.window)
             HyperionManager.sharedInstance().togglePluginDrawer()
+        }
+        self.devFunction.TestHitShow = { show in
+            if self.window is TouchInspectorWindow {
+                (self.window as! TouchInspectorWindow).showHitTesting = show
+            }
+        }
+        self.devFunction.TestHitTouchesShow = { show in
+            if self.window is TouchInspectorWindow {
+                (self.window as! TouchInspectorWindow).showTouches = show
+            }
         }
 #endif
         
