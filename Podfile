@@ -56,7 +56,7 @@ target 'PTChatGPT' do
   pod 'TensorFlowLiteSwift', '~> 2.3.0', :subspecs => ['Metal']
   pod 'SwiftSpinner'
   pod 'KDCircularProgress'
-  
+#  https://github.com/dmrschmidt/DSWaveformImage
   pod 'SwiftLint'
   pod 'Swinject'
   pod 'YCSymbolTracker'

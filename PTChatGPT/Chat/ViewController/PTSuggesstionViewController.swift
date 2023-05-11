@@ -32,9 +32,6 @@ class PTSuggesstionViewController: PTChatBaseViewController {
         var group : NSCollectionLayoutGroup
         let behavior : UICollectionLayoutSectionOrthogonalScrollingBehavior = .continuous
         
-        var bannerGroupSize : NSCollectionLayoutSize
-        var customers = [NSCollectionLayoutGroupCustomItem]()
-        var groupH:CGFloat = 0
         let itemRightSapce:CGFloat = 15
         var screenW:CGFloat = 0
         if Gobal_device_info.isPad {
@@ -44,53 +41,19 @@ class PTSuggesstionViewController: PTChatBaseViewController {
         }
 
         let cellWidth = (screenW - PTAppBaseConfig.share.defaultViewSpace * 2 - itemRightSapce) / 2
-        let originalX = PTAppBaseConfig.share.defaultViewSpace
-        let contentTopAndBottom:CGFloat = 10
-        var x:CGFloat = originalX,y:CGFloat = 0 + contentTopAndBottom
-        sectionModel.rows.enumerated().forEach { (index,model) in
-            let cellModel = model.dataModel as! PTSampleModels
+        
+        group = UICollectionView.waterFallLayout(data: sectionModel.rows,screenWidth: screenW, itemSpace: itemRightSapce, itemWidth: cellWidth) { index, model in
+            let cellModel = (model as! PTRows).dataModel as! PTSampleModels
             
             let titleHeight = UIView.sizeFor(string: cellModel.keyName, font: PTSuggesstionCell.titleFont,lineSpacing: 5, height: CGFloat(MAXFLOAT), width: (cellWidth - 20)).height + 10
             
             let nameHeight = UIView.sizeFor(string: cellModel.who.stringIsEmpty() ? "@anonymous" : cellModel.who, font: PTSuggesstionCell.nameFont,lineSpacing: 5, height: CGFloat(MAXFLOAT), width: (cellWidth - 20)).height + 10
             
             let contentHeight = UIView.sizeFor(string: cellModel.systemContent, font: PTSuggesstionCell.infoFont,lineSpacing: 5, height: CGFloat(MAXFLOAT), width: (cellWidth - 20)).height + 10
-
-            let itemH:CGFloat = titleHeight + nameHeight + contentHeight + 10 + 34 + 10
-            if index < 2 {
-                let customItem = NSCollectionLayoutGroupCustomItem.init(frame: CGRect.init(x: x, y: y, width: cellWidth, height: itemH), zIndex: 1000+index)
-                customers.append(customItem)
-                x += cellWidth + itemRightSapce
-                if index == (sectionModel.rows.count - 1) {
-                    groupH = y + itemH + contentTopAndBottom
-                }
-            } else {
-                x += cellWidth + itemRightSapce
-                if index > 0 && (index % 2 == 0) {
-                    x = originalX
-                    y = (customers[index - 2].frame.height + 10 + customers[index - 2].frame.origin.y)
-                } else {
-                    y = (customers[index - 2].frame.height + 10 + customers[index - 2].frame.origin.y)
-                }
-
-                if index == (sectionModel.rows.count - 1) {
-                    let lastHeight = (y + itemH + contentTopAndBottom)
-                    let lastLastHeight = (customers[index - 1].frame.height + contentTopAndBottom + customers[index - 1].frame.origin.y)
-                    if lastLastHeight > lastHeight {
-                        groupH = lastLastHeight
-                    } else {
-                        groupH = lastHeight
-                    }
-                }
-                let customItem = NSCollectionLayoutGroupCustomItem.init(frame: CGRect.init(x: x, y: y, width: cellWidth, height: itemH), zIndex: 1000+index)
-                customers.append(customItem)
-            }
+            
+            return titleHeight + nameHeight + contentHeight + 10 + 34 + 10
         }
-        bannerGroupSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(screenW), heightDimension: NSCollectionLayoutDimension.absolute(groupH))
-        group = NSCollectionLayoutGroup.custom(layoutSize: bannerGroupSize, itemProvider: { layoutEnvironment in
-            customers
-        })
-        
+                
         let sectionInsets = NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 0)
         let laySection = NSCollectionLayoutSection(group: group)
         laySection.orthogonalScrollingBehavior = behavior

@@ -3151,8 +3151,9 @@ extension PTChatViewController:OSSSpeechDelegate {
                 self.insertMessages([text])
                 self.maskView.translateLabel.text = ""
             } else {
-                self.insertMessage(voiceMessage)
-                self.sendTextFunction(str: text, saveModel: saveModel, sectionIndex: self.messageList.count - 1,flagType: .PASS)
+                self.insertMessage(voiceMessage) {
+                    self.sendTextFunction(str: text, saveModel: saveModel, sectionIndex: self.messageList.count - 1,flagType: .PASS)
+                }
             }
             self.messagesCollectionView.scrollToLastItem(animated: true)
             self.sendTranslateText = false

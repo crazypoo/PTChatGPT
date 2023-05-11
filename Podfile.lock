@@ -1,5 +1,5 @@
 PODS:
-  - Alamofire (5.6.4)
+  - Alamofire (5.7.1)
   - AttributedString (3.3.5)
   - BRPickerView (2.8.1):
     - BRPickerView/AddressPickerView (= 2.8.1)
@@ -49,9 +49,9 @@ PODS:
   - KDCircularProgress (1.5.4)
   - Kingfisher (7.6.2)
   - LifetimeTracker (1.8.1)
-  - LookinServer (1.1.5):
-    - LookinServer/Core (= 1.1.5)
-  - LookinServer/Core (1.1.5)
+  - LookinServer (1.1.6):
+    - LookinServer/Core (= 1.1.6)
+  - LookinServer/Core (1.1.6)
   - LXFProtocolTool/LXFEmptyDataSetable (0.2.0):
     - DZNEmptyDataSet (~> 1.8.1)
   - MarqueeLabel (4.3.0)
@@ -67,12 +67,12 @@ PODS:
   - PhoneNumberKit/PhoneNumberKitCore (3.3.4)
   - PhoneNumberKit/UIKit (3.3.4):
     - PhoneNumberKit/PhoneNumberKitCore
-  - PooTools/CheckUpdate (3.2.0):
+  - PooTools/CheckUpdate (3.2.3):
     - PooTools/NetWork
-  - PooTools/ColorPicker (3.2.0):
+  - PooTools/ColorPicker (3.2.3):
     - ChromaColorPicker
     - PooTools/Core
-  - PooTools/Core (3.2.0):
+  - PooTools/Core (3.2.3):
     - AttributedString
     - CocoaLumberjack/Swift
     - DeviceKit
@@ -88,41 +88,41 @@ PODS:
     - "UIViewController+Swizzled"
     - WZLBadge
     - YYText
-  - PooTools/DarkModeSetting (3.2.0):
+  - PooTools/DarkModeSetting (3.2.3):
     - PooTools/Core
-  - PooTools/DEBUG (3.2.0):
+  - PooTools/DEBUG (3.2.3):
     - PooTools/Core
-  - PooTools/FloatPanel (3.2.0):
+  - PooTools/FloatPanel (3.2.3):
     - FloatingPanel
     - PooTools/Core
-  - PooTools/GCDWebServer (3.2.0):
+  - PooTools/GCDWebServer (3.2.3):
     - GCDWebServer
     - GCDWebServer/WebUploader
     - PooTools/Core
-  - PooTools/ImagePicker (3.2.0):
+  - PooTools/ImagePicker (3.2.3):
     - PooTools/Core
     - TZImagePickerController
-  - PooTools/Input (3.2.0):
+  - PooTools/Input (3.2.3):
     - CRBoxInputView
     - PhoneNumberKit
     - PooTools/Core
     - TextFieldEffects
     - "UITextField+Shake"
-  - PooTools/Instructions (3.2.0):
+  - PooTools/Instructions (3.2.3):
     - Instructions
     - PooTools/Core
-  - PooTools/LanguageSetting (3.2.0):
+  - PooTools/LanguageSetting (3.2.3):
     - PooTools/Core
-  - PooTools/ListEmptyData (3.2.0):
+  - PooTools/ListEmptyData (3.2.3):
     - EmptyDataSet-Swift
     - LXFProtocolTool/LXFEmptyDataSetable
     - PooTools/Core
-  - PooTools/MediaViewer (3.2.0):
-    - PooTools/Core
-  - PooTools/NavBarController (3.2.0):
+  - PooTools/MediaViewer (3.2.3):
+    - PooTools/NetWork
+  - PooTools/NavBarController (3.2.3):
     - PooTools/Core
     - ZXNavigationBar
-  - PooTools/NetWork (3.2.0):
+  - PooTools/NetWork (3.2.3):
     - Alamofire
     - HandyJSON
     - KakaJSON
@@ -130,23 +130,23 @@ PODS:
     - MJExtension
     - PooTools/Core
     - SwiftyJSON
-  - PooTools/NotificationBanner (3.2.0):
+  - PooTools/NotificationBanner (3.2.3):
     - NotificationBannerSwift
     - PooTools/Core
-  - PooTools/PagingControl (3.2.0):
+  - PooTools/PagingControl (3.2.3):
     - JXPagingView/Paging
     - JXSegmentedView
     - PooTools/Core
-  - PooTools/Picker (3.2.0):
+  - PooTools/Picker (3.2.3):
     - BRPickerView
     - PooTools/Core
-  - PooTools/Slider (3.2.0):
+  - PooTools/Slider (3.2.3):
     - PooTools/Core
     - RangeSeekSlider
-  - PooTools/SwipeCell (3.2.0):
+  - PooTools/SwipeCell (3.2.3):
     - PooTools/Core
     - SwipeCellKit
-  - PooTools/ZipArchive (3.2.0):
+  - PooTools/ZipArchive (3.2.3):
     - PooTools/Core
     - SSZipArchive
   - pop (1.0.12)
@@ -317,11 +317,11 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   PooTools:
-    :commit: 05b2dd7b9b35e5f69a93773ee38a8951670a363a
+    :commit: 84e23fb78d6b62d824f161cdd6772603e573e7f7
     :git: https://github.com/crazypoo/PTools.git
 
 SPEC CHECKSUMS:
-  Alamofire: 4e95d97098eacb88856099c4fc79b526a299e48c
+  Alamofire: 0123a34370cb170936ae79a8df46cc62b2edeb88
   AttributedString: 6d2d9d65310119556c3b5c6e4ea8d1ca339b703c
   BRPickerView: 2531a2d4d0fea0b57a1c738de215af0f88863a2f
   Bugly: b8715e6ec4004b7f7fbffab0643ba80545aee3da
@@ -347,7 +347,7 @@ SPEC CHECKSUMS:
   KDCircularProgress: 98200c6b8e85d22bc04eb644721d3b1e12b0686b
   Kingfisher: 6c5449c6450c5239166510ba04afe374a98afc4f
   LifetimeTracker: be33b0d89357dd2f381eb8aca636d184b538d5e9
-  LookinServer: 2893f2bae53cbf3fd49bbe1a8ea1745582ef1317
+  LookinServer: c4b8303b0e832448fe4ff005e2e0e4bf815a48c3
   LXFProtocolTool: 8d1e53c010f6941c273b9908be24bfc20d1ce2f2
   MarqueeLabel: 02f5ac8fd6877c94564556cb93fa86c70c08baeb
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
@@ -355,7 +355,7 @@ SPEC CHECKSUMS:
   MJExtension: 21c5f6f8c4d5d8844b7ae8fbae08fed0b501f961
   NotificationBannerSwift: dce54ded532b26e30cd8e7f4d80e124a0f2ba7d1
   PhoneNumberKit: 441e8b26ec88d598e3591de9061eff18f5dd12e8
-  PooTools: 78b6e91fb463e54837b9afe7e61e645a257a9cd6
+  PooTools: b197b65c60536cd2a5102f93ec839710a0884154
   pop: d582054913807fd11fd50bfe6a539d91c7e1a55a
   RangeSeekSlider: 650b11fa1edcb92e1e0ede797669d98622570fb5
   SnapKit: e01d52ebb8ddbc333eefe2132acf85c8227d9c25
@@ -381,6 +381,6 @@ SPEC CHECKSUMS:
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
   ZXNavigationBar: a8ceb13fe37f9ca894cf6ae22d805cbdbb9ad6b1
 
-PODFILE CHECKSUM: 58814f91e33a3fe3e4fa1c2ea7804bc6b3fc1947
+PODFILE CHECKSUM: 191019cb146ba685e21cb62762c86cb0e56ea4cd
 
 COCOAPODS: 1.12.1
