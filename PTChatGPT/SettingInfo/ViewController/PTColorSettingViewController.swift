@@ -240,8 +240,8 @@ extension PTColorSettingViewController:UICollectionViewDelegate,UICollectionView
         let itemRow = itemSec.rows[indexPath.row]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTFusionCell
         cell.cellModel = (itemRow.dataModel as! PTFusionCellModel)
-        cell.dataContent.lineView.isHidden = indexPath.row == (itemSec.rows.count - 1) ? true : false
-        cell.dataContent.topLineView.isHidden = true
+        cell.dataContent.lineView.isHidden = true
+        cell.dataContent.topLineView.isHidden = (indexPath.row == 0) ? true : false
         return cell
     }
     

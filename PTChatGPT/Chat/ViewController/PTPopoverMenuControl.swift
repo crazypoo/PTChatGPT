@@ -130,8 +130,8 @@ extension PTPopoverMenuControl:UICollectionViewDelegate,UICollectionViewDataSour
         if itemRow.ID == PTFusionCell.ID {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTFusionCell
             cell.cellModel = (itemRow.dataModel as! PTFusionCellModel)
-            cell.dataContent.lineView.isHidden = indexPath.row == (self.cellModels.count - 1) ? true : false
-            cell.dataContent.topLineView.isHidden = true
+            cell.dataContent.lineView.isHidden = true
+            cell.dataContent.topLineView.isHidden = indexPath.row == 0 ? true : false
             return cell
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CELL", for: indexPath)

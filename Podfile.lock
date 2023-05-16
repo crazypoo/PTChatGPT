@@ -1,6 +1,15 @@
 PODS:
   - Alamofire (5.7.1)
   - AttributedString (3.3.5)
+  - Brightroom/Engine (2.8.0):
+    - Verge/Store (>= 8.19.0)
+  - Brightroom/UI-Classic (2.8.0):
+    - Brightroom/Engine
+    - TransitionPatch
+    - Verge/Store (>= 8.19.0)
+  - Brightroom/UI-Crop (2.8.0):
+    - Brightroom/Engine
+    - Verge/Store (>= 8.19.0)
   - BRPickerView (2.8.1):
     - BRPickerView/AddressPickerView (= 2.8.1)
     - BRPickerView/Base (= 2.8.1)
@@ -49,9 +58,9 @@ PODS:
   - KDCircularProgress (1.5.4)
   - Kingfisher (7.6.2)
   - LifetimeTracker (1.8.1)
-  - LookinServer (1.1.6):
-    - LookinServer/Core (= 1.1.6)
-  - LookinServer/Core (1.1.6)
+  - LookinServer (1.1.7):
+    - LookinServer/Core (= 1.1.7)
+  - LookinServer/Core (1.1.7)
   - LXFProtocolTool/LXFEmptyDataSetable (0.2.0):
     - DZNEmptyDataSet (~> 1.8.1)
   - MarqueeLabel (4.3.0)
@@ -67,12 +76,12 @@ PODS:
   - PhoneNumberKit/PhoneNumberKitCore (3.3.4)
   - PhoneNumberKit/UIKit (3.3.4):
     - PhoneNumberKit/PhoneNumberKitCore
-  - PooTools/CheckUpdate (3.2.3):
+  - PooTools/CheckUpdate (3.2.4):
     - PooTools/NetWork
-  - PooTools/ColorPicker (3.2.3):
+  - PooTools/ColorPicker (3.2.4):
     - ChromaColorPicker
     - PooTools/Core
-  - PooTools/Core (3.2.3):
+  - PooTools/Core (3.2.4):
     - AttributedString
     - CocoaLumberjack/Swift
     - DeviceKit
@@ -88,41 +97,41 @@ PODS:
     - "UIViewController+Swizzled"
     - WZLBadge
     - YYText
-  - PooTools/DarkModeSetting (3.2.3):
+  - PooTools/DarkModeSetting (3.2.4):
     - PooTools/Core
-  - PooTools/DEBUG (3.2.3):
+  - PooTools/DEBUG (3.2.4):
     - PooTools/Core
-  - PooTools/FloatPanel (3.2.3):
+  - PooTools/FloatPanel (3.2.4):
     - FloatingPanel
     - PooTools/Core
-  - PooTools/GCDWebServer (3.2.3):
+  - PooTools/GCDWebServer (3.2.4):
     - GCDWebServer
     - GCDWebServer/WebUploader
     - PooTools/Core
-  - PooTools/ImagePicker (3.2.3):
+  - PooTools/ImagePicker (3.2.4):
     - PooTools/Core
     - TZImagePickerController
-  - PooTools/Input (3.2.3):
+  - PooTools/Input (3.2.4):
     - CRBoxInputView
     - PhoneNumberKit
     - PooTools/Core
     - TextFieldEffects
     - "UITextField+Shake"
-  - PooTools/Instructions (3.2.3):
+  - PooTools/Instructions (3.2.4):
     - Instructions
     - PooTools/Core
-  - PooTools/LanguageSetting (3.2.3):
+  - PooTools/LanguageSetting (3.2.4):
     - PooTools/Core
-  - PooTools/ListEmptyData (3.2.3):
+  - PooTools/ListEmptyData (3.2.4):
     - EmptyDataSet-Swift
     - LXFProtocolTool/LXFEmptyDataSetable
     - PooTools/Core
-  - PooTools/MediaViewer (3.2.3):
+  - PooTools/MediaViewer (3.2.4):
     - PooTools/NetWork
-  - PooTools/NavBarController (3.2.3):
+  - PooTools/NavBarController (3.2.4):
     - PooTools/Core
     - ZXNavigationBar
-  - PooTools/NetWork (3.2.3):
+  - PooTools/NetWork (3.2.4):
     - Alamofire
     - HandyJSON
     - KakaJSON
@@ -130,23 +139,23 @@ PODS:
     - MJExtension
     - PooTools/Core
     - SwiftyJSON
-  - PooTools/NotificationBanner (3.2.3):
+  - PooTools/NotificationBanner (3.2.4):
     - NotificationBannerSwift
     - PooTools/Core
-  - PooTools/PagingControl (3.2.3):
+  - PooTools/PagingControl (3.2.4):
     - JXPagingView/Paging
     - JXSegmentedView
     - PooTools/Core
-  - PooTools/Picker (3.2.3):
+  - PooTools/Picker (3.2.4):
     - BRPickerView
     - PooTools/Core
-  - PooTools/Slider (3.2.3):
+  - PooTools/Slider (3.2.4):
     - PooTools/Core
     - RangeSeekSlider
-  - PooTools/SwipeCell (3.2.3):
+  - PooTools/SwipeCell (3.2.4):
     - PooTools/Core
     - SwipeCellKit
-  - PooTools/ZipArchive (3.2.3):
+  - PooTools/ZipArchive (3.2.4):
     - PooTools/Core
     - SSZipArchive
   - pop (1.0.12)
@@ -179,7 +188,7 @@ PODS:
   - SwifterSwift/StoreKit (5.2.0)
   - SwifterSwift/SwiftStdlib (5.2.0)
   - SwifterSwift/UIKit (5.2.0)
-  - SwiftLint (0.51.0)
+  - SwiftLint (0.52.2)
   - SwiftSpinner (2.2.0)
   - SwiftyJSON (5.0.1)
   - Swinject (2.8.3)
@@ -195,6 +204,7 @@ PODS:
     - TensorFlowLiteC/Metal (= 2.3.0)
     - TensorFlowLiteSwift/Core (= 2.3.0)
   - TextFieldEffects (1.6.0)
+  - TransitionPatch (1.0.5)
   - TZImagePickerController (3.8.3):
     - TZImagePickerController/Basic (= 3.8.3)
     - TZImagePickerController/Location (= 3.8.3)
@@ -203,6 +213,9 @@ PODS:
   - UIColor_Hex_Swift (5.1.9)
   - "UITextField+Shake (1.2.1)"
   - "UIViewController+Swizzled (1.4)"
+  - Verge/ObjcBridge (8.19.0)
+  - Verge/Store (8.19.0):
+    - Verge/ObjcBridge
   - WhatsNew (0.4.6)
   - WoodPeckeriOS (1.3.3)
   - WZLBadge (1.2.6)
@@ -211,6 +224,9 @@ PODS:
   - ZXNavigationBar (1.4.1)
 
 DEPENDENCIES:
+  - Brightroom/Engine
+  - Brightroom/UI-Classic
+  - Brightroom/UI-Crop
   - Bugly
   - FLEX
   - HyperioniOS/AttributesInspector
@@ -254,6 +270,7 @@ SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - Alamofire
     - AttributedString
+    - Brightroom
     - BRPickerView
     - Bugly
     - ChromaColorPicker
@@ -300,10 +317,12 @@ SPEC REPOS:
     - TensorFlowLiteC
     - TensorFlowLiteSwift
     - TextFieldEffects
+    - TransitionPatch
     - TZImagePickerController
     - UIColor_Hex_Swift
     - "UITextField+Shake"
     - "UIViewController+Swizzled"
+    - Verge
     - WhatsNew
     - WoodPeckeriOS
     - WZLBadge
@@ -317,12 +336,13 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   PooTools:
-    :commit: 84e23fb78d6b62d824f161cdd6772603e573e7f7
+    :commit: 66b20c8790cb9a94fc7b600f12e4eb1eba0cd78c
     :git: https://github.com/crazypoo/PTools.git
 
 SPEC CHECKSUMS:
   Alamofire: 0123a34370cb170936ae79a8df46cc62b2edeb88
   AttributedString: 6d2d9d65310119556c3b5c6e4ea8d1ca339b703c
+  Brightroom: 458ac052ac38d2f2ff2d7bd990808f6dee450ba4
   BRPickerView: 2531a2d4d0fea0b57a1c738de215af0f88863a2f
   Bugly: b8715e6ec4004b7f7fbffab0643ba80545aee3da
   ChromaColorPicker: 307585f2dc23d4d72f24cad320c1e08825cb5c09
@@ -347,7 +367,7 @@ SPEC CHECKSUMS:
   KDCircularProgress: 98200c6b8e85d22bc04eb644721d3b1e12b0686b
   Kingfisher: 6c5449c6450c5239166510ba04afe374a98afc4f
   LifetimeTracker: be33b0d89357dd2f381eb8aca636d184b538d5e9
-  LookinServer: c4b8303b0e832448fe4ff005e2e0e4bf815a48c3
+  LookinServer: 4ce0469b066871525611d009d8d16a7a50c23491
   LXFProtocolTool: 8d1e53c010f6941c273b9908be24bfc20d1ce2f2
   MarqueeLabel: 02f5ac8fd6877c94564556cb93fa86c70c08baeb
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
@@ -355,14 +375,14 @@ SPEC CHECKSUMS:
   MJExtension: 21c5f6f8c4d5d8844b7ae8fbae08fed0b501f961
   NotificationBannerSwift: dce54ded532b26e30cd8e7f4d80e124a0f2ba7d1
   PhoneNumberKit: 441e8b26ec88d598e3591de9061eff18f5dd12e8
-  PooTools: b197b65c60536cd2a5102f93ec839710a0884154
+  PooTools: ac8bd071f58999251c4c461941e8102e4c48efaf
   pop: d582054913807fd11fd50bfe6a539d91c7e1a55a
   RangeSeekSlider: 650b11fa1edcb92e1e0ede797669d98622570fb5
   SnapKit: e01d52ebb8ddbc333eefe2132acf85c8227d9c25
   SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef
   SwiftDate: bbc26e26fc8c0c33fbee8c140c5e8a68293a148a
   SwifterSwift: 334181863c416882d97b7a60c05054d9e4d799e2
-  SwiftLint: 1b7561918a19e23bfed960e40759086e70f4dba5
+  SwiftLint: 1ac76dac888ca05cb0cf24d0c85887ec1209961d
   SwiftSpinner: f9b59477fe107427f2b5b835497d6636fa167ede
   SwiftyJSON: 2f33a42c6fbc52764d96f13368585094bfd8aa5e
   Swinject: 893c9a543000ac2f10ee4cbaf0933c6992c935d5
@@ -370,10 +390,12 @@ SPEC CHECKSUMS:
   TensorFlowLiteC: 51f50caf5777f740a70e2c1a5dbdc149e7aeb50b
   TensorFlowLiteSwift: fb152cc1eec36b25b03a23c07f5d58113170af58
   TextFieldEffects: 529b8aff706fb40f82c41c780c0777941a893796
+  TransitionPatch: e401775146cbe326605b7009c7e7442184a444f0
   TZImagePickerController: e9909edbadf7381140efc5b5c9f5bdbfd630f7d4
   UIColor_Hex_Swift: 20cb4e8d51b63e168a9da6933bc5d39cd8fb4ab5
   "UITextField+Shake": 298ac5a0f239d731bdab999b19b628c956ca0ac3
   "UIViewController+Swizzled": 1cd9397598ede6930f94fbcac4b43d63c7aa0dbb
+  Verge: 5199d7de11162b5568697dabdfab4f83d99d6436
   WhatsNew: d66a52b294e90d5bc133877e270ea7ce0b945003
   WoodPeckeriOS: 6c067b9de7c2d4143ec1c66bac5aa2120327f759
   WZLBadge: 9ec779dcfd94c825518b395e8315fccaabff1bfa
@@ -381,6 +403,6 @@ SPEC CHECKSUMS:
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
   ZXNavigationBar: a8ceb13fe37f9ca894cf6ae22d805cbdbb9ad6b1
 
-PODFILE CHECKSUM: 191019cb146ba685e21cb62762c86cb0e56ea4cd
+PODFILE CHECKSUM: 537414dd16b2d6e983625b05f06e34ac9eddb9d0
 
 COCOAPODS: 1.12.1

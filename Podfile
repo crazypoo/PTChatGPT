@@ -28,7 +28,7 @@ target 'PTChatGPT' do
   pod 'HyperioniOS/AttributesInspector', :configurations => ['Debug'] # Optional plugin
   pod 'HyperioniOS/Measurements', :configurations => ['Debug'] # Optional plugin
   pod 'HyperioniOS/SlowAnimations', :configurations => ['Debug'] # Optional plugin
-
+  pod 'YCSymbolTracker'
 
   pod 'PooTools/Core', :git => 'https://github.com/crazypoo/PTools.git'
   pod 'PooTools/Picker', :git => 'https://github.com/crazypoo/PTools.git'
@@ -59,6 +59,8 @@ target 'PTChatGPT' do
 #  https://github.com/dmrschmidt/DSWaveformImage
   pod 'SwiftLint'
   pod 'Swinject'
-  pod 'YCSymbolTracker'
-  
+  pod 'Brightroom/Engine'
+  pod 'Brightroom/UI-Classic'
+  pod 'Brightroom/UI-Crop'
+
 end

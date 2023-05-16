@@ -90,6 +90,13 @@
 		55DF5C5129E06EB00077F8F7 /* PTSableDiffusion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DF5C5029E06EB00077F8F7 /* PTSableDiffusion.swift */; };
 		55DF64A429E07DE40077F8F7 /* PTDiffusionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DF64A329E07DE40077F8F7 /* PTDiffusionViewController.swift */; };
 		55F2099C29D8AEA90034A6AF /* PTChatGPTBaseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F2099B29D8AEA90034A6AF /* PTChatGPTBaseModel.swift */; };
+		55F3C4382A13FE5100E74FBF /* HALD_256.png in Resources */ = {isa = PBXBuildFile; fileRef = 55F3C4312A13FE5100E74FBF /* HALD_256.png */; };
+		55F3C4392A13FE5100E74FBF /* LUT_64_Dark_HighContrast_v3.png in Resources */ = {isa = PBXBuildFile; fileRef = 55F3C4322A13FE5100E74FBF /* LUT_64_Dark_HighContrast_v3.png */; };
+		55F3C43A2A13FE5100E74FBF /* LUT_64_Neutral.png in Resources */ = {isa = PBXBuildFile; fileRef = 55F3C4332A13FE5100E74FBF /* LUT_64_Neutral.png */; };
+		55F3C43B2A13FE5100E74FBF /* LUT_64_1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 55F3C4342A13FE5100E74FBF /* LUT_64_1.jpg */; };
+		55F3C43C2A13FE5100E74FBF /* LUT_64_Gloss.png in Resources */ = {isa = PBXBuildFile; fileRef = 55F3C4352A13FE5100E74FBF /* LUT_64_Gloss.png */; };
+		55F3C43D2A13FE5100E74FBF /* LUT_64_3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 55F3C4362A13FE5100E74FBF /* LUT_64_3.jpg */; };
+		55F3C43E2A13FE5100E74FBF /* LUT_64_2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 55F3C4372A13FE5100E74FBF /* LUT_64_2.jpg */; };
 		55F7A65D29D4012B00CF6272 /* PTSuggestionControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F7A65C29D4012B00CF6272 /* PTSuggestionControl.swift */; };
 		55F7A8C029D6AC7800CF6272 /* PTSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F7A8BF29D6AC7800CF6272 /* PTSplitViewController.swift */; };
 		EC91DE097C54ED7562DD3DCA /* Pods_PTChatGPT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 372877C61B4F76BA38F0C55D /* Pods_PTChatGPT.framework */; };
@@ -190,6 +197,13 @@
 		55DF5C5029E06EB00077F8F7 /* PTSableDiffusion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PTSableDiffusion.swift; sourceTree = "<group>"; };
 		55DF64A329E07DE40077F8F7 /* PTDiffusionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTDiffusionViewController.swift; sourceTree = "<group>"; };
 		55F2099B29D8AEA90034A6AF /* PTChatGPTBaseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTChatGPTBaseModel.swift; sourceTree = "<group>"; };
+		55F3C4312A13FE5100E74FBF /* HALD_256.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = HALD_256.png; sourceTree = "<group>"; };
+		55F3C4322A13FE5100E74FBF /* LUT_64_Dark_HighContrast_v3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = LUT_64_Dark_HighContrast_v3.png; sourceTree = "<group>"; };
+		55F3C4332A13FE5100E74FBF /* LUT_64_Neutral.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = LUT_64_Neutral.png; sourceTree = "<group>"; };
+		55F3C4342A13FE5100E74FBF /* LUT_64_1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = LUT_64_1.jpg; sourceTree = "<group>"; };
+		55F3C4352A13FE5100E74FBF /* LUT_64_Gloss.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = LUT_64_Gloss.png; sourceTree = "<group>"; };
+		55F3C4362A13FE5100E74FBF /* LUT_64_3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = LUT_64_3.jpg; sourceTree = "<group>"; };
+		55F3C4372A13FE5100E74FBF /* LUT_64_2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = LUT_64_2.jpg; sourceTree = "<group>"; };
 		55F7A65C29D4012B00CF6272 /* PTSuggestionControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSuggestionControl.swift; sourceTree = "<group>"; };
 		55F7A8BF29D6AC7800CF6272 /* PTSplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTSplitViewController.swift; sourceTree = "<group>"; };
 		7E66237D0C268E8EEFD172D0 /* Pods-PTChatGPT.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PTChatGPT.release.xcconfig"; path = "Target Support Files/Pods-PTChatGPT/Pods-PTChatGPT.release.xcconfig"; sourceTree = "<group>"; };
@@ -561,6 +575,13 @@
 		55D752F429D1FCED005CE46B /* Resource */ = {
 			isa = PBXGroup;
 			children = (
+				55F3C4312A13FE5100E74FBF /* HALD_256.png */,
+				55F3C4342A13FE5100E74FBF /* LUT_64_1.jpg */,
+				55F3C4372A13FE5100E74FBF /* LUT_64_2.jpg */,
+				55F3C4362A13FE5100E74FBF /* LUT_64_3.jpg */,
+				55F3C4322A13FE5100E74FBF /* LUT_64_Dark_HighContrast_v3.png */,
+				55F3C4352A13FE5100E74FBF /* LUT_64_Gloss.png */,
+				55F3C4332A13FE5100E74FBF /* LUT_64_Neutral.png */,
 				55D752F729D1FD8E005CE46B /* Model */,
 				55D752F529D1FCF8005CE46B /* SampleJson.json */,
 			);
@@ -699,10 +720,17 @@
 				55B2745F29CE240E00E05736 /* style_transfer_quantized_384.tflite in Resources */,
 				55A5D72429B1D23E00DCA096 /* LaunchScreen.storyboard in Resources */,
 				55B2746029CE240E00E05736 /* style_predict_quantized_256.tflite in Resources */,
+				55F3C4392A13FE5100E74FBF /* LUT_64_Dark_HighContrast_v3.png in Resources */,
+				55F3C43E2A13FE5100E74FBF /* LUT_64_2.jpg in Resources */,
+				55F3C43B2A13FE5100E74FBF /* LUT_64_1.jpg in Resources */,
+				55F3C43C2A13FE5100E74FBF /* LUT_64_Gloss.png in Resources */,
 				5514B39C29BB127F00890161 /* Localizable.strings in Resources */,
 				55A5D72129B1D23E00DCA096 /* Assets.xcassets in Resources */,
+				55F3C43D2A13FE5100E74FBF /* LUT_64_3.jpg in Resources */,
 				55D752F629D1FCF8005CE46B /* SampleJson.json in Resources */,
+				55F3C4382A13FE5100E74FBF /* HALD_256.png in Resources */,
 				55A5D71F29B1D23D00DCA096 /* Main.storyboard in Resources */,
+				55F3C43A2A13FE5100E74FBF /* LUT_64_Neutral.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

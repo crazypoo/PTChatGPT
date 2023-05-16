@@ -32,6 +32,7 @@ class PTAISmartCell: PTBaseNormalCell {
         slider.value = smartValue
         slider.tintColor = .orange
         slider.titleColor = .orange
+        slider.backgroundColor = .clear
         return slider
     }()
     
@@ -42,7 +43,7 @@ class PTAISmartCell: PTBaseNormalCell {
             self.nameTitle.font = self.cellModel!.cellFont
         }
     }
-    
+        
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -62,8 +63,8 @@ class PTAISmartCell: PTBaseNormalCell {
         
         self.lineView.snp.makeConstraints { make in
             make.right.equalToSuperview().inset(self.cellModel?.rightSpace ?? 10)
-            make.bottom.equalToSuperview()
             make.height.equalTo(1)
+            make.top.equalToSuperview()
             make.left.equalTo(self.nameTitle)
         }
         

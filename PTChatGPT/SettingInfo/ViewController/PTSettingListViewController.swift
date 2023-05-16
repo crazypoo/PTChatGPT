@@ -17,6 +17,7 @@ import SwiftSpinner
 import OSSSpeechKit
 import GCDWebServer
 import AttributedString
+import Brightroom
 
 //MARK: iCloud
 let SettingCloudString = "iCloud"
@@ -47,6 +48,8 @@ class PTChatPanelLayout: FloatingPanelLayout {
 }
 
 class PTSettingListViewController: PTChatBaseViewController {
+
+    let lutFileNames = ["LUT_64_Neutral"/*,"HALD_256"*/,"LUT_64_1","LUT_64_2","LUT_64_3","LUT_64_Dark_HighContrast_v3","LUT_64_Gloss"]
 
     var canOpenWebServer:Bool = false
     var webServerIsRunning:Bool = false
@@ -592,6 +595,14 @@ class PTSettingListViewController: PTChatBaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        var filters = [FilterColorCube]()
+        self.lutFileNames.enumerated().forEach { index,value in
+            if let filter = self.filterCubes(name: value, filterIdentifier: "filter_\(index)") {
+                filters.append(filter)
+            }
+        }
+        ColorCubeStorage.default.filters = filters
+
         NotificationCenter.default.addObserver(self, selector: #selector(self.reloadCellData), name: NSNotification.Name(nRefreshSetting), object: nil)
         
         if AppDelegate.appDelegate()!.appConfig.canUseStableDiffusionModel() {
@@ -641,6 +652,23 @@ class PTSettingListViewController: PTChatBaseViewController {
         }
     }
     
+    func filterCubes(name:String,filterIdentifier:String) -> FilterColorCube? {
+        if let path = Bundle.main.path(forResource: name, ofType: "png") {
+            do {
+                let data = try Data(contentsOf: URL(fileURLWithPath: path))
+                let json = UIImage(data: data)
+                
+                let filter = FilterColorCube(name: name, identifier: filterIdentifier, lutImage: ImageSource(image: json!), dimension: 64)
+                return filter
+            } catch {
+                PTNSLogConsole("Error reading JSON file: \(error)")
+                return nil
+            }
+        } else {
+            return nil
+        }
+    }
+
     func reloadCellData() {
         self.downloadInfo = AppDelegate.appDelegate()!.appConfig.getDownloadInfomation()
         self.showDetail()
@@ -691,13 +719,31 @@ class PTSettingListViewController: PTChatBaseViewController {
                 await MainActor.run{
                     switch string {
                     case PTLanguage.share.text(forKey: "about_User_icon"):
-                        AppDelegate.appDelegate()!.appConfig.userIcon = object.pngData()!
+                        let imageProvider = ImageProvider(image: object)
+                        let controller = ClassicImageEditViewController(imageProvider: imageProvider)
+                        let nav = PTNavController(rootViewController: controller)
+                        nav.modalPresentationStyle = .fullScreen
+                        self.present(nav, animated: true, completion: nil)
+                        controller.handlers.didCancelEditing = { vc in
+                            vc.dismiss(animated: true)
+                        }
+                        controller.handlers.didEndEditing = { vc,stack in
+                            vc.dismiss(animated: true)
+                            try! stack.makeRenderer().render(completion: { result in
+                                switch result {
+                                case .success(let rendered):
+                                    AppDelegate.appDelegate()!.appConfig.userIcon = rendered.uiImage.pngData()!
+                                    self.showDetail()
+                                case .failure(let error):
+                                    PTNSLogConsole(error.localizedDescription)
+                                }
+                            })
+                        }
                     case PTLanguage.share.text(forKey: "draw_Reference"):
                         AppDelegate.appDelegate()!.appConfig.drawRefrence = object.pngData()!
+                        self.showDetail()
                     default:break
                     }
-                    self.showDetail()
-                    PTNSLogConsole(object)
                 }
             } catch let pickerError as PTImagePicker.PickerError {
                 pickerError.outPutLog()
@@ -742,8 +788,8 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTFusionCell
             cell.dataContent.backgroundColor = .gobalCellBackgroundColor
             cell.cellModel = (itemRow.dataModel as! PTFusionCellModel)
-            cell.dataContent.lineView.isHidden = indexPath.row == (itemSec.rows.count - 1) ? true : false
-            cell.dataContent.topLineView.isHidden = true
+            cell.dataContent.lineView.isHidden = false
+            cell.dataContent.topLineView.isHidden = (indexPath.row == 0) ? true : false
             if itemRow.title == SettingCloudString {
                 cell.dataContent.valueSwitch.isOn = AppDelegate.appDelegate()!.appConfig.cloudSwitch
                 cell.dataContent.valueSwitch.addSwitchAction { sender in
@@ -785,18 +831,14 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                 }
             }
             
-            if itemSec.rows.count == 1 {
-                PTGCDManager.gcdMain {
-                    cell.dataContent.viewCornerRectCorner(cornerRadii:5,corner:.allCorners)
-                }
-            } else {
-                if indexPath.row == 0 {
-                    PTGCDManager.gcdMain {
-                        cell.dataContent.viewCornerRectCorner(cornerRadii: 5,corner:[.topLeft,.topRight])
-                    }
-                } else if indexPath.row == (itemSec.rows.count - 1) {
-                    PTGCDManager.gcdMain {
-                        cell.dataContent.viewCornerRectCorner(cornerRadii: 5,corner:[.bottomLeft,.bottomRight])
+            PTGCDManager.gcdMain {
+                if itemSec.rows.count == 1 {
+                    cell.contentView.viewCornerRectCorner(cornerRadii:5,corner:.allCorners)
+                } else {
+                    if indexPath.row == 0 {
+                        cell.contentView.viewCornerRectCorner(cornerRadii: 5,corner:[.topLeft,.topRight])
+                    } else if indexPath.row == (itemSec.rows.count - 1) {
+                        cell.contentView.viewCornerRectCorner(cornerRadii: 5,corner:[.bottomLeft,.bottomRight])
                     }
                 }
             }
