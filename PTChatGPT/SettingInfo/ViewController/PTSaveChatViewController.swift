@@ -158,8 +158,8 @@ extension PTSaveChatViewController:UICollectionViewDelegate,UICollectionViewData
         if itemRow.ID == PTFusionSwipeCell.ID {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTFusionSwipeCell
             cell.cellModel = (itemRow.dataModel as! PTFusionCellModel)
-            cell.dataContent.lineView.isHidden = indexPath.row == (itemSec.rows.count - 1) ? true : false
-            cell.dataContent.topLineView.isHidden = true
+//            cell.dataContent.lineView.isHidden = indexPath.row == (itemSec.rows.count - 1) ? true : false
+//            cell.dataContent.topLineView.isHidden = true
             cell.delegate = self
             return cell
         } else {

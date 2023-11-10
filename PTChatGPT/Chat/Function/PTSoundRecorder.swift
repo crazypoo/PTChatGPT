@@ -9,7 +9,6 @@
 import UIKit
 import AVFoundation
 import PooTools
-import OSSSpeechKit
 
 class PTSoundRecorder: NSObject,AVAudioRecorderDelegate {
     

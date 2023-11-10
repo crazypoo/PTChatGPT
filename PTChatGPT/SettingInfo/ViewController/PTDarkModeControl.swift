@@ -186,7 +186,7 @@ extension PTDarkModeControl:UICollectionViewDelegate,UICollectionViewDataSource
         } else if kind == UICollectionView.elementKindSectionFooter {
             if itemSec.footerID == PTDarkSmartFooter.ID {
                 let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: itemSec.footerID!, for: indexPath) as! PTDarkSmartFooter
-                footer.themeTimeButton.setTitle(darkTime, for: .normal)
+                footer.themeTimeButton.normalTitle = darkTime
                 footer.themeTimeButton.addActionHandlers { sender in
                     let timeIntervalValue = PTDarkModeOption.smartPeelingTimeIntervalValue.separatedByString(with: "~")
                     let darkModePickerView = DarkModePickerView(startTime: timeIntervalValue[0], endTime: timeIntervalValue[1]) { (startTime, endTime) in
@@ -219,22 +219,22 @@ extension PTDarkModeControl:UICollectionViewDelegate,UICollectionViewDataSource
             let cellModel = (itemRow.dataModel as! PTFusionCellModel)
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTFusionCell
             cell.cellModel = cellModel
-            cell.dataContent.lineView.isHidden = indexPath.row == (itemSec.rows.count - 1) ? true : false
-            cell.dataContent.topLineView.isHidden = true
-            cell.dataContent.backgroundColor = .gobalCellBackgroundColor
-            cell.dataContent.valueSwitch.onTintColor = .orange
+//            cell.dataContent.lineView.isHidden = indexPath.row == (itemSec.rows.count - 1) ? true : false
+//            cell.dataContent.topLineView.isHidden = true
+//            cell.dataContent.backgroundColor = .gobalCellBackgroundColor
+//            cell.dataContent.valueSwitch.onTintColor = .orange
             if cellModel.name == PTLanguage.share.text(forKey: "theme_Smart") {
-                cell.dataContent.valueSwitch.isOn = PTDarkModeOption.isSmartPeeling
+                cell.switchValue = PTDarkModeOption.isSmartPeeling
                 PTGCDManager.gcdMain {
                     cell.contentView.viewCornerRectCorner(cornerRadii: 0, corner: .allCorners)
                 }
             } else if cellModel.name == PTLanguage.share.text(forKey: "theme_FollowSystem") {
-                cell.dataContent.valueSwitch.isOn = PTDarkModeOption.isFollowSystem
+                cell.switchValue = PTDarkModeOption.isFollowSystem
                 PTGCDManager.gcdMain {
                     cell.contentView.viewCornerRectCorner(cornerRadii: 5, corner: [.bottomLeft,.bottomRight])
                 }
             }
-            cell.dataContent.valueSwitch.addSwitchAction { sender in
+            cell.switchValueChangeBlock = { title,sender in
                 if cellModel.name == PTLanguage.share.text(forKey: "theme_Smart") {
                     PTDarkModeOption.setSmartPeelingDarkMode(isSmartPeeling: sender.isOn)
                     self.showDetail()

@@ -1,4 +1,4 @@
-platform :ios, '13.0'
+platform :ios, '13.1'
 source 'https://github.com/CocoaPods/Specs.git'
 use_frameworks!
 
@@ -51,6 +51,7 @@ target 'PTChatGPT' do
   pod 'PooTools/SwipeCell', :git => 'https://github.com/crazypoo/PTools.git'
   pod 'PooTools/NotificationBanner', :git => 'https://github.com/crazypoo/PTools.git'
   pod 'PooTools/NavBarController', :git => 'https://github.com/crazypoo/PTools.git'
+  pod 'PooTools/OSSKitSpeech', :git => 'https://github.com/crazypoo/PTools.git'
 
   pod 'WhatsNew'
   pod 'TensorFlowLiteSwift', '~> 2.3.0', :subspecs => ['Metal']

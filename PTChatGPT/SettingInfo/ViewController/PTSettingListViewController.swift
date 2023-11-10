@@ -14,7 +14,6 @@ import FloatingPanel
 import ZXNavigationBar
 import FDFullscreenPopGesture
 import SwiftSpinner
-import OSSSpeechKit
 import GCDWebServer
 import AttributedString
 import Brightroom
@@ -156,7 +155,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         cloud.accessoryType = .Switch
         cloud.nameColor = .gobalTextColor
         cloud.cellFont = nameFont
-        cloud.switchTinColor = switchColor
+        cloud.switchTintColor = switchColor
 
         cloudMain.models = [cloud]
 
@@ -362,7 +361,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         domainSwitch.name = PTLanguage.share.text(forKey: "about_Use_custom_domain_switch")
         domainSwitch.nameColor = .gobalTextColor
         domainSwitch.accessoryType = .Switch
-        domainSwitch.switchTinColor = switchColor
+        domainSwitch.switchTintColor = switchColor
         domainSwitch.cellFont = nameFont
 
         let domainAddress = PTFusionCellModel()
@@ -402,7 +401,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         localUpload.accessoryType = .Switch
         localUpload.nameColor = .gobalTextColor
         localUpload.cellFont = nameFont
-        localUpload.switchTinColor = switchColor
+        localUpload.switchTintColor = switchColor
 
         let modelEdit = PTFusionCellModel()
         modelEdit.name = PTLanguage.share.text(forKey: "about_Local_model")
@@ -681,13 +680,13 @@ class PTSettingListViewController: PTChatBaseViewController {
             var rows = [PTRows]()
             value.models.enumerated().forEach { (subIndex,subValue) in
                 if subValue.name == PTLanguage.share.text(forKey: "about_AI_smart") {
-                    let row_List = PTRows.init(title: subValue.name, placeholder: subValue.content,cls: PTAISmartCell.self, ID: PTAISmartCell.ID, dataModel: subValue)
+                    let row_List = PTRows.init(title: subValue.name,cls: PTAISmartCell.self, ID: PTAISmartCell.ID, dataModel: subValue)
                     rows.append(row_List)
                 } else if subValue.name == PTLanguage.share.text(forKey: "MoDi") || subValue.name == PTLanguage.share.text(forKey: "V1.4") || subValue.name == PTLanguage.share.text(forKey: "V1.5") || subValue.name == PTLanguage.share.text(forKey: "TEST") {
                     let row_List = PTRows.init(cls: PTStableDiffusionModelCell.self, ID: PTStableDiffusionModelCell.ID, dataModel: subValue)
                     rows.append(row_List)
                 } else {
-                    let row_List = PTRows.init(title: subValue.name, placeholder: subValue.content,cls: PTFusionCell.self, ID: PTFusionCell.ID, dataModel: subValue)
+                    let row_List = PTRows.init(title: subValue.name,cls: PTFusionCell.self, ID: PTFusionCell.ID, dataModel: subValue)
                     rows.append(row_List)
                 }
             }
@@ -786,24 +785,24 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
         let itemRow = itemSec.rows[indexPath.row]
         if itemRow.ID == PTFusionCell.ID {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTFusionCell
-            cell.dataContent.backgroundColor = .gobalCellBackgroundColor
+//            cell.dataContent.backgroundColor = .gobalCellBackgroundColor
             cell.cellModel = (itemRow.dataModel as! PTFusionCellModel)
-            cell.dataContent.lineView.isHidden = false
-            cell.dataContent.topLineView.isHidden = (indexPath.row == 0) ? true : false
+//            cell.dataContent.lineView.isHidden = false
+//            cell.dataContent.topLineView.isHidden = (indexPath.row == 0) ? true : false
             if itemRow.title == SettingCloudString {
-                cell.dataContent.valueSwitch.isOn = AppDelegate.appDelegate()!.appConfig.cloudSwitch
-                cell.dataContent.valueSwitch.addSwitchAction { sender in
+                cell.switchValue = AppDelegate.appDelegate()!.appConfig.cloudSwitch
+                cell.switchValueChangeBlock = { title,sender in
                     AppDelegate.appDelegate()?.appConfig.mobileDataSavePlaceChange(value: sender.isOn)
                 }
             }
             else if itemRow.title == PTLanguage.share.text(forKey: "about_Use_custom_domain_switch") {
-                cell.dataContent.valueSwitch.isOn = AppDelegate.appDelegate()!.appConfig.useCustomDomain
-                cell.dataContent.valueSwitch.addSwitchAction { sender in
+                cell.switchValue = AppDelegate.appDelegate()!.appConfig.useCustomDomain
+                cell.switchValueChangeBlock =  { title,sender in
                     AppDelegate.appDelegate()?.appConfig.useCustomDomain = sender.isOn
                 }
             } else if itemRow.title == PTLanguage.share.text(forKey: "about_Local_upload") {
-                cell.dataContent.valueSwitch.isOn = self.webServerIsRunning
-                cell.dataContent.valueSwitch.addSwitchAction { sender in
+                cell.switchValue = self.webServerIsRunning
+                cell.switchValueChangeBlock = { title,sender in
                     if self.canOpenWebServer {
                         self.webServerIsRunning = sender.isOn
                         if sender.isOn {
@@ -825,7 +824,7 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                             }
                         }
                     } else {
-                        cell.dataContent.valueSwitch.isOn = false
+                        cell.switchValue = false
                         PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Plz_connect_wifi"))
                     }
                 }
@@ -922,7 +921,7 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
         } else if itemRow.title == PTLanguage.share.text(forKey: "about_APIAIToken") {
             let textKey = PTLanguage.share.text(forKey: "alert_Input_token")
             let apiToken = AppDelegate.appDelegate()!.appConfig.apiToken
-            UIAlertController.base_textfiele_alertVC(title:textKey,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey], textFieldTexts: [apiToken], keyboardType: [.default],textFieldDelegate: self) { result in
+            UIAlertController.base_textfield_alertVC(title:textKey,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey], textFieldTexts: [apiToken], keyboardType: [.default],textFieldDelegate: self) { result in
                 let newToken:String? = result[textKey]!
                 #if DEBUG
                 AppDelegate.appDelegate()!.appConfig.apiToken = (newToken ?? "")
@@ -937,7 +936,7 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
         } else if itemRow.title == PTLanguage.share.text(forKey: "about_Use_custom_domain_address") {
             let textKey = PTLanguage.share.text(forKey: "alert_Enter_domain")
             let domain = AppDelegate.appDelegate()!.appConfig.customDomain
-            UIAlertController.base_textfiele_alertVC(title:textKey,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey], textFieldTexts: [domain], keyboardType: [.default],textFieldDelegate: self) { result in
+            UIAlertController.base_textfield_alertVC(title:textKey,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey], textFieldTexts: [domain], keyboardType: [.default],textFieldDelegate: self) { result in
                 let newDomain:String? = result[textKey]!
                 if (newDomain ?? "").stringIsEmpty() || !(newDomain ?? "").isURL() {
                     PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Domain_error"))
@@ -1017,7 +1016,7 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
             PTGCDManager.gcdAfter(time: 0.5) {
                 let title = PTLanguage.share.text(forKey: "alert_Name_edit_title")
                 let placeHolder = PTLanguage.share.text(forKey: "alert_Name_edit_placeholder")
-                UIAlertController.base_textfiele_alertVC(title:title,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [placeHolder], textFieldTexts: [AppDelegate.appDelegate()!.appConfig.userName], keyboardType: [.default],textFieldDelegate: self) { result in
+                UIAlertController.base_textfield_alertVC(title:title,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [placeHolder], textFieldTexts: [AppDelegate.appDelegate()!.appConfig.userName], keyboardType: [.default],textFieldDelegate: self) { result in
                     let userName:String? = result[placeHolder]!
                     if !(userName ?? "").stringIsEmpty() {
                         AppDelegate.appDelegate()?.appConfig.userName = userName!
@@ -1034,7 +1033,7 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
         } else if itemRow.title == PTLanguage.share.text(forKey: "about_AI_name") {
             PTGCDManager.gcdAfter(time: 0.5) {
                 let title = PTLanguage.share.text(forKey: "alert_AI_name_edit")
-                UIAlertController.base_textfiele_alertVC(title:title,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [title], textFieldTexts: [AppDelegate.appDelegate()!.appConfig.aiName], keyboardType: [.default],textFieldDelegate: self) { result in
+                UIAlertController.base_textfield_alertVC(title:title,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [title], textFieldTexts: [AppDelegate.appDelegate()!.appConfig.aiName], keyboardType: [.default],textFieldDelegate: self) { result in
                     let userName:String? = result[title]!
                     if !(userName ?? "").stringIsEmpty() {
                         AppDelegate.appDelegate()?.appConfig.aiName = userName!

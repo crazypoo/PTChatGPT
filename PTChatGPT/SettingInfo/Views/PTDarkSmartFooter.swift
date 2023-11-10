@@ -59,10 +59,10 @@ class PTDarkSmartFooter: PTBaseCollectionReusableView {
         return view
     }()
     
-    lazy var themeTimeButton:BKLayoutButton = {
-        let view = BKLayoutButton()
+    lazy var themeTimeButton:PTLayoutButton = {
+        let view = PTLayoutButton()
         view.layoutStyle = .leftTitleRightImage
-        view.setMidSpacing(5)
+        view.midSpacing = 5
         view.setTitle(PTDarkModeOption.smartPeelingTimeIntervalValue, for: .normal)
         view.setImage(UIImage(systemName: "chevron.right")!.withTintColor(.gobalTextColor,renderingMode: .alwaysOriginal), for: .normal)
         view.titleLabel?.font = .appfont(size: 16)

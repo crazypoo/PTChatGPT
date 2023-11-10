@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		55024D1429F0E7D000244E44 /* KMFloatingPanelLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55024D1329F0E7D000244E44 /* KMFloatingPanelLayout.swift */; };
 		5503C51629CB273A00B00BE1 /* MessageKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5503C51529CB273A00B00BE1 /* MessageKit */; };
-		5509372D29DD1C82007FA668 /* PTClampedProperyWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5509372C29DD1C82007FA668 /* PTClampedProperyWrapper.swift */; };
 		5512AB7C29B470310059D840 /* PTAudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5512AB7B29B470310059D840 /* PTAudioPlayer.swift */; };
 		5514B37129B9CBFD00890161 /* PTChatCustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B37029B9CBFD00890161 /* PTChatCustomCell.swift */; };
 		5514B37429B9D50D00890161 /* PTChatModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B37329B9D50D00890161 /* PTChatModel.swift */; };
@@ -32,7 +31,6 @@
 		5526D05829E41D9D00585EC8 /* PTLocalFileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5526D05429E41D9D00585EC8 /* PTLocalFileViewController.swift */; };
 		5526D05929E41D9D00585EC8 /* PTLocalFileCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5526D05629E41D9D00585EC8 /* PTLocalFileCell.swift */; };
 		55278F3229BB7BF100615B0D /* PTAISmartCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55278F3129BB7BF100615B0D /* PTAISmartCell.swift */; };
-		552A609629D7EACF00239210 /* OSSSpeechKit in Frameworks */ = {isa = PBXBuildFile; productRef = 552A609529D7EACF00239210 /* OSSSpeechKit */; };
 		552A609829D7F0E200239210 /* PTChatApiFunction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552A609729D7F0E200239210 /* PTChatApiFunction.swift */; };
 		552A609D29D819F500239210 /* PTAIModerationdModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552A609C29D819F500239210 /* PTAIModerationdModel.swift */; };
 		552A609F29D831BD00239210 /* PTAICompletionsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552A609E29D831BD00239210 /* PTAICompletionsModel.swift */; };
@@ -105,7 +103,6 @@
 /* Begin PBXFileReference section */
 		372877C61B4F76BA38F0C55D /* Pods_PTChatGPT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PTChatGPT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		55024D1329F0E7D000244E44 /* KMFloatingPanelLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KMFloatingPanelLayout.swift; sourceTree = "<group>"; };
-		5509372C29DD1C82007FA668 /* PTClampedProperyWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PTClampedProperyWrapper.swift; sourceTree = "<group>"; };
 		5512AB7B29B470310059D840 /* PTAudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTAudioPlayer.swift; sourceTree = "<group>"; };
 		5514B37029B9CBFD00890161 /* PTChatCustomCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTChatCustomCell.swift; sourceTree = "<group>"; };
 		5514B37329B9D50D00890161 /* PTChatModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTChatModel.swift; sourceTree = "<group>"; };
@@ -218,7 +215,6 @@
 				EC91DE097C54ED7562DD3DCA /* Pods_PTChatGPT.framework in Frameworks */,
 				5503C51629CB273A00B00BE1 /* MessageKit in Frameworks */,
 				552B41CA29D14A5200065892 /* AppStoreConnect-Swift-SDK in Frameworks */,
-				552A609629D7EACF00239210 /* OSSSpeechKit in Frameworks */,
 				55833D3029E13C2F004B754D /* GradientProgressView in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -403,7 +399,6 @@
 		552A60A229D85C9900239210 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				5509372C29DD1C82007FA668 /* PTClampedProperyWrapper.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -660,7 +655,6 @@
 			packageProductDependencies = (
 				5503C51529CB273A00B00BE1 /* MessageKit */,
 				552B41C929D14A5200065892 /* AppStoreConnect-Swift-SDK */,
-				552A609529D7EACF00239210 /* OSSSpeechKit */,
 				55833D2F29E13C2F004B754D /* GradientProgressView */,
 			);
 			productName = PTChatGPT;
@@ -699,7 +693,6 @@
 			packageReferences = (
 				5503C51429CB273A00B00BE1 /* XCRemoteSwiftPackageReference "MessageKit" */,
 				552B41C829D14A5200065892 /* XCRemoteSwiftPackageReference "appstoreconnect-swift-sdk" */,
-				552A609429D7EACF00239210 /* XCRemoteSwiftPackageReference "OSSSpeechKit" */,
 				55833D2E29E13C2F004B754D /* XCRemoteSwiftPackageReference "GradientProgressView" */,
 			);
 			productRefGroup = 55A5D71529B1D23D00DCA096 /* Products */;
@@ -802,7 +795,6 @@
 			files = (
 				5526D05829E41D9D00585EC8 /* PTLocalFileViewController.swift in Sources */,
 				55ADCD9229D6BB500092F3D4 /* PTChatMasterControl.swift in Sources */,
-				5509372D29DD1C82007FA668 /* PTClampedProperyWrapper.swift in Sources */,
 				552B41C329D1358300065892 /* PTApp3PartyKey.swift in Sources */,
 				552B41C529D135AE00065892 /* PTCheckTestFlight.swift in Sources */,
 				5539463D29D8794500FFB312 /* PTSendChatModel.swift in Sources */,
@@ -1043,7 +1035,7 @@
 				CODE_SIGN_ENTITLEMENTS = PTChatGPT/PTChatGPT.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = SFU2CNYFPC;
+				DEVELOPMENT_TEAM = C9R984N453;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = PTChatGPT/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
@@ -1062,7 +1054,7 @@
 				);
 				MARKETING_VERSION = 1.0.12;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.zola.chat;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hoang.chat;
 				PRODUCT_NAME = "Chat走啦";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -1083,7 +1075,7 @@
 				CODE_SIGN_ENTITLEMENTS = PTChatGPT/PTChatGPT.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = SFU2CNYFPC;
+				DEVELOPMENT_TEAM = C9R984N453;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = PTChatGPT/Info.plist;
@@ -1102,7 +1094,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.12;
-				PRODUCT_BUNDLE_IDENTIFIER = com.zola.chat;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hoang.chat;
 				PRODUCT_NAME = "Chat走啦";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -1145,14 +1137,6 @@
 				minimumVersion = 4.0.0;
 			};
 		};
-		552A609429D7EACF00239210 /* XCRemoteSwiftPackageReference "OSSSpeechKit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/crazypoo/OSSSpeechKit";
-			requirement = {
-				branch = master;
-				kind = branch;
-			};
-		};
 		552B41C829D14A5200065892 /* XCRemoteSwiftPackageReference "appstoreconnect-swift-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/AvdLee/appstoreconnect-swift-sdk";
@@ -1176,11 +1160,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5503C51429CB273A00B00BE1 /* XCRemoteSwiftPackageReference "MessageKit" */;
 			productName = MessageKit;
-		};
-		552A609529D7EACF00239210 /* OSSSpeechKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 552A609429D7EACF00239210 /* XCRemoteSwiftPackageReference "OSSSpeechKit" */;
-			productName = OSSSpeechKit;
 		};
 		552B41C929D14A5200065892 /* AppStoreConnect-Swift-SDK */ = {
 			isa = XCSwiftPackageProductDependency;

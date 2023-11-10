@@ -42,7 +42,7 @@ class PTSuggesstionViewController: PTChatBaseViewController {
 
         let cellWidth = (screenW - PTAppBaseConfig.share.defaultViewSpace * 2 - itemRightSapce) / 2
         
-        group = UICollectionView.waterFallLayout(data: sectionModel.rows,screenWidth: screenW, itemSpace: itemRightSapce, itemWidth: cellWidth) { index, model in
+        group = UICollectionView.waterFallLayout(data: sectionModel.rows, itemSpace: itemRightSapce) { index, model in
             let cellModel = (model as! PTRows).dataModel as! PTSampleModels
             
             let titleHeight = UIView.sizeFor(string: cellModel.keyName, font: PTSuggesstionCell.titleFont,lineSpacing: 5, height: CGFloat(MAXFLOAT), width: (cellWidth - 20)).height + 10

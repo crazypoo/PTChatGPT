@@ -275,7 +275,7 @@ extension PTPopoverControl:SwipeCollectionViewCellDelegate {
                        let currentTitle = cellModel.keyName
                        let aiSet = cellModel.systemContent
 
-                       UIAlertController.base_textfiele_alertVC(title:PTLanguage.share.text(forKey: "alert_Edit_ai"),titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey,aiKey], textFieldTexts: [currentTitle,aiSet], keyboardType: [.default,.default],textFieldDelegate: self) { result in
+                       UIAlertController.base_textfield_alertVC(title:PTLanguage.share.text(forKey: "alert_Edit_ai"),titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey,aiKey], textFieldTexts: [currentTitle,aiSet], keyboardType: [.default,.default],textFieldDelegate: self) { result in
                            let newKey:String? = result[textKey]!
                            let newAiKey:String? = result[aiKey]
                            if !(newKey ?? "").stringIsEmpty() {

@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nathantannar4/InputBarAccessoryView",
       "state" : {
-        "revision" : "039a9cb3ae8c5bc4d39242a6aa688b88023633d3",
-        "version" : "6.2.0"
+        "revision" : "17ced92a5dccb36512b408b6276353631d7cbe57",
+        "version" : "6.3.0"
       }
     },
     {
@@ -32,17 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/MessageKit/MessageKit",
       "state" : {
-        "revision" : "14bfa7eb9f93267c3d7b8cdf58615bba27be672a",
-        "version" : "4.1.1"
-      }
-    },
-    {
-      "identity" : "ossspeechkit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/crazypoo/OSSSpeechKit",
-      "state" : {
-        "branch" : "master",
-        "revision" : "114bf79025ecbf2662c5bf87b414a2fd6cca2ca3"
+        "revision" : "1993e8e90d4e9a61b8d9bc8ceb733964ce943376",
+        "version" : "4.2.0"
       }
     },
     {

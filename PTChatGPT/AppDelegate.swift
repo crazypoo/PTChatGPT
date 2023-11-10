@@ -19,6 +19,7 @@ import HyperionCore
 #endif
 import Bugly
 
+//iColou.UserIcon//
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 

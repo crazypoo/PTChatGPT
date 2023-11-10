@@ -54,31 +54,14 @@ class PTChatApiFunction {
     ///   - word: 须要检测的文本
     ///   - model: GPT的检测模型,因为这里只能用到ContentPolicyModels里面的Case模型
     func checkSentence(word:String,
-                       model:ContentPolicyModels? = .latest,
-                       completion:@escaping ((_ model:PTAIModerationdModel?,_ error:AFError?)->Void)) {
+                       model:ContentPolicyModels? = .latest) async throws -> PTAIModerationdModel {
                 
-        SwiftSpinner.show("Checking.....")
+        await SwiftSpinner.show("Checking.....")
         
         let path = self.fullUrlPath(path: "/moderations")
         let param = ["input":word,"model":model!.rawValue]
-        Network.requestApi(needGobal:false,urlStr: path,header: self.baseHeader,parameters: param,modelType: PTAIModerationdModel.self,encoder: JSONEncoding.default,showHud: false) { result, error in
-            SwiftSpinner.hide() {
-                if error == nil {
-                    if let model = PTAIModerationdModel.deserialize(from: result?.originalString.jsonStringToDic()) {
-                        if model.error == nil {
-                            completion(model,nil)
-                        } else {
-                            completion(nil,AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: NSError(domain: model.error!.message, code: 12345, userInfo: nil))))
-                        }
-                    } else {
-                        completion(nil,AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: self.jsonSerializationFailedError)))
-                    }
-                } else {
-                    PTBaseViewController.gobal_drop(title: error!.localizedDescription)
-                    completion(nil,error)
-                }
-            }
-        }
+        let result = try await Network.requestApi(needGobal:false,urlStr: path,header:self.baseHeader,parameters: param,modelType: PTAIModerationdModel.self,encoder: JSONEncoding.default)
+        return result.customerModel as! PTAIModerationdModel
     }
 }
 
@@ -92,26 +75,12 @@ extension PTChatApiFunction {
     ///   - modelType: 模型(这里的模型智能是GPT3.5以下的模型)
     func sendEdits(input:String,
                    instruction:String,
-                   modelType: OpenAIModelType = .feature(.davinci),
-                   completion:@escaping ((_ model:PTAIEditsModel?,_ error:AFError?)->Void)) {
+                   modelType: OpenAIModelType = .feature(.davinci)) async throws -> PTAIEditsModel {
         let path = self.fullUrlPath(path: "/edits")
         let param = ["input":input,"model":modelType.modelName,"instruction":instruction] as [String : Any]
-        Network.requestApi(needGobal:false,urlStr: path,header: self.baseHeader,parameters: param,encoder: JSONEncoding.default,showHud: false) { result, error in
-            if error == nil {
-                if let model = PTAIEditsModel.deserialize(from: result?.originalString.jsonStringToDic()) {
-                    if model.error == nil {
-                        completion(model,nil)
-                    } else {
-                        completion(nil,AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: NSError(domain: model.error!.message, code: 12345, userInfo: nil))))
-                    }
-                } else {
-                    completion(nil,AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: self.jsonSerializationFailedError)))
-                }
-            } else {
-                PTBaseViewController.gobal_drop(title: error!.localizedDescription)
-                completion(nil,error)
-            }
-        }
+        
+        let result = try await Network.requestApi(needGobal:false,urlStr: path,header:self.baseHeader,parameters: param,modelType: PTAIEditsModel.self,encoder: JSONEncoding.default)
+        return result.customerModel as! PTAIEditsModel
     }
 }
 
@@ -127,52 +96,24 @@ extension PTChatApiFunction {
     func sendCompletions(prompt:String,
                          modelType: OpenAIModelType = .gpt3(.davinci),
                          temperature:Double? = 1,
-                         maxTokens: Int = 16,
-                         completion:@escaping ((_ model:PTAICompletionsModel?,_ error:AFError?)->Void)) {
+                         maxTokens: Int = 16) async throws -> PTAICompletionsModel {
         let path = self.fullUrlPath(path: "/completions")
         let param = ["prompt":prompt,"model":modelType.modelName,"max_tokens":maxTokens,"temperature":temperature!] as [String : Any]
-        Network.requestApi(needGobal:false,urlStr: path,header: self.baseHeader,parameters: param,encoder: JSONEncoding.default,showHud: false) { result, error in
-            if error == nil {
-                if let model = PTAICompletionsModel.deserialize(from: result?.originalString.jsonStringToDic()) {
-                    if model.error == nil {
-                        completion(model,nil)
-                    } else {
-                        completion(nil,AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: NSError(domain: model.error!.message, code: 12345, userInfo: nil))))
-                    }
-                } else {
-                    completion(nil,AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: self.jsonSerializationFailedError)))
-                }
-            } else {
-                PTBaseViewController.gobal_drop(title: error!.localizedDescription)
-                completion(nil,error)
-            }
-        }
+        
+        let result = try await Network.requestApi(needGobal:false,urlStr: path,header:self.baseHeader,parameters: param,modelType: PTAICompletionsModel.self,encoder: JSONEncoding.default)
+        return result.customerModel as! PTAICompletionsModel
     }
 
     //MARK: ChatGPT发送消息请求(GPT3.5以上的接口请求)
     ///ChatGPT发送消息请求(GPT3.5以上的接口请求)
     /// - Parameters:
     ///   - sendModel: 消息模型
-    func sendChat(sendModel:PTSendChatModel,
-                  completion:@escaping ((_ model:PTReceiveChatModel?,_ error:AFError?)->Void)) {
+    func sendChat(sendModel:PTSendChatModel) async throws -> PTReceiveChatModel {
         let path = self.fullUrlPath(path: "/chat/completions")
         let param = sendModel.toJSON()
-        Network.requestApi(needGobal:false,urlStr: path,header: self.baseHeader,parameters: param,encoder: JSONEncoding.default,showHud: false) { result, error in
-            if error == nil {
-                if let model = PTReceiveChatModel.deserialize(from: result?.originalString.jsonStringToDic()) {
-                    if model.error == nil {
-                        completion(model,nil)
-                    } else {
-                        completion(nil,AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: NSError(domain: model.error!.message, code: 12345, userInfo: nil))))
-                    }
-                } else {
-                    completion(nil,AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: self.jsonSerializationFailedError)))
-                }
-            } else {
-                PTBaseViewController.gobal_drop(title: error!.localizedDescription)
-                completion(nil,error)
-            }
-        }
+        
+        let result = try await Network.requestApi(needGobal:false,urlStr: path,header:self.baseHeader,parameters: param,modelType: PTReceiveChatModel.self,encoder: JSONEncoding.default)
+        return result.customerModel as! PTReceiveChatModel
     }
 }
 
@@ -186,26 +127,11 @@ extension PTChatApiFunction {
     ///   - imageSize: 图片大小(这里ChatGPT有限制图片必须是1024*1024/512*512/256*256)
     func imageGenerations(prompt:String,
     @PTClampedProperyWrapper(range: 1...10) numberofImages: Int = 1,
-imageSize:PTOpenAIImageSize,
-completion:@escaping ((_ model:PTImageGeneration?,_ error:AFError?)->Void)) {
+imageSize:PTOpenAIImageSize) async throws -> PTImageGeneration {
         let path = self.fullUrlPath(path: "/images/generations")
         let param = ["prompt":prompt,"n":numberofImages,"size":imageSize.rawValue] as [String : Any]
-        Network.requestApi(needGobal:false,urlStr: path,header: self.baseHeader,parameters: param,encoder: JSONEncoding.default,showHud: false) { result, error in
-            if error == nil {
-                if let model = PTImageGeneration.deserialize(from: result?.originalString.jsonStringToDic()) {
-                    if model.error == nil {
-                        completion(model,nil)
-                    } else {
-                        completion(nil,AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: NSError(domain: model.error!.message, code: 12345, userInfo: nil))))
-                    }
-                } else {
-                    completion(nil,AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: self.jsonSerializationFailedError)))
-                }
-            } else {
-                PTBaseViewController.gobal_drop(title: error!.localizedDescription)
-                completion(nil,error)
-            }
-        }
+        let result = try await Network.requestApi(needGobal:false,urlStr: path,header:self.baseHeader,parameters: param,modelType: PTImageGeneration.self,encoder: JSONEncoding.default)
+        return result.customerModel as! PTImageGeneration
     }
     
     //MARK: ChatGPT根据图片来生成相似的图片

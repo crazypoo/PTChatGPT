@@ -38,17 +38,18 @@ class PTDiffusionViewController: PTChatBaseViewController {
         let view = UIButton(type: .custom)
         view.isUserInteractionEnabled = false
         view.addActionHandlers { sender in
-            let viewerModel = PTViewerModel()
+            let viewerModel = PTMediaBrowserModel()
             viewerModel.imageURL = self.showImageView.imageView!.image!
-            viewerModel.imageShowType = .Normal
-            let config = PTViewerConfig()
+            let config = PTMediaBrowserConfig()
             config.actionType = .Save
             config.closeViewerImage = UIImage(systemName: "chevron.left")!.withTintColor(.white, renderingMode: .automatic)
             config.moreActionImage = UIImage(systemName: "ellipsis")!.withRenderingMode(.automatic)
             config.mediaData = [viewerModel]
             config.moreActionEX = ["Reset"]
-            let viewer = PTMediaViewer(viewConfig: config)
-            viewer.showImageViewer()
+            let viewer = PTMediaBrowserController()
+            viewer.viewConfig = config
+            viewer.modalPresentationStyle = .fullScreen
+            self.present(viewer, animated: true)
             viewer.viewSaveImageBlock = { finish in
                 if finish {
                     PTGCDManager.gcdBackground {
@@ -61,7 +62,7 @@ class PTDiffusionViewController: PTChatBaseViewController {
             viewer.viewMoreActionBlock = { index in
                 self.showImageView.setImage(UIImage(), for: .normal)
             }
-            viewer.viewerDismissBlock = {
+            viewer.viewDismissBlock = {
             }
         }
         return view
@@ -279,13 +280,13 @@ class PTDiffusionViewController: PTChatBaseViewController {
             buttonName = ""
         }
         
-        let moreButton = BKLayoutButton()
-        moreButton.setMidSpacing(5)
-        moreButton.titleLabel?.font = .appfont(size: 14,bold: true)
-        moreButton.setTitleColor(.gobalTextColor, for: .normal)
-        moreButton.setTitle(buttonName, for: .normal)
+        let moreButton = PTLayoutButton()
+        moreButton.midSpacing = 5
+        moreButton.normalTitleFont = .appfont(size: 14,bold: true)
+        moreButton.normalTitleColor = .gobalTextColor
+        moreButton.normalTitle = buttonName
         moreButton.layoutStyle = .leftImageRightTitle
-        moreButton.setImage(UIImage(systemName: "chevron.up.chevron.down")!.withRenderingMode(.automatic), for: .normal)
+        moreButton.normalImage = UIImage(systemName: "chevron.up.chevron.down")!.withRenderingMode(.automatic)
         moreButton.addActionHandlers { sender in
             let modelArr = self.getModel()
             if modelArr.count > 0 {

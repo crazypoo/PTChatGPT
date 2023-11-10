@@ -176,7 +176,7 @@ class PTColorSettingViewController: PTChatBaseViewController {
         self.aboutModels().enumerated().forEach { (index,value) in
             var rows = [PTRows]()
             value.models.enumerated().forEach { (subIndex,subValue) in
-                let row_List = PTRows.init(title: subValue.name, placeholder: subValue.content,cls: PTFusionCell.self, ID: PTFusionCell.ID, dataModel: subValue)
+                let row_List = PTRows.init(title: subValue.name,cls: PTFusionCell.self, ID: PTFusionCell.ID, dataModel: subValue)
                 rows.append(row_List)
             }
             let cellSection = PTSection.init(rows: rows)
@@ -240,8 +240,8 @@ extension PTColorSettingViewController:UICollectionViewDelegate,UICollectionView
         let itemRow = itemSec.rows[indexPath.row]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTFusionCell
         cell.cellModel = (itemRow.dataModel as! PTFusionCellModel)
-        cell.dataContent.lineView.isHidden = true
-        cell.dataContent.topLineView.isHidden = (indexPath.row == 0) ? true : false
+//        cell.dataContent.lineView.isHidden = true
+//        cell.dataContent.topLineView.isHidden = (indexPath.row == 0) ? true : false
         return cell
     }
     

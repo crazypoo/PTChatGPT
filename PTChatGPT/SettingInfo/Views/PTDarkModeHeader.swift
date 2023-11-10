@@ -70,15 +70,15 @@ class PTDarkModeHeader: PTBaseCollectionReusableView {
         return view
     }()
     
-    lazy var whiteButton:BKLayoutButton = {
-        let view = BKLayoutButton()
+    lazy var whiteButton:PTLayoutButton = {
+        let view = PTLayoutButton()
         view.layoutStyle = .leftImageRightTitle
-        view.setMidSpacing(7.5)
-        view.setImage(.tradeValidperiod, for: .normal)
-        view.setImage(.tradeValidperiodSelected, for: .selected)
-        view.titleLabel?.font = .appfont(size: 13)
-        view.setTitle(PTLanguage.share.text(forKey: "theme_White"), for: .normal)
-        view.setTitleColor(.gobalTextColor, for: .normal)
+        view.midSpacing = 7.5
+        view.normalImage = .tradeValidperiod
+        view.selectedImage = .tradeValidperiodSelected
+        view.normalTitleFont = .appfont(size: 13)
+        view.normalTitle = PTLanguage.share.text(forKey: "theme_White")
+        view.normalTitleColor = .gobalTextColor
         view.isSelected = false
         view.addActionHandlers { sender in
             if !sender.isSelected {
@@ -94,15 +94,15 @@ class PTDarkModeHeader: PTBaseCollectionReusableView {
         return view
     }()
     
-    lazy var blackButton:BKLayoutButton = {
-        let view = BKLayoutButton()
+    lazy var blackButton:PTLayoutButton = {
+        let view = PTLayoutButton()
         view.layoutStyle = .leftImageRightTitle
-        view.setMidSpacing(7.5)
-        view.setImage(.tradeValidperiod, for: .normal)
-        view.setImage(.tradeValidperiodSelected, for: .selected)
-        view.titleLabel?.font = .appfont(size: 13)
-        view.setTitle(PTLanguage.share.text(forKey: "theme_Black"), for: .normal)
-        view.setTitleColor(.gobalTextColor, for: .normal)
+        view.midSpacing = 7.5
+        view.normalImage = .tradeValidperiod
+        view.selectedImage = .tradeValidperiodSelected
+        view.normalTitleFont = .appfont(size: 13)
+        view.normalTitle = PTLanguage.share.text(forKey: "theme_Black")
+        view.normalTitleColor = .gobalTextColor
         view.isSelected = false
         view.addActionHandlers { sender in
             if !sender.isSelected {

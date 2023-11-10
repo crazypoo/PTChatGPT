@@ -32,7 +32,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>20230517024142</string>
+	<string>20231110172835</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -50,8 +50,10 @@
 	<string>I want to access the local network so that you can have a better experience.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>To use commands, we need to access the microphone.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>To change user icon,we need to access the photo library</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>To change theme,we need to access the phtot library</string>
+	<string>To change theme,we need to access the photo library</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Would you like to use voice commands?</string>
 	<key>UIApplicationSceneManifest</key>

@@ -106,7 +106,7 @@ class PTChatMasterControl: PTChatBaseViewController {
             PTGCDManager.gcdAfter(time: 0.5) {
                 let title = PTLanguage.share.text(forKey: "alert_Name_edit_title")
                 let placeHolder = PTLanguage.share.text(forKey: "alert_Name_edit_placeholder")
-                UIAlertController.base_textfiele_alertVC(title:title,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [placeHolder], textFieldTexts: [AppDelegate.appDelegate()!.appConfig.userName], keyboardType: [.default],textFieldDelegate: self) { result in
+                UIAlertController.base_textfield_alertVC(title:title,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [placeHolder], textFieldTexts: [AppDelegate.appDelegate()!.appConfig.userName], keyboardType: [.default], textFieldDelegate: self) { result in
                     let userName:String? = result[placeHolder]!
                     if !(userName ?? "").stringIsEmpty() {
                         self.nameButton.setTitle(userName!, for: .normal)
@@ -245,7 +245,7 @@ class PTChatMasterControl: PTChatBaseViewController {
             PTGCDManager.gcdAfter(time: 0.5) {
                 let textKey = PTLanguage.share.text(forKey: "alert_Tag_set")
                 let aiKey = PTLanguage.share.text(forKey: "alert_AI_Set")
-                UIAlertController.base_textfiele_alertVC(title:textKey,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey,aiKey], textFieldTexts: ["",""], keyboardType: [.default,.default],textFieldDelegate: self) { result in
+                UIAlertController.base_textfield_alertVC(title:textKey,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey,aiKey], textFieldTexts: ["",""], keyboardType: [.default,.default], textFieldDelegate: self) { result in
                     let newKey:String? = result[textKey]!
                     let newAiKey:String? = result[aiKey]
                     if !(newKey ?? "").stringIsEmpty() {
@@ -564,7 +564,7 @@ extension PTChatMasterControl:SwipeCollectionViewCellDelegate {
                        let currentTitle = cellModel.keyName
                        let aiSet = cellModel.systemContent
 
-                       UIAlertController.base_textfiele_alertVC(title:PTLanguage.share.text(forKey: "alert_Edit_ai"),titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey,aiKey], textFieldTexts: [currentTitle,aiSet], keyboardType: [.default,.default],textFieldDelegate: self) { result in
+                       UIAlertController.base_textfield_alertVC(title:PTLanguage.share.text(forKey: "alert_Edit_ai"),titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey,aiKey], textFieldTexts: [currentTitle,aiSet], keyboardType: [.default,.default], textFieldDelegate: self) { result in
                            let newKey:String? = result[textKey]!
                            let newAiKey:String? = result[aiKey]
                            if !(newKey ?? "").stringIsEmpty() {

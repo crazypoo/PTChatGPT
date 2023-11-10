@@ -16,7 +16,6 @@ import SwifterSwift
 import Instructions
 import WhatsNew
 import SwiftSpinner
-import OSSSpeechKit
 import Alamofire
 import Kingfisher
 import AttributedString
@@ -56,16 +55,17 @@ class PTChatViewController: MessagesViewController {
     }
     
     //MARK: 花费按钮
-    lazy var tokenButton:BKLayoutButton = {
-        let view = BKLayoutButton()
+    lazy var tokenButton:PTLayoutButton = {
+        let view = PTLayoutButton()
         view.layoutStyle = .leftImageRightTitle
-        view.setMidSpacing(5)
-        view.setImage("✏️".emojiToImage(emojiFont: .appfont(size: 13)), for: .normal)
-        view.setImage("💸".emojiToImage(emojiFont: .appfont(size: 13)), for: .selected)
-        view.titleLabel?.font = .appfont(size: 12)
-        view.setTitleColor(.gobalTextColor, for: .normal)
-        view.setTitleColor(.gobalTextColor, for: .selected)
-        view.setTitle(String(format: "%.0f", AppDelegate.appDelegate()!.appConfig.totalToken), for: .normal)
+        view.midSpacing = 5
+        view.normalImage = "✏️".emojiToImage(emojiFont: .appfont(size: 13))
+        view.selectedImage = "💸".emojiToImage(emojiFont: .appfont(size: 13))
+        view.normalTitleFont = .appfont(size: 12)
+        view.selectedTitleFont = .appfont(size: 12)
+        view.normalTitleColor = .gobalTextColor
+        view.selectedTitleColor = .gobalTextColor
+        view.normalTitle = String(format: "%.0f", AppDelegate.appDelegate()!.appConfig.totalToken)
         view.isSelected = false
         view.addActionHandlers { sender in
             sender.isSelected = !sender.isSelected
@@ -526,7 +526,7 @@ class PTChatViewController: MessagesViewController {
                     PTGCDManager.gcdAfter(time: 0.5) {
                         let textKey = PTLanguage.share.text(forKey: "alert_Tag_set")
                         let aiKey = PTLanguage.share.text(forKey: "alert_AI_Set")
-                        UIAlertController.base_textfiele_alertVC(title:textKey,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey,aiKey], textFieldTexts: ["",""], keyboardType: [.default,.default],textFieldDelegate: self) { result in
+                        UIAlertController.base_textfield_alertVC(title:textKey,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey,aiKey], textFieldTexts: ["",""], keyboardType: [.default,.default],textFieldDelegate: self) { result in
                             let newKey:String? = result[textKey]!
                             let newAiKey:String? = result[aiKey]
                             if !(newKey ?? "").stringIsEmpty() {
@@ -583,16 +583,16 @@ class PTChatViewController: MessagesViewController {
         PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_done"))
     }
     
-    lazy var titleButton:BKLayoutButton = {
-        let view = BKLayoutButton()
+    lazy var titleButton:PTLayoutButton = {
+        let view = PTLayoutButton()
         view.titleLabel?.lineBreakMode = .byTruncatingTail
         view.titleLabel?.numberOfLines = 2
-        view.titleLabel?.font = .appfont(size: 24,bold: true)
-        view.setTitleColor(.gobalTextColor, for: .normal)
+        view.normalTitleFont = .appfont(size: 24,bold: true)
+        view.normalTitleColor = .gobalTextColor
         view.layoutStyle = .leftTitleRightImage
         if !Gobal_device_info.isPad {
-            view.setImage(UIImage(systemName: "chevron.up.chevron.down")!.withRenderingMode(.automatic), for: .normal)
-            view.setMidSpacing(5)
+            view.normalImage = UIImage(systemName: "chevron.up.chevron.down")!.withRenderingMode(.automatic)
+            view.midSpacing = 5
         } else {
             view.isUserInteractionEnabled = false
         }
@@ -1192,7 +1192,7 @@ class PTChatViewController: MessagesViewController {
         }
         
         if text == .thinking {
-            var buttonW = self.titleButton.sizeFor(size: CGSize(width: CGFloat.kSCREEN_WIDTH - 108, height: 34)).width + 10
+            var buttonW = self.titleButton.sizeFor(height: 34,width: CGFloat.kSCREEN_WIDTH - 108).width + 10
             let titleViewSapce = (CGFloat.kSCREEN_WIDTH - 34 - PTAppBaseConfig.share.defaultViewSpace * 2 - 20)
             if buttonW >= titleViewSapce {
                 buttonW = titleViewSapce
@@ -1201,7 +1201,7 @@ class PTChatViewController: MessagesViewController {
             self.titleButton.frame = CGRect(x: 0, y: 0, width: buttonW, height: 34)
             self.titleButton.isUserInteractionEnabled = false
         } else {
-            var buttonW = self.titleButton.sizeFor(size: CGSize(width: CGFloat.kSCREEN_WIDTH - 108, height: 34)).width + 24 + 5 + 10
+            var buttonW = self.titleButton.sizeFor(height: 34,width: CGFloat.kSCREEN_WIDTH - 108).width + 24 + 5 + 10
             let titleViewSapce = (CGFloat.kSCREEN_WIDTH - 34 - PTAppBaseConfig.share.defaultViewSpace * 2 - 20)
             if buttonW >= titleViewSapce {
                 buttonW = titleViewSapce
@@ -1872,7 +1872,7 @@ extension PTChatViewController:MessageCellDelegate {
                         self.chatCase = .chat(type: .edit)
                         self.editString = text
                         self.inputBarCloseEditButton.setTitle(text, for: .normal)
-                        var textHeight = self.inputBarCloseEditButton.sizeFor(size: CGSize(width: CGFloat.kSCREEN_WIDTH, height: CGFloat(MAXFLOAT))).height
+                        var textHeight = self.inputBarCloseEditButton.sizeFor(width: CGFloat.kSCREEN_WIDTH).height
                         if textHeight <= 44 {
                             textHeight = 44
                         }
@@ -1948,31 +1948,30 @@ extension PTChatViewController:MessageCellDelegate {
         case .attributedText(_):
             let hisModel = self.historyModel!.historyModel[indexPath!.section]
             
-            var viewModels = [PTViewerModel]()
+            var viewModels = [PTMediaBrowserModel]()
             
             if !hisModel.editMainName.stringIsEmpty() {
-                let viewerModel = PTViewerModel()
+                let viewerModel = PTMediaBrowserModel()
                 viewerModel.imageURL = AppDelegate.appDelegate()!.appConfig.getMessageImage(name: hisModel.editMainName)
-                viewerModel.imageShowType = .Normal
                 viewModels.append(viewerModel)
             }
             
             if !hisModel.editMaskName.stringIsEmpty() {
-                let viewerModel = PTViewerModel()
+                let viewerModel = PTMediaBrowserModel()
                 viewerModel.imageURL = AppDelegate.appDelegate()!.appConfig.getMessageImage(name: hisModel.editMaskName)
-                viewerModel.imageShowType = .Normal
                 viewModels.append(viewerModel)
             }
 
-            let config = PTViewerConfig()
+            let config = PTMediaBrowserConfig()
             config.actionType = .Empty
             config.closeViewerImage = UIImage(systemName: "chevron.left")!.withTintColor(.white, renderingMode: .automatic)
             config.moreActionImage = UIImage(systemName: "ellipsis")!.withRenderingMode(.automatic)
             config.mediaData = viewModels
             
-            let viewer = PTMediaViewer(viewConfig: config)
-            viewer.showImageViewer()
-
+            let viewer = PTMediaBrowserController()
+            viewer.viewConfig = config
+            viewer.modalPresentationStyle = .fullScreen
+            self.present(viewer, animated: true)
         default:
             break
         }
@@ -1988,18 +1987,21 @@ extension PTChatViewController:MessageCellDelegate {
         case .photo(let image):
             PTNSLogConsole(image)
             self.messageInputBar.alpha = 0
-            let viewerModel = PTViewerModel()
+            let viewerModel = PTMediaBrowserModel()
             viewerModel.imageURL = image.url?.absoluteString
-            viewerModel.imageShowType = .Normal
-            let config = PTViewerConfig()
+            let config = PTMediaBrowserConfig()
             config.actionType = .Save
             config.closeViewerImage = UIImage(systemName: "chevron.left")!.withTintColor(.white, renderingMode: .automatic)
             config.moreActionImage = UIImage(systemName: "ellipsis")!.withRenderingMode(.automatic)
             config.mediaData = [viewerModel]
             config.moreActionEX = AppDelegate.appDelegate()!.appConfig.imageControlActions
             config.iCloudDocumentName = "Documents"
-            let viewer = PTMediaViewer(viewConfig: config)
-            viewer.showImageViewer()
+            
+            let viewer = PTMediaBrowserController()
+            viewer.viewConfig = config
+            viewer.modalPresentationStyle = .fullScreen
+            self.present(viewer, animated: true)
+            
             viewer.viewSaveImageBlock = { finish in
                 if finish {
                     PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Save_success"))
@@ -2043,10 +2045,9 @@ extension PTChatViewController:MessageCellDelegate {
                     }
                 }
             }
-            viewer.viewerDismissBlock = {
+            viewer.viewDismissBlock = {
                 self.messageInputBar.alpha = 1
             }
-
         default:
             break
         }
@@ -2281,13 +2282,21 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
             imageSizeType = .size256
         }
         
-        self.apiShare.imageGenerations(prompt: str,numberofImages: AppDelegate.appDelegate()!.appConfig.getImageCount, imageSize: imageSizeType) { model, error in
-            PTGCDManager.gcdBackground {
-                PTGCDManager.gcdMain {
-                    self.setTypingIndicatorViewHidden(true)
+        Task.init {
+            do {
+                let model = try await self.apiShare.imageGenerations(prompt: str, numberofImages: AppDelegate.appDelegate()!.appConfig.getImageCount, imageSize: imageSizeType)
+                saveModel.messageSendSuccess = true
+                self.chatModels.append(saveModel)
+                self.messageList[indexSection].sending = false
+                self.messageList[indexSection].sendSuccess = true
+                PTGCDManager.gcdBackground {
+                    PTGCDManager.gcdMain {
+                        self.reloadSomeSection(itemIndex: indexSection) {
+                            self.receivedImage(urlArr: model.data!, saveModel: saveModel, sendIndex: (self.messageList.count - 1))
+                        }
+                    }
                 }
-            }
-            if error != nil {
+            } catch {
                 PTGCDManager.gcdBackground {
                     PTGCDManager.gcdMain {
                         saveModel.messageSendSuccess = false
@@ -2305,23 +2314,11 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                                     self.reloadSomeSection(itemIndex: indexSection) {
                                         self.packChatData()
                                         PTGCDManager.gcdMain {
-                                            PTBaseViewController.gobal_drop(title: error!.localizedDescription)
+                                            PTBaseViewController.gobal_drop(title: error.localizedDescription)
                                         }
                                     }
                                 }
                             }
-                        }
-                    }
-                }
-            } else {
-                saveModel.messageSendSuccess = true
-                self.chatModels.append(saveModel)
-                self.messageList[indexSection].sending = false
-                self.messageList[indexSection].sendSuccess = true
-                PTGCDManager.gcdBackground {
-                    PTGCDManager.gcdMain {
-                        self.reloadSomeSection(itemIndex: indexSection) {
-                            self.receivedImage(urlArr: model!.data!, saveModel: saveModel, sendIndex: (self.messageList.count - 1))
                         }
                     }
                 }
@@ -2774,14 +2771,32 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                 self.messageInputBar.setStackViewItems([], forStack: .top, animated: true)
             }
                         
-            self.apiShare.sendEdits(input: self.editString, instruction: str) { model, error in
-                PTNSLogConsole("Edit API result>>:\(String(describing: model))")
-                PTGCDManager.gcdBackground {
+            Task.init {
+                self.setTypingIndicatorViewHidden(true)
+                do {
+                    let model = try await self.apiShare.sendEdits(input: self.editString, instruction: str)
+                    saveModel.messageSendSuccess = true
+                    self.messageList[sectionIndex].sending = false
+                    self.messageList[sectionIndex].sendSuccess = true
                     PTGCDManager.gcdMain {
-                        self.setTypingIndicatorViewHidden(true)
+                        AppDelegate.appDelegate()!.appConfig.totalToken += Double(model.usage?.total_tokens ?? 0)
+                        AppDelegate.appDelegate()!.appConfig.totalTokenCost += AppDelegate.appDelegate()!.appConfig.tokenCostCalculation(type: .gpt3(.davinci), usageModel: model.usage!)
+                        
+                        let costModel = PTCostMainModel()
+                        costModel.historyType = 0
+                        costModel.question = str
+                        costModel.answer = model.choices?.first?.text ?? ""
+                        costModel.tokenUsage = model.usage!
+                        costModel.costDate = Date().dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+                        costModel.modelName = OpenAIModelType.gpt3(.davinci).modelName
+                        self.costHistoriaSave(model: costModel)
+                        
+                        self.setTokenButton()
+                        self.reloadSomeSection(itemIndex: sectionIndex) {
+                            self.saveQAndAText(question: model.choices?.first?.text ?? "", saveModel: saveModel,sendIndex: sectionIndex)
+                        }
                     }
-                }
-                if error != nil {
+                } catch {
                     PTGCDManager.gcdMain {
                         saveModel.messageSendSuccess = false
                         if resend! {
@@ -2795,30 +2810,8 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                             self.messageList[sectionIndex].sendSuccess = false
                             self.reloadSomeSection(itemIndex: sectionIndex) {
                                 self.packChatData()
-                                PTBaseViewController.gobal_drop(title: error!.localizedDescription)
+                                PTBaseViewController.gobal_drop(title: error.localizedDescription)
                             }
-                        }
-                    }
-                } else {
-                    saveModel.messageSendSuccess = true
-                    self.messageList[sectionIndex].sending = false
-                    self.messageList[sectionIndex].sendSuccess = true
-                    PTGCDManager.gcdMain {
-                        AppDelegate.appDelegate()!.appConfig.totalToken += Double(model?.usage?.total_tokens ?? 0)
-                        AppDelegate.appDelegate()!.appConfig.totalTokenCost += AppDelegate.appDelegate()!.appConfig.tokenCostCalculation(type: .gpt3(.davinci), usageModel: model!.usage!)
-                        
-                        let costModel = PTCostMainModel()
-                        costModel.historyType = 0
-                        costModel.question = str
-                        costModel.answer = model?.choices?.first?.text ?? ""
-                        costModel.tokenUsage = model!.usage!
-                        costModel.costDate = Date().dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
-                        costModel.modelName = OpenAIModelType.gpt3(.davinci).modelName
-                        self.costHistoriaSave(model: costModel)
-                        
-                        self.setTokenButton()
-                        self.reloadSomeSection(itemIndex: sectionIndex) {
-                            self.saveQAndAText(question: model?.choices?.first?.text ?? "", saveModel: saveModel,sendIndex: sectionIndex)
                         }
                     }
                 }
@@ -2830,13 +2823,32 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                 case .chat(.chatgpt),.chat(.chatgpt0301),.chat(.chatgpt4),.chat(.chatgpt40314),.chat(.chatgpt432k),.chat(.chatgpt432k0314):
                     self.gpt3xSendMessage(str: str, saveModel: saveModel, sectionIndex: sectionIndex, resend: resend!, type: type)
                 default:
-                    self.apiShare.sendCompletions(prompt: str,modelType: type,temperature: AppDelegate.appDelegate()!.appConfig.aiSmart,maxTokens: 2048) { model, error in
-                        PTGCDManager.gcdBackground {
+                    Task.init {
+                        self.setTypingIndicatorViewHidden(true)
+                        do {
+                            let model = try await self.apiShare.sendCompletions(prompt:str,modelType:type,temperature:AppDelegate.appDelegate()!.appConfig.aiSmart,maxTokens:2048)
                             PTGCDManager.gcdMain {
-                                self.setTypingIndicatorViewHidden(true)
+                                AppDelegate.appDelegate()!.appConfig.totalToken += Double(model.usage?.total_tokens ?? 0)
+                                AppDelegate.appDelegate()!.appConfig.totalTokenCost += AppDelegate.appDelegate()!.appConfig.tokenCostCalculation(type: type, usageModel: model.usage!)
+                                self.setTokenButton()
+                                
+                                let costModel = PTCostMainModel()
+                                costModel.historyType = 0
+                                costModel.question = str
+                                costModel.answer = model.choices?.first?.text ?? ""
+                                costModel.tokenUsage = model.usage!
+                                costModel.costDate = Date().dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+                                costModel.modelName = type.modelName
+                                self.costHistoriaSave(model: costModel)
+
+                                saveModel.messageSendSuccess = true
+                                self.messageList[sectionIndex].sending = false
+                                self.messageList[sectionIndex].sendSuccess = true
+                                self.reloadSomeSection(itemIndex: sectionIndex) {
+                                    self.saveQAndAText(question: model.choices?.first?.text ?? "", saveModel: saveModel,sendIndex: sectionIndex)
+                                }
                             }
-                        }
-                        if error != nil {
+                        } catch {
                             PTGCDManager.gcdMain {
                                 saveModel.messageSendSuccess = false
                                 if resend! {
@@ -2850,30 +2862,8 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                                     self.messageList[sectionIndex].sendSuccess = false
                                     self.reloadSomeSection(itemIndex: sectionIndex) {
                                         self.packChatData()
-                                        PTBaseViewController.gobal_drop(title: error!.localizedDescription)
+                                        PTBaseViewController.gobal_drop(title: error.localizedDescription)
                                     }
-                                }
-                            }
-                        } else {
-                            PTGCDManager.gcdMain {
-                                AppDelegate.appDelegate()!.appConfig.totalToken += Double(model?.usage?.total_tokens ?? 0)
-                                AppDelegate.appDelegate()!.appConfig.totalTokenCost += AppDelegate.appDelegate()!.appConfig.tokenCostCalculation(type: type, usageModel: model!.usage!)
-                                self.setTokenButton()
-                                
-                                let costModel = PTCostMainModel()
-                                costModel.historyType = 0
-                                costModel.question = str
-                                costModel.answer = model?.choices?.first?.text ?? ""
-                                costModel.tokenUsage = model!.usage!
-                                costModel.costDate = Date().dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
-                                costModel.modelName = type.modelName
-                                self.costHistoriaSave(model: costModel)
-
-                                saveModel.messageSendSuccess = true
-                                self.messageList[sectionIndex].sending = false
-                                self.messageList[sectionIndex].sendSuccess = true
-                                self.reloadSomeSection(itemIndex: sectionIndex) {
-                                    self.saveQAndAText(question: model?.choices?.first?.text ?? "", saveModel: saveModel,sendIndex: sectionIndex)
                                 }
                             }
                         }
@@ -2915,13 +2905,34 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
         sendChatModel.temperature = (AppDelegate.appDelegate()!.appConfig.aiSmart * 2)
         sendChatModel.max_tokens = 4096
         
-        self.apiShare.sendChat(sendModel: sendChatModel) { model, error in
-            PTGCDManager.gcdBackground {
-                PTGCDManager.gcdMain {
-                    self.setTypingIndicatorViewHidden(true)
+        Task.init {
+            self.setTypingIndicatorViewHidden(true)
+            do {
+                let model = try await self.apiShare.sendChat(sendModel: sendChatModel)
+                PTGCDManager.gcdBackground {
+                    PTGCDManager.gcdMain {
+                        AppDelegate.appDelegate()!.appConfig.totalToken += Double(model.usage?.total_tokens ?? 0)
+                        AppDelegate.appDelegate()!.appConfig.totalTokenCost += AppDelegate.appDelegate()!.appConfig.tokenCostCalculation(type: type, usageModel: model.usage!)
+                        self.setTokenButton()
+                        
+                        let costModel = PTCostMainModel()
+                        costModel.historyType = 0
+                        costModel.question = str
+                        costModel.answer = model.choices?.first?.message?.content ?? ""
+                        costModel.tokenUsage = model.usage!
+                        costModel.costDate = Date().dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+                        costModel.modelName = type.modelName
+                        self.costHistoriaSave(model: costModel)
+
+                        saveModel.messageSendSuccess = true
+                        self.messageList[sectionIndex].sending = false
+                        self.messageList[sectionIndex].sendSuccess = true
+                        self.reloadSomeSection(itemIndex: sectionIndex) {
+                            self.saveQAndAText(question: model.choices?.first?.message?.content ?? "", saveModel: saveModel,sendIndex: sectionIndex)
+                        }
+                    }
                 }
-            }
-            if error != nil {
+            } catch {
                 PTGCDManager.gcdBackground {
                     PTGCDManager.gcdMain {
                         saveModel.messageSendSuccess = false
@@ -2938,34 +2949,10 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
                                     self.messageList[sectionIndex].sendSuccess = false
                                     self.reloadSomeSection(itemIndex: sectionIndex) {
                                         self.packChatData()
-                                        PTBaseViewController.gobal_drop(title: error!.localizedDescription)
+                                        PTBaseViewController.gobal_drop(title: error.localizedDescription)
                                     }
                                 }
                             }
-                        }
-                    }
-                }
-            } else {
-                PTGCDManager.gcdBackground {
-                    PTGCDManager.gcdMain {
-                        AppDelegate.appDelegate()!.appConfig.totalToken += Double(model?.usage?.total_tokens ?? 0)
-                        AppDelegate.appDelegate()!.appConfig.totalTokenCost += AppDelegate.appDelegate()!.appConfig.tokenCostCalculation(type: type, usageModel: model!.usage!)
-                        self.setTokenButton()
-                        
-                        let costModel = PTCostMainModel()
-                        costModel.historyType = 0
-                        costModel.question = str
-                        costModel.answer = model?.choices?.first?.message?.content ?? ""
-                        costModel.tokenUsage = model!.usage!
-                        costModel.costDate = Date().dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
-                        costModel.modelName = type.modelName
-                        self.costHistoriaSave(model: costModel)
-
-                        saveModel.messageSendSuccess = true
-                        self.messageList[sectionIndex].sending = false
-                        self.messageList[sectionIndex].sendSuccess = true
-                        self.reloadSomeSection(itemIndex: sectionIndex) {
-                            self.saveQAndAText(question: model?.choices?.first?.message?.content ?? "", saveModel: saveModel,sendIndex: sectionIndex)
                         }
                     }
                 }
@@ -3106,7 +3093,7 @@ extension PTChatViewController:OSSSpeechDelegate {
         if self.translateToText {
             self.maskView.translateLabel.text = text
             self.maskView.translateLabel.isHidden = false
-            var textHeight = self.maskView.translateLabel.sizeFor(size: CGSize(width: CGFloat.kSCREEN_WIDTH - 40, height: CGFloat(MAXFLOAT))).height + 10
+            var textHeight = self.maskView.translateLabel.sizeFor(width: CGFloat.kSCREEN_WIDTH - 40).height + 10
             
             let centerY = CGFloat.kSCREEN_HEIGHT / 2
             let textMaxHeight = (centerY - CGFloat.statusBarHeight() - 44 - 5)
@@ -3318,13 +3305,14 @@ extension PTChatViewController {
         PTGCDManager.gcdMain {
             let throwThisApi:Bool = AppDelegate.appDelegate()!.appConfig.checkSentence
             if throwThisApi {
-                self.apiShare.checkSentence(word: checkWork) { model, error in
-                    if model != nil {
-                        completed(throwThisApi,model!.results?.first?.flagged ?? false,nil)
-                    } else {
-                        completed(throwThisApi,false,error)
+                Task.init {
+                    do {
+                        let model = try await self.apiShare.checkSentence(word: checkWork)
+                        completed(throwThisApi,model.results?.first?.flagged ?? false,nil)
+                    } catch {
+                        completed(throwThisApi,false,nil)
                     }
-                }
+                }                
             } else {
                 completed(throwThisApi,false,nil)
             }

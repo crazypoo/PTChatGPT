@@ -39,11 +39,11 @@ class PTSuggesstionCell: PTBaseNormalCell {
         return view
     }()
     
-    lazy var addButton:BKLayoutButton = {
-        let view = BKLayoutButton()
+    lazy var addButton:PTLayoutButton = {
+        let view = PTLayoutButton()
         view.layoutStyle = .leftImageRightTitle
-        view.titleLabel?.font = .appfont(size: 13)
-        view.setMidSpacing(0)
+        view.normalTitleFont = .appfont(size: 13)
+        view.midSpacing = 0
         view.setTitle(PTLanguage.share.text(forKey: "bot_Suggesstion_import"), for: .normal)
         return view
     }()
@@ -57,7 +57,7 @@ class PTSuggesstionCell: PTBaseNormalCell {
             make.left.equalToSuperview().inset(10)
             make.bottom.equalToSuperview().inset(10)
             make.height.equalTo(34)
-            make.width.equalTo(self.addButton.sizeFor(size: CGSize(width: CGFloat(MAXFLOAT), height: 34)).width + 15)
+            make.width.equalTo(self.addButton.sizeFor(height: 34).width + 15)
         }
         
         self.infoLaebl.snp.makeConstraints { make in
