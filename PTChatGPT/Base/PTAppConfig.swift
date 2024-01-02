@@ -1602,6 +1602,6 @@ class PTAppConfig {
     }
     
     class func languageFunc(text:String) ->String {
-        return text.localized()
+        return text.localized(using: nil,in: Bundle.main)
     }
 }

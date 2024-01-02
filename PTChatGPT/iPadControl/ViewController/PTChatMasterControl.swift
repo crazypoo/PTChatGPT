@@ -414,23 +414,26 @@ class PTChatMasterControl: PTChatBaseViewController {
     
     //MARK: 進入相冊
     func enterPhotos(string:String) {
-        Task {
-            do {
-                let object:UIImage = try await PTImagePicker.openAlbum()
-                await MainActor.run{
-                    switch string {
-                    case PTAppConfig.languageFunc(text: "about_User_icon"):
-                        AppDelegate.appDelegate()!.appConfig.userIcon = object.pngData()!
-                    case PTAppConfig.languageFunc(text: "draw_Reference"):
-                        AppDelegate.appDelegate()!.appConfig.drawRefrence = object.pngData()!
-                    default:break
-                    }
-                    self.userIconButton.setImage(UIImage(data: AppDelegate.appDelegate()!.appConfig.userIcon), for: .normal)
-                    
-                    self.currentChatViewController.refreshViewAndLoadNewData()
+        let mediaConfig = PTMediaLibConfig.share
+        mediaConfig.allowSelectVideo = false
+        mediaConfig.allowTakePhotoInLibrary = false
+        mediaConfig.allowEditImage = false
+        mediaConfig.maxSelectCount = 1
+        mediaConfig.maxVideoSelectCount = 1
+        
+        let mediaLib = PTMediaLibViewController()
+        mediaLib.mediaLibShow()
+        mediaLib.selectImageBlock = { results,isOriginal in
+            if results.count > 0 {
+                switch string {
+                case PTAppConfig.languageFunc(text: "about_User_icon"):
+                    AppDelegate.appDelegate()!.appConfig.userIcon = results.first!.image.pngData()!
+                case PTAppConfig.languageFunc(text: "draw_Reference"):
+                    AppDelegate.appDelegate()!.appConfig.drawRefrence = results.first!.image.pngData()!
+                default:break
                 }
-            } catch let pickerError as PTImagePicker.PickerError {
-                pickerError.outPutLog()
+                self.userIconButton.setImage(UIImage(data: AppDelegate.appDelegate()!.appConfig.userIcon), for: .normal)
+                self.currentChatViewController.refreshViewAndLoadNewData()
             }
         }
     }

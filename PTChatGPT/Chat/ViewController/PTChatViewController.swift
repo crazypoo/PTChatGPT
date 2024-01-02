@@ -155,16 +155,24 @@ class PTChatViewController: MessagesViewController {
             } otherBlock: { sheet,index, title in
                 switch index {
                 case 0,1:
-                    Task.init {
-                        do {
-                            let object:UIImage = try await PTImagePicker.openAlbum()
+                    let mediaConfig = PTMediaLibConfig.share
+                    mediaConfig.allowSelectVideo = false
+                    mediaConfig.allowTakePhotoInLibrary = false
+                    mediaConfig.allowEditImage = false
+                    mediaConfig.maxSelectCount = 1
+                    mediaConfig.maxVideoSelectCount = 1
+                    
+                    let mediaLib = PTMediaLibViewController()
+                    mediaLib.mediaLibShow()
+                    mediaLib.selectImageBlock = { results,isOriginal in
+                        if results.count > 0 {
                             let date = Date()
                             let dateString = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
                             let fileName = "cartoon_\(dateString).png"
                             
                             PTGCDManager.gcdBackground {
                                 PTGCDManager.gcdMain {
-                                    AppDelegate.appDelegate()!.appConfig.saveUserSendImage(image: object, fileName: fileName) { finish in
+                                    AppDelegate.appDelegate()!.appConfig.saveUserSendImage(image: results.first!.image, fileName: fileName) { finish in
                                         if finish {
                                             PTGCDManager.gcdMain {
                                                 self.setTypingIndicatorViewHidden(false)
@@ -176,16 +184,16 @@ class PTChatViewController: MessagesViewController {
                                             saveModel.messageSendSuccess = false
                                             saveModel.localFileName = fileName
                                             self.chatModels.append(saveModel)
-                                            var message = PTMessageModel(image: object, user: PTChatData.share.user, messageId: UUID().uuidString, date: Date(), sendSuccess: false,fileName: fileName)
+                                            var message = PTMessageModel(image: results.first!.image, user: PTChatData.share.user, messageId: UUID().uuidString, date: Date(), sendSuccess: false,fileName: fileName)
                                             message.sending = true
                                             self.historyModel?.historyModel = self.chatModels
                                             PTGCDManager.gcdMain {
                                                 self.insertMessage(message) {
                                                     switch self.cartoonImageModes[index] {
                                                     case PTAppConfig.languageFunc(text: "chat_TF_Cartoon"):
-                                                        self.cartoonGanModel.process(object)
+                                                        self.cartoonGanModel.process(results.first!.image)
                                                     case PTAppConfig.languageFunc(text: "chat_TF_Oil_painting"):
-                                                        self.styleTransfererModel.process(object)
+                                                        self.styleTransfererModel.process(results.first!.image)
                                                     default:break
                                                     }
                                                 }
@@ -194,8 +202,6 @@ class PTChatViewController: MessagesViewController {
                                     }
                                 }
                             }
-                        } catch let pickerError as PTImagePicker.PickerError {
-                            pickerError.outPutLog()
                         }
                     }
                 default:
@@ -327,39 +333,42 @@ class PTChatViewController: MessagesViewController {
         view.setSize(CGSize(width: 44, height: 44), animated: true)
         view.setImage(UIImage(systemName: "photo.fill.on.rectangle.fill")?.withTintColor(.gobalTextColor, renderingMode: .automatic), for: .normal)
         view.addActionHandlers { sender in
-            PTGCDManager.gcdAfter(time: 0.35) {
-                Task.init {
-                    do {
-                        let object:UIImage = try await PTImagePicker.openAlbum()
-                        
-                        let date = Date()
-                        let dateString = date.dateFormat(formatString: "yyyy-MM-dd-HH-mm-ss")
-                        let fileName = "\(dateString).png"
-                        
-                        PTGCDManager.gcdMain {
-                            AppDelegate.appDelegate()!.appConfig.saveUserSendImage(image: object, fileName: "\(dateString).png") { finish in
-                                if finish {
-                                    let saveModel = PTChatModel()
-                                    saveModel.messageType = 2
-                                    saveModel.messageDateString = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
-                                    saveModel.messageSendSuccess = false
-                                    saveModel.localFileName = "\(dateString).png"
-                                    
-                                    var message = PTMessageModel(image: object, user: PTChatData.share.user, messageId: UUID().uuidString, date: Date(), sendSuccess: false,fileName: fileName)
-                                    message.sending = true
-                                    self.insertMessage(message) {
-                                        self.messageList[(self.messageList.count - 1)].sending = true
-                                        self.messageList[(self.messageList.count - 1)].sendSuccess = false
-                                        self.reloadSomeSection(itemIndex: (self.messageList.count - 1)) {
-                                            PTNSLogConsole("开始发送")
-                                            self.userSendImage(imageObject: object, saveModel: saveModel)
-                                        }
+            let mediaConfig = PTMediaLibConfig.share
+            mediaConfig.allowSelectVideo = false
+            mediaConfig.allowTakePhotoInLibrary = false
+            mediaConfig.allowEditImage = false
+            mediaConfig.maxSelectCount = 1
+            mediaConfig.maxVideoSelectCount = 1
+            
+            let mediaLib = PTMediaLibViewController()
+            mediaLib.mediaLibShow()
+            mediaLib.selectImageBlock = { results,isOriginal in
+                if results.count > 0 {
+                    let date = Date()
+                    let dateString = date.dateFormat(formatString: "yyyy-MM-dd-HH-mm-ss")
+                    let fileName = "\(dateString).png"
+                    
+                    PTGCDManager.gcdMain {
+                        AppDelegate.appDelegate()!.appConfig.saveUserSendImage(image: results.first!.image, fileName: "\(dateString).png") { finish in
+                            if finish {
+                                let saveModel = PTChatModel()
+                                saveModel.messageType = 2
+                                saveModel.messageDateString = date.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
+                                saveModel.messageSendSuccess = false
+                                saveModel.localFileName = "\(dateString).png"
+                                
+                                var message = PTMessageModel(image: results.first!.image, user: PTChatData.share.user, messageId: UUID().uuidString, date: Date(), sendSuccess: false,fileName: fileName)
+                                message.sending = true
+                                self.insertMessage(message) {
+                                    self.messageList[(self.messageList.count - 1)].sending = true
+                                    self.messageList[(self.messageList.count - 1)].sendSuccess = false
+                                    self.reloadSomeSection(itemIndex: (self.messageList.count - 1)) {
+                                        PTNSLogConsole("开始发送")
+                                        self.userSendImage(imageObject: results.first!.image, saveModel: saveModel)
                                     }
                                 }
                             }
                         }
-                    } catch let pickerError as PTImagePicker.PickerError {
-                        pickerError.outPutLog()
                     }
                 }
             }
@@ -388,12 +397,18 @@ class PTChatViewController: MessagesViewController {
         view.setImage(UIImage(systemName: "rectangle.stack.badge.plus")?.withTintColor(.black, renderingMode: .automatic), for: .normal)
         view.setSize(CGSize(width: 44, height: 44), animated: false)
         view.addActionHandlers { sender in
-            Task.init {
-                do {
-                    let object:UIImage = try await PTImagePicker.openAlbum()
-                    self.editMainImageButton.setImage(object, for: .normal)
-                } catch let pickerError as PTImagePicker.PickerError {
-                    pickerError.outPutLog()
+            let mediaConfig = PTMediaLibConfig.share
+            mediaConfig.allowSelectVideo = false
+            mediaConfig.allowTakePhotoInLibrary = false
+            mediaConfig.allowEditImage = false
+            mediaConfig.maxSelectCount = 1
+            mediaConfig.maxVideoSelectCount = 1
+            
+            let mediaLib = PTMediaLibViewController()
+            mediaLib.mediaLibShow()
+            mediaLib.selectImageBlock = { results,isOriginal in
+                if results.count > 0 {
+                    self.editMainImageButton.setImage(results.first!.image, for: .normal)
                 }
             }
         }
@@ -409,12 +424,18 @@ class PTChatViewController: MessagesViewController {
         view.setImage(UIImage(systemName: "rectangle.center.inset.filled.badge.plus")?.withTintColor(.black, renderingMode: .automatic), for: .normal)
         view.setSize(CGSize(width: 44, height: 44), animated: false)
         view.addActionHandlers { sender in
-            Task.init {
-                do {
-                    let object:UIImage = try await PTImagePicker.openAlbum()
-                    self.editMaskImageButton.setImage(object, for: .normal)
-                } catch let pickerError as PTImagePicker.PickerError {
-                    pickerError.outPutLog()
+            let mediaConfig = PTMediaLibConfig.share
+            mediaConfig.allowSelectVideo = false
+            mediaConfig.allowTakePhotoInLibrary = false
+            mediaConfig.allowEditImage = false
+            mediaConfig.maxSelectCount = 1
+            mediaConfig.maxVideoSelectCount = 1
+            
+            let mediaLib = PTMediaLibViewController()
+            mediaLib.mediaLibShow()
+            mediaLib.selectImageBlock = { results,isOriginal in
+                if results.count > 0 {
+                    self.editMaskImageButton.setImage(results.first!.image, for: .normal)
                 }
             }
         }
@@ -585,10 +606,9 @@ class PTChatViewController: MessagesViewController {
     
     lazy var titleButton:PTLayoutButton = {
         let view = PTLayoutButton()
-        view.titleLabel?.lineBreakMode = .byTruncatingTail
-        view.titleLabel?.numberOfLines = 2
-        view.normalTitleFont = .appfont(size: 24,bold: true)
+        view.normalTitleFont = .appfont(size: 17,bold: true)
         view.normalTitleColor = .gobalTextColor
+        view.normalSubTitleFont = .appfont(size: 14)
         view.layoutStyle = .leftTitleRightImage
         if !Gobal_device_info.isPad {
             view.normalImage = UIImage(systemName: "chevron.up.chevron.down")!.withRenderingMode(.automatic)
@@ -1167,32 +1187,31 @@ class PTChatViewController: MessagesViewController {
             self.titleButton.frame = CGRect(x: 0, y: 0, width: contrast, height: 34)
             if !Gobal_device_info.isPad {
                 self.titleButton.isUserInteractionEnabled = true
-                self.titleButton.setImage(UIImage(systemName: "chevron.up.chevron.down")!.withRenderingMode(.automatic), for: .normal)
+                self.titleButton.normalImage = UIImage(systemName: "chevron.up.chevron.down")!.withRenderingMode(.automatic)
             } else {
                 self.titleButton.isUserInteractionEnabled = false
             }
             
-            let att:ASAttributedString = """
-            \(wrap: .embedding("""
-            \("\(model.keyName)",.paragraph(.alignment(.center),.lineSpacing(5)),.foreground(.gobalTextColor),.font(.appfont(size: 17)))
-            \("\(model.systemContent)",.paragraph(.alignment(.center),.lineSpacing(5)),.foreground(.lightGray),.font(.appfont(size: 14)))
-            """),.paragraph(.alignment(.left)))
-            """
-            self.titleButton.setAttributedTitle(att.value, for: .normal)
+            self.titleButton.normalTitle = model.keyName
+            self.titleButton.normalSubTitle = model.keyName == "Base" ? " " : model.systemContent
+            PTNSLogConsole("<<<<<<<<<<<<<\(model.keyName)\n\(model.systemContent)")
         }
     }
     
     func setTitleViewFrame(text:String) {
         
         self.titleButton.setAttributedTitle(nil, for: .normal)
+        var buttonString = ""
         if text == "Base" {
-            self.titleButton.setTitle(kAppName!, for: .normal)
+            buttonString = kAppName!
         } else {
-            self.titleButton.setTitle(text, for: .normal)
+            buttonString = text
         }
+        self.titleButton.normalTitle = buttonString
+        self.titleButton.normalSubTitle = ""
         
         if text == .thinking {
-            var buttonW = self.titleButton.sizeFor(height: 34,width: CGFloat.kSCREEN_WIDTH - 108).width + 10
+            var buttonW = UIView.sizeFor(string: buttonString, font: .appfont(size: 17,bold: true),height: 34,width: CGFloat.kSCREEN_WIDTH - 108).width + 10
             let titleViewSapce = (CGFloat.kSCREEN_WIDTH - 34 - PTAppBaseConfig.share.defaultViewSpace * 2 - 20)
             if buttonW >= titleViewSapce {
                 buttonW = titleViewSapce
@@ -1201,7 +1220,7 @@ class PTChatViewController: MessagesViewController {
             self.titleButton.frame = CGRect(x: 0, y: 0, width: buttonW, height: 34)
             self.titleButton.isUserInteractionEnabled = false
         } else {
-            var buttonW = self.titleButton.sizeFor(height: 34,width: CGFloat.kSCREEN_WIDTH - 108).width + 24 + 5 + 10
+            var buttonW = UIView.sizeFor(string: buttonString, font: .appfont(size: 17,bold: true),height: 34,width: CGFloat.kSCREEN_WIDTH - 108).width + 24 + 5 + 10
             let titleViewSapce = (CGFloat.kSCREEN_WIDTH - 34 - PTAppBaseConfig.share.defaultViewSpace * 2 - 20)
             if buttonW >= titleViewSapce {
                 buttonW = titleViewSapce
@@ -1209,7 +1228,7 @@ class PTChatViewController: MessagesViewController {
             self.titleButton.frame = CGRect(x: 0, y: 0, width: buttonW, height: 34)
             if !Gobal_device_info.isPad {
                 self.titleButton.isUserInteractionEnabled = true
-                self.titleButton.setImage(UIImage(systemName: "chevron.up.chevron.down")!.withRenderingMode(.automatic), for: .normal)
+                self.titleButton.normalImage = UIImage(systemName: "chevron.up.chevron.down")!.withRenderingMode(.automatic)
             } else {
                 self.titleButton.isUserInteractionEnabled = false
             }

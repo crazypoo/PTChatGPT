@@ -712,40 +712,25 @@ class PTSettingListViewController: PTChatBaseViewController {
     
     //MARK: 進入相冊
     func enterPhotos(string:String) {
-        Task {
-            do {
-                let object:UIImage = try await PTImagePicker.openAlbum()
-                await MainActor.run{
-                    switch string {
-                    case PTAppConfig.languageFunc(text: "about_User_icon"):
-                        let imageProvider = ImageProvider(image: object)
-                        let controller = ClassicImageEditViewController(imageProvider: imageProvider)
-                        let nav = PTNavController(rootViewController: controller)
-                        nav.modalPresentationStyle = .fullScreen
-                        self.present(nav, animated: true, completion: nil)
-                        controller.handlers.didCancelEditing = { vc in
-                            vc.dismiss(animated: true)
-                        }
-                        controller.handlers.didEndEditing = { vc,stack in
-                            vc.dismiss(animated: true)
-                            try! stack.makeRenderer().render(completion: { result in
-                                switch result {
-                                case .success(let rendered):
-                                    AppDelegate.appDelegate()!.appConfig.userIcon = rendered.uiImage.pngData()!
-                                    self.showDetail()
-                                case .failure(let error):
-                                    PTNSLogConsole(error.localizedDescription)
-                                }
-                            })
-                        }
-                    case PTAppConfig.languageFunc(text: "draw_Reference"):
-                        AppDelegate.appDelegate()!.appConfig.drawRefrence = object.pngData()!
-                        self.showDetail()
-                    default:break
-                    }
+        let mediaConfig = PTMediaLibConfig.share
+        mediaConfig.allowSelectVideo = false
+        mediaConfig.allowTakePhotoInLibrary = false
+        mediaConfig.allowEditImage = false
+        mediaConfig.maxSelectCount = 1
+        mediaConfig.maxVideoSelectCount = 1
+        
+        let mediaLib = PTMediaLibViewController()
+        mediaLib.mediaLibShow()
+        mediaLib.selectImageBlock = { results,isOriginal in
+            if results.count > 0 {
+                switch string {
+                case PTAppConfig.languageFunc(text: "about_User_icon"):
+                    AppDelegate.appDelegate()!.appConfig.userIcon = results.first!.image.pngData()!
+                case PTAppConfig.languageFunc(text: "draw_Reference"):
+                    AppDelegate.appDelegate()!.appConfig.drawRefrence = results.first!.image.pngData()!
+                default:break
                 }
-            } catch let pickerError as PTImagePicker.PickerError {
-                pickerError.outPutLog()
+                self.showDetail()
             }
         }
     }
