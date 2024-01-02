@@ -12,8 +12,8 @@ import AttributedString
 
 class PTDisclaimerViewController: PTChatBaseViewController {
 
-    let firstTitle = PTLanguage.share.text(forKey: "disclaimer_App")
-    let secondTitle = PTLanguage.share.text(forKey: "disclaimer_External")
+    let firstTitle = PTAppConfig.languageFunc(text: "disclaimer_App")
+    let secondTitle = PTAppConfig.languageFunc(text: "disclaimer_External")
 
     lazy var labelContent:UIScrollView = {
         let view = UIScrollView()
@@ -29,7 +29,7 @@ class PTDisclaimerViewController: PTChatBaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.zx_navTitle = PTLanguage.share.text(forKey: "first_Disclaimer")
+        self.zx_navTitle = PTAppConfig.languageFunc(text: "first_Disclaimer")
         
         self.view.addSubview(self.labelContent)
         self.labelContent.snp.makeConstraints { make in

@@ -70,7 +70,7 @@ class PTSaveChatViewController: PTChatBaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.zx_navTitle = PTLanguage.share.text(forKey: "selected_List")
+        self.zx_navTitle = PTAppConfig.languageFunc(text: "selected_List")
         self.saveChatModel = AppDelegate.appDelegate()!.appConfig.getSaveChatData()
 
         NotificationCenter.default.addObserver(self, selector: #selector(self.refreshViewAndLoadNewData), name: NSNotification.Name(rawValue: kRefreshControllerAndLoadNewData), object: nil)
@@ -210,9 +210,9 @@ extension PTSaveChatViewController:SwipeCollectionViewCellDelegate {
    func collectionView(_ collectionView: UICollectionView, editActionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
        if orientation == .right {
            
-           let delete = SwipeAction(style: .destructive, title: PTLanguage.share.text(forKey: "cell_Delete")) { action, indexPath in
+           let delete = SwipeAction(style: .destructive, title: PTAppConfig.languageFunc(text: "cell_Delete")) { action, indexPath in
                PTGCDManager.gcdMain {
-                   UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg:PTLanguage.share.text(forKey: "cell_Delete_one_cell"),msgColor: .gobalTextColor,okBtns:[PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
+                   UIAlertController.base_alertVC(title: PTAppConfig.languageFunc(text: "alert_Info"),titleColor: .gobalTextColor,msg:PTAppConfig.languageFunc(text: "cell_Delete_one_cell"),msgColor: .gobalTextColor,okBtns:[PTAppConfig.languageFunc(text: "button_Confirm")],cancelBtn: PTAppConfig.languageFunc(text: "button_Cancel")) {
                        self.showDetail()
                    } moreBtn: { index, title in
                        self.saveChatModel.remove(at: indexPath.row)
@@ -221,7 +221,7 @@ extension PTSaveChatViewController:SwipeCollectionViewCellDelegate {
                            AppDelegate.appDelegate()!.appConfig.favouriteChat = self.saveChatModel.kj.JSONObjectArray()
                        }
                        self.showDetail()
-                       PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_done"))
+                       PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Delete_done"))
                    }
                }
            }
@@ -250,7 +250,7 @@ extension PTSaveChatViewController {
         self.lxf_EmptyDataSet(currentScroller) { () -> ([LXFEmptyDataSetAttributeKeyType : Any]) in
             let color:UIColor = .gobalTextColor
             return [
-                .tipStr : PTLanguage.share.text(forKey: "chat_Select"),
+                .tipStr : PTAppConfig.languageFunc(text: "chat_Select"),
                 .tipColor : color,
                 .verticalOffset : 0,
                 .tipImage : UIImage(systemName:"info.circle.fill")!.withTintColor(.gobalTextColor, renderingMode: .automatic)

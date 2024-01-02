@@ -144,25 +144,17 @@ imageSize:PTOpenAIImageSize) async throws -> PTImageGeneration {
     @PTClampedProperyWrapper(range: 1...10) numberofImages: Int = 1,
 imageSize:PTOpenAIImageSize,
 completion:@escaping ((_ model:PTImageGeneration?,_ error:AFError?)->Void)) {
-        let path = self.fullUrlPath(path: "/images/variations")
-        let param = ["n":"\(numberofImages)","size":imageSize.rawValue]
-        
-        let baseHeader = HTTPHeaders(["Authorization": "Bearer \(AppDelegate.appDelegate()!.appConfig.apiToken)","Content-Type": "multipart/form-data; boundary=\(UUID().uuidString)"])
+        Task.init {
+            do {
+                let path = self.fullUrlPath(path: "/images/variations")
+                let param = ["n":"\(numberofImages)","size":imageSize.rawValue]
+                
+                let baseHeader = HTTPHeaders(["Authorization": "Bearer \(await AppDelegate.appDelegate()!.appConfig.apiToken)","Content-Type": "multipart/form-data; boundary=\(UUID().uuidString)"])
 
-        Network.imageUpload(needGobal:false,images: [image],path: path,fileKey: ["image"],parmas: param,header: baseHeader,showHud: false) { result, error in
-            if error == nil {
-                if let model = PTImageGeneration.deserialize(from: result?.originalString.jsonStringToDic()) {
-                    if model.error == nil {
-                        completion(model,nil)
-                    } else {
-                        completion(nil,AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: NSError(domain: model.error!.message, code: 12345, userInfo: nil))))
-                    }
-                } else {
-                    completion(nil,AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: self.jsonSerializationFailedError)))
-                }
-            } else {
-                PTBaseViewController.gobal_drop(title: error!.localizedDescription)
-                completion(nil,error)
+                let model = try await Network.imageUpload(needGobal:false,images: [image],path: path,fileKey: ["image"],parmas: param,header: baseHeader,modelType: PTImageGeneration.self)
+                completion((model.customerModel as! PTImageGeneration),nil)
+            } catch  {
+                completion(nil,error as! AFError)
             }
         }
     }
@@ -181,35 +173,29 @@ maskImage:UIImage? = nil,
     @PTClampedProperyWrapper(range: 1...10) numberofImages: Int = 1,
 imageSize:PTOpenAIImageSize,
 completion:@escaping ((_ model:PTImageGeneration?,_ error:AFError?)->Void)) {
-        let path = self.fullUrlPath(path: "/images/edits")
-        let param = ["prompt":prompt,"n":"\(numberofImages)","size":imageSize.rawValue]
         
-        let baseHeader = HTTPHeaders(["Authorization": "Bearer \(AppDelegate.appDelegate()!.appConfig.apiToken)","Content-Type": "multipart/form-data; boundary=\(UUID().uuidString)"])
+        Task.init {
+            do {
+                let path = self.fullUrlPath(path: "/images/edits")
+                let param = ["prompt":prompt,"n":"\(numberofImages)","size":imageSize.rawValue]
+                
+                let baseHeader = HTTPHeaders(["Authorization": "Bearer \(await AppDelegate.appDelegate()!.appConfig.apiToken)","Content-Type": "multipart/form-data; boundary=\(UUID().uuidString)"])
 
-        var images = [UIImage]()
-        var imagesName = [String]()
-        if maskImage != nil {
-            images = [mainImage,maskImage!]
-            imagesName = ["image","mask"]
-        } else {
-            images = [mainImage]
-            imagesName = ["image"]
-        }
-        
-        Network.imageUpload(needGobal:false,images: images,path: path,fileKey: imagesName,parmas: param,header: baseHeader,showHud: false) { result, error in
-            if error == nil {
-                if let model = PTImageGeneration.deserialize(from: result?.originalString.jsonStringToDic()) {
-                    if model.error == nil {
-                        completion(model,nil)
-                    } else {
-                        completion(nil,AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: NSError(domain: model.error!.message, code: 12345, userInfo: nil))))
-                    }
+                var images = [UIImage]()
+                var imagesName = [String]()
+                if maskImage != nil {
+                    images = [mainImage,maskImage!]
+                    imagesName = ["image","mask"]
                 } else {
-                    completion(nil,AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: self.jsonSerializationFailedError)))
+                    images = [mainImage]
+                    imagesName = ["image"]
                 }
-            } else {
-                PTBaseViewController.gobal_drop(title: error!.localizedDescription)
-                completion(nil,error)
+
+                let model = try await Network.imageUpload(needGobal:false,images: images,path: path,fileKey: imagesName,parmas: param,header: baseHeader,modelType: PTImageGeneration.self)
+                completion((model.customerModel as! PTImageGeneration),nil)
+            } catch  {
+                
+                completion(nil,AFError.createUploadableFailed(error: error))
             }
         }
     }

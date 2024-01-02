@@ -148,7 +148,7 @@ extension PTPopoverControl:UICollectionViewDelegate,UICollectionViewDataSource {
             if itemSec.footerID == PTPopoverFooter.ID {
                 let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: itemSec.footerID!, for: indexPath) as! PTPopoverFooter
                 footer.deleteButton.addActionHandlers { sender in
-                    UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "alert_delete_all_tag"),msgColor: .gobalTextColor,okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
+                    UIAlertController.base_alertVC(title: PTAppConfig.languageFunc(text: "alert_Info"),titleColor: .gobalTextColor,msg: PTAppConfig.languageFunc(text: "alert_delete_all_tag"),msgColor: .gobalTextColor,okBtns: [PTAppConfig.languageFunc(text: "button_Confirm")],cancelBtn: PTAppConfig.languageFunc(text: "button_Cancel")) {
                     } moreBtn: { index, title in
                         if self.deleteAllTagBlock != nil {
                             self.deleteAllTagBlock!()
@@ -224,10 +224,10 @@ extension PTPopoverControl:SwipeCollectionViewCellDelegate {
    func collectionView(_ collectionView: UICollectionView, editActionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
        if orientation == .right {
            
-           let delete = SwipeAction(style: .destructive, title: PTLanguage.share.text(forKey: "cell_Delete")) { action, indexPath in
+           let delete = SwipeAction(style: .destructive, title: PTAppConfig.languageFunc(text: "cell_Delete")) { action, indexPath in
                PTGCDManager.gcdMain {
                    if self.segDataArr[indexPath.row]!.keyName == "Base" {
-                       PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_error"))
+                       PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Delete_error"))
                        self.showDetail()
                    } else if self.segDataArr[indexPath.row]!.keyName == self.currentHistoryModel.keyName && self.segDataArr[indexPath.row]!.keyName != "Base" {
                        self.segDataArr.remove(at: indexPath.row)
@@ -267,15 +267,15 @@ extension PTPopoverControl:SwipeCollectionViewCellDelegate {
                    let itemRow = itemSec.rows[indexPath.row]
                    let cellModel = (itemRow.dataModel as! PTSegHistoryModel)
                    if cellModel.keyName == "Base" {
-                       PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Edit_error"))
+                       PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Edit_error"))
                    } else {
-                       let textKey = PTLanguage.share.text(forKey: "alert_Tag_set")
-                       let aiKey = PTLanguage.share.text(forKey: "alert_AI_Set")
+                       let textKey = PTAppConfig.languageFunc(text: "alert_Tag_set")
+                       let aiKey = PTAppConfig.languageFunc(text: "alert_AI_Set")
                                           
                        let currentTitle = cellModel.keyName
                        let aiSet = cellModel.systemContent
 
-                       UIAlertController.base_textfield_alertVC(title:PTLanguage.share.text(forKey: "alert_Edit_ai"),titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey,aiKey], textFieldTexts: [currentTitle,aiSet], keyboardType: [.default,.default],textFieldDelegate: self) { result in
+                       UIAlertController.base_textfield_alertVC(title:PTAppConfig.languageFunc(text: "alert_Edit_ai"),titleColor: .gobalTextColor,okBtn: PTAppConfig.languageFunc(text: "button_Confirm"), cancelBtn: PTAppConfig.languageFunc(text: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey,aiKey], textFieldTexts: [currentTitle,aiSet], keyboardType: [.default,.default],textFieldDelegate: self) { result in
                            let newKey:String? = result[textKey]!
                            let newAiKey:String? = result[aiKey]
                            if !(newKey ?? "").stringIsEmpty() {
@@ -303,7 +303,7 @@ extension PTPopoverControl:SwipeCollectionViewCellDelegate {
                                    }
                                }
                            } else {
-                               PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Input_error"))
+                               PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Input_error"))
                            }
                        }
 

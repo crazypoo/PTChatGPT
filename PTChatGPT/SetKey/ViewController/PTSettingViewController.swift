@@ -24,7 +24,7 @@ class PTSettingViewController: PTChatBaseViewController {
                 
         let picker = BRStringPickerView(pickerMode: .componentSingle)
         picker.pickerStyle = PTAppConfig.gobal_BRPickerStyle()
-        picker.title = PTLanguage.share.text(forKey: "first_Select_speech_language")
+        picker.title = PTAppConfig.languageFunc(text: "first_Select_speech_language")
         return picker
     }()
             
@@ -35,7 +35,7 @@ class PTSettingViewController: PTChatBaseViewController {
     
     lazy var token:PTTextField = {
         let view = PTTextField()
-        view.placeholder = PTLanguage.share.text(forKey: "first_Paste")
+        view.placeholder = PTAppConfig.languageFunc(text: "first_Paste")
         view.delegate = self
         view.text = AppDelegate.appDelegate()?.appConfig.apiToken
         view.leftSpace = 10
@@ -63,7 +63,7 @@ class PTSettingViewController: PTChatBaseViewController {
         
     lazy var disclaimerButton:UILabel = {
         
-        let att:ASAttributedString = ASAttributedString.init("\(PTLanguage.share.text(forKey: "first_Disclaimer"))",.paragraph(.alignment(.center)),.foreground(.systemBlue),.font(.appfont(size: 14)),.action(self.disclaimerClick),.underline(.single,color: .systemBlue))
+        let att:ASAttributedString = ASAttributedString.init("\(PTAppConfig.languageFunc(text: "first_Disclaimer"))",.paragraph(.alignment(.center)),.foreground(.systemBlue),.font(.appfont(size: 14)),.action(self.disclaimerClick),.underline(.single,color: .systemBlue))
         
         let view = UILabel()
         view.numberOfLines = 0
@@ -73,7 +73,7 @@ class PTSettingViewController: PTChatBaseViewController {
     
     lazy var gogogoButton:UIButton = {
         let button = UIButton(type: .custom)
-        button.setTitle(PTLanguage.share.text(forKey: "first_Start"), for: .normal)
+        button.setTitle(PTAppConfig.languageFunc(text: "first_Start"), for: .normal)
         button.setTitleColor(.gobalTextColor, for: .normal)
         button.addActionHandlers { sender in
             self.token.resignFirstResponder()
@@ -86,7 +86,7 @@ class PTSettingViewController: PTChatBaseViewController {
         let view = UILabel()
         view.font = .appfont(size: 14)
         view.textColor = .lightGray
-        view.text = PTLanguage.share.text(forKey: "first_Disclaimer_info")
+        view.text = PTAppConfig.languageFunc(text: "first_Disclaimer_info")
         view.textAlignment = .center
         view.numberOfLines = 0
         return view
@@ -109,7 +109,7 @@ class PTSettingViewController: PTChatBaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.zx_navTitle = PTLanguage.share.text(forKey: "first_Title")
+        self.zx_navTitle = PTAppConfig.languageFunc(text: "first_Title")
                 
         self.view.backgroundColor = .gobalBackgroundColor
         
@@ -189,7 +189,7 @@ class PTSettingViewController: PTChatBaseViewController {
     
     func checkTextField(textField:UITextField) {
         if (textField.text ?? "").stringIsEmpty() || !(textField.text ?? "").nsString.contains("sk-") {
-            PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Token_error"))
+            PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Token_error"))
         } else {
             AppDelegate.appDelegate()!.appConfig.apiToken = textField.text!
             AppDelegate.appDelegate()!.appConfig.language = self.languageType.rawValue

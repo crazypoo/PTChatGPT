@@ -75,7 +75,7 @@ class PTCostHistoriaViewController: PTChatBaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.zx_navTitle = PTLanguage.share.text(forKey: "cost_Title")
+        self.zx_navTitle = PTAppConfig.languageFunc(text: "cost_Title")
         self.view.addSubviews([self.collectionView])
         self.collectionView.snp.makeConstraints { make in
             make.left.right.bottom.equalToSuperview()
@@ -135,7 +135,7 @@ extension PTCostHistoriaViewController {
         self.lxf_EmptyDataSet(currentScroller) { () -> ([LXFEmptyDataSetAttributeKeyType : Any]) in
             let color:UIColor = .gobalTextColor
             return [
-                .tipStr : PTLanguage.share.text(forKey: "cost_Empty"),
+                .tipStr : PTAppConfig.languageFunc(text: "cost_Empty"),
                 .tipColor : color,
                 .verticalOffset : 0,
                 .tipImage : UIImage(systemName:"info.circle.fill")!.withTintColor(.gobalTextColor, renderingMode: .automatic)

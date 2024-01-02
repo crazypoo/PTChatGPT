@@ -49,7 +49,7 @@ class PTStableDiffusionModelCell: PTBaseNormalCell {
         return view
     }()
     
-    var downLoad:PTFileDownloadApi?
+    var downLoad = Network.share
     
     lazy var downLoadStatus:UIButton = {
         let view = UIButton(type: .custom)
@@ -63,46 +63,40 @@ class PTStableDiffusionModelCell: PTBaseNormalCell {
                 self.progressInfoLabel.isHidden = false
                 
                 PTGCDManager.gcdMain {
-                    PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "download_Start"))
+                    PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "download_Start"))
                 }
                 
                 let tempFile = FileManager.pt.TmpDirectory().appendingPathComponent("\(self.cellModel!.folderName).zip")
                 
                 if FileManager.pt.judgeFileOrFolderExists(filePath: tempFile) {
                     PTGCDManager.gcdAfter(time: 0.5) {
-                        self.progressInfoLabel.text = PTLanguage.share.text(forKey: "download_Unzip")
+                        self.progressInfoLabel.text = PTAppConfig.languageFunc(text: "download_Unzip")
                         self.unzipFunction(tempFileUrl: tempFile)
                     }
                 } else {
-                    self.downLoad = PTFileDownloadApi(fileUrl: self.cellModel!.url, saveFilePath: userChatCostFilePath) { bytesRead, totalBytesRead, progress in
-                        self.progressView.progress = Float(progress)
-                        self.progressInfoLabel.text = "\(bytesRead) / \(totalBytesRead)"
-                    } success: { reponse in
-                        let result = (reponse as! AFDownloadResponse<Data>)
-                                                
-                        switch result.result {
-                        case .success(let data):
-                            do {
-                                try data.write(to: URL(fileURLWithPath: tempFile),options: .atomic)
-                                PTNSLogConsole("文件写入成功")
-                                PTGCDManager.gcdAfter(time: 0.5) {
-                                    self.progressInfoLabel.text = PTLanguage.share.text(forKey: "download_Unzip")
-                                    self.unzipFunction(tempFileUrl: tempFile)
+                    Task.init {
+                        do {
+                            let data = try await Network.fileDownLoad(fileUrl: self.cellModel!.url, saveFilePath: userChatCostFilePath) { bytesRead, totalBytesRead, progress in
+                                PTGCDManager.gcdMain {
+                                    self.progressView.progress = Float(progress)
+                                    self.progressInfoLabel.text = "\(bytesRead) / \(totalBytesRead)"
                                 }
-                            } catch {
-                                sender.isSelected = false
-                                PTNSLogConsole("写入文件失败\(error.localizedDescription)")
                             }
-                        default:break
-                        }
+                            try data.write(to: URL(fileURLWithPath: tempFile),options: .atomic)
+                            PTNSLogConsole("文件写入成功")
+                            PTGCDManager.gcdAfter(time: 0.5) {
+                                self.progressInfoLabel.text = PTAppConfig.languageFunc(text: "download_Unzip")
+                                self.unzipFunction(tempFileUrl: tempFile)
+                            }
 
-                    } fail: { error in
-                        sender.isSelected = false
-                        PTNSLogConsole("下载失败\(error!.localizedDescription)")
+                        } catch {
+                            sender.isSelected = false
+                            PTNSLogConsole("下载失败\(error.localizedDescription)")
+                        }
                     }
                 }
             } else {
-                self.downLoad!.cancelDownload()
+                self.downLoad.cancelDownload()
             }
         }
         return view

@@ -14,7 +14,7 @@ class PTDarkSmartFooter: PTBaseCollectionReusableView {
     
     static let footerDescFont:UIFont = .appfont(size: 14)
     
-    static let footerTotalHeight = 10 + UIView.sizeFor(string: PTLanguage.share.text(forKey: "theme_SmartInfo"), font: PTDarkSmartFooter.footerDescFont, height: CGFloat(MAXFLOAT), width: CGFloat.kSCREEN_WIDTH - PTAppBaseConfig.share.defaultViewSpace * 2).height + 10 + 44 * 2
+    static let footerTotalHeight = 10 + UIView.sizeFor(string: PTAppConfig.languageFunc(text: "theme_SmartInfo"), font: PTDarkSmartFooter.footerDescFont, height: CGFloat(MAXFLOAT), width: CGFloat.kSCREEN_WIDTH - PTAppBaseConfig.share.defaultViewSpace * 2).height + 10 + 44 * 2
     
     lazy var footerContent:UIView = {
         let view = UIView()
@@ -24,7 +24,7 @@ class PTDarkSmartFooter: PTBaseCollectionReusableView {
     
     lazy var descLabel:UILabel = {
         let view = UILabel()
-        view.text = PTLanguage.share.text(forKey: "theme_SmartInfo")
+        view.text = PTAppConfig.languageFunc(text: "theme_SmartInfo")
         view.font = PTDarkSmartFooter.footerDescFont
         view.numberOfLines = 0
         view.textAlignment = .left
@@ -34,7 +34,7 @@ class PTDarkSmartFooter: PTBaseCollectionReusableView {
     
     lazy var themeName:UILabel = {
         let view = UILabel()
-        view.text = PTLanguage.share.text(forKey: "theme_Night")
+        view.text = PTAppConfig.languageFunc(text: "theme_Night")
         view.font = .appfont(size: 16)
         view.textAlignment = .left
         view.textColor = .gobalTextColor
@@ -43,7 +43,7 @@ class PTDarkSmartFooter: PTBaseCollectionReusableView {
     
     lazy var themeNight:UILabel = {
         let view = UILabel()
-        view.text = PTLanguage.share.text(forKey: "theme_Black")
+        view.text = PTAppConfig.languageFunc(text: "theme_Black")
         view.font = .appfont(size: 16)
         view.textAlignment = .left
         view.textColor = .gobalTextColor
@@ -52,7 +52,7 @@ class PTDarkSmartFooter: PTBaseCollectionReusableView {
 
     lazy var themeTime:UILabel = {
         let view = UILabel()
-        view.text = PTLanguage.share.text(forKey: "theme_Time")
+        view.text = PTAppConfig.languageFunc(text: "theme_Time")
         view.font = .appfont(size: 16)
         view.textAlignment = .left
         view.textColor = .gobalTextColor

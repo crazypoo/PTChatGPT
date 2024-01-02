@@ -19,32 +19,32 @@ class PTChatMasterControl: PTChatBaseViewController {
     lazy var coachArray:[PTCoachModel] = {
         
         let icon = PTCoachModel()
-        icon.info = PTLanguage.share.text(forKey: "appUseInfo_Icon")
-        icon.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
+        icon.info = PTAppConfig.languageFunc(text: "appUseInfo_Icon")
+        icon.next = PTAppConfig.languageFunc(text: "appUseInfo_Next")
         
         let userName = PTCoachModel()
-        userName.info = PTLanguage.share.text(forKey: "appUseInfo_User_name")
-        userName.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
+        userName.info = PTAppConfig.languageFunc(text: "appUseInfo_User_name")
+        userName.next = PTAppConfig.languageFunc(text: "appUseInfo_Next")
         
         let tags = PTCoachModel()
-        tags.info = PTLanguage.share.text(forKey: "appUseInfo_Tags")
-        tags.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
+        tags.info = PTAppConfig.languageFunc(text: "appUseInfo_Tags")
+        tags.next = PTAppConfig.languageFunc(text: "appUseInfo_Next")
         
         let deleteAllTags = PTCoachModel()
-        deleteAllTags.info = PTLanguage.share.text(forKey: "appUseInfo_Deleta_all_tag")
-        deleteAllTags.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
+        deleteAllTags.info = PTAppConfig.languageFunc(text: "appUseInfo_Deleta_all_tag")
+        deleteAllTags.next = PTAppConfig.languageFunc(text: "appUseInfo_Next")
         
         let cleanChat = PTCoachModel()
-        cleanChat.info = PTLanguage.share.text(forKey: "appUseInfo_Clean_chat")
-        cleanChat.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
+        cleanChat.info = PTAppConfig.languageFunc(text: "appUseInfo_Clean_chat")
+        cleanChat.next = PTAppConfig.languageFunc(text: "appUseInfo_Next")
 
         let addTag = PTCoachModel()
-        addTag.info = PTLanguage.share.text(forKey: "appUseInfo_AddTag")
-        addTag.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
+        addTag.info = PTAppConfig.languageFunc(text: "appUseInfo_AddTag")
+        addTag.next = PTAppConfig.languageFunc(text: "appUseInfo_Next")
 
         let setting = PTCoachModel()
-        setting.info = PTLanguage.share.text(forKey: "appUseInfo_Setting")
-        setting.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
+        setting.info = PTAppConfig.languageFunc(text: "appUseInfo_Setting")
+        setting.next = PTAppConfig.languageFunc(text: "appUseInfo_Next")
 
         return [icon,userName,tags,deleteAllTags,cleanChat,addTag,setting]
     }()
@@ -80,17 +80,17 @@ class PTChatMasterControl: PTChatBaseViewController {
                 PHPhotoLibrary.requestAuthorization { blockStatus in
                     if blockStatus == .authorized {
                         PTGCDManager.gcdMain {
-                            self.enterPhotos(string: PTLanguage.share.text(forKey: "about_User_icon"))
+                            self.enterPhotos(string: PTAppConfig.languageFunc(text: "about_User_icon"))
                         }
                     }
                 }
             } else if status == .authorized {
-                self.enterPhotos(string: PTLanguage.share.text(forKey: "about_User_icon"))
+                self.enterPhotos(string: PTAppConfig.languageFunc(text: "about_User_icon"))
             } else if status == .denied {
-                let messageString = String(format: PTLanguage.share.text(forKey: "alert_Go_to_photo_setting"), kAppName!)
+                let messageString = String(format: PTAppConfig.languageFunc(text: "alert_Go_to_photo_setting"), kAppName!)
                 PTBaseViewController.gobal_drop(title: messageString)
             } else {
-                PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_No_photo_library"))
+                PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_No_photo_library"))
             }
         }
         return view
@@ -104,9 +104,9 @@ class PTChatMasterControl: PTChatBaseViewController {
         view.setTitle(AppDelegate.appDelegate()?.appConfig.userName, for: .normal)
         view.addActionHandlers { sender in
             PTGCDManager.gcdAfter(time: 0.5) {
-                let title = PTLanguage.share.text(forKey: "alert_Name_edit_title")
-                let placeHolder = PTLanguage.share.text(forKey: "alert_Name_edit_placeholder")
-                UIAlertController.base_textfield_alertVC(title:title,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [placeHolder], textFieldTexts: [AppDelegate.appDelegate()!.appConfig.userName], keyboardType: [.default], textFieldDelegate: self) { result in
+                let title = PTAppConfig.languageFunc(text: "alert_Name_edit_title")
+                let placeHolder = PTAppConfig.languageFunc(text: "alert_Name_edit_placeholder")
+                UIAlertController.base_textfield_alertVC(title:title,titleColor: .gobalTextColor,okBtn: PTAppConfig.languageFunc(text: "button_Confirm"), cancelBtn: PTAppConfig.languageFunc(text: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [placeHolder], textFieldTexts: [AppDelegate.appDelegate()!.appConfig.userName], keyboardType: [.default], textFieldDelegate: self) { result in
                     let userName:String? = result[placeHolder]!
                     if !(userName ?? "").stringIsEmpty() {
                         self.nameButton.setTitle(userName!, for: .normal)
@@ -118,7 +118,7 @@ class PTChatMasterControl: PTChatBaseViewController {
                             }
                         }
                     } else {
-                        PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Input_error"))
+                        PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Input_error"))
                     }
                 }
             }
@@ -193,9 +193,9 @@ class PTChatMasterControl: PTChatBaseViewController {
         deleteAllTag.setImage("🗑️".emojiToImage(emojiFont: .appfont(size: 34)), for: .normal)
         deleteAllTag.addActionHandlers { sender in
             if self.segDataArr().count == 1 {
-                PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_cannot_delete_tag"))
+                PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_cannot_delete_tag"))
             } else {
-                UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "alert_delete_all_tag"),msgColor: .gobalTextColor,okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
+                UIAlertController.base_alertVC(title: PTAppConfig.languageFunc(text: "alert_Info"),titleColor: .gobalTextColor,msg: PTAppConfig.languageFunc(text: "alert_delete_all_tag"),msgColor: .gobalTextColor,okBtns: [PTAppConfig.languageFunc(text: "button_Confirm")],cancelBtn: PTAppConfig.languageFunc(text: "button_Cancel")) {
                 } moreBtn: { index, title in
                     var arr = AppDelegate.appDelegate()?.appConfig.tagDataArr()
                     arr?.removeAll(where: {$0!.keyName != "Base"})
@@ -211,7 +211,7 @@ class PTChatMasterControl: PTChatBaseViewController {
                     self.currentHistoryModel = self.segDataArr()[0]!
                     self.showDetail()
                     self.collectionView.selectItem(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .top)
-                    PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_done"))
+                    PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Delete_done"))
                 }
             }
         }
@@ -222,7 +222,7 @@ class PTChatMasterControl: PTChatBaseViewController {
         let cleanChat = UIButton(type: .custom)
         cleanChat.setImage("♻️".emojiToImage(emojiFont: .appfont(size: 34)), for: .normal)
         cleanChat.addActionHandlers { sender in
-            UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "alert_Ask_clean_current_chat_record"),msgColor: .gobalTextColor,okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
+            UIAlertController.base_alertVC(title: PTAppConfig.languageFunc(text: "alert_Info"),titleColor: .gobalTextColor,msg: PTAppConfig.languageFunc(text: "alert_Ask_clean_current_chat_record"),msgColor: .gobalTextColor,okBtns: [PTAppConfig.languageFunc(text: "button_Confirm")],cancelBtn: PTAppConfig.languageFunc(text: "button_Cancel")) {
                 
             } moreBtn: { index, title in
                 if self.currentHistoryModel.historyModel.count > 0 {
@@ -231,7 +231,7 @@ class PTChatMasterControl: PTChatBaseViewController {
                         self.reloadTagChat(index: self.segDataArr().firstIndex(where: {$0!.keyName == self.currentHistoryModel.keyName})!)
                     }
                 } else {
-                    PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_error"))
+                    PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Delete_error"))
                 }
             }
         }
@@ -243,14 +243,14 @@ class PTChatMasterControl: PTChatBaseViewController {
         addTag.setImage("🏷️".emojiToImage(emojiFont: .appfont(size: 34)), for: .normal)
         addTag.addActionHandlers { sender in
             PTGCDManager.gcdAfter(time: 0.5) {
-                let textKey = PTLanguage.share.text(forKey: "alert_Tag_set")
-                let aiKey = PTLanguage.share.text(forKey: "alert_AI_Set")
-                UIAlertController.base_textfield_alertVC(title:textKey,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey,aiKey], textFieldTexts: ["",""], keyboardType: [.default,.default], textFieldDelegate: self) { result in
+                let textKey = PTAppConfig.languageFunc(text: "alert_Tag_set")
+                let aiKey = PTAppConfig.languageFunc(text: "alert_AI_Set")
+                UIAlertController.base_textfield_alertVC(title:textKey,titleColor: .gobalTextColor,okBtn: PTAppConfig.languageFunc(text: "button_Confirm"), cancelBtn: PTAppConfig.languageFunc(text: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey,aiKey], textFieldTexts: ["",""], keyboardType: [.default,.default], textFieldDelegate: self) { result in
                     let newKey:String? = result[textKey]!
                     let newAiKey:String? = result[aiKey]
                     if !(newKey ?? "").stringIsEmpty() {
                         if self.segDataArr().contains(where: {$0?.keyName == newKey}) {
-                            PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Save_error"))
+                            PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Save_error"))
                         } else {
                             var data = self.segDataArr()
                             let newTag = PTSegHistoryModel()
@@ -265,7 +265,7 @@ class PTChatMasterControl: PTChatBaseViewController {
                             self.loadData()
                         }
                     } else {
-                        PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Input_error"))
+                        PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Input_error"))
                     }
                 }
             }
@@ -419,9 +419,9 @@ class PTChatMasterControl: PTChatBaseViewController {
                 let object:UIImage = try await PTImagePicker.openAlbum()
                 await MainActor.run{
                     switch string {
-                    case PTLanguage.share.text(forKey: "about_User_icon"):
+                    case PTAppConfig.languageFunc(text: "about_User_icon"):
                         AppDelegate.appDelegate()!.appConfig.userIcon = object.pngData()!
-                    case PTLanguage.share.text(forKey: "draw_Reference"):
+                    case PTAppConfig.languageFunc(text: "draw_Reference"):
                         AppDelegate.appDelegate()!.appConfig.drawRefrence = object.pngData()!
                     default:break
                     }
@@ -515,10 +515,10 @@ extension PTChatMasterControl:SwipeCollectionViewCellDelegate {
    func collectionView(_ collectionView: UICollectionView, editActionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
        if orientation == .right {
            
-           let delete = SwipeAction(style: .destructive, title: PTLanguage.share.text(forKey: "cell_Delete")) { action, indexPath in
+           let delete = SwipeAction(style: .destructive, title: PTAppConfig.languageFunc(text: "cell_Delete")) { action, indexPath in
                PTGCDManager.gcdMain {
                    if self.segDataArr()[indexPath.row]!.keyName == "Base" {
-                       PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_error"))
+                       PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Delete_error"))
                        self.showDetail()
                    } else if self.segDataArr()[indexPath.row]!.keyName == self.currentHistoryModel.keyName && self.segDataArr()[indexPath.row]!.keyName != "Base" {
                        var data = self.segDataArr()
@@ -556,15 +556,15 @@ extension PTChatMasterControl:SwipeCollectionViewCellDelegate {
                    let itemRow = itemSec.rows[indexPath.row]
                    let cellModel = (itemRow.dataModel as! PTSegHistoryModel)
                    if cellModel.keyName == "Base" {
-                       PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Edit_error"))
+                       PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Edit_error"))
                    } else {
-                       let textKey = PTLanguage.share.text(forKey: "alert_Tag_set")
-                       let aiKey = PTLanguage.share.text(forKey: "alert_AI_Set")
+                       let textKey = PTAppConfig.languageFunc(text: "alert_Tag_set")
+                       let aiKey = PTAppConfig.languageFunc(text: "alert_AI_Set")
                                           
                        let currentTitle = cellModel.keyName
                        let aiSet = cellModel.systemContent
 
-                       UIAlertController.base_textfield_alertVC(title:PTLanguage.share.text(forKey: "alert_Edit_ai"),titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey,aiKey], textFieldTexts: [currentTitle,aiSet], keyboardType: [.default,.default], textFieldDelegate: self) { result in
+                       UIAlertController.base_textfield_alertVC(title:PTAppConfig.languageFunc(text: "alert_Edit_ai"),titleColor: .gobalTextColor,okBtn: PTAppConfig.languageFunc(text: "button_Confirm"), cancelBtn: PTAppConfig.languageFunc(text: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey,aiKey], textFieldTexts: [currentTitle,aiSet], keyboardType: [.default,.default], textFieldDelegate: self) { result in
                            let newKey:String? = result[textKey]!
                            let newAiKey:String? = result[aiKey]
                            if !(newKey ?? "").stringIsEmpty() {
@@ -592,7 +592,7 @@ extension PTChatMasterControl:SwipeCollectionViewCellDelegate {
                                    self.reloadTagChat(index: indexPath.row)
                                }
                            } else {
-                               PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Input_error"))
+                               PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Input_error"))
                            }
                        }
                    }

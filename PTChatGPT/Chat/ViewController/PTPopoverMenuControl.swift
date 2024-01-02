@@ -10,8 +10,8 @@ import UIKit
 import PooTools
 
 extension String {
-    static let addTag = PTLanguage.share.text(forKey: "alert_Add_tag")
-    static let deleteHistory = PTLanguage.share.text(forKey: "alert_Delete_current_history")
+    static let addTag = PTAppConfig.languageFunc(text: "alert_Add_tag")
+    static let deleteHistory = PTAppConfig.languageFunc(text: "alert_Delete_current_history")
 }
 
 class PTPopoverMenuControl: PTChatBaseViewController {

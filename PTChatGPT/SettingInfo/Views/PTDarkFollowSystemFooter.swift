@@ -12,11 +12,11 @@ import PooTools
 class PTDarkFollowSystemFooter: PTBaseCollectionReusableView {
     static let ID = "PTDarkFollowSystemFooter"
     
-    static let footerHeight = UIView.sizeFor(string: PTLanguage.share.text(forKey: "theme_SystemInfo"), font: .appfont(size: 14), height: CGFloat(MAXFLOAT), width: CGFloat.kSCREEN_WIDTH - PTAppBaseConfig.share.defaultViewSpace * 2).height + 20
+    static let footerHeight = UIView.sizeFor(string: PTAppConfig.languageFunc(text: "theme_SystemInfo"), font: .appfont(size: 14), height: CGFloat(MAXFLOAT), width: CGFloat.kSCREEN_WIDTH - PTAppBaseConfig.share.defaultViewSpace * 2).height + 20
     
     lazy var descLabel:UILabel = {
         let view = UILabel()
-        view.text = PTLanguage.share.text(forKey: "theme_SystemInfo")
+        view.text = PTAppConfig.languageFunc(text: "theme_SystemInfo")
         view.font = PTDarkSmartFooter.footerDescFont
         view.numberOfLines = 0
         view.textAlignment = .left

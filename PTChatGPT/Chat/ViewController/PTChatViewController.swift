@@ -21,14 +21,14 @@ import Kingfisher
 import AttributedString
 
 fileprivate extension String {
-    static let saveNavTitle = PTLanguage.share.text(forKey: "about_SavedChat")
+    static let saveNavTitle = PTAppConfig.languageFunc(text: "about_SavedChat")
     
-    static let copyString = PTLanguage.share.text(forKey: "chat_Copy")
-    static let editString = PTLanguage.share.text(forKey: "chat_Edit_question")
-    static let playString = PTLanguage.share.text(forKey: "chat_Speak_text")
-    static let saveString = PTLanguage.share.text(forKey: "chat_Favourite")
-    static let thinking = PTLanguage.share.text(forKey: "chat_Thinking")
-    static let resend = PTLanguage.share.text(forKey: "chat_Resend")
+    static let copyString = PTAppConfig.languageFunc(text: "chat_Copy")
+    static let editString = PTAppConfig.languageFunc(text: "chat_Edit_question")
+    static let playString = PTAppConfig.languageFunc(text: "chat_Speak_text")
+    static let saveString = PTAppConfig.languageFunc(text: "chat_Favourite")
+    static let thinking = PTAppConfig.languageFunc(text: "chat_Thinking")
+    static let resend = PTAppConfig.languageFunc(text: "chat_Resend")
 }
 
 enum PTChatCase {
@@ -143,16 +143,16 @@ class PTChatViewController: MessagesViewController {
             
             var actionSheetOption = ""
             if AppDelegate.appDelegate()!.appConfig.canUseStableDiffusionModel() {
-                actionSheetOption = PTLanguage.share.text(forKey: "chat_TF")
+                actionSheetOption = PTAppConfig.languageFunc(text: "chat_TF")
             } else {
-                actionSheetOption = PTLanguage.share.text(forKey: "chat_TF_no_sd")
+                actionSheetOption = PTAppConfig.languageFunc(text: "chat_TF_no_sd")
             }
             
-            UIAlertController.baseActionSheet(title: "AI Draw",subTitle: actionSheetOption, titles: self.cartoonImageModes) { sheet in
+            UIAlertController.baseActionSheet(title: "AI Draw",subTitle: actionSheetOption, titles: self.cartoonImageModes) { sheet,index,title in
                 
             } cancelBlock: { sheet in
                 
-            } otherBlock: { sheet, index in
+            } otherBlock: { sheet,index, title in
                 switch index {
                 case 0,1:
                     Task.init {
@@ -182,9 +182,9 @@ class PTChatViewController: MessagesViewController {
                                             PTGCDManager.gcdMain {
                                                 self.insertMessage(message) {
                                                     switch self.cartoonImageModes[index] {
-                                                    case PTLanguage.share.text(forKey: "chat_TF_Cartoon"):
+                                                    case PTAppConfig.languageFunc(text: "chat_TF_Cartoon"):
                                                         self.cartoonGanModel.process(object)
-                                                    case PTLanguage.share.text(forKey: "chat_TF_Oil_painting"):
+                                                    case PTAppConfig.languageFunc(text: "chat_TF_Oil_painting"):
                                                         self.styleTransfererModel.process(object)
                                                     default:break
                                                     }
@@ -279,7 +279,7 @@ class PTChatViewController: MessagesViewController {
                     self.voiceButton.removeFromSuperview()
                 }
             } else {
-                PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Can_not_send_voice"))
+                PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Can_not_send_voice"))
             }
         }
         return view
@@ -427,9 +427,9 @@ class PTChatViewController: MessagesViewController {
     
     let cartoonImageModes : [String] = {
         if AppDelegate.appDelegate()!.appConfig.canUseStableDiffusionModel() {
-            return [PTLanguage.share.text(forKey: "chat_TF_Cartoon"),PTLanguage.share.text(forKey: "chat_TF_Oil_painting"),PTLanguage.share.text(forKey: "Stable Diffusion")]
+            return [PTAppConfig.languageFunc(text: "chat_TF_Cartoon"),PTAppConfig.languageFunc(text: "chat_TF_Oil_painting"),PTAppConfig.languageFunc(text: "Stable Diffusion")]
         } else {
-            return [PTLanguage.share.text(forKey: "chat_TF_Cartoon"),PTLanguage.share.text(forKey: "chat_TF_Oil_painting")]
+            return [PTAppConfig.languageFunc(text: "chat_TF_Cartoon"),PTAppConfig.languageFunc(text: "chat_TF_Oil_painting")]
         }
     }()
     
@@ -451,44 +451,44 @@ class PTChatViewController: MessagesViewController {
     lazy var coachArray:[PTCoachModel] = {
         
         let option = PTCoachModel()
-        option.info = PTLanguage.share.text(forKey: "appUseInfo_Title_view")
-        option.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
+        option.info = PTAppConfig.languageFunc(text: "appUseInfo_Title_view")
+        option.next = PTAppConfig.languageFunc(text: "appUseInfo_Next")
         
         let tags = PTCoachModel()
-        tags.info = PTLanguage.share.text(forKey: "appUseInfo_Option")
-        tags.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
+        tags.info = PTAppConfig.languageFunc(text: "appUseInfo_Option")
+        tags.next = PTAppConfig.languageFunc(text: "appUseInfo_Next")
         
         let setting = PTCoachModel()
-        setting.info = PTLanguage.share.text(forKey: "appUseInfo_Setting")
-        setting.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
+        setting.info = PTAppConfig.languageFunc(text: "appUseInfo_Setting")
+        setting.next = PTAppConfig.languageFunc(text: "appUseInfo_Next")
         
         let textDraw = PTCoachModel()
-        textDraw.info = PTLanguage.share.text(forKey: "suggesstion_Text_draw")
-        textDraw.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
+        textDraw.info = PTAppConfig.languageFunc(text: "suggesstion_Text_draw")
+        textDraw.next = PTAppConfig.languageFunc(text: "appUseInfo_Next")
 
         let imageLike = PTCoachModel()
-        imageLike.info = PTLanguage.share.text(forKey: "suggesstion_Like")
-        imageLike.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
+        imageLike.info = PTAppConfig.languageFunc(text: "suggesstion_Like")
+        imageLike.next = PTAppConfig.languageFunc(text: "appUseInfo_Next")
 
         let contentDraw = PTCoachModel()
-        contentDraw.info = PTLanguage.share.text(forKey: "suggesstion_Content_draw")
-        contentDraw.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
+        contentDraw.info = PTAppConfig.languageFunc(text: "suggesstion_Content_draw")
+        contentDraw.next = PTAppConfig.languageFunc(text: "appUseInfo_Next")
 
         let psPhoto = PTCoachModel()
-        psPhoto.info = PTLanguage.share.text(forKey: "suggesstion_PS")
-        psPhoto.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
+        psPhoto.info = PTAppConfig.languageFunc(text: "suggesstion_PS")
+        psPhoto.next = PTAppConfig.languageFunc(text: "appUseInfo_Next")
 
         let sentence = PTCoachModel()
-        sentence.info = PTLanguage.share.text(forKey: "suggesstion_Sentence_switch")
-        sentence.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
+        sentence.info = PTAppConfig.languageFunc(text: "suggesstion_Sentence_switch")
+        sentence.next = PTAppConfig.languageFunc(text: "appUseInfo_Next")
 
         let aiDraw = PTCoachModel()
-        aiDraw.info = PTLanguage.share.text(forKey: "suggesstion_AI_draw")
-        aiDraw.next = PTLanguage.share.text(forKey: "appUseInfo_Next")
+        aiDraw.info = PTAppConfig.languageFunc(text: "suggesstion_AI_draw")
+        aiDraw.next = PTAppConfig.languageFunc(text: "appUseInfo_Next")
 
         let bot = PTCoachModel()
-        bot.info = PTLanguage.share.text(forKey: "bot_Suggesstion")
-        bot.next = PTLanguage.share.text(forKey: "appUseInfo_Finish")
+        bot.info = PTAppConfig.languageFunc(text: "bot_Suggesstion")
+        bot.next = PTAppConfig.languageFunc(text: "appUseInfo_Finish")
 
         if Gobal_device_info.isPad {
             return [textDraw,imageLike,psPhoto,sentence,aiDraw,bot]
@@ -524,14 +524,14 @@ class PTChatViewController: MessagesViewController {
                 switch string {
                 case .addTag:
                     PTGCDManager.gcdAfter(time: 0.5) {
-                        let textKey = PTLanguage.share.text(forKey: "alert_Tag_set")
-                        let aiKey = PTLanguage.share.text(forKey: "alert_AI_Set")
-                        UIAlertController.base_textfield_alertVC(title:textKey,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey,aiKey], textFieldTexts: ["",""], keyboardType: [.default,.default],textFieldDelegate: self) { result in
+                        let textKey = PTAppConfig.languageFunc(text: "alert_Tag_set")
+                        let aiKey = PTAppConfig.languageFunc(text: "alert_AI_Set")
+                        UIAlertController.base_textfield_alertVC(title:textKey,titleColor: .gobalTextColor,okBtn: PTAppConfig.languageFunc(text: "button_Confirm"), cancelBtn: PTAppConfig.languageFunc(text: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey,aiKey], textFieldTexts: ["",""], keyboardType: [.default,.default],textFieldDelegate: self) { result in
                             let newKey:String? = result[textKey]!
                             let newAiKey:String? = result[aiKey]
                             if !(newKey ?? "").stringIsEmpty() {
                                 if self.segDataArr.contains(where: {$0?.keyName == newKey}) {
-                                    PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Save_error"))
+                                    PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Save_error"))
                                 } else {
                                     let newTag = PTSegHistoryModel()
                                     newTag.keyName = newKey!
@@ -548,14 +548,14 @@ class PTChatViewController: MessagesViewController {
                                     }
                                 }
                             } else {
-                                PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Input_error"))
+                                PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Input_error"))
                             }
                         }
                     }
                 case .deleteHistory:
                     popover.dismiss(animated: true) {
                         PTGCDManager.gcdAfter(time: 0.35) {
-                            UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "alert_Ask_clean_current_chat_record"),msgColor: .gobalTextColor,okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
+                            UIAlertController.base_alertVC(title: PTAppConfig.languageFunc(text: "alert_Info"),titleColor: .gobalTextColor,msg: PTAppConfig.languageFunc(text: "alert_Ask_clean_current_chat_record"),msgColor: .gobalTextColor,okBtns: [PTAppConfig.languageFunc(text: "button_Confirm")],cancelBtn: PTAppConfig.languageFunc(text: "button_Cancel")) {
                                 
                             } moreBtn: { index, title in
                                 if self.historyModel!.historyModel.count > 0 {
@@ -564,7 +564,7 @@ class PTChatViewController: MessagesViewController {
                                         self.refreshViewAndLoadNewData()
                                     }
                                 } else {
-                                    PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_error"))
+                                    PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Delete_error"))
                                 }
                             }
                         }
@@ -580,7 +580,7 @@ class PTChatViewController: MessagesViewController {
         self.historyModel?.historyModel = []
         self.packChatData()
         self.refreshCurrentTagData()
-        PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_done"))
+        PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Delete_done"))
     }
     
     lazy var titleButton:PTLayoutButton = {
@@ -628,13 +628,13 @@ class PTChatViewController: MessagesViewController {
                         self.historyModel = (arr!.first!!)
                     }
                     self.setTitleViewFrame(withModel: self.historyModel!)
-                    PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_done"))
+                    PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Delete_done"))
                 }
             }
             popover.refreshCurrentTag = { newTagModel in
                 self.historyModel = newTagModel
                 self.setTitleViewFrame(withModel: self.historyModel!)
-                PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Save_success"))
+                PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Save_success"))
             }
         }
         return view
@@ -687,7 +687,7 @@ class PTChatViewController: MessagesViewController {
         longPressRecognizer.minimumPressDuration = 0.3
         view.addGestureRecognizer(longPressRecognizer)
         view.viewCorner(radius: 5, borderWidth: 1, borderColor: .black)
-        view.setTitle(PTLanguage.share.text(forKey: "button_Long_tap"), for: .normal)
+        view.setTitle(PTAppConfig.languageFunc(text: "button_Long_tap"), for: .normal)
         view.setTitleColor(.black, for: .normal)
         return view
     }()
@@ -894,7 +894,7 @@ class PTChatViewController: MessagesViewController {
         self.pt_observerLanguage {
             self.refreshViewAndLoadNewData()
             self.showEmptyDataSet(currentScroller: self.messagesCollectionView)
-            self.messageInputBar.sendButton.setTitle(PTLanguage.share.text(forKey: "chat_Send"), for: .normal)
+            self.messageInputBar.sendButton.setTitle(PTAppConfig.languageFunc(text: "chat_Send"), for: .normal)
         }
     }
         
@@ -1115,7 +1115,7 @@ class PTChatViewController: MessagesViewController {
                 PTCheckTestFlight.share.checkFunction { can in
                     if can {
                         PTGCDManager.gcdMain {
-                            UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "alert_TF"),msgColor: .gobalTextColor, okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
+                            UIAlertController.base_alertVC(title: PTAppConfig.languageFunc(text: "alert_Info"),titleColor: .gobalTextColor,msg: PTAppConfig.languageFunc(text: "alert_TF"),msgColor: .gobalTextColor, okBtns: [PTAppConfig.languageFunc(text: "button_Confirm")],cancelBtn: PTAppConfig.languageFunc(text: "button_Cancel")) {
                                 
                             } moreBtn: { index, title in
                                 let url = URL(string: "https://testflight.apple.com/join/6XpIFw9m")!
@@ -1357,7 +1357,7 @@ extension PTChatViewController {
         messageInputBar.inputTextView.tintColor = .gobalTextColor
         messageInputBar.sendButton.spacing = .fixed(10)
         messageInputBar.sendButton.setSize(CGSize(width: 52, height: 34), animated: true)
-        messageInputBar.sendButton.setTitle(PTLanguage.share.text(forKey: "chat_Send"), for: .normal)
+        messageInputBar.sendButton.setTitle(PTAppConfig.languageFunc(text: "chat_Send"), for: .normal)
         messageInputBar.sendButton.setTitleColor( .gobalTextColor, for: .normal)
         messageInputBar.sendButton.setTitleColor(
             .gobalTextColor.withAlphaComponent(0.3),
@@ -1440,7 +1440,7 @@ extension PTChatViewController {
     
     @objc func longPress(_ sender: UILongPressGestureRecognizer) {
         if self.avCaptureDeviceAuthorize(avMediaType: .audio) {
-            self.voiceButton.setTitle(PTLanguage.share.text(forKey: "button_Long_tap_end"), for: .normal)
+            self.voiceButton.setTitle(PTAppConfig.languageFunc(text: "button_Long_tap_end"), for: .normal)
             if self.isRecording {
                 self.speechKit.recordVoice()
                 self.isRecording = false
@@ -1469,16 +1469,16 @@ extension PTChatViewController {
                                 make.width.equalTo(150)
                                 make.centerX.equalToSuperview().offset(-(screenCenterX / 2))
                             }
-                            self.voiceButton.setTitle(PTLanguage.share.text(forKey: "button_Long_tap_cancel"), for: .normal)
+                            self.voiceButton.setTitle(PTAppConfig.languageFunc(text: "button_Long_tap_cancel"), for: .normal)
                             self.maskView.actionInfoLabel.isHidden = false
-                            self.maskView.actionInfoLabel.text = PTLanguage.share.text(forKey: "voice_Cancel_send")
+                            self.maskView.actionInfoLabel.text = PTAppConfig.languageFunc(text: "voice_Cancel_send")
                         } else if abs(newX) <= 44 {
                             self.maskView.visualizerView.backgroundColor = self.maskView.visualizerViewBaseBackgroundColor
                             self.maskView.visualizerView.snp.updateConstraints { make in
                                 make.centerX.equalToSuperview().offset(0)
                                 make.width.equalTo(150)
                             }
-                            self.voiceButton.setTitle(PTLanguage.share.text(forKey: "button_Long_tap_release"), for: .normal)
+                            self.voiceButton.setTitle(PTAppConfig.languageFunc(text: "button_Long_tap_release"), for: .normal)
                             self.maskView.actionInfoLabel.isHidden = true
                             self.maskView.actionInfoLabel.text = ""
                         } else {
@@ -1487,9 +1487,9 @@ extension PTChatViewController {
                                 make.centerX.equalToSuperview().offset(newX)
                                 make.width.equalTo(150)
                             }
-                            self.voiceButton.setTitle(PTLanguage.share.text(forKey: "button_Long_tap_cancel"), for: .normal)
+                            self.voiceButton.setTitle(PTAppConfig.languageFunc(text: "button_Long_tap_cancel"), for: .normal)
                             self.maskView.actionInfoLabel.isHidden = false
-                            self.maskView.actionInfoLabel.text = PTLanguage.share.text(forKey: "voice_Cancel_send")
+                            self.maskView.actionInfoLabel.text = PTAppConfig.languageFunc(text: "voice_Cancel_send")
                         }
                         PTNSLogConsole("在左边")
                         self.translateToText = false
@@ -1501,7 +1501,7 @@ extension PTChatViewController {
                             make.width.equalTo(CGFloat.kSCREEN_WIDTH - 40)
                         }
                         self.maskView.actionInfoLabel.isHidden = false
-                        self.maskView.actionInfoLabel.text = PTLanguage.share.text(forKey: "voice_Change_to_text")
+                        self.maskView.actionInfoLabel.text = PTAppConfig.languageFunc(text: "voice_Change_to_text")
                     } else {
                         self.translateToText = false
                         PTNSLogConsole("在中间")
@@ -1509,7 +1509,7 @@ extension PTChatViewController {
                             make.centerX.equalToSuperview().offset(0)
                             make.width.equalTo(150)
                         }
-                        self.voiceButton.setTitle(PTLanguage.share.text(forKey: "button_Long_tap_release"), for: .normal)
+                        self.voiceButton.setTitle(PTAppConfig.languageFunc(text: "button_Long_tap_release"), for: .normal)
                         self.maskView.actionInfoLabel.isHidden = true
                         self.maskView.actionInfoLabel.text = ""
                     }
@@ -1521,10 +1521,10 @@ extension PTChatViewController {
                     self.maskView.visualizerView.snp.updateConstraints { make in
                         make.centerX.equalToSuperview().offset(0)
                     }
-                    self.voiceButton.setTitle(PTLanguage.share.text(forKey: "button_Long_tap_release"), for: .normal)
+                    self.voiceButton.setTitle(PTAppConfig.languageFunc(text: "button_Long_tap_release"), for: .normal)
                 }
             case .ended:
-                self.voiceButton.setTitle(PTLanguage.share.text(forKey: "button_Long_tap"), for: .normal)
+                self.voiceButton.setTitle(PTAppConfig.languageFunc(text: "button_Long_tap"), for: .normal)
                 let touchPoint = sender.location(in: self.voiceButton)
                 if touchPoint.y < -(CGFloat.kTabbarHeight_Total + 34) {
                     let screenCenterX = (CGFloat.kSCREEN_WIDTH / 2)
@@ -1743,9 +1743,9 @@ extension PTChatViewController:MessagesDataSource {
 
         var sendString = ""
         if cellModel.sending! {
-            sendString = PTLanguage.share.text(forKey: "chat_Sending")
+            sendString = PTAppConfig.languageFunc(text: "chat_Sending")
         } else {
-            sendString = cellModel.sendSuccess ? PTLanguage.share.text(forKey: "chat_Read") : PTLanguage.share.text(forKey: "chat_Send_error")
+            sendString = cellModel.sendSuccess ? PTAppConfig.languageFunc(text: "chat_Read") : PTAppConfig.languageFunc(text: "chat_Send_error")
         }
         
       return NSAttributedString(
@@ -1777,7 +1777,7 @@ extension PTChatViewController:MessagesDataSource {
         if !messageModel.correctionText.nsString.stringIsEmpty() {
             let attEdit:ASAttributedString = """
             \(wrap: .embedding("""
-            \("\((PTLanguage.share.text(forKey: "chat_Edit_message") + messageModel.correctionText))",.paragraph(.alignment(.left),.lineSpacing(4)),.foreground(.gobalTextColor),.font(UIFont.preferredFont(forTextStyle: .caption2)),.background(.black.withAlphaComponent(0.05))))
+            \("\((PTAppConfig.languageFunc(text: "chat_Edit_message") + messageModel.correctionText))",.paragraph(.alignment(.left),.lineSpacing(4)),.foreground(.gobalTextColor),.font(UIFont.preferredFont(forTextStyle: .caption2)),.background(.black.withAlphaComponent(0.05))))
             """))
             """
             totalAtt += attEdit
@@ -1842,13 +1842,13 @@ extension PTChatViewController:MessageCellDelegate {
             }
             
             self.messageInputBar.alpha = 0
-            UIAlertController.baseActionSheet(title: PTLanguage.share.text(forKey: "alert_Option_title"), subTitle: PTLanguage.share.text(forKey: "alert_Select_option"),cancelButtonName: PTLanguage.share.text(forKey: "button_Cancel"), titles: titles) { sheet in
+            UIAlertController.baseActionSheet(title: PTAppConfig.languageFunc(text: "alert_Option_title"), subTitle: PTAppConfig.languageFunc(text: "alert_Select_option"),cancelButtonName: PTAppConfig.languageFunc(text: "button_Cancel"), titles: titles) { sheet,index,title in
                 
             } cancelBlock: { sheet in
                 if !self.onlyShowSave {
                     self.messageInputBar.alpha = 1
                 }
-            } otherBlock: { sheet, index in
+            } otherBlock: { sheet, index,title in
                 if !self.onlyShowSave {
                     self.messageInputBar.alpha = 1
                 }
@@ -1863,7 +1863,7 @@ extension PTChatViewController:MessageCellDelegate {
                     switch messageModel.kind {
                     case .text(let text):
                         text.copyToPasteboard()
-                        PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Copy_done"))
+                        PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Copy_done"))
                     default: break
                     }
                 case .editString:                    
@@ -1879,7 +1879,7 @@ extension PTChatViewController:MessageCellDelegate {
                         self.inputBarCloseEditButton.setSize(CGSize(width: CGFloat.kSCREEN_WIDTH, height: textHeight), animated: true)
                         self.setEditInputItem()
                         PTGCDManager.gcdAfter(time: 1) {
-                            self.messageInputBar.inputTextView.placeholder = PTLanguage.share.text(forKey: "chat_Edit")
+                            self.messageInputBar.inputTextView.placeholder = PTAppConfig.languageFunc(text: "chat_Edit")
                         }
                         self.messageInputBar.inputTextView.becomeFirstResponder()
                     default: break
@@ -1896,7 +1896,7 @@ extension PTChatViewController:MessageCellDelegate {
                     PTGCDManager.gcdAfter(time: 0.5) {
                         if messageModel.sender.senderId == PTChatData.share.bot.senderId {
                             let userModel = self.messageList[indexPath!.section - 1]
-                            UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "alert_Save_Q&A"),msgColor: .gobalTextColor,okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
+                            UIAlertController.base_alertVC(title: PTAppConfig.languageFunc(text: "alert_Info"),titleColor: .gobalTextColor,msg: PTAppConfig.languageFunc(text: "alert_Save_Q&A"),msgColor: .gobalTextColor,okBtns: [PTAppConfig.languageFunc(text: "button_Confirm")],cancelBtn: PTAppConfig.languageFunc(text: "button_Cancel")) {
                                 
                             } moreBtn: { index, title in
                                 let model = PTChatModel()
@@ -1933,7 +1933,7 @@ extension PTChatViewController:MessageCellDelegate {
                                 favouriteModel.chatContent = model.messageText.stringIsEmpty() ? "Voice" : model.messageText
                                 favouriteModel.chats = [model,botMessage]
                                 self.saveChatModelToJsonString(model: favouriteModel)
-                                PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Save_success"))
+                                PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Save_success"))
                             }
                         }
                     }
@@ -2004,10 +2004,10 @@ extension PTChatViewController:MessageCellDelegate {
             
             viewer.viewSaveImageBlock = { finish in
                 if finish {
-                    PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Save_success"))
+                    PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Save_success"))
                 }
             }
-            viewer.viewMoreActionBlock = { index in
+            viewer.viewMoreActionBlock = { index,images in
                 self.messageInputBar.alpha = 1
                 PTNSLogConsole("\(image.image as Any)\\\\.\(String(describing: image.url))")
                 ImageDownloader.default.downloadImage(with: image.url!, options: PTAppBaseConfig.share.gobalWebImageLoadOption()) { result in
@@ -2356,7 +2356,7 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
         inputBar.invalidatePlugins()
         // Send button activity animation
         inputBar.sendButton.startAnimating()
-        inputBar.inputTextView.placeholder = PTLanguage.share.text(forKey: "chat_Sending")
+        inputBar.inputTextView.placeholder = PTAppConfig.languageFunc(text: "chat_Sending")
         // Resign first responder for iPad split view
         inputBar.inputTextView.resignFirstResponder()
         DispatchQueue.global(qos: .default).async {
@@ -2381,11 +2381,11 @@ extension PTChatViewController: InputBarAccessoryViewDelegate {
         let botMessageModel = PTChatModel()
         botMessageModel.messageDateString = botDate.dateFormat(formatString: "yyyy-MM-dd HH:mm:ss")
         botMessageModel.messageType = 0
-        botMessageModel.messageText = PTLanguage.share.text(forKey: "chat_Check_sentence")
+        botMessageModel.messageText = PTAppConfig.languageFunc(text: "chat_Check_sentence")
         botMessageModel.outgoing = false
         self.chatModels.append(botMessageModel)
 
-        var botMessage = PTMessageModel(text: PTLanguage.share.text(forKey: "chat_Check_sentence"), user: PTChatData.share.bot, messageId: UUID().uuidString, date: botDate)
+        var botMessage = PTMessageModel(text: PTAppConfig.languageFunc(text: "chat_Check_sentence"), user: PTChatData.share.bot, messageId: UUID().uuidString, date: botDate)
         botMessage.sending = false
         PTGCDManager.gcdMain {
             self.insertMessage(botMessage) {
@@ -3156,7 +3156,7 @@ extension PTChatViewController:LXFEmptyDataSetable {
         self.lxf_EmptyDataSet(currentScroller) { () -> ([LXFEmptyDataSetAttributeKeyType : Any]) in
             let color:UIColor = .gobalTextColor
             return [
-                .tipStr : PTLanguage.share.text(forKey: "chat_Empty"),
+                .tipStr : PTAppConfig.languageFunc(text: "chat_Empty"),
                 .tipColor : color,
                 .verticalOffset : 0,
                 .tipImage : UIImage(systemName:"info.circle.fill")!.withTintColor(.gobalTextColor, renderingMode: .automatic)

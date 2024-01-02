@@ -50,7 +50,7 @@ class PTSuggestionControl: PTChatBaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.zx_navTitle = PTLanguage.share.text(forKey: "bot_Suggesstion")
+        self.zx_navTitle = PTAppConfig.languageFunc(text: "bot_Suggesstion")
 
         self.customSegDataSource.titleSelectedColor = .gobalTextColor
         self.customSegDataSource.isItemSpacingAverageEnabled = true

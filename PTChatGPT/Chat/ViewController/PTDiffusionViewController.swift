@@ -54,12 +54,12 @@ class PTDiffusionViewController: PTChatBaseViewController {
                 if finish {
                     PTGCDManager.gcdBackground {
                         PTGCDManager.gcdMain {
-                            PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Save_success"))
+                            PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Save_success"))
                         }
                     }
                 }
             }
-            viewer.viewMoreActionBlock = { index in
+            viewer.viewMoreActionBlock = { index,image in
                 self.showImageView.setImage(UIImage(), for: .normal)
             }
             viewer.viewDismissBlock = {
@@ -72,7 +72,7 @@ class PTDiffusionViewController: PTChatBaseViewController {
     
     lazy var promptText : HoshiTextField = {
         let view = HoshiTextField()
-        view.placeholder = PTLanguage.share.text(forKey: "diffusion_Prompt")
+        view.placeholder = PTAppConfig.languageFunc(text: "diffusion_Prompt")
         view.borderInactiveColor = .lightGray
         view.borderActiveColor = .orange
         view.placeholderColor = .lightGray
@@ -87,7 +87,7 @@ class PTDiffusionViewController: PTChatBaseViewController {
     ///扩展字段,这里是添加AI避免的操作(Option)
     lazy var negativeText : HoshiTextField = {
         let view = HoshiTextField()
-        view.placeholder = PTLanguage.share.text(forKey: "diffusion_Attention")
+        view.placeholder = PTAppConfig.languageFunc(text: "diffusion_Attention")
         view.borderInactiveColor = .lightGray
         view.borderActiveColor = .orange
         view.placeholderColor = .lightGray
@@ -103,7 +103,7 @@ class PTDiffusionViewController: PTChatBaseViewController {
         view.textAlignment = .left
         view.textColor = .gobalTextColor
         view.numberOfLines = 0
-        view.text = PTLanguage.share.text(forKey: "diffusion_Accuracy")
+        view.text = PTAppConfig.languageFunc(text: "diffusion_Accuracy")
         return view
     }()
     
@@ -128,7 +128,7 @@ class PTDiffusionViewController: PTChatBaseViewController {
         view.textAlignment = .left
         view.textColor = .gobalTextColor
         view.numberOfLines = 0
-        view.text = PTLanguage.share.text(forKey: "diffusion_Draw_step")
+        view.text = PTAppConfig.languageFunc(text: "diffusion_Draw_step")
         return view
     }()
 
@@ -150,7 +150,7 @@ class PTDiffusionViewController: PTChatBaseViewController {
     lazy var createButton:UIButton = {
         let view = UIButton(type: .custom)
         view.titleLabel?.font = .appfont(size: 18,bold: true)
-        view.setTitle(PTLanguage.share.text(forKey: "diffusion_Draw"), for: .normal)
+        view.setTitle(PTAppConfig.languageFunc(text: "diffusion_Draw"), for: .normal)
         view.setTitleColor(.white, for: .normal)
         view.backgroundColor = .orange
         view.setBackgroundImage(UIColor.orange.createImageWithColor().transformImage(size: CGSize(width: CGFloat.kSCREEN_WIDTH, height: 64)), for: .normal)
@@ -163,7 +163,7 @@ class PTDiffusionViewController: PTChatBaseViewController {
                 if sender.isSelected {
                     if self.promptString.stringIsEmpty() {
                         PTGCDManager.gcdMain {
-                            PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "diffusion_Prompt"))
+                            PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "diffusion_Prompt"))
                             sender.isUserInteractionEnabled = true
                             sender.isSelected = !sender.isSelected
                         }
@@ -177,7 +177,7 @@ class PTDiffusionViewController: PTChatBaseViewController {
                         self.dispatchQueue.async {
                             PTGCDManager.gcdBackground {
                                 PTGCDManager.gcdMain {
-                                    SwiftSpinner.show(PTLanguage.share.text(forKey: "diffusion_Init"))
+                                    SwiftSpinner.show(PTAppConfig.languageFunc(text: "diffusion_Init"))
                                 }
                             }
                             self.diffusion = PTSableDiffusion(modelName: self.modelName,saveMemoryButBeSlower: true)
@@ -235,7 +235,7 @@ class PTDiffusionViewController: PTChatBaseViewController {
                     }
                 }
             } else {
-                PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_No_diffusion_model"))
+                PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_No_diffusion_model"))
             }
         }
         view.isSelected = false
@@ -294,18 +294,18 @@ class PTDiffusionViewController: PTChatBaseViewController {
                 modelArr.enumerated().forEach { index,value in
                     arr.append(value[0])
                 }
-                UIAlertController.baseActionSheet(title: "AI Model", titles: arr) { sheet in
+                UIAlertController.baseActionSheet(title: "AI Model", titles: arr) { sheet,index,title in
                     
                 } cancelBlock: { sheet in
                     
-                } otherBlock: { sheet, index in
+                } otherBlock: { sheet, index,title in
                     self.modelName = modelArr[index][1]
                     sender.setTitle(arr[index], for: .normal)
                 } tapBackgroundBlock: { sheet in
                     
                 }
             } else {
-                PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_No_diffusion_model"))
+                PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_No_diffusion_model"))
             }
         }
 //        let photoImage = UIButton(type: .custom)

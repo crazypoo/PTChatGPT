@@ -44,7 +44,7 @@ class PTSuggesstionCell: PTBaseNormalCell {
         view.layoutStyle = .leftImageRightTitle
         view.normalTitleFont = .appfont(size: 13)
         view.midSpacing = 0
-        view.setTitle(PTLanguage.share.text(forKey: "bot_Suggesstion_import"), for: .normal)
+        view.setTitle(PTAppConfig.languageFunc(text: "bot_Suggesstion_import"), for: .normal)
         return view
     }()
     

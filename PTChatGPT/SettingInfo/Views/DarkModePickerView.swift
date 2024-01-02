@@ -60,7 +60,7 @@ class DarkModePickerView: UIView {
     /// 取消
     lazy var cancelButton: UIButton = {
         let button = UIButton(frame: CGRect(x: 0, y: 0, width: 88, height: 44))
-        button.setTitle(PTLanguage.share.text(forKey: "button_Cancel"), for: .normal)
+        button.setTitle(PTAppConfig.languageFunc(text: "button_Cancel"), for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
         button.setTitleColor(.systemBlue, for: .normal)
         button.addTarget(self, action: #selector(dismissView), for: .touchUpInside)
@@ -69,7 +69,7 @@ class DarkModePickerView: UIView {
     /// 确定
     lazy var sureButton: UIButton = {
         let button = UIButton(frame: CGRect(x: UIScreen.main.bounds.width - 88, y: 0, width: 88, height: 44))
-        button.setTitle(PTLanguage.share.text(forKey: "button_Confirm"), for: .normal)
+        button.setTitle(PTAppConfig.languageFunc(text: "button_Confirm"), for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
         button.setTitleColor(.systemBlue, for: .normal)
         button.addTarget(self, action: #selector(sureButtonClick), for: .touchUpInside)

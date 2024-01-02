@@ -31,12 +31,12 @@ class PTHelpViewController: PTChatBaseViewController {
         let att:ASAttributedString = """
         \(wrap: .embedding("""
         \("URL SCHEME",.paragraph(.alignment(.left),.lineSpacing(15)),.foreground(.gobalTextColor),.font(.appfont(size: 24,bold: true)))
-        \("\(PTLanguage.share.text(forKey: "help_Base")):",.paragraph(.alignment(.left),.lineSpacing(5)),.foreground(.gobalTextColor),.font(.appfont(size: 20,bold: true)))
+        \("\(PTAppConfig.languageFunc(text: "help_Base")):",.paragraph(.alignment(.left),.lineSpacing(5)),.foreground(.gobalTextColor),.font(.appfont(size: 20,bold: true)))
         \("chatzola://chatTag=Base&chatText=Hola",.paragraph(.alignment(.left),.lineSpacing(5)),.foreground(.gobalTextColor),.font(.appfont(size: 20,bold: true)))
-        \("\(PTLanguage.share.text(forKey: "help_And"))",.paragraph(.alignment(.left),.lineSpacing(5)),.foreground(.gobalTextColor),.font(.appfont(size: 20,bold: true)))
+        \("\(PTAppConfig.languageFunc(text: "help_And"))",.paragraph(.alignment(.left),.lineSpacing(5)),.foreground(.gobalTextColor),.font(.appfont(size: 20,bold: true)))
         \("chatzola://chatText=Hola",.paragraph(.alignment(.left),.lineSpacing(5)),.foreground(.gobalTextColor),.font(.appfont(size: 20,bold: true)))
         
-        \("\(PTLanguage.share.text(forKey: "help_Other")):",.paragraph(.alignment(.left),.lineSpacing(5)),.foreground(.gobalTextColor),.font(.appfont(size: 20,bold: true)))
+        \("\(PTAppConfig.languageFunc(text: "help_Other")):",.paragraph(.alignment(.left),.lineSpacing(5)),.foreground(.gobalTextColor),.font(.appfont(size: 20,bold: true)))
         \("chatzola://chatTag=XXXXXXXXXXXXXXXXXXXXX&chatText=Hola",.paragraph(.alignment(.left),.lineSpacing(5)),.foreground(.gobalTextColor),.font(.appfont(size: 20,bold: true)))
         """),.paragraph(.alignment(.left)))
         """        

@@ -50,7 +50,7 @@ class PTDarkModeHeader: PTBaseCollectionReusableView {
     
     lazy var titlaLabel:UILabel = {
         let view = UILabel()
-        view.text = PTLanguage.share.text(forKey: "theme_MT")
+        view.text = PTAppConfig.languageFunc(text: "theme_MT")
         view.textAlignment = .left
         view.font = .appfont(size: 16)
         view.textColor = .gobalTextColor
@@ -77,7 +77,7 @@ class PTDarkModeHeader: PTBaseCollectionReusableView {
         view.normalImage = .tradeValidperiod
         view.selectedImage = .tradeValidperiodSelected
         view.normalTitleFont = .appfont(size: 13)
-        view.normalTitle = PTLanguage.share.text(forKey: "theme_White")
+        view.normalTitle = PTAppConfig.languageFunc(text: "theme_White")
         view.normalTitleColor = .gobalTextColor
         view.isSelected = false
         view.addActionHandlers { sender in
@@ -101,7 +101,7 @@ class PTDarkModeHeader: PTBaseCollectionReusableView {
         view.normalImage = .tradeValidperiod
         view.selectedImage = .tradeValidperiodSelected
         view.normalTitleFont = .appfont(size: 13)
-        view.normalTitle = PTLanguage.share.text(forKey: "theme_Black")
+        view.normalTitle = PTAppConfig.languageFunc(text: "theme_Black")
         view.normalTitleColor = .gobalTextColor
         view.isSelected = false
         view.addActionHandlers { sender in

@@ -17,12 +17,12 @@ class PTDarkModeControl: PTChatBaseViewController {
 
     lazy var darkModeControlArr : [[PTFusionCellModel]] = {
         let smart = PTFusionCellModel()
-        smart.name = PTLanguage.share.text(forKey: "theme_Smart")
+        smart.name = PTAppConfig.languageFunc(text: "theme_Smart")
         smart.nameColor = .gobalTextColor
         smart.accessoryType = .Switch
         
         let followSystem = PTFusionCellModel()
-        followSystem.name = PTLanguage.share.text(forKey: "theme_FollowSystem")
+        followSystem.name = PTAppConfig.languageFunc(text: "theme_FollowSystem")
         followSystem.nameColor = .gobalTextColor
         followSystem.accessoryType = .Switch
 
@@ -110,7 +110,7 @@ class PTDarkModeControl: PTChatBaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.zx_navTitle = PTLanguage.share.text(forKey: "theme_Title")
+        self.zx_navTitle = PTAppConfig.languageFunc(text: "theme_Title")
         
         // Do any additional setup after loading the view.
         self.view.addSubviews([self.collectionView])
@@ -195,7 +195,7 @@ extension PTDarkModeControl:UICollectionViewDelegate,UICollectionViewDataSource
                             self.darkTime = startTime + "~" + endTime
                             self.showDetail()
                         } else {
-                            PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Time_set_error"))
+                            PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Time_set_error"))
                         }
                     }
                     darkModePickerView.showTime()
@@ -223,22 +223,22 @@ extension PTDarkModeControl:UICollectionViewDelegate,UICollectionViewDataSource
 //            cell.dataContent.topLineView.isHidden = true
 //            cell.dataContent.backgroundColor = .gobalCellBackgroundColor
 //            cell.dataContent.valueSwitch.onTintColor = .orange
-            if cellModel.name == PTLanguage.share.text(forKey: "theme_Smart") {
+            if cellModel.name == PTAppConfig.languageFunc(text: "theme_Smart") {
                 cell.switchValue = PTDarkModeOption.isSmartPeeling
                 PTGCDManager.gcdMain {
                     cell.contentView.viewCornerRectCorner(cornerRadii: 0, corner: .allCorners)
                 }
-            } else if cellModel.name == PTLanguage.share.text(forKey: "theme_FollowSystem") {
+            } else if cellModel.name == PTAppConfig.languageFunc(text: "theme_FollowSystem") {
                 cell.switchValue = PTDarkModeOption.isFollowSystem
                 PTGCDManager.gcdMain {
                     cell.contentView.viewCornerRectCorner(cornerRadii: 5, corner: [.bottomLeft,.bottomRight])
                 }
             }
             cell.switchValueChangeBlock = { title,sender in
-                if cellModel.name == PTLanguage.share.text(forKey: "theme_Smart") {
+                if cellModel.name == PTAppConfig.languageFunc(text: "theme_Smart") {
                     PTDarkModeOption.setSmartPeelingDarkMode(isSmartPeeling: sender.isOn)
                     self.showDetail()
-                } else if cellModel.name == PTLanguage.share.text(forKey: "theme_FollowSystem") {
+                } else if cellModel.name == PTAppConfig.languageFunc(text: "theme_FollowSystem") {
                     PTDarkModeOption.setDarkModeFollowSystem(isFollowSystem: sender.isOn)
                     self.showDetail()
                 }

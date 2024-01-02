@@ -138,7 +138,7 @@ extension PTSuggesstionViewController:UICollectionViewDelegate,UICollectionViewD
             cell.contentView.backgroundColor = .random
             cell.addButton.addActionHandlers { sender in
                 let cellModel = (itemRow.dataModel as! PTSampleModels)
-                UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "bot_Suggesstion_import_msg"),msgColor: .gobalTextColor,okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
+                UIAlertController.base_alertVC(title: PTAppConfig.languageFunc(text: "alert_Info"),titleColor: .gobalTextColor,msg: PTAppConfig.languageFunc(text: "bot_Suggesstion_import_msg"),msgColor: .gobalTextColor,okBtns: [PTAppConfig.languageFunc(text: "button_Confirm")],cancelBtn: PTAppConfig.languageFunc(text: "button_Cancel")) {
                     
                 } moreBtn: { index, title in
                     

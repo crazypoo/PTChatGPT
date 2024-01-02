@@ -82,7 +82,7 @@ class PTLocalFileViewController: PTChatBaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.zx_navTitle = PTLanguage.share.text(forKey: "local_File_title")
+        self.zx_navTitle = PTAppConfig.languageFunc(text: "local_File_title")
         // Do any additional setup after loading the view.
         self.zx_navBar?.addSubview(self.deleteButton)
         self.deleteButton.snp.makeConstraints { make in
@@ -177,11 +177,11 @@ extension PTLocalFileViewController:UICollectionViewDelegate,UICollectionViewDat
                     }
                 }
                 
-                PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_done"))
+                PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Delete_done"))
                 self.showDetail()
                 NotificationCenter.default.post(name: NSNotification.Name(nRefreshSetting), object: nil)
             } else {
-                PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_error"))
+                PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Delete_error"))
             }
         }
         return cell
@@ -193,7 +193,7 @@ extension PTLocalFileViewController {
         self.lxf_EmptyDataSet(currentScroller) { () -> ([LXFEmptyDataSetAttributeKeyType : Any]) in
             let color:UIColor = .black
             return [
-                .tipStr : PTLanguage.share.text(forKey: "local_Empty"),
+                .tipStr : PTAppConfig.languageFunc(text: "local_Empty"),
                 .tipColor : color,
                 .verticalOffset : 0,
                 .tipImage : "📂".emojiToImage(emojiFont: .appfont(size: 88))

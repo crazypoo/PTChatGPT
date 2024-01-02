@@ -34,13 +34,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-                
         
         FileManager.pt.createFolder(folderPath: userImageMessageFilePath)
         FileManager.pt.createFolder(folderPath: userChatMessageFilePath)
         FileManager.pt.createFolder(folderPath: userChatCostFilePath)
                 
-        PTNSLogConsole(FileManager.pt.getAllFileNames(folderPath: FileManager.pt.TmpDirectory())!)
         var debugDevice = false
         let buglyConfig = BuglyConfig()
 //        buglyConfig.delegate = self
@@ -61,41 +59,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         PTAppBaseConfig.share.decorationBackgroundColor = .gobalCellBackgroundColor
         StatusBarManager.shared.isHidden = false
         StatusBarManager.shared.style = PTDarkModeOption.isLight ? .darkContent : .lightContent
-        
-        self.query.searchScopes = [NSMetadataQueryUbiquitousDocumentsScope]
-        self.query.predicate = NSPredicate(value: true)
-
-        NotificationCenter.default.addObserver(self, selector: #selector(keyValueStoreDidChange(_:)), name: NSUbiquitousKeyValueStore.didChangeExternallyNotification, object: self.cloudStore)
-
-        NotificationCenter.default.addObserver(forName: NSNotification.Name.NSMetadataQueryDidFinishGathering, object: AppDelegate.appDelegate()?.query, queue: nil) { (notification) in
-            guard let query = notification.object as? NSMetadataQuery else {
-                return
-            }
-            query.disableUpdates()
-            let results = query.results
-            if let fileURL = (results.first as? NSMetadataItem)?.value(forAttribute: NSMetadataItemURLKey) as? URL {
-                if let imageData = try? Data(contentsOf: fileURL), let image = UIImage(data: imageData) {
-                    // 成功读取图片数据
-                    PTNSLogConsole("?>>>>????>>>>>\(image)")
-                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: kRefreshController), object: nil)
-                } else {
-                    PTNSLogConsole("Failed to read image data from iCloud")
-                }
-                PTNSLogConsole("刷新\(fileURL)")
-                // 文件存在，可以读取
-            }
-            query.stop()
-        }
-                
+                        
         #if DEBUG
         let filePath = NSTemporaryDirectory().appending("/demo.order")
         YCSymbolTracker.exportSymbols(filePath: filePath)
         #endif
                           
-        PTNSLogConsole("\(self.appConfig.apiToken)")
+//        PTNSLogConsole("\(self.appConfig.apiToken)")
         
         var viewC:UIViewController!        
-        PTNSLogConsole(self.appConfig.tagDataArr())
+//        PTNSLogConsole(self.appConfig.tagDataArr())
         if Gobal_device_info.isPad {
             viewC = PTSplitViewController()
         } else {
@@ -171,7 +144,35 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        PTGCDManager.gcdAfter(time: 10) {
 //            UIApplication.pt.changeAppIcon(with: "AppIcon1")
 //        }
+//        PTNSLogConsole(FileManager.pt.getAllFileNames(folderPath: FileManager.pt.TmpDirectory())!)
+
         self.createMaskView()
+        
+        self.query.searchScopes = [NSMetadataQueryUbiquitousDocumentsScope]
+        self.query.predicate = NSPredicate(value: true)
+
+        NotificationCenter.default.addObserver(self, selector: #selector(keyValueStoreDidChange(_:)), name: NSUbiquitousKeyValueStore.didChangeExternallyNotification, object: self.cloudStore)
+
+        NotificationCenter.default.addObserver(forName: NSNotification.Name.NSMetadataQueryDidFinishGathering, object: AppDelegate.appDelegate()?.query, queue: nil) { (notification) in
+            guard let query = notification.object as? NSMetadataQuery else {
+                return
+            }
+            query.disableUpdates()
+            let results = query.results
+            if let fileURL = (results.first as? NSMetadataItem)?.value(forAttribute: NSMetadataItemURLKey) as? URL {
+                if let imageData = try? Data(contentsOf: fileURL), let image = UIImage(data: imageData) {
+                    // 成功读取图片数据
+//                    PTNSLogConsole("?>>>>????>>>>>\(image)")
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: kRefreshController), object: nil)
+                } else {
+//                    PTNSLogConsole("Failed to read image data from iCloud")
+                }
+//                PTNSLogConsole("刷新\(fileURL)")
+                // 文件存在，可以读取
+            }
+            query.stop()
+        }
+
         return true
     }
         
@@ -270,7 +271,7 @@ extension AppDelegate {
         let userInfo = notification.userInfo
         if let keys = userInfo?[NSUbiquitousKeyValueStoreChangedKeysKey] as? [String] {
             for key in keys {
-                PTNSLogConsole(key)
+//                PTNSLogConsole(key)
                 PTGCDManager.gcdMain {
                     switch key {
                     case uTotalToken:

@@ -19,10 +19,10 @@ class PTColorSettingViewController: PTChatBaseViewController {
         let disclosureIndicatorImageName = UIImage(systemName: "chevron.right")!.withTintColor(.gobalTextColor,renderingMode: .alwaysOriginal)
 
         let colorMain = PTSettingModels()
-        colorMain.name = PTLanguage.share.text(forKey: "alert_Info")
+        colorMain.name = PTAppConfig.languageFunc(text: "alert_Info")
         
         let userBubbleInfo = PTFusionCellModel()
-        userBubbleInfo.name = PTLanguage.share.text(forKey: "color_Bubble_user")
+        userBubbleInfo.name = PTAppConfig.languageFunc(text: "color_Bubble_user")
         userBubbleInfo.nameColor = .gobalTextColor
         userBubbleInfo.leftImage = UIImage(systemName: "bubble.left.fill")!.withRenderingMode(.automatic)
         userBubbleInfo.accessoryType = .DisclosureIndicator
@@ -30,7 +30,7 @@ class PTColorSettingViewController: PTChatBaseViewController {
         userBubbleInfo.disclosureIndicatorImage = disclosureIndicatorImageName
         
         let botBubbleInfo = PTFusionCellModel()
-        botBubbleInfo.name = PTLanguage.share.text(forKey: "color_Bubble_bot")
+        botBubbleInfo.name = PTAppConfig.languageFunc(text: "color_Bubble_bot")
         botBubbleInfo.nameColor = .gobalTextColor
         botBubbleInfo.leftImage = UIImage(systemName: "bubble.right.fill")!.withRenderingMode(.automatic)
         botBubbleInfo.accessoryType = .DisclosureIndicator
@@ -38,7 +38,7 @@ class PTColorSettingViewController: PTChatBaseViewController {
         botBubbleInfo.contentIcon = AppDelegate.appDelegate()?.appConfig.botBubbleColor.createImageWithColor().transformImage(size: CGSizeMake(44, 44))
 
         let userTextInfo = PTFusionCellModel()
-        userTextInfo.name = PTLanguage.share.text(forKey: "color_Text_user")
+        userTextInfo.name = PTAppConfig.languageFunc(text: "color_Text_user")
         userTextInfo.nameColor = .gobalTextColor
         userTextInfo.leftImage = UIImage(systemName: "plus.bubble.fill")!.withRenderingMode(.automatic)
         userTextInfo.accessoryType = .DisclosureIndicator
@@ -46,7 +46,7 @@ class PTColorSettingViewController: PTChatBaseViewController {
         userTextInfo.contentIcon = AppDelegate.appDelegate()?.appConfig.userTextColor.createImageWithColor().transformImage(size: CGSizeMake(44, 44))
 
         let botTextInfo = PTFusionCellModel()
-        botTextInfo.name = PTLanguage.share.text(forKey: "color_Text_bot")
+        botTextInfo.name = PTAppConfig.languageFunc(text: "color_Text_bot")
         botTextInfo.nameColor = .gobalTextColor
         botTextInfo.leftImage = UIImage(systemName: "text.bubble.fill")!.withRenderingMode(.automatic)
         botTextInfo.accessoryType = .DisclosureIndicator
@@ -54,7 +54,7 @@ class PTColorSettingViewController: PTChatBaseViewController {
         botTextInfo.contentIcon = AppDelegate.appDelegate()?.appConfig.botTextColor.createImageWithColor().transformImage(size: CGSizeMake(44, 44))
 
         let waveInfo = PTFusionCellModel()
-        waveInfo.name = PTLanguage.share.text(forKey: "color_Wave")
+        waveInfo.name = PTAppConfig.languageFunc(text: "color_Wave")
         waveInfo.nameColor = .gobalTextColor
         waveInfo.leftImage = UIImage(systemName: "waveform")!.withRenderingMode(.automatic)
         waveInfo.accessoryType = .DisclosureIndicator
@@ -154,7 +154,7 @@ class PTColorSettingViewController: PTChatBaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.zx_navTitle = PTLanguage.share.text(forKey: "color_Setting")
+        self.zx_navTitle = PTAppConfig.languageFunc(text: "color_Setting")
         if Gobal_device_info.isPad {
             self.isModalInPresentation = true
             self.zx_navFixFrame = CGRect(x: 0, y: 0, width: 400, height: 54)
@@ -210,15 +210,15 @@ class PTColorSettingViewController: PTChatBaseViewController {
     }
     
     func colorPickerSelectedColor(selectedColor:UIColor) {
-        if self.currentColorName == PTLanguage.share.text(forKey: "color_Bubble_user") {
+        if self.currentColorName == PTAppConfig.languageFunc(text: "color_Bubble_user") {
             AppDelegate.appDelegate()!.appConfig.userBubbleColor = selectedColor
-        } else if self.currentColorName == PTLanguage.share.text(forKey: "color_Bubble_bot") {
+        } else if self.currentColorName == PTAppConfig.languageFunc(text: "color_Bubble_bot") {
             AppDelegate.appDelegate()!.appConfig.botBubbleColor = selectedColor
-        } else if self.currentColorName == PTLanguage.share.text(forKey: "color_Text_user") {
+        } else if self.currentColorName == PTAppConfig.languageFunc(text: "color_Text_user") {
             AppDelegate.appDelegate()!.appConfig.userTextColor = selectedColor
-        } else if self.currentColorName == PTLanguage.share.text(forKey: "color_Text_bot") {
+        } else if self.currentColorName == PTAppConfig.languageFunc(text: "color_Text_bot") {
             AppDelegate.appDelegate()!.appConfig.botTextColor = selectedColor
-        } else if self.currentColorName == PTLanguage.share.text(forKey: "color_Wave") {
+        } else if self.currentColorName == PTAppConfig.languageFunc(text: "color_Wave") {
             AppDelegate.appDelegate()!.appConfig.waveColor = selectedColor
         }
         
@@ -248,15 +248,15 @@ extension PTColorSettingViewController:UICollectionViewDelegate,UICollectionView
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let itemSec = mSections[indexPath.section]
         let itemRow = itemSec.rows[indexPath.row]
-        if itemRow.title == PTLanguage.share.text(forKey: "color_Bubble_user") {
+        if itemRow.title == PTAppConfig.languageFunc(text: "color_Bubble_user") {
             self.colorPicker(color: AppDelegate.appDelegate()!.appConfig.userBubbleColor)
-        } else if itemRow.title == PTLanguage.share.text(forKey: "color_Bubble_bot") {
+        } else if itemRow.title == PTAppConfig.languageFunc(text: "color_Bubble_bot") {
             self.colorPicker(color: AppDelegate.appDelegate()!.appConfig.botBubbleColor)
-        } else if itemRow.title == PTLanguage.share.text(forKey: "color_Text_user") {
+        } else if itemRow.title == PTAppConfig.languageFunc(text: "color_Text_user") {
             self.colorPicker(color: AppDelegate.appDelegate()!.appConfig.userTextColor)
-        } else if itemRow.title == PTLanguage.share.text(forKey: "color_Text_bot") {
+        } else if itemRow.title == PTAppConfig.languageFunc(text: "color_Text_bot") {
             self.colorPicker(color: AppDelegate.appDelegate()!.appConfig.botTextColor)
-        } else if itemRow.title == PTLanguage.share.text(forKey: "color_Wave") {
+        } else if itemRow.title == PTAppConfig.languageFunc(text: "color_Wave") {
             self.colorPicker(color: AppDelegate.appDelegate()!.appConfig.waveColor)
         }
 

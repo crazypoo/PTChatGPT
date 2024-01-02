@@ -82,8 +82,8 @@ let getApiUrl = "https://platform.openai.com/account/api-keys"
 let myGithubUrl = "https://github.com/crazypoo"
 let projectGithubUrl = "https://github.com/crazypoo/PTChatGPT"
 
-let AppDisclaimer = PTLanguage.share.text(forKey: "disclaimer_App_Info")
-let ExternalLinksDisclaimer = PTLanguage.share.text(forKey: "disclaimer_External_info")
+let AppDisclaimer = PTAppConfig.languageFunc(text: "disclaimer_App_Info")
+let ExternalLinksDisclaimer = PTAppConfig.languageFunc(text: "disclaimer_External_info")
 
 //MARK: 图片保存的本地地址
 let userImageMessageFilePath = FileManager.pt.LibraryDirectory() + "/UserImageMessageFile"
@@ -112,8 +112,8 @@ extension UIColor {
 }
 
 extension String {
-    static let findImage = PTLanguage.share.text(forKey: "chat_Looking_for")
-    static let remakeImage = PTLanguage.share.text(forKey: "chat_Paint_image")
+    static let findImage = PTAppConfig.languageFunc(text: "chat_Looking_for")
+    static let remakeImage = PTAppConfig.languageFunc(text: "chat_Paint_image")
     
     func replaceStringWithAsterisk() -> String {
         let nsString = self.nsString
@@ -246,13 +246,13 @@ class PTAppConfig {
                 if let value = AppDelegate.appDelegate()?.cloudStore.object(forKey: uUserName) {
                     return value as! String
                 } else {
-                    return PTLanguage.share.text(forKey: "chat_User")
+                    return PTAppConfig.languageFunc(text: "chat_User")
                 }
             } else {
                 if let value = UserDefaults.standard.value(forKey: uUserName) {
                     return value as! String
                 } else {
-                    return PTLanguage.share.text(forKey: "chat_User")
+                    return PTAppConfig.languageFunc(text: "chat_User")
                 }
             }
         } set {
@@ -1493,13 +1493,13 @@ class PTAppConfig {
         style.pickerTextColor = .gobalTextColor
         style.titleBarColor = .gobalBackgroundColor
         style.cancelTextFont = .appfont(size: 15)
-        let cancelW = UIView.sizeFor(string: PTLanguage.share.text(forKey: "button_Cancel"), font: .appfont(size: 16), height: style.cancelBtnFrame.size.height, width: CGFloat(MAXFLOAT)).width + 10
-        style.cancelBtnTitle = PTLanguage.share.text(forKey: "button_Cancel")
+        let cancelW = UIView.sizeFor(string: PTAppConfig.languageFunc(text: "button_Cancel"), font: .appfont(size: 16), height: style.cancelBtnFrame.size.height, width: CGFloat(MAXFLOAT)).width + 10
+        style.cancelBtnTitle = PTAppConfig.languageFunc(text: "button_Cancel")
         style.cancelBtnFrame = CGRectMake(style.cancelBtnFrame.origin.x, style.cancelBtnFrame.origin.y, cancelW, style.cancelBtnFrame.size.height)
         style.cancelTextColor = .systemBlue
         style.doneTextFont = .appfont(size: 15)
-        style.doneBtnTitle = PTLanguage.share.text(forKey: "button_Confirm")
-        let doneW = UIView.sizeFor(string: PTLanguage.share.text(forKey: "button_Confirm"), font: .appfont(size: 16), height: style.doneBtnFrame.size.height, width: CGFloat(MAXFLOAT)).width + 10
+        style.doneBtnTitle = PTAppConfig.languageFunc(text: "button_Confirm")
+        let doneW = UIView.sizeFor(string: PTAppConfig.languageFunc(text: "button_Confirm"), font: .appfont(size: 16), height: style.doneBtnFrame.size.height, width: CGFloat(MAXFLOAT)).width + 10
         style.doneBtnFrame = CGRectMake(CGFloat.kSCREEN_WIDTH - doneW, style.doneBtnFrame.origin.y, doneW, style.doneBtnFrame.size.height)
         style.doneTextColor = .systemBlue
         return style
@@ -1599,5 +1599,9 @@ class PTAppConfig {
         } else {
             return true
         }
+    }
+    
+    class func languageFunc(text:String) ->String {
+        return text.localized()
     }
 }

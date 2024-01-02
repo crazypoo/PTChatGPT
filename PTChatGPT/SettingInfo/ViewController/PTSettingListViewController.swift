@@ -20,8 +20,8 @@ import Brightroom
 
 //MARK: iCloud
 let SettingCloudString = "iCloud"
-let SettingGithub = PTLanguage.share.text(forKey: "Github")
-let SettingHelp = PTLanguage.share.text(forKey: "about_Help")
+let SettingGithub = PTAppConfig.languageFunc(text: "Github")
+let SettingHelp = PTAppConfig.languageFunc(text: "about_Help")
 
 class PTChatPanelLayout: FloatingPanelLayout {
     
@@ -131,7 +131,7 @@ class PTSettingListViewController: PTChatBaseViewController {
             self.showDetail()
         }
         picker.pickerStyle = PTAppConfig.gobal_BRPickerStyle()
-        picker.title = PTLanguage.share.text(forKey: "about_APIAIType")
+        picker.title = PTAppConfig.languageFunc(text: "about_APIAIType")
         return picker
     }()
         
@@ -160,11 +160,11 @@ class PTSettingListViewController: PTChatBaseViewController {
         cloudMain.models = [cloud]
 
         let themeMain = PTSettingModels()
-        themeMain.name = PTLanguage.share.text(forKey: "about_Main_Theme")
+        themeMain.name = PTAppConfig.languageFunc(text: "about_Main_Theme")
         
         //MARK: 主題
         let color = PTFusionCellModel()
-        color.name = PTLanguage.share.text(forKey: "about_Color")
+        color.name = PTAppConfig.languageFunc(text: "about_Color")
 //        color.leftImage = "🎨".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         color.accessoryType = .DisclosureIndicator
         color.nameColor = .gobalTextColor
@@ -172,7 +172,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         color.cellFont = nameFont
 
         let language = PTFusionCellModel()
-        language.name = PTLanguage.share.text(forKey: "about_Language")
+        language.name = PTAppConfig.languageFunc(text: "about_Language")
 //        language.leftImage = "🚩".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         language.accessoryType = .DisclosureIndicator
         language.nameColor = .gobalTextColor
@@ -181,7 +181,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         language.contentAttr = self.cellContentAtt(content: self.currentSelectedLanguage)
 
         let theme = PTFusionCellModel()
-        theme.name = PTLanguage.share.text(forKey: "about_Main_Theme")
+        theme.name = PTAppConfig.languageFunc(text: "about_Main_Theme")
 //        theme.leftImage = "🖼️".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         theme.accessoryType = .DisclosureIndicator
         theme.nameColor = .gobalTextColor
@@ -190,17 +190,17 @@ class PTSettingListViewController: PTChatBaseViewController {
         
         var themeCurrent = ""
         if PTDarkModeOption.isSmartPeeling {
-            themeCurrent = PTLanguage.share.text(forKey: "theme_Smart")
+            themeCurrent = PTAppConfig.languageFunc(text: "theme_Smart")
         } else if PTDarkModeOption.isFollowSystem {
-            themeCurrent = PTLanguage.share.text(forKey: "theme_FollowSystem")
+            themeCurrent = PTAppConfig.languageFunc(text: "theme_FollowSystem")
         } else {
-            themeCurrent = PTDarkModeOption.isLight ? PTLanguage.share.text(forKey: "theme_White") : PTLanguage.share.text(forKey: "theme_Black")
+            themeCurrent = PTDarkModeOption.isLight ? PTAppConfig.languageFunc(text: "theme_White") : PTAppConfig.languageFunc(text: "theme_Black")
         }
         
         theme.contentAttr = self.cellContentAtt(content: themeCurrent)
 
         let userIcon = PTFusionCellModel()
-        userIcon.name = PTLanguage.share.text(forKey: "about_User_icon")
+        userIcon.name = PTAppConfig.languageFunc(text: "about_User_icon")
 //        userIcon.leftImage = "🤳".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         userIcon.contentIcon = UIImage(data: AppDelegate.appDelegate()!.appConfig.userIcon)
         userIcon.accessoryType = .DisclosureIndicator
@@ -209,7 +209,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         userIcon.cellFont = nameFont
         
         let userName = PTFusionCellModel()
-        userName.name = PTLanguage.share.text(forKey: "about_User_name")
+        userName.name = PTAppConfig.languageFunc(text: "about_User_name")
         userName.accessoryType = .DisclosureIndicator
         userName.nameColor = .gobalTextColor
         userName.disclosureIndicatorImage = disclosureIndicatorImageName
@@ -234,10 +234,10 @@ class PTSettingListViewController: PTChatBaseViewController {
         
         //MARK: Speech
         let speechMain = PTSettingModels()
-        speechMain.name = PTLanguage.share.text(forKey: "about_Main_Speech")
+        speechMain.name = PTAppConfig.languageFunc(text: "about_Main_Speech")
 
         let speechLanguage = PTFusionCellModel()
-        speechLanguage.name = PTLanguage.share.text(forKey: "about_Main_Speech")
+        speechLanguage.name = PTAppConfig.languageFunc(text: "about_Main_Speech")
 //        speechLanguage.leftImage = "🎙️".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         speechLanguage.accessoryType = .DisclosureIndicator
         speechLanguage.nameColor = .gobalTextColor
@@ -252,7 +252,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         chatMain.name = "Chat"
 
         let savedMessage = PTFusionCellModel()
-        savedMessage.name = PTLanguage.share.text(forKey: "about_SavedChat")
+        savedMessage.name = PTAppConfig.languageFunc(text: "about_SavedChat")
 //        savedMessage.leftImage = "📑".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         savedMessage.accessoryType = .DisclosureIndicator
         savedMessage.nameColor = .gobalTextColor
@@ -261,7 +261,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         savedMessage.contentAttr = self.cellContentAtt(content: "\(AppDelegate.appDelegate()!.appConfig.getSaveChatData().count)")
 
         let deleteAllChat = PTFusionCellModel()
-        deleteAllChat.name = PTLanguage.share.text(forKey: "about_DeleteAllChat")
+        deleteAllChat.name = PTAppConfig.languageFunc(text: "about_DeleteAllChat")
 //        deleteAllChat.leftImage = "🗑️".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         deleteAllChat.accessoryType = .DisclosureIndicator
         deleteAllChat.nameColor = .gobalTextColor
@@ -269,7 +269,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         deleteAllChat.cellFont = nameFont
 
         let deleteAllVoiceFile = PTFusionCellModel()
-        deleteAllVoiceFile.name = PTLanguage.share.text(forKey: "about_Delete_all_voice_file")
+        deleteAllVoiceFile.name = PTAppConfig.languageFunc(text: "about_Delete_all_voice_file")
 //        deleteAllVoiceFile.leftImage = "🔇".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         deleteAllVoiceFile.accessoryType = .DisclosureIndicator
         deleteAllVoiceFile.nameColor = .gobalTextColor
@@ -283,7 +283,7 @@ class PTSettingListViewController: PTChatBaseViewController {
 
         //MARK: AI
         let aiName = PTFusionCellModel()
-        aiName.name = PTLanguage.share.text(forKey: "about_AI_name")
+        aiName.name = PTAppConfig.languageFunc(text: "about_AI_name")
         aiName.accessoryType = .DisclosureIndicator
         aiName.nameColor = .gobalTextColor
         aiName.disclosureIndicatorImage = disclosureIndicatorImageName
@@ -291,7 +291,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         aiName.contentAttr = self.cellContentAtt(content: AppDelegate.appDelegate()!.appConfig.aiName)
 
         let aiType = PTFusionCellModel()
-        aiType.name = PTLanguage.share.text(forKey: "about_APIAIType")
+        aiType.name = PTAppConfig.languageFunc(text: "about_APIAIType")
 //        aiType.leftImage = "🤖".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         aiType.accessoryType = .DisclosureIndicator
         aiType.nameColor = .gobalTextColor
@@ -300,13 +300,13 @@ class PTSettingListViewController: PTChatBaseViewController {
         aiType.contentAttr = self.cellContentAtt(content: AppDelegate.appDelegate()!.appConfig.aiModelType)
 
         let aiSmart = PTFusionCellModel()
-        aiSmart.name = PTLanguage.share.text(forKey: "about_AI_smart")
+        aiSmart.name = PTAppConfig.languageFunc(text: "about_AI_smart")
         aiSmart.nameColor = .gobalTextColor
 //        aiSmart.leftImage = "🧠".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         aiSmart.cellFont = nameFont
 
         let drawSize = PTFusionCellModel()
-        drawSize.name = PTLanguage.share.text(forKey: "about_Draw_image_size")
+        drawSize.name = PTAppConfig.languageFunc(text: "about_Draw_image_size")
 //        drawSize.leftImage = "📏".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         drawSize.accessoryType = .DisclosureIndicator
         drawSize.nameColor = .gobalTextColor
@@ -324,7 +324,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         drawSize.contentAttr = self.cellContentAtt(content: sizeString)
 
         let imageCount = PTFusionCellModel()
-        imageCount.name = PTLanguage.share.text(forKey: "chat_Get_image_count")
+        imageCount.name = PTAppConfig.languageFunc(text: "chat_Get_image_count")
 //        imageCount.leftImage = "🎆".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         imageCount.accessoryType = .DisclosureIndicator
         imageCount.nameColor = .gobalTextColor
@@ -333,7 +333,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         imageCount.contentAttr = self.cellContentAtt(content: "\(AppDelegate.appDelegate()!.appConfig.getImageCount)")
 
         let drawSample = PTFusionCellModel()
-        drawSample.name = PTLanguage.share.text(forKey: "draw_Reference")
+        drawSample.name = PTAppConfig.languageFunc(text: "draw_Reference")
 //        drawSample.leftImage = "🎇".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         drawSample.contentIcon = UIImage(data: AppDelegate.appDelegate()!.appConfig.drawRefrence)
         drawSample.accessoryType = .DisclosureIndicator
@@ -342,7 +342,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         drawSample.cellFont = nameFont
 
         let aiToken = PTFusionCellModel()
-        aiToken.name = PTLanguage.share.text(forKey: "about_APIAIToken")
+        aiToken.name = PTAppConfig.languageFunc(text: "about_APIAIToken")
 //        aiToken.leftImage = "🔑".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         aiToken.accessoryType = .DisclosureIndicator
         aiToken.nameColor = .gobalTextColor
@@ -350,7 +350,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         aiToken.cellFont = nameFont
 
         let getApiToken = PTFusionCellModel()
-        getApiToken.name = PTLanguage.share.text(forKey: "about_GetAPIAIToken")
+        getApiToken.name = PTAppConfig.languageFunc(text: "about_GetAPIAIToken")
 //        getApiToken.leftImage = "🧭".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         getApiToken.accessoryType = .DisclosureIndicator
         getApiToken.nameColor = .gobalTextColor
@@ -358,14 +358,14 @@ class PTSettingListViewController: PTChatBaseViewController {
         getApiToken.cellFont = nameFont
         
         let domainSwitch = PTFusionCellModel()
-        domainSwitch.name = PTLanguage.share.text(forKey: "about_Use_custom_domain_switch")
+        domainSwitch.name = PTAppConfig.languageFunc(text: "about_Use_custom_domain_switch")
         domainSwitch.nameColor = .gobalTextColor
         domainSwitch.accessoryType = .Switch
         domainSwitch.switchTintColor = switchColor
         domainSwitch.cellFont = nameFont
 
         let domainAddress = PTFusionCellModel()
-        domainAddress.name = PTLanguage.share.text(forKey: "about_Use_custom_domain_address")
+        domainAddress.name = PTAppConfig.languageFunc(text: "about_Use_custom_domain_address")
         domainAddress.accessoryType = .DisclosureIndicator
         domainAddress.nameColor = .gobalTextColor
         domainAddress.disclosureIndicatorImage = disclosureIndicatorImageName
@@ -379,7 +379,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         }
         
         let stableDiffusionMain = PTSettingModels()
-        stableDiffusionMain.name = PTLanguage.share.text(forKey: "Stable Diffusion Model")
+        stableDiffusionMain.name = PTAppConfig.languageFunc(text: "Stable Diffusion Model")
 
         var diffusionModels = [PTFusionCellModel]()
         self.downloadInfo.enumerated().forEach { index,value in
@@ -394,17 +394,17 @@ class PTSettingListViewController: PTChatBaseViewController {
         stableDiffusionMain.models = diffusionModels
         
         let localUploadMain = PTSettingModels()
-        localUploadMain.name = PTLanguage.share.text(forKey: "about_Local_network")
+        localUploadMain.name = PTAppConfig.languageFunc(text: "about_Local_network")
 
         let localUpload = PTFusionCellModel()
-        localUpload.name = PTLanguage.share.text(forKey: "about_Local_upload")
+        localUpload.name = PTAppConfig.languageFunc(text: "about_Local_upload")
         localUpload.accessoryType = .Switch
         localUpload.nameColor = .gobalTextColor
         localUpload.cellFont = nameFont
         localUpload.switchTintColor = switchColor
 
         let modelEdit = PTFusionCellModel()
-        modelEdit.name = PTLanguage.share.text(forKey: "about_Local_model")
+        modelEdit.name = PTAppConfig.languageFunc(text: "about_Local_model")
         modelEdit.accessoryType = .DisclosureIndicator
         modelEdit.nameColor = .gobalTextColor
         modelEdit.disclosureIndicatorImage = disclosureIndicatorImageName
@@ -413,10 +413,10 @@ class PTSettingListViewController: PTChatBaseViewController {
         localUploadMain.models = [localUpload,modelEdit]
 
         let toolMain = PTSettingModels()
-        toolMain.name = PTLanguage.share.text(forKey: "setting_Tool")
+        toolMain.name = PTAppConfig.languageFunc(text: "setting_Tool")
         
         let reset = PTFusionCellModel()
-        reset.name = PTLanguage.share.text(forKey: "setting_Reset")
+        reset.name = PTAppConfig.languageFunc(text: "setting_Reset")
 //        reset.leftImage = "🔄".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         reset.accessoryType = .DisclosureIndicator
         reset.nameColor = .gobalTextColor
@@ -426,11 +426,11 @@ class PTSettingListViewController: PTChatBaseViewController {
         toolMain.models = [reset]
         
         let otherMain = PTSettingModels()
-        otherMain.name = PTLanguage.share.text(forKey: "about_Main_Other")
+        otherMain.name = PTAppConfig.languageFunc(text: "about_Main_Other")
 
         //MARK: Other
         let github = PTFusionCellModel()
-        github.name = PTLanguage.share.text(forKey: "Github")
+        github.name = PTAppConfig.languageFunc(text: "Github")
 //        github.leftImage = "🐙".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         github.accessoryType = .DisclosureIndicator
         github.nameColor = .gobalTextColor
@@ -438,7 +438,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         github.cellFont = nameFont
 
         let forum = PTFusionCellModel()
-        forum.name = PTLanguage.share.text(forKey: "about_Forum")
+        forum.name = PTAppConfig.languageFunc(text: "about_Forum")
 //        forum.leftImage = "🧾".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         forum.accessoryType = .DisclosureIndicator
         forum.nameColor = .gobalTextColor
@@ -446,7 +446,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         forum.cellFont = nameFont
 
         let rate = PTFusionCellModel()
-        rate.name = PTLanguage.share.text(forKey: "about_Rate")
+        rate.name = PTAppConfig.languageFunc(text: "about_Rate")
 //        rate.leftImage = "⭐️".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         rate.accessoryType = .DisclosureIndicator
         rate.nameColor = .gobalTextColor
@@ -454,7 +454,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         rate.cellFont = nameFont
 
         let share = PTFusionCellModel()
-        share.name = PTLanguage.share.text(forKey: "about_Share")
+        share.name = PTAppConfig.languageFunc(text: "about_Share")
 //        share.leftImage = "💁‍♂️".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         share.accessoryType = .DisclosureIndicator
         share.nameColor = .gobalTextColor
@@ -462,7 +462,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         share.cellFont = nameFont
         
         let help = PTFusionCellModel()
-        help.name = PTLanguage.share.text(forKey: "about_Help")
+        help.name = PTAppConfig.languageFunc(text: "about_Help")
 //        share.leftImage = "💁‍♂️".emojiToImage(emojiFont: .appfont(size: 24)).transformImage(size: CGSize(width: 34, height: 34))
         help.accessoryType = .DisclosureIndicator
         help.nameColor = .gobalTextColor
@@ -516,7 +516,7 @@ class PTSettingListViewController: PTChatBaseViewController {
             } else {
                 cellHeight = CGFloat.ScaleW(w: 44)
             }
-            if (model.dataModel as! PTFusionCellModel).name == PTLanguage.share.text(forKey: "about_AI_smart") {
+            if (model.dataModel as! PTFusionCellModel).name == PTAppConfig.languageFunc(text: "about_AI_smart") {
                 if Gobal_device_info.isPad {
                     cellHeight = 98
                 } else {
@@ -546,7 +546,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         let footerSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(screenW - PTAppBaseConfig.share.defaultViewSpace * 2), heightDimension: NSCollectionLayoutDimension.absolute(sectionModel.footerHeight ?? CGFloat.leastNormalMagnitude))
         let headerItem = NSCollectionLayoutBoundarySupplementaryItem.init(layoutSize: headerSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .topTrailing)
         let footerItem = NSCollectionLayoutBoundarySupplementaryItem.init(layoutSize: footerSize, elementKind: UICollectionView.elementKindSectionFooter, alignment: .bottomTrailing)
-        if sectionModel.headerTitle == PTLanguage.share.text(forKey: "about_Main_Other") {
+        if sectionModel.headerTitle == PTAppConfig.languageFunc(text: "about_Main_Other") {
             laySection.boundarySupplementaryItems = [headerItem,footerItem]
         } else {
             laySection.boundarySupplementaryItems = [headerItem]
@@ -609,11 +609,11 @@ class PTSettingListViewController: PTChatBaseViewController {
         }
                 
         if self.user.senderId == PTChatData.share.bot.senderId {
-            self.zx_navTitle = "ZolaAi " + PTLanguage.share.text(forKey: "about_Setting")
+            self.zx_navTitle = "ZolaAi " + PTAppConfig.languageFunc(text: "about_Setting")
         } else if self.user.senderId == PTChatData.share.user.senderId {
-            self.zx_navTitle = PTLanguage.share.text(forKey: "chat_User") + " " + PTLanguage.share.text(forKey: "about_Setting")
+            self.zx_navTitle = PTAppConfig.languageFunc(text: "chat_User") + " " + PTAppConfig.languageFunc(text: "about_Setting")
         } else {
-            self.zx_navTitle = PTLanguage.share.text(forKey: "about_Setting")
+            self.zx_navTitle = PTAppConfig.languageFunc(text: "about_Setting")
         }
         self.view.backgroundColor = .gobalScrollerBackgroundColor
         
@@ -632,7 +632,7 @@ class PTSettingListViewController: PTChatBaseViewController {
         self.pt_observerLanguage {
             PTGCDManager.gcdBackground {
                 PTGCDManager.gcdMain {
-                    self.zx_navTitle = PTLanguage.share.text(forKey: "about_Setting")
+                    self.zx_navTitle = PTAppConfig.languageFunc(text: "about_Setting")
                     self.showDetail()
                 }
             }
@@ -679,10 +679,10 @@ class PTSettingListViewController: PTChatBaseViewController {
         self.aboutModels().enumerated().forEach { (index,value) in
             var rows = [PTRows]()
             value.models.enumerated().forEach { (subIndex,subValue) in
-                if subValue.name == PTLanguage.share.text(forKey: "about_AI_smart") {
+                if subValue.name == PTAppConfig.languageFunc(text: "about_AI_smart") {
                     let row_List = PTRows.init(title: subValue.name,cls: PTAISmartCell.self, ID: PTAISmartCell.ID, dataModel: subValue)
                     rows.append(row_List)
-                } else if subValue.name == PTLanguage.share.text(forKey: "MoDi") || subValue.name == PTLanguage.share.text(forKey: "V1.4") || subValue.name == PTLanguage.share.text(forKey: "V1.5") || subValue.name == PTLanguage.share.text(forKey: "TEST") {
+                } else if subValue.name == PTAppConfig.languageFunc(text: "MoDi") || subValue.name == PTAppConfig.languageFunc(text: "V1.4") || subValue.name == PTAppConfig.languageFunc(text: "V1.5") || subValue.name == PTAppConfig.languageFunc(text: "TEST") {
                     let row_List = PTRows.init(cls: PTStableDiffusionModelCell.self, ID: PTStableDiffusionModelCell.ID, dataModel: subValue)
                     rows.append(row_List)
                 } else {
@@ -697,7 +697,7 @@ class PTSettingListViewController: PTChatBaseViewController {
             } else {
                 headerHeight = CGFloat.ScaleW(w: 44)
             }
-            if value.name == PTLanguage.share.text(forKey: "about_Main_Other") {
+            if value.name == PTAppConfig.languageFunc(text: "about_Main_Other") {
                 let cellSection = PTSection.init(headerTitle:value.name,headerCls:PTSettingHeader.self,headerID: PTSettingHeader.ID,footerCls:PTSettingFooter.self,footerID:PTSettingFooter.ID,footerHeight:CGFloat.kTabbarHeight_Total,headerHeight: headerHeight,rows: rows)
                 mSections.append(cellSection)
             } else {
@@ -717,7 +717,7 @@ class PTSettingListViewController: PTChatBaseViewController {
                 let object:UIImage = try await PTImagePicker.openAlbum()
                 await MainActor.run{
                     switch string {
-                    case PTLanguage.share.text(forKey: "about_User_icon"):
+                    case PTAppConfig.languageFunc(text: "about_User_icon"):
                         let imageProvider = ImageProvider(image: object)
                         let controller = ClassicImageEditViewController(imageProvider: imageProvider)
                         let nav = PTNavController(rootViewController: controller)
@@ -738,7 +738,7 @@ class PTSettingListViewController: PTChatBaseViewController {
                                 }
                             })
                         }
-                    case PTLanguage.share.text(forKey: "draw_Reference"):
+                    case PTAppConfig.languageFunc(text: "draw_Reference"):
                         AppDelegate.appDelegate()!.appConfig.drawRefrence = object.pngData()!
                         self.showDetail()
                     default:break
@@ -795,12 +795,12 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                     AppDelegate.appDelegate()?.appConfig.mobileDataSavePlaceChange(value: sender.isOn)
                 }
             }
-            else if itemRow.title == PTLanguage.share.text(forKey: "about_Use_custom_domain_switch") {
+            else if itemRow.title == PTAppConfig.languageFunc(text: "about_Use_custom_domain_switch") {
                 cell.switchValue = AppDelegate.appDelegate()!.appConfig.useCustomDomain
                 cell.switchValueChangeBlock =  { title,sender in
                     AppDelegate.appDelegate()?.appConfig.useCustomDomain = sender.isOn
                 }
-            } else if itemRow.title == PTLanguage.share.text(forKey: "about_Local_upload") {
+            } else if itemRow.title == PTAppConfig.languageFunc(text: "about_Local_upload") {
                 cell.switchValue = self.webServerIsRunning
                 cell.switchValueChangeBlock = { title,sender in
                     if self.canOpenWebServer {
@@ -812,8 +812,8 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                             self.webServer.run { server in
                                 if self.webServer!.start() {
                                     let ipString = self.webServer!.serverURL!.absoluteString
-                                    let msg = String(format: PTLanguage.share.text(forKey: "alert_Local_wifi"), ipString)
-                                    UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: msg,msgColor: .gobalTextColor,cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"))
+                                    let msg = String(format: PTAppConfig.languageFunc(text: "alert_Local_wifi"), ipString)
+                                    UIAlertController.base_alertVC(title: PTAppConfig.languageFunc(text: "alert_Info"),titleColor: .gobalTextColor,msg: msg,msgColor: .gobalTextColor,cancelBtn: PTAppConfig.languageFunc(text: "button_Cancel"))
                                 }
                             }
                         } else {
@@ -825,7 +825,7 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                         }
                     } else {
                         cell.switchValue = false
-                        PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Plz_connect_wifi"))
+                        PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Plz_connect_wifi"))
                     }
                 }
             }
@@ -895,14 +895,14 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let itemSec = mSections[indexPath.section]
         let itemRow = itemSec.rows[indexPath.row]
-        if itemRow.title == PTLanguage.share.text(forKey: "about_Color") {
+        if itemRow.title == PTAppConfig.languageFunc(text: "about_Color") {
             let vc = PTColorSettingViewController(user: self.user)
             self.navigationController?.pushViewController(vc)
-        } else if itemRow.title == PTLanguage.share.text(forKey: "about_SavedChat") {
+        } else if itemRow.title == PTAppConfig.languageFunc(text: "about_SavedChat") {
             let vc = PTSaveChatViewController()
             self.navigationController?.pushViewController(vc)
-        } else if itemRow.title == PTLanguage.share.text(forKey: "about_DeleteAllChat") {
-            UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "chat_Delete_all_chat"),msgColor: .gobalTextColor,okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
+        } else if itemRow.title == PTAppConfig.languageFunc(text: "about_DeleteAllChat") {
+            UIAlertController.base_alertVC(title: PTAppConfig.languageFunc(text: "alert_Info"),titleColor: .gobalTextColor,msg: PTAppConfig.languageFunc(text: "chat_Delete_all_chat"),msgColor: .gobalTextColor,okBtns: [PTAppConfig.languageFunc(text: "button_Confirm")],cancelBtn: PTAppConfig.languageFunc(text: "button_Cancel")) {
                 
             } moreBtn: { index, title in
                 
@@ -911,50 +911,50 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                     arr[index]!.historyModel = [PTChatModel]()
                 }
                 AppDelegate.appDelegate()!.appConfig.setChatData = arr.kj.JSONObjectArray()
-                PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_done"))
+                PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Delete_done"))
                 if self.cleanChatListBlock != nil {
                     self.cleanChatListBlock!()
                 }
             }
-        } else if itemRow.title == PTLanguage.share.text(forKey: "about_APIAIType") {
+        } else if itemRow.title == PTAppConfig.languageFunc(text: "about_APIAIType") {
             self.AIModelPicker.show()
-        } else if itemRow.title == PTLanguage.share.text(forKey: "about_APIAIToken") {
-            let textKey = PTLanguage.share.text(forKey: "alert_Input_token")
+        } else if itemRow.title == PTAppConfig.languageFunc(text: "about_APIAIToken") {
+            let textKey = PTAppConfig.languageFunc(text: "alert_Input_token")
             let apiToken = AppDelegate.appDelegate()!.appConfig.apiToken
-            UIAlertController.base_textfield_alertVC(title:textKey,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey], textFieldTexts: [apiToken], keyboardType: [.default],textFieldDelegate: self) { result in
+            UIAlertController.base_textfield_alertVC(title:textKey,titleColor: .gobalTextColor,okBtn: PTAppConfig.languageFunc(text: "button_Confirm"), cancelBtn: PTAppConfig.languageFunc(text: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey], textFieldTexts: [apiToken], keyboardType: [.default],textFieldDelegate: self) { result in
                 let newToken:String? = result[textKey]!
                 #if DEBUG
                 AppDelegate.appDelegate()!.appConfig.apiToken = (newToken ?? "")
                 #else
                 if (newToken ?? "").stringIsEmpty() || !(newToken ?? "").nsString.contains("sk-") {
-                    PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Token_error"))
+                    PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Token_error"))
                 } else {
                     AppDelegate.appDelegate()!.appConfig.apiToken = newToken!
                 }
                 #endif
             }
-        } else if itemRow.title == PTLanguage.share.text(forKey: "about_Use_custom_domain_address") {
-            let textKey = PTLanguage.share.text(forKey: "alert_Enter_domain")
+        } else if itemRow.title == PTAppConfig.languageFunc(text: "about_Use_custom_domain_address") {
+            let textKey = PTAppConfig.languageFunc(text: "alert_Enter_domain")
             let domain = AppDelegate.appDelegate()!.appConfig.customDomain
-            UIAlertController.base_textfield_alertVC(title:textKey,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey], textFieldTexts: [domain], keyboardType: [.default],textFieldDelegate: self) { result in
+            UIAlertController.base_textfield_alertVC(title:textKey,titleColor: .gobalTextColor,okBtn: PTAppConfig.languageFunc(text: "button_Confirm"), cancelBtn: PTAppConfig.languageFunc(text: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey], textFieldTexts: [domain], keyboardType: [.default],textFieldDelegate: self) { result in
                 let newDomain:String? = result[textKey]!
                 if (newDomain ?? "").stringIsEmpty() || !(newDomain ?? "").isURL() {
-                    PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Domain_error"))
+                    PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Domain_error"))
                 } else {
                     AppDelegate.appDelegate()!.appConfig.customDomain = newDomain!
                     self.showDetail()
                 }
             }
-        } else if itemRow.title == PTLanguage.share.text(forKey: "about_GetAPIAIToken") {
+        } else if itemRow.title == PTAppConfig.languageFunc(text: "about_GetAPIAIToken") {
             let url = URL(string: getApiUrl)!
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
         } else if itemRow.title == SettingGithub {
             let url = URL(string: myGithubUrl)!
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
-        } else if itemRow.title == PTLanguage.share.text(forKey: "about_Forum") {
+        } else if itemRow.title == PTAppConfig.languageFunc(text: "about_Forum") {
             let url = URL(string: projectGithubUrl)!
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
-        } else if itemRow.title == PTLanguage.share.text(forKey: "about_Share") {
+        } else if itemRow.title == PTAppConfig.languageFunc(text: "about_Share") {
             let title = kAppName!
             let content = "Look at me!!!!!!!"
             let shareLink = projectGithubUrl
@@ -968,10 +968,10 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
             } else {
                 self.present(activityViewController, animated: true, completion: nil)
             }
-        } else if itemRow.title == PTLanguage.share.text(forKey: "about_Rate") {
+        } else if itemRow.title == PTAppConfig.languageFunc(text: "about_Rate") {
             PTAppStoreFunction.rateApp(appid: AppAppStoreID)
-        } else if itemRow.title == PTLanguage.share.text(forKey: "about_Main_Speech") {
-            self.languagePicker.title = PTLanguage.share.text(forKey: "about_Main_Speech")
+        } else if itemRow.title == PTAppConfig.languageFunc(text: "about_Main_Speech") {
+            self.languagePicker.title = PTAppConfig.languageFunc(text: "about_Main_Speech")
             self.languagePicker.selectValue = AppDelegate.appDelegate()!.appConfig.language
             self.languagePicker.dataSourceArr = AppDelegate.appDelegate()!.appConfig.languagePickerData
             self.languagePicker.show()
@@ -979,8 +979,8 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                 AppDelegate.appDelegate()!.appConfig.language = OSSVoiceEnum.allCases[route!.index].rawValue
                 self.showDetail()
             }
-        } else if itemRow.title == PTLanguage.share.text(forKey: "about_Language") {
-            self.languagePicker.title = PTLanguage.share.text(forKey: "about_Language")
+        } else if itemRow.title == PTAppConfig.languageFunc(text: "about_Language") {
+            self.languagePicker.title = PTAppConfig.languageFunc(text: "about_Language")
             self.languagePicker.selectValue = self.currentSelectedLanguage
             self.languagePicker.dataSourceArr = LanguageKey.allNames
             self.languagePicker.show()
@@ -988,13 +988,13 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                 self.currentSelectedLanguage = LanguageKey.allValues[route!.index].desc
                 PTLanguage.share.language = LanguageKey.allValues[route!.index].rawValue
             }
-        } else if itemRow.title == PTLanguage.share.text(forKey: "about_Main_Theme") {
+        } else if itemRow.title == PTAppConfig.languageFunc(text: "about_Main_Theme") {
             let vc = PTDarkModeControl()
             self.navigationController?.pushViewController(vc)
             vc.themeSetBlock = {
                 self.showDetail()
             }
-        } else if itemRow.title == PTLanguage.share.text(forKey: "about_User_icon") {
+        } else if itemRow.title == PTAppConfig.languageFunc(text: "about_User_icon") {
             let status = PHPhotoLibrary.authorizationStatus()
             if status == .notDetermined {
                 PHPhotoLibrary.requestAuthorization { blockStatus in
@@ -1007,16 +1007,16 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
             } else if status == .authorized {
                 self.enterPhotos(string: itemRow.title)
             } else if status == .denied {
-                let messageString = String(format: PTLanguage.share.text(forKey: "alert_Go_to_photo_setting"), kAppName!)
+                let messageString = String(format: PTAppConfig.languageFunc(text: "alert_Go_to_photo_setting"), kAppName!)
                 PTBaseViewController.gobal_drop(title: messageString)
             } else {
-                PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_No_photo_library"))
+                PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_No_photo_library"))
             }
-        } else if itemRow.title == PTLanguage.share.text(forKey: "about_User_name") {
+        } else if itemRow.title == PTAppConfig.languageFunc(text: "about_User_name") {
             PTGCDManager.gcdAfter(time: 0.5) {
-                let title = PTLanguage.share.text(forKey: "alert_Name_edit_title")
-                let placeHolder = PTLanguage.share.text(forKey: "alert_Name_edit_placeholder")
-                UIAlertController.base_textfield_alertVC(title:title,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [placeHolder], textFieldTexts: [AppDelegate.appDelegate()!.appConfig.userName], keyboardType: [.default],textFieldDelegate: self) { result in
+                let title = PTAppConfig.languageFunc(text: "alert_Name_edit_title")
+                let placeHolder = PTAppConfig.languageFunc(text: "alert_Name_edit_placeholder")
+                UIAlertController.base_textfield_alertVC(title:title,titleColor: .gobalTextColor,okBtn: PTAppConfig.languageFunc(text: "button_Confirm"), cancelBtn: PTAppConfig.languageFunc(text: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [placeHolder], textFieldTexts: [AppDelegate.appDelegate()!.appConfig.userName], keyboardType: [.default],textFieldDelegate: self) { result in
                     let userName:String? = result[placeHolder]!
                     if !(userName ?? "").stringIsEmpty() {
                         AppDelegate.appDelegate()?.appConfig.userName = userName!
@@ -1026,14 +1026,14 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                             self.cleanChatListBlock!()
                         }
                     } else {
-                        PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Input_error"))
+                        PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Input_error"))
                     }
                 }
             }
-        } else if itemRow.title == PTLanguage.share.text(forKey: "about_AI_name") {
+        } else if itemRow.title == PTAppConfig.languageFunc(text: "about_AI_name") {
             PTGCDManager.gcdAfter(time: 0.5) {
-                let title = PTLanguage.share.text(forKey: "alert_AI_name_edit")
-                UIAlertController.base_textfield_alertVC(title:title,titleColor: .gobalTextColor,okBtn: PTLanguage.share.text(forKey: "button_Confirm"), cancelBtn: PTLanguage.share.text(forKey: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [title], textFieldTexts: [AppDelegate.appDelegate()!.appConfig.aiName], keyboardType: [.default],textFieldDelegate: self) { result in
+                let title = PTAppConfig.languageFunc(text: "alert_AI_name_edit")
+                UIAlertController.base_textfield_alertVC(title:title,titleColor: .gobalTextColor,okBtn: PTAppConfig.languageFunc(text: "button_Confirm"), cancelBtn: PTAppConfig.languageFunc(text: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [title], textFieldTexts: [AppDelegate.appDelegate()!.appConfig.aiName], keyboardType: [.default],textFieldDelegate: self) { result in
                     let userName:String? = result[title]!
                     if !(userName ?? "").stringIsEmpty() {
                         AppDelegate.appDelegate()?.appConfig.aiName = userName!
@@ -1043,21 +1043,21 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                             self.cleanChatListBlock!()
                         }
                     } else {
-                        PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Input_error"))
+                        PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Input_error"))
                     }
                 }
             }
-        } else if itemRow.title == PTLanguage.share.text(forKey: "about_Delete_all_voice_file") {
-            UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "chat_Delete_all_voice_file"),msgColor: .gobalTextColor,okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
+        } else if itemRow.title == PTAppConfig.languageFunc(text: "about_Delete_all_voice_file") {
+            UIAlertController.base_alertVC(title: PTAppConfig.languageFunc(text: "alert_Info"),titleColor: .gobalTextColor,msg: PTAppConfig.languageFunc(text: "chat_Delete_all_voice_file"),msgColor: .gobalTextColor,okBtns: [PTAppConfig.languageFunc(text: "button_Confirm")],cancelBtn: PTAppConfig.languageFunc(text: "button_Cancel")) {
                 
             } moreBtn: { index, title in
                 let speechKit = OSSSpeech.shared
                 speechKit.delegate = self
                 speechKit.deleteVoiceFolderItem(url: nil)
             }
-        } else if itemRow.title == PTLanguage.share.text(forKey: "about_Draw_image_size") {
+        } else if itemRow.title == PTAppConfig.languageFunc(text: "about_Draw_image_size") {
             let imageSize = AppDelegate.appDelegate()!.appConfig.aiDrawSize
-            self.languagePicker.title = PTLanguage.share.text(forKey: "about_Language")
+            self.languagePicker.title = PTAppConfig.languageFunc(text: "about_Language")
             self.languagePicker.selectValue = "\(String(format: "%.0f", imageSize.width))x\(String(format: "%.0f", imageSize.height))"
             self.languagePicker.dataSourceArr = AppDelegate.appDelegate()?.appConfig.imageSizeArray
             self.languagePicker.show()
@@ -1072,9 +1072,9 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                 }
                 self.showDetail()
             }
-        } else if itemRow.title == PTLanguage.share.text(forKey: "chat_Get_image_count") {
+        } else if itemRow.title == PTAppConfig.languageFunc(text: "chat_Get_image_count") {
             let imageCount = AppDelegate.appDelegate()!.appConfig.getImageCount
-            self.languagePicker.title = PTLanguage.share.text(forKey: "chat_Get_image_count")
+            self.languagePicker.title = PTAppConfig.languageFunc(text: "chat_Get_image_count")
             self.languagePicker.selectValue = "\(imageCount)"
             self.languagePicker.dataSourceArr = AppDelegate.appDelegate()?.appConfig.getImageCountPickerData
             self.languagePicker.show()
@@ -1082,7 +1082,7 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                 AppDelegate.appDelegate()?.appConfig.getImageCount = (AppDelegate.appDelegate()?.appConfig.getImageCountPickerData[route!.index].int)!
                 self.showDetail()
             }
-        } else if itemRow.title == PTLanguage.share.text(forKey: "draw_Reference") {
+        } else if itemRow.title == PTAppConfig.languageFunc(text: "draw_Reference") {
             let status = PHPhotoLibrary.authorizationStatus()
             if status == .notDetermined {
                 PHPhotoLibrary.requestAuthorization { blockStatus in
@@ -1095,25 +1095,25 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
             } else if status == .authorized {
                 self.enterPhotos(string: itemRow.title)
             } else if status == .denied {
-                let messageString = String(format: PTLanguage.share.text(forKey: "alert_Go_to_photo_setting"), kAppName!)
+                let messageString = String(format: PTAppConfig.languageFunc(text: "alert_Go_to_photo_setting"), kAppName!)
                 PTBaseViewController.gobal_drop(title: messageString)
             } else {
-                PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_No_photo_library"))
+                PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_No_photo_library"))
             }
-        } else if itemRow.title == PTLanguage.share.text(forKey: "setting_Reset") {
-            UIAlertController.base_alertVC(title: PTLanguage.share.text(forKey: "alert_Info"),titleColor: .gobalTextColor,msg: PTLanguage.share.text(forKey: "alert_Reset_all_setting"),msgColor: .gobalTextColor,okBtns: [PTLanguage.share.text(forKey: "button_Confirm")],cancelBtn: PTLanguage.share.text(forKey: "button_Cancel")) {
+        } else if itemRow.title == PTAppConfig.languageFunc(text: "setting_Reset") {
+            UIAlertController.base_alertVC(title: PTAppConfig.languageFunc(text: "alert_Info"),titleColor: .gobalTextColor,msg: PTAppConfig.languageFunc(text: "alert_Reset_all_setting"),msgColor: .gobalTextColor,okBtns: [PTAppConfig.languageFunc(text: "button_Confirm")],cancelBtn: PTAppConfig.languageFunc(text: "button_Cancel")) {
                 
             } moreBtn: { index, title in
                 PTGCDManager.gcdMain {
-                    SwiftSpinner.show(PTLanguage.share.text(forKey: "about_Reset_ing"))
+                    SwiftSpinner.show(PTAppConfig.languageFunc(text: "about_Reset_ing"))
                     AppDelegate.appDelegate()!.appConfig.mobileDataReset(delegate:self) {
-                        SwiftSpinner.show(PTLanguage.share.text(forKey: "about_Reset_chat"))
+                        SwiftSpinner.show(PTAppConfig.languageFunc(text: "about_Reset_chat"))
                     } resetChat: {
-                        SwiftSpinner.show(PTLanguage.share.text(forKey: "about_Reset_photo"))
+                        SwiftSpinner.show(PTAppConfig.languageFunc(text: "about_Reset_photo"))
                     } resetVoiceFile: {
-                        SwiftSpinner.show(PTLanguage.share.text(forKey: "about_Reset_voice"))
+                        SwiftSpinner.show(PTAppConfig.languageFunc(text: "about_Reset_voice"))
                     } resetImage: {
-                        SwiftSpinner.show(PTLanguage.share.text(forKey: "about_Reset_done"))
+                        SwiftSpinner.show(PTAppConfig.languageFunc(text: "about_Reset_done"))
 
                         PTGCDManager.gcdAfter(time: 1) {
                             SwiftSpinner.hide() {
@@ -1126,10 +1126,10 @@ extension PTSettingListViewController:UICollectionViewDelegate,UICollectionViewD
                     }
                 }
             }
-        } else if itemRow.title == PTLanguage.share.text(forKey: "about_Help") {
+        } else if itemRow.title == PTAppConfig.languageFunc(text: "about_Help") {
             let vc = PTHelpViewController()
             self.navigationController?.pushViewController(vc, animated: true)
-        } else if itemRow.title == PTLanguage.share.text(forKey: "about_Local_model") {
+        } else if itemRow.title == PTAppConfig.languageFunc(text: "about_Local_model") {
             let vc = PTLocalFileViewController()
             self.navigationController?.pushViewController(vc)
         }
@@ -1148,7 +1148,7 @@ extension PTSettingListViewController:OSSSpeechDelegate {
     
     func deleteVoiceFile(withFinish finish: Bool, withError error: Error?) {
         if finish {
-            PTBaseViewController.gobal_drop(title: PTLanguage.share.text(forKey: "alert_Delete_done"))
+            PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Delete_done"))
         } else {
             PTBaseViewController.gobal_drop(title: error!.localizedDescription)
         }
