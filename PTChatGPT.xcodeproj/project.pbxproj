@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		55024D1429F0E7D000244E44 /* KMFloatingPanelLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55024D1329F0E7D000244E44 /* KMFloatingPanelLayout.swift */; };
 		5503C51629CB273A00B00BE1 /* MessageKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5503C51529CB273A00B00BE1 /* MessageKit */; };
 		5512AB7C29B470310059D840 /* PTAudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5512AB7B29B470310059D840 /* PTAudioPlayer.swift */; };
 		5514B37129B9CBFD00890161 /* PTChatCustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5514B37029B9CBFD00890161 /* PTChatCustomCell.swift */; };
@@ -102,7 +101,6 @@
 
 /* Begin PBXFileReference section */
 		372877C61B4F76BA38F0C55D /* Pods_PTChatGPT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PTChatGPT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		55024D1329F0E7D000244E44 /* KMFloatingPanelLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KMFloatingPanelLayout.swift; sourceTree = "<group>"; };
 		5512AB7B29B470310059D840 /* PTAudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTAudioPlayer.swift; sourceTree = "<group>"; };
 		5514B37029B9CBFD00890161 /* PTChatCustomCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTChatCustomCell.swift; sourceTree = "<group>"; };
 		5514B37329B9D50D00890161 /* PTChatModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTChatModel.swift; sourceTree = "<group>"; };
@@ -252,7 +250,6 @@
 		55024D1129F0E17E00244E44 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				55024D1329F0E7D000244E44 /* KMFloatingPanelLayout.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -646,6 +643,7 @@
 				55A5D71229B1D23D00DCA096 /* Resources */,
 				84ECCE16EC8C5340A0C59EA8 /* [CP] Embed Pods Frameworks */,
 				55278F2E29BB753E00615B0D /* ShellScript */,
+				B179F85C1F9AC83F691A3F36 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -786,6 +784,23 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PTChatGPT/Pods-PTChatGPT-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		B179F85C1F9AC83F691A3F36 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PTChatGPT/Pods-PTChatGPT-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PTChatGPT/Pods-PTChatGPT-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PTChatGPT/Pods-PTChatGPT-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -829,7 +844,6 @@
 				55A5D7FE29B1EEF400DCA096 /* PTChatData.swift in Sources */,
 				55F7A65D29D4012B00CF6272 /* PTSuggestionControl.swift in Sources */,
 				552A609F29D831BD00239210 /* PTAICompletionsModel.swift in Sources */,
-				55024D1429F0E7D000244E44 /* KMFloatingPanelLayout.swift in Sources */,
 				55A5D71829B1D23D00DCA096 /* AppDelegate.swift in Sources */,
 				5554FE9129DFE99400C29F8A /* PTCostMainModel.swift in Sources */,
 				5514B38729BAE76E00890161 /* PTShareItem.swift in Sources */,
@@ -1035,7 +1049,7 @@
 				CODE_SIGN_ENTITLEMENTS = PTChatGPT/PTChatGPT.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = C9R984N453;
+				DEVELOPMENT_TEAM = K738QG676J;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = PTChatGPT/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
@@ -1054,7 +1068,7 @@
 				);
 				MARKETING_VERSION = 1.0.12;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.hoang.chat;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yd.chat;
 				PRODUCT_NAME = "Chat走啦";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -1075,7 +1089,7 @@
 				CODE_SIGN_ENTITLEMENTS = PTChatGPT/PTChatGPT.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = C9R984N453;
+				DEVELOPMENT_TEAM = K738QG676J;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = PTChatGPT/Info.plist;
@@ -1094,7 +1108,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.12;
-				PRODUCT_BUNDLE_IDENTIFIER = com.hoang.chat;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yd.chat;
 				PRODUCT_NAME = "Chat走啦";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;

@@ -203,7 +203,7 @@ class PTChatMasterControl: PTChatBaseViewController {
                     if arr?.count == 0 {
                         let baseSub = PTSegHistoryModel()
                         baseSub.keyName = "Base"
-                        AppDelegate.appDelegate()!.appConfig.setChatData = [baseSub.toJSON()!]
+                        AppDelegate.appDelegate()!.appConfig.setChatData = [baseSub.kj.JSONObject()]
                     } else {
                         AppDelegate.appDelegate()!.appConfig.setChatData = arr!.kj.JSONObjectArray()
                     }

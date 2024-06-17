@@ -42,7 +42,7 @@ class PTLocalFileViewController: PTChatBaseViewController {
 
         let cellSize = (screenW - 40) / 3
         
-        group = UICollectionView.girdCollectionLayout(data: sectionModel.rows, itemHeight: cellSize,cellRowCount: 3,originalX: 10,contentTopAndBottom: 10,cellLeadingSpace: 10,cellTrailingSpace: 10)
+        group = UICollectionView.girdCollectionLayout(data: sectionModel.rows, itemHeight: cellSize,cellRowCount: 3,originalX: 10,topContentSpace: 10,bottomContentSpace: 10,cellLeadingSpace: 10,cellTrailingSpace: 10)
         
         let sectionInsets = NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 0)
         let laySection = NSCollectionLayoutSection(group: group)

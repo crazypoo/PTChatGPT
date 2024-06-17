@@ -17,7 +17,12 @@ post_install do |installer|
   end
 end
 
-target 'PTChatGPT' do  
+#添加此处是因为harbeth库无法添加
+pre_install do |installer|
+Pod::Installer::Xcode::TargetValidator.send(:define_method, :verify_no_static_framework_transitive_dependencies) {}
+end
+
+target 'PTChatGPT' do
   pod 'FLEX', :configurations => ['Debug']
   pod 'InAppViewDebugger', :configurations => ['Debug']
   pod 'LookinServer', :configurations => ['Debug']
@@ -44,7 +49,7 @@ target 'PTChatGPT' do
   pod 'PooTools/GCDWebServer', :git => 'https://github.com/crazypoo/PTools.git'
   pod 'PooTools/DEBUG', :git => 'https://github.com/crazypoo/PTools.git'
   pod 'PooTools/ListEmptyData', :git => 'https://github.com/crazypoo/PTools.git'
-  pod 'PooTools/FloatPanel', :git => 'https://github.com/crazypoo/PTools.git'
+  pod 'PooTools/FloatingPanel', :git => 'https://github.com/crazypoo/PTools.git'
   pod 'PooTools/NetWork', :git => 'https://github.com/crazypoo/PTools.git'
   pod 'PooTools/SwipeCell', :git => 'https://github.com/crazypoo/PTools.git'
   pod 'PooTools/NotificationBanner', :git => 'https://github.com/crazypoo/PTools.git'
@@ -58,8 +63,8 @@ target 'PTChatGPT' do
 #  https://github.com/dmrschmidt/DSWaveformImage
   pod 'SwiftLint'
   pod 'Swinject'
-  pod 'Brightroom/Engine'
-  pod 'Brightroom/UI-Classic'
-  pod 'Brightroom/UI-Crop'
+#  pod 'Brightroom/Engine'
+#  pod 'Brightroom/UI-Classic'
+#  pod 'Brightroom/UI-Crop'
 
 end

@@ -77,8 +77,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         #if DEBUG
         self.window = TouchInspectorWindow(frame: UIScreen.main.bounds)
-        (self.window as! TouchInspectorWindow).showTouches = self.devFunction.touchesType
-        (self.window as! TouchInspectorWindow).showHitTesting = self.devFunction.touchesTestHit
+        (self.window as! TouchInspectorWindow).showTouches = PTCoreUserDefultsWrapper.AppTouchInspectShow
+        (self.window as! TouchInspectorWindow).showHitTesting = PTCoreUserDefultsWrapper.AppTouchInspectShowHits
         #else
         self.window = UIWindow.init(frame: UIScreen.main.bounds)
         #endif
@@ -98,47 +98,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             skipFont = 30
         }
         
-        PTLaunchAdMonitor.showAt(path: ["https://avatars.githubusercontent.com/u/1111976?v=4"], onView: self.window!, timeInterval: 2, param: ["URLS":myGithubUrl], year: "2023", skipFont: .appfont(size: skipFont), comName: "Crazypoo", comNameFont: .appfont(size: fontSize)) {
-        }
+        PTLaunchAdMonitor.showAt(path:  ["https://avatars.githubusercontent.com/u/1111976?v=4"], onView: self.window!, timeInterval: 2, param: ["URLS":myGithubUrl], skipFont: .appfont(size: skipFont), ltdString: "Crazypoo 2024", comNameFont: .appfont(size: fontSize), callBack: {
+            
+        })
                 
 #if DEBUG
-        self.devFunction.createLabBtn()
-        self.devFunction.goToAppDevVC = {
-            let vc = PTDebugViewController()
-            let nav = UINavigationController(rootViewController: vc)
-            PTUtils.getCurrentVC().present(nav, animated: true)
-        }
-        self.devFunction.flex = {
-            if FLEXManager.shared.isHidden {
-                FLEXManager.shared.showExplorer()
-            } else {
-                FLEXManager.shared.hideExplorer()
-            }
-        }
-        self.devFunction.inApp = {
-            InAppViewDebugger.present()
-        }
-        self.devFunction.flexBool = { show in
-            if show {
-                FLEXManager.shared.showExplorer()
-            } else {
-                FLEXManager.shared.hideExplorer()
-            }
-        }
-        self.devFunction.HyperioniOS = {
-            HyperionManager.sharedInstance().attach(to: self.window)
-            HyperionManager.sharedInstance().togglePluginDrawer()
-        }
-        self.devFunction.TestHitShow = { show in
-            if self.window is TouchInspectorWindow {
-                (self.window as! TouchInspectorWindow).showHitTesting = show
-            }
-        }
-        self.devFunction.TestHitTouchesShow = { show in
-            if self.window is TouchInspectorWindow {
-                (self.window as! TouchInspectorWindow).showTouches = show
-            }
-        }
+        let lcm = LocalConsole.shared
+        lcm.isVisiable = PTCoreUserDefultsWrapper.AppDebugMode
 #endif
         
 //        PTGCDManager.gcdAfter(time: 10) {

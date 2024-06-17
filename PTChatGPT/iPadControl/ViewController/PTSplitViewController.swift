@@ -60,7 +60,9 @@ class PTSplitViewController: UISplitViewController {
                     self.currentChatViewController.showKeyboard()
                     NotificationCenter.default.post(name: NSNotification.Name(rawValue: nSetKey), object: nil)
                 }
-                PTFloatingPanelFuction.floatPanel_VC(vc:keySetting,panGesDelegate:self,currentViewController:self) {
+                let sheet = PTSheetViewController(controller: keySetting,sizes: [.percent(0.8)])
+                UIViewController.currentPresentToSheet(vc: sheet)
+                PTGCDManager.gcdAfter(time: 0.35) {
                     self.currentChatViewController.showKeyboard()
                     NotificationCenter.default.post(name: NSNotification.Name(rawValue: nSetKey), object: nil)
                 }

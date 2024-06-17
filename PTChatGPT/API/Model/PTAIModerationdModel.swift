@@ -8,22 +8,11 @@
 
 import UIKit
 import PooTools
-import HandyJSON
+import KakaJSON
 
 class PTAIModerationdCategory_scores :PTBaseModel {
 
     required init() {}
-
-    override func mapping(mapper: HelpingMapper) {
-        mapper <<<
-            sexualMinors <-- "sexual/minors"
-        mapper <<<
-            hateThreatening <-- "hate/threatening"
-        mapper <<<
-            selfHarm <-- "self-harm"
-        mapper <<<
-            violenceGraphic <-- "violence/graphic"
-    }
     
     var sexual: Double = 0.0
     var sexualMinors: Double = 0.0
@@ -33,21 +22,22 @@ class PTAIModerationdCategory_scores :PTBaseModel {
     var violence: Double = 0.0
     var violenceGraphic: Double = 0.0
 
+    open override func kj_modelKey(from property: KakaJSON.Property) -> ModelPropertyKey {
+        switch property.name {
+        case "sexualMinors":
+            return "sexual/minors"
+        case "hateThreatening":
+            return "hate/threatening"
+        case "selfHarm":
+            return "self-harm"
+        default:
+            return property.name
+        }
+    }
 }
 
 class PTAIModerationdCategories :PTBaseModel {
     required init() {}
-
-    override func mapping(mapper: HelpingMapper) {
-        mapper <<<
-            sexualMinors <-- "sexual/minors"
-        mapper <<<
-            hateThreatening <-- "hate/threatening"
-        mapper <<<
-            selfHarm <-- "self-harm"
-        mapper <<<
-            violenceGraphic <-- "violence/graphic"
-    }
 
     var sexual: Bool = false
     var sexualMinors: Bool = false
@@ -56,6 +46,21 @@ class PTAIModerationdCategories :PTBaseModel {
     var selfHarm: Bool = false
     var violence: Bool = false
     var violenceGraphic: Bool = false
+    
+    open override func kj_modelKey(from property: KakaJSON.Property) -> ModelPropertyKey {
+        switch property.name {
+        case "sexualMinors":
+            return "sexual/minors"
+        case "hateThreatening":
+            return "hate/threatening"
+        case "selfHarm":
+            return "self-harm"
+        case "violenceGraphic":
+            return "violence/graphic"
+        default:
+            return property.name
+        }
+    }
 }
 
 class PTAIModerationdResults :PTBaseModel {

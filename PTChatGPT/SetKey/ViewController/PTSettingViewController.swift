@@ -10,7 +10,6 @@ import PooTools
 import SnapKit
 import SwifterSwift
 import BRPickerView
-import FloatingPanel
 import AttributedString
 
 class PTSettingViewController: PTChatBaseViewController {
@@ -232,12 +231,5 @@ extension PTSettingViewController:UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.checkTextField(textField: textField)
         return true
-    }
-}
-
-extension PTSettingViewController {
-    override func floatingPanel(_ fpc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout {
-        let layout = KMFloatingPanelLayout()
-        return layout
     }
 }

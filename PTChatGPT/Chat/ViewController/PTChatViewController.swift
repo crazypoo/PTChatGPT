@@ -640,7 +640,7 @@ class PTChatViewController: MessagesViewController {
                     if arr?.count == 0 {
                         let baseSub = PTSegHistoryModel()
                         baseSub.keyName = "Base"
-                        AppDelegate.appDelegate()!.appConfig.setChatData = [baseSub.toJSON()!]
+                        AppDelegate.appDelegate()!.appConfig.setChatData = [baseSub.kj.JSONObject()]
                         self.historyModel = baseSub
                     } else {
                         
@@ -1042,7 +1042,9 @@ class PTChatViewController: MessagesViewController {
         keySetting.skipBlock = {
             self.firstCoach()
         }
-        PTFloatingPanelFuction.floatPanel_VC(vc:keySetting,panGesDelegate:self,currentViewController:self) {
+        let sheet = PTSheetViewController(controller: keySetting,sizes: [.percent(0.8)])
+        UIViewController.currentPresentToSheet(vc: sheet)
+        PTGCDManager.gcdAfter(time: 0.35) {
             self.firstCoach()
         }
         #else
@@ -1053,7 +1055,9 @@ class PTChatViewController: MessagesViewController {
                 keySetting.skipBlock = {
                     self.firstCoach()
                 }
-                PTFloatingPanelFuction.floatPanel_VC(vc:keySetting,panGesDelegate:self,currentViewController:self) {
+                let sheet = PTSheetViewController(controller: keySetting,sizes: [.percent(0.8)])
+                UIViewController.currentPresentToSheet(vc: sheet)
+                PTGCDManager.gcdAfter(time: 0.35) {
                     self.firstCoach()
                 }
             } else {

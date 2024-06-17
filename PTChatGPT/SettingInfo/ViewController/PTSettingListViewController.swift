@@ -10,41 +10,17 @@ import UIKit
 import PooTools
 import BRPickerView
 import Photos
-import FloatingPanel
 import ZXNavigationBar
 import FDFullscreenPopGesture
 import SwiftSpinner
 import GCDWebServer
 import AttributedString
-import Brightroom
+//import Brightroom
 
 //MARK: iCloud
 let SettingCloudString = "iCloud"
 let SettingGithub = PTAppConfig.languageFunc(text: "Github")
 let SettingHelp = PTAppConfig.languageFunc(text: "about_Help")
-
-class PTChatPanelLayout: FloatingPanelLayout {
-    
-    public var viewHeight:CGFloat = 18
-    
-    open var initialState: FloatingPanelState {
-        .full
-    }
-
-    open var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring]  {
-        [
-            .full: FloatingPanelLayoutAnchor(absoluteInset: CGFloat.kSCREEN_HEIGHT - viewHeight, edge: .top, referenceGuide: .superview)
-        ]
-    }
-
-    open var position: FloatingPanelPosition {
-        .bottom
-    }
-
-    open func backdropAlpha(for state: FloatingPanelState) -> CGFloat {
-        return 0.45
-    }
-}
 
 class PTSettingListViewController: PTChatBaseViewController {
 
@@ -594,13 +570,13 @@ class PTSettingListViewController: PTChatBaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        var filters = [FilterColorCube]()
-        self.lutFileNames.enumerated().forEach { index,value in
-            if let filter = self.filterCubes(name: value, filterIdentifier: "filter_\(index)") {
-                filters.append(filter)
-            }
-        }
-        ColorCubeStorage.default.filters = filters
+//        var filters = [FilterColorCube]()
+//        self.lutFileNames.enumerated().forEach { index,value in
+//            if let filter = self.filterCubes(name: value, filterIdentifier: "filter_\(index)") {
+//                filters.append(filter)
+//            }
+//        }
+//        ColorCubeStorage.default.filters = filters
 
         NotificationCenter.default.addObserver(self, selector: #selector(self.reloadCellData), name: NSNotification.Name(nRefreshSetting), object: nil)
         
@@ -638,7 +614,7 @@ class PTSettingListViewController: PTChatBaseViewController {
             }
         }
         
-        XMNetWorkStatus.shared.netWork { status in
+        PTNetWorkStatus.shared.netWork { status in
             switch status {
             case .wifi:
                 self.canOpenWebServer = true
@@ -651,22 +627,22 @@ class PTSettingListViewController: PTChatBaseViewController {
         }
     }
     
-    func filterCubes(name:String,filterIdentifier:String) -> FilterColorCube? {
-        if let path = Bundle.main.path(forResource: name, ofType: "png") {
-            do {
-                let data = try Data(contentsOf: URL(fileURLWithPath: path))
-                let json = UIImage(data: data)
-                
-                let filter = FilterColorCube(name: name, identifier: filterIdentifier, lutImage: ImageSource(image: json!), dimension: 64)
-                return filter
-            } catch {
-                PTNSLogConsole("Error reading JSON file: \(error)")
-                return nil
-            }
-        } else {
-            return nil
-        }
-    }
+//    func filterCubes(name:String,filterIdentifier:String) -> FilterColorCube? {
+//        if let path = Bundle.main.path(forResource: name, ofType: "png") {
+//            do {
+//                let data = try Data(contentsOf: URL(fileURLWithPath: path))
+//                let json = UIImage(data: data)
+//                
+//                let filter = FilterColorCube(name: name, identifier: filterIdentifier, lutImage: ImageSource(image: json!), dimension: 64)
+//                return filter
+//            } catch {
+//                PTNSLogConsole("Error reading JSON file: \(error)")
+//                return nil
+//            }
+//        } else {
+//            return nil
+//        }
+//    }
 
     func reloadCellData() {
         self.downloadInfo = AppDelegate.appDelegate()!.appConfig.getDownloadInfomation()
@@ -1163,11 +1139,11 @@ extension PTSettingListViewController:OSSSpeechDelegate {
 }
 
 extension PTSettingListViewController {
-    override public func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout {
-        let layout = PTChatPanelLayout()
-        layout.viewHeight = CGFloat.kTabbarSaveAreaHeight + CGFloat.ScaleW(w: 44) + CGFloat.ScaleW(w: 10) + CGFloat.ScaleW(w: 44) * 3 + CGFloat.ScaleW(w: 34) + CGFloat.ScaleW(w: 10) + CGFloat.ScaleW(w: 24) + CGFloat.ScaleW(w: 13)
-        return layout
-    }
+//    override public func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout {
+//        let layout = PTChatPanelLayout()
+//        layout.viewHeight = CGFloat.kTabbarSaveAreaHeight + CGFloat.ScaleW(w: 44) + CGFloat.ScaleW(w: 10) + CGFloat.ScaleW(w: 44) * 3 + CGFloat.ScaleW(w: 34) + CGFloat.ScaleW(w: 10) + CGFloat.ScaleW(w: 24) + CGFloat.ScaleW(w: 13)
+//        return layout
+//    }
 }
 
 extension PTSettingListViewController:GCDWebUploaderDelegate {

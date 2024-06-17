@@ -746,7 +746,7 @@ class PTAppConfig {
                         let baseSub = PTSegHistoryModel()
                         baseSub.keyName = "Base"
                         
-                        let createBaseData = baseSub.toJSON()!
+                        let createBaseData = baseSub.kj.JSONObject()
                         
                         self.setChatData = [createBaseData]
                         
@@ -756,7 +756,7 @@ class PTAppConfig {
                     let baseSub = PTSegHistoryModel()
                     baseSub.keyName = "Base"
                     
-                    let createBaseData = baseSub.toJSON()!
+                    let createBaseData = baseSub.kj.JSONObject()
                     
                     self.setChatData = [createBaseData]
 
@@ -774,7 +774,7 @@ class PTAppConfig {
                     let baseSub = PTSegHistoryModel()
                     baseSub.keyName = "Base"
                     
-                    let createBaseData = baseSub.toJSON()!
+                    let createBaseData = baseSub.kj.JSONObject()
                     
                     self.setChatData = [createBaseData]
 
@@ -844,11 +844,7 @@ class PTAppConfig {
     }
     
     func tagDataArr() -> [PTSegHistoryModel?] {
-        if let models = [PTSegHistoryModel].deserialize(from: self.setChatData) {
-            return models
-        } else {
-            return [PTSegHistoryModel?]()
-        }
+        return self.setChatData.kj.modelArray(PTSegHistoryModel.self)
     }
     
     //MARK: 精选记录
@@ -945,11 +941,7 @@ class PTAppConfig {
     //MARK: 精选数据
     ///精选数据
     func getSaveChatData() -> [PTFavouriteModel?] {
-        if let models = [PTFavouriteModel].deserialize(from: self.favouriteChat) {
-            return models
-        } else {
-            return [PTFavouriteModel?]()
-        }
+        return self.favouriteChat.kj.modelArray(PTFavouriteModel.self)
     }
     
     var totalToken:Double {
@@ -1068,11 +1060,7 @@ class PTAppConfig {
     //MARK: 精选数据
     ///精选数据
     func getCostHistoriaData() -> [PTCostMainModel?] {
-        if let models = [PTCostMainModel].deserialize(from: self.costHistory) {
-            return models
-        } else {
-            return [PTCostMainModel?]()
-        }
+        return self.costHistory.kj.modelArray(PTCostMainModel.self)
     }
     
     //MARK: 下载记录
@@ -1110,9 +1098,9 @@ class PTAppConfig {
                 var packData = [[String:Any]]()
                 
                 if self.canUseStableDiffusionModel() {
-                    packData = [modi.toJSON()!,model1_4.toJSON()!,model1_5.toJSON()!,modelTest.toJSON()!]
+                    packData = [modi.kj.JSONObject(),model1_4.kj.JSONObject(),model1_5.kj.JSONObject(),modelTest.kj.JSONObject()]
                 } else {
-                    packData = [modi.toJSON()!,model1_4.toJSON()!,model1_5.toJSON()!]
+                    packData = [modi.kj.JSONObject(),model1_4.kj.JSONObject(),model1_5.kj.JSONObject()]
                 }
                 self.downloadInfomation = packData
 
@@ -1134,25 +1122,19 @@ class PTAppConfig {
     //MARK: 获取下载模型信息
     ///获取下载模型信息
     func getDownloadInfomation() -> [PTDownloadModelModel?] {
-        if let models = [PTDownloadModelModel].deserialize(from: self.downloadInfomation) {
-            
-            if models.count > 0 {
-                for (index,value) in models.enumerated() {
-                    if !FileManager.pt.judgeFileOrFolderExists(filePath: uploadFilePath.appendingPathComponent(value!.folderName)) {
-                        models[index]?.loadFinish = false
-                    } else {
-                        models[index]?.loadFinish = true
-                    }
-                }
-                self.downloadInfomation = models.kj.JSONObjectArray()
-                if let newModels = [PTDownloadModelModel].deserialize(from: self.downloadInfomation) {
-                    return newModels
+        let models = self.downloadInfomation.kj.modelArray(PTDownloadModelModel.self)
+        if models.count > 0 {
+            for (index,value) in models.enumerated() {
+                if !FileManager.pt.judgeFileOrFolderExists(filePath: uploadFilePath.appendingPathComponent(value.folderName)) {
+                    models[index].loadFinish = false
+                } else {
+                    models[index].loadFinish = true
                 }
             }
-            return models
-        } else {
-            return [PTDownloadModelModel?]()
+            self.downloadInfomation = models.kj.JSONObjectArray()
+            return self.downloadInfomation.kj.modelArray(PTDownloadModelModel.self)
         }
+        return models
     }
     
     let imageControlActions:[String] = {
@@ -1226,7 +1208,7 @@ class PTAppConfig {
             PTGCDManager.gcdAfter(time: 1.5) {
                 let baseSub = PTSegHistoryModel()
                 baseSub.keyName = "Base"
-                let createBaseData = baseSub.toJSON()!
+                let createBaseData = baseSub.kj.JSONObject()
                 self.setChatData = [createBaseData]
                 self.favouriteChat = [[String:Any]]()
                 resetChat()
@@ -1512,9 +1494,9 @@ class PTAppConfig {
     func getJsonFileTags() -> [String] {
         if let jsonData = self.loadJSON(fileName: "SampleJson") {
             var array = [String]()
-            let models = [PTSampleMainModels].deserialize(from: (jsonData["result"] as! NSArray))
-            models!.enumerated().forEach({ index,value in
-                array.append(value!.segmentName)
+            let models = (jsonData["result"] as! NSArray).kj.modelArray(type: PTSampleMainModels.self) as! [PTSampleMainModels]
+            models.enumerated().forEach({ index,value in
+                array.append(value.segmentName)
             })
             return array
         }
@@ -1524,9 +1506,9 @@ class PTAppConfig {
     func getJsonFileModel(index:Int) -> [PTSampleModels] {
         if let jsonData = self.loadJSON(fileName: "SampleJson") {
             var array = [PTSampleModels]()
-            let models = [PTSampleMainModels].deserialize(from: (jsonData["result"] as! NSArray))
-            let subModels = models![index]
-            subModels?.persion.enumerated().forEach({ index,value in
+            let models = (jsonData["result"] as! NSArray).kj.modelArray(type: PTSampleMainModels.self) as! [PTSampleMainModels]
+            let subModels = models[index]
+            subModels.persion.enumerated().forEach({ index,value in
                 let subModel = value
                 subModel.imported = self.tagDataArr().contains(where: {$0!.keyName == value.keyName && $0!.systemContent == value.systemContent})
                 array.append(subModel)

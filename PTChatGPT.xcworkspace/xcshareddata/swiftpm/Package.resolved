@@ -1,4 +1,5 @@
 {
+  "originHash" : "b1ae64cd3aa6107eb4ff8b25aada5416e7cc5ab00a1701f90e41d4e3ec906c9f",
   "pins" : [
     {
       "identity" : "appstoreconnect-swift-sdk",
@@ -46,5 +47,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }

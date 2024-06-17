@@ -110,7 +110,7 @@ extension PTChatApiFunction {
     ///   - sendModel: 消息模型
     func sendChat(sendModel:PTSendChatModel) async throws -> PTReceiveChatModel {
         let path = self.fullUrlPath(path: "/chat/completions")
-        let param = sendModel.toJSON()
+        let param = sendModel.kj.JSONObject()
         
         let result = try await Network.requestApi(needGobal:false,urlStr: path,header:self.baseHeader,parameters: param,modelType: PTReceiveChatModel.self,encoder: JSONEncoding.default)
         return result.customerModel as! PTReceiveChatModel
@@ -151,10 +151,26 @@ completion:@escaping ((_ model:PTImageGeneration?,_ error:AFError?)->Void)) {
                 
                 let baseHeader = HTTPHeaders(["Authorization": "Bearer \(await AppDelegate.appDelegate()!.appConfig.apiToken)","Content-Type": "multipart/form-data; boundary=\(UUID().uuidString)"])
 
-                let model = try await Network.imageUpload(needGobal:false,images: [image],path: path,fileKey: ["image"],parmas: param,header: baseHeader,modelType: PTImageGeneration.self)
-                completion((model.customerModel as! PTImageGeneration),nil)
+                let model = Network.imageUpload(
+                    needGobal:false,
+                    images: [image],
+                    path: path,
+                    fileKey: ["image"],
+                    params: param,
+                    header: baseHeader,
+                    modelType: PTImageGeneration.self
+                )
+                for try await (progress, response) in model {
+                    if let response = response {
+                        // 上传完成，处理响应模型
+                        completion((response.customerModel as! PTImageGeneration),nil)
+                    } else {
+                        // 处理进度更新
+                        PTNSLogConsole("Upload progress: \(progress.fractionCompleted)")
+                    }
+                }
             } catch  {
-                completion(nil,error as! AFError)
+                completion(nil,(error as! AFError))
             }
         }
     }
@@ -191,10 +207,25 @@ completion:@escaping ((_ model:PTImageGeneration?,_ error:AFError?)->Void)) {
                     imagesName = ["image"]
                 }
 
-                let model = try await Network.imageUpload(needGobal:false,images: images,path: path,fileKey: imagesName,parmas: param,header: baseHeader,modelType: PTImageGeneration.self)
-                completion((model.customerModel as! PTImageGeneration),nil)
+                let model = Network.imageUpload(
+                    needGobal:false,
+                    images: images,
+                    path: path,
+                    fileKey: imagesName,
+                    params: param,
+                    header: baseHeader,
+                    modelType: PTImageGeneration.self
+                )
+                for try await (progress, response) in model {
+                    if let response = response {
+                        // 上传完成，处理响应模型
+                        completion((response.customerModel as! PTImageGeneration),nil)
+                    } else {
+                        // 处理进度更新
+                        PTNSLogConsole("Upload progress: \(progress.fractionCompleted)")
+                    }
+                }
             } catch  {
-                
                 completion(nil,AFError.createUploadableFailed(error: error))
             }
         }
