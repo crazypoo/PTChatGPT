@@ -40,51 +40,32 @@ class PTPopoverMenuControl: PTChatBaseViewController {
     }()
 
     var mSections = [PTSection]()
-    func comboLayout()->UICollectionViewCompositionalLayout {
-        let layout = UICollectionViewCompositionalLayout.init { section, environment in
-            self.generateSection(section: section)
-        }
-        layout.register(PTBaseDecorationView_Corner.self, forDecorationViewOfKind: "background")
-        layout.register(PTBaseDecorationView.self, forDecorationViewOfKind: "background_no")
-        return layout
-    }
-    
-    func generateSection(section:NSInteger)->NSCollectionLayoutSection {
-        let sectionModel = mSections[section]
-
-        var group : NSCollectionLayoutGroup
-        let behavior : UICollectionLayoutSectionOrthogonalScrollingBehavior = .continuous
+    lazy var collectionView : PTCollectionView = {
+        let config = PTCollectionViewConfig()
+        config.viewType = .Custom
         
-        var bannerGroupSize : NSCollectionLayoutSize
-        var customers = [NSCollectionLayoutGroupCustomItem]()
-        var groupH:CGFloat = 0
-        sectionModel.rows.enumerated().forEach { (index,model) in
-            let cellHeight:CGFloat = self.popoverCellBaseHeight
-            let customItem = NSCollectionLayoutGroupCustomItem.init(frame: CGRect.init(x: 0, y: groupH, width: self.popoverWidth, height: cellHeight), zIndex: 1000+index)
-            customers.append(customItem)
-            groupH += cellHeight
+        let view = PTCollectionView(viewConfig: config)
+        view.registerClassCells(classs: [PTFusionCell.ID:PTFusionCell.self])
+        view.customerLayout = { sectionIndex,sectionModel in
+            return UICollectionView.girdCollectionLayout(data: sectionModel.rows,groupWidth: self.popoverWidth - 20, itemHeight: self.popoverCellBaseHeight,cellRowCount: 1)
         }
-        bannerGroupSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(self.popoverWidth - 20), heightDimension: NSCollectionLayoutDimension.absolute(groupH))
-        group = NSCollectionLayoutGroup.custom(layoutSize: bannerGroupSize, itemProvider: { layoutEnvironment in
-            customers
-        })
-        
-        let sectionInsets = NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 0)
-        let laySection = NSCollectionLayoutSection(group: group)
-        laySection.orthogonalScrollingBehavior = behavior
-        laySection.contentInsets = sectionInsets
-
-        return laySection
-    }
-
-    lazy var collectionView : UICollectionView = {
-        let view = UICollectionView.init(frame: .zero, collectionViewLayout: self.comboLayout())
-        view.backgroundColor = .clear
-        view.delegate = self
-        view.dataSource = self
+        view.cellInCollection = { collection,sectionModel,indexPath in
+            let itemRow = sectionModel.rows[indexPath.row]
+            let cell = collection.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTFusionCell
+            cell.cellModel = (itemRow.dataModel as! PTFusionCellModel)
+            return cell
+        }
+        view.collectionDidSelect = { collection,sectionModel,indexPath in
+            let itemRow = sectionModel.rows[indexPath.row]
+            let cellModel = (itemRow.dataModel as! PTFusionCellModel)
+            if self.selectActionBlock != nil {
+                self.selectActionBlock!(cellModel.name)
+            }
+            self.returnFrontVC()
+        }
         return view
     }()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -97,57 +78,18 @@ class PTPopoverMenuControl: PTChatBaseViewController {
         self.showDetail()
     }
     
-    func showDetail()
-    {
+    func showDetail() {
         mSections.removeAll()
 
         var rows = [PTRows]()
         self.cellModels.enumerated().forEach { (index,value) in
-            let row_List = PTRows.init(cls: PTFusionCell.self, ID: PTFusionCell.ID, dataModel: value)
+            let row_List = PTRows(ID: PTFusionCell.ID, dataModel: value)
             rows.append(row_List)
         }
         let cellSection = PTSection.init(rows: rows)
         mSections.append(cellSection)
 
-        self.collectionView.pt_register(by: mSections)
-        self.collectionView.reloadData()
-    }
-}
-
-extension PTPopoverMenuControl:UICollectionViewDelegate,UICollectionViewDataSource
-{
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return self.mSections.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.mSections[section].rows.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let itemSec = mSections[indexPath.section]
-        let itemRow = itemSec.rows[indexPath.row]
-        if itemRow.ID == PTFusionCell.ID {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTFusionCell
-            cell.cellModel = (itemRow.dataModel as! PTFusionCellModel)
-//            cell.dataContent.lineView.isHidden = true
-//            cell.dataContent.topLineView.isHidden = indexPath.row == 0 ? true : false
-            return cell
-        } else {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CELL", for: indexPath)
-            cell.backgroundColor = .random
-            return cell
-        }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let itemSec = mSections[indexPath.section]
-        let itemRow = itemSec.rows[indexPath.row]
-        let cellModel = (itemRow.dataModel as! PTFusionCellModel)
-        if self.selectActionBlock != nil {
-            self.selectActionBlock!(cellModel.name)
-        }
-        self.returnFrontVC()
+        self.collectionView.showCollectionDetail(collectionData: mSections)
     }
 }
 

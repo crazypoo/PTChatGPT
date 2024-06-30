@@ -30,163 +30,31 @@ class PTDarkModeControl: PTChatBaseViewController {
     }()
     
     var mSections = [PTSection]()
-    func comboLayout()->UICollectionViewCompositionalLayout {
-        let layout = UICollectionViewCompositionalLayout.init { section, environment in
-            self.generateSection(section: section)
-        }
-        layout.register(PTBaseDecorationView_Corner.self, forDecorationViewOfKind: "background")
-        layout.register(PTBaseDecorationView.self, forDecorationViewOfKind: "background_no")
-        return layout
-    }
     
-    func generateSection(section:NSInteger)->NSCollectionLayoutSection {
-        let sectionModel = mSections[section]
-
-        var group : NSCollectionLayoutGroup
-        let behavior : UICollectionLayoutSectionOrthogonalScrollingBehavior = .continuous
+    lazy var collectionView : PTCollectionView = {
+        let config = PTCollectionViewConfig()
+        config.viewType = .Custom
         
-        var bannerGroupSize : NSCollectionLayoutSize
-        var customers = [NSCollectionLayoutGroupCustomItem]()
-        var groupH:CGFloat = 0
-        var screenW:CGFloat = 0
-        if Gobal_device_info.isPad {
-            screenW = (CGFloat.kSCREEN_WIDTH - iPadSplitMainControl)
-        } else {
-            screenW = CGFloat.kSCREEN_WIDTH
-        }
-        var cellHeight:CGFloat = 0
-        if Gobal_device_info.isPad {
-            cellHeight = 64
-        } else {
-            cellHeight = CGFloat.ScaleW(w: 44)
-        }
-        sectionModel.rows.enumerated().forEach { (index,model) in
-            let cellHeight:CGFloat = cellHeight
-            let customItem = NSCollectionLayoutGroupCustomItem.init(frame: CGRect.init(x: PTAppBaseConfig.share.defaultViewSpace, y: groupH, width: screenW - PTAppBaseConfig.share.defaultViewSpace * 2, height: cellHeight), zIndex: 1000+index)
-            customers.append(customItem)
-            groupH += cellHeight
-        }
-        bannerGroupSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(screenW - PTAppBaseConfig.share.defaultViewSpace * 2), heightDimension: NSCollectionLayoutDimension.absolute(groupH))
-        group = NSCollectionLayoutGroup.custom(layoutSize: bannerGroupSize, itemProvider: { layoutEnvironment in
-            customers
-        })
-        
-        let sectionInsets = NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 0)
-        let laySection = NSCollectionLayoutSection(group: group)
-        laySection.orthogonalScrollingBehavior = behavior
-        laySection.contentInsets = sectionInsets
-
-        if sectionModel.headerID == PTDarkModeHeader.ID {
-            let headerSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(screenW), heightDimension: NSCollectionLayoutDimension.absolute(sectionModel.headerHeight ?? CGFloat.leastNormalMagnitude))
-            let headerItem = NSCollectionLayoutBoundarySupplementaryItem.init(layoutSize: headerSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .topTrailing)
-            
-            let footerSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(screenW), heightDimension: NSCollectionLayoutDimension.absolute(sectionModel.footerHeight ?? CGFloat.leastNormalMagnitude))
-            let footerItem = NSCollectionLayoutBoundarySupplementaryItem.init(layoutSize: footerSize, elementKind: UICollectionView.elementKindSectionFooter, alignment: .bottomTrailing)
-
-            if PTDarkModeOption.isSmartPeeling {
-                laySection.boundarySupplementaryItems = [headerItem,footerItem]
-            } else {
-                laySection.boundarySupplementaryItems = [headerItem]
-            }
-        } else if sectionModel.footerID == PTDarkFollowSystemFooter.ID {
-            let footerSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(screenW), heightDimension: NSCollectionLayoutDimension.absolute(sectionModel.footerHeight ?? CGFloat.leastNormalMagnitude))
-            let footerItem = NSCollectionLayoutBoundarySupplementaryItem.init(layoutSize: footerSize, elementKind: UICollectionView.elementKindSectionFooter, alignment: .bottomTrailing)
-            laySection.boundarySupplementaryItems = [footerItem]
-        }
-        
-        laySection.supplementariesFollowContentInsets = false
-
-        return laySection
-    }
-
-    lazy var collectionView : UICollectionView = {
-        let view = UICollectionView.init(frame: .zero, collectionViewLayout: self.comboLayout())
-        view.backgroundColor = .clear
-        view.delegate = self
-        view.dataSource = self
-        return view
-    }()
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        self.zx_navTitle = PTAppConfig.languageFunc(text: "theme_Title")
-        
-        // Do any additional setup after loading the view.
-        self.view.addSubviews([self.collectionView])
-        self.collectionView.snp.makeConstraints { make in
-            make.left.right.bottom.equalToSuperview()
-            make.top.equalToSuperview().inset(CGFloat.kNavBarHeight_Total)
-        }
-        self.apply()
-    }
-    
-    func showDetail() {
-        mSections.removeAll()
-
-        self.darkModeControlArr.enumerated().forEach { (index,value) in
-            var rows = [PTRows]()
-            value.enumerated().forEach { subIndex,subValue in
-                let row = PTRows(cls:PTFusionCell.self,ID: PTFusionCell.ID,dataModel: subValue)
-                rows.append(row)
-            }
-            switch index {
-            case 0:
-                var sections:PTSection
-                if PTDarkModeOption.isSmartPeeling {
-                    sections = PTSection(headerCls: PTDarkModeHeader.self,headerID: PTDarkModeHeader.ID,footerCls: PTDarkSmartFooter.self,footerID: PTDarkSmartFooter.ID,footerHeight: PTDarkSmartFooter.footerTotalHeight,headerHeight: PTDarkModeHeader.contentHeight + 10, rows: rows)
-                } else {
-                    sections = PTSection(headerCls: PTDarkModeHeader.self,headerID: PTDarkModeHeader.ID,headerHeight: PTDarkModeHeader.contentHeight + 10, rows: rows)
+        let view = PTCollectionView(viewConfig: config)
+        view.registerClassCells(classs: [PTFusionCell.ID:PTFusionCell.self])
+        view.registerSupplementaryView(classs: [PTDarkModeHeader.ID:PTDarkModeHeader.self], kind: UICollectionView.elementKindSectionHeader)
+        view.registerSupplementaryView(classs: [PTDarkSmartFooter.ID:PTDarkSmartFooter.self,PTDarkFollowSystemFooter.ID:PTDarkFollowSystemFooter.self], kind: UICollectionView.elementKindSectionFooter)
+        view.headerInCollection = { kind,collectionView,sectionModel,indexPath in
+            let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: sectionModel.headerID!, for: indexPath) as! PTDarkModeHeader
+            header.currentMode = PTDarkModeOption.isLight ? .light : .dark
+            header.selectModeBlock = { mode in
+                PTDarkModeOption.setDarkModeCustom(isLight: mode == .light ? true : false)
+                self.showDetail()
+                if self.themeSetBlock != nil {
+                    self.themeSetBlock!()
                 }
-                mSections.append(sections)
-            case 1:
-                var sections:PTSection
-                if PTDarkModeOption.isFollowSystem {
-                    sections = PTSection(footerCls: PTDarkFollowSystemFooter.self,footerID: PTDarkFollowSystemFooter.ID,footerHeight: PTDarkFollowSystemFooter.footerHeight, rows: rows)
-                } else {
-                    sections = PTSection(rows: rows)
-                }
-                mSections.append(sections)
-            default:break
             }
+            return header
         }
-        
-        self.collectionView.pt_register(by: mSections)
-        self.collectionView.reloadData()
-    }
-
-}
-
-extension PTDarkModeControl:UICollectionViewDelegate,UICollectionViewDataSource
-{
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return self.mSections.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.mSections[section].rows.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let itemSec = mSections[indexPath.section]
-        if kind == UICollectionView.elementKindSectionHeader {
-            if itemSec.headerID == PTDarkModeHeader.ID {
-                let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: itemSec.headerID!, for: indexPath) as! PTDarkModeHeader
-                header.currentMode = PTDarkModeOption.isLight ? .light : .dark
-                header.selectModeBlock = { mode in
-                    PTDarkModeOption.setDarkModeCustom(isLight: mode == .light ? true : false)
-                    self.showDetail()
-                    if self.themeSetBlock != nil {
-                        self.themeSetBlock!()
-                    }
-                }
-                return header
-            }
-            return UICollectionReusableView()
-        } else if kind == UICollectionView.elementKindSectionFooter {
-            if itemSec.footerID == PTDarkSmartFooter.ID {
-                let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: itemSec.footerID!, for: indexPath) as! PTDarkSmartFooter
-                footer.themeTimeButton.normalTitle = darkTime
+        view.footerInCollection = { kind,collectionView,sectionModel,indexPath in
+            if sectionModel.footerID == PTDarkSmartFooter.ID {
+                let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: sectionModel.footerID!, for: indexPath) as! PTDarkSmartFooter
+                footer.themeTimeButton.normalTitle = self.darkTime
                 footer.themeTimeButton.addActionHandlers { sender in
                     let timeIntervalValue = PTDarkModeOption.smartPeelingTimeIntervalValue.separatedByString(with: "~")
                     let darkModePickerView = DarkModePickerView(startTime: timeIntervalValue[0], endTime: timeIntervalValue[1]) { (startTime, endTime) in
@@ -201,23 +69,47 @@ extension PTDarkModeControl:UICollectionViewDelegate,UICollectionViewDataSource
                     darkModePickerView.showTime()
                 }
                 return footer
-            }
-            else if itemSec.footerID == PTDarkFollowSystemFooter.ID {
-                let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: itemSec.footerID!, for: indexPath) as! PTDarkFollowSystemFooter
+            } else if sectionModel.footerID == PTDarkFollowSystemFooter.ID {
+                let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: sectionModel.footerID!, for: indexPath) as! PTDarkFollowSystemFooter
                 return footer
             }
-            return UICollectionReusableView()
-        } else {
-            return UICollectionReusableView()
+            return nil
         }
-    }
-
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let itemSec = mSections[indexPath.section]
-        let itemRow = itemSec.rows[indexPath.row]
-        if itemRow.ID == PTFusionCell.ID {
+        view.customerLayout = { sectionIndex,sectionModel in
+            var group : NSCollectionLayoutGroup
+            let behavior : UICollectionLayoutSectionOrthogonalScrollingBehavior = .continuous
+            
+            var bannerGroupSize : NSCollectionLayoutSize
+            var customers = [NSCollectionLayoutGroupCustomItem]()
+            var groupH:CGFloat = 0
+            var screenW:CGFloat = 0
+            if Gobal_device_info.isPad {
+                screenW = (CGFloat.kSCREEN_WIDTH - iPadSplitMainControl)
+            } else {
+                screenW = CGFloat.kSCREEN_WIDTH
+            }
+            var cellHeight:CGFloat = 0
+            if Gobal_device_info.isPad {
+                cellHeight = 64
+            } else {
+                cellHeight = CGFloat.ScaleW(w: 44)
+            }
+            sectionModel.rows.enumerated().forEach { (index,model) in
+                let cellHeight:CGFloat = cellHeight
+                let customItem = NSCollectionLayoutGroupCustomItem.init(frame: CGRect.init(x: PTAppBaseConfig.share.defaultViewSpace, y: groupH, width: screenW - PTAppBaseConfig.share.defaultViewSpace * 2, height: cellHeight), zIndex: 1000+index)
+                customers.append(customItem)
+                groupH += cellHeight
+            }
+            bannerGroupSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(screenW - PTAppBaseConfig.share.defaultViewSpace * 2), heightDimension: NSCollectionLayoutDimension.absolute(groupH))
+            group = NSCollectionLayoutGroup.custom(layoutSize: bannerGroupSize, itemProvider: { layoutEnvironment in
+                customers
+            })
+            return group
+        }
+        view.cellInCollection = { collection,sectionModel,indexPath in
+            let itemRow = sectionModel.rows[indexPath.row]
             let cellModel = (itemRow.dataModel as! PTFusionCellModel)
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTFusionCell
+            let cell = collection.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTFusionCell
             cell.cellModel = cellModel
 //            cell.dataContent.lineView.isHidden = indexPath.row == (itemSec.rows.count - 1) ? true : false
 //            cell.dataContent.topLineView.isHidden = true
@@ -248,11 +140,58 @@ extension PTDarkModeControl:UICollectionViewDelegate,UICollectionViewDataSource
             }
             
             return cell
-        } else {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CELL", for: indexPath)
-            cell.backgroundColor = .random
-            return cell
+
         }
+        view.collectionDidSelect = { collection,sectionModel,indexPath in
+        }
+        return view
+    }()
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        self.zx_navTitle = PTAppConfig.languageFunc(text: "theme_Title")
+        
+        // Do any additional setup after loading the view.
+        self.view.addSubviews([self.collectionView])
+        self.collectionView.snp.makeConstraints { make in
+            make.left.right.bottom.equalToSuperview()
+            make.top.equalToSuperview().inset(CGFloat.kNavBarHeight_Total)
+        }
+        self.apply()
+    }
+    
+    func showDetail() {
+        mSections.removeAll()
+
+        self.darkModeControlArr.enumerated().forEach { (index,value) in
+            var rows = [PTRows]()
+            value.enumerated().forEach { subIndex,subValue in
+                let row = PTRows(ID: PTFusionCell.ID,dataModel: subValue)
+                rows.append(row)
+            }
+            switch index {
+            case 0:
+                var sections:PTSection
+                if PTDarkModeOption.isSmartPeeling {
+                    sections = PTSection(headerID: PTDarkModeHeader.ID,footerID: PTDarkSmartFooter.ID,footerHeight: PTDarkSmartFooter.footerTotalHeight,headerHeight: PTDarkModeHeader.contentHeight + 10, rows: rows)
+                } else {
+                    sections = PTSection(headerID: PTDarkModeHeader.ID,headerHeight: PTDarkModeHeader.contentHeight + 10, rows: rows)
+                }
+                mSections.append(sections)
+            case 1:
+                var sections:PTSection
+                if PTDarkModeOption.isFollowSystem {
+                    sections = PTSection(footerID: PTDarkFollowSystemFooter.ID,footerHeight: PTDarkFollowSystemFooter.footerHeight, rows: rows)
+                } else {
+                    sections = PTSection(rows: rows)
+                }
+                mSections.append(sections)
+            default:break
+            }
+        }
+        
+        self.collectionView.showCollectionDetail(collectionData: mSections)
     }
 }
 

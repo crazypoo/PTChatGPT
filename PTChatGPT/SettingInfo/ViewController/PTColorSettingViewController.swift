@@ -73,70 +73,75 @@ class PTColorSettingViewController: PTChatBaseViewController {
     }
                 
     var mSections = [PTSection]()
-    func comboLayout()->UICollectionViewCompositionalLayout {
-        let layout = UICollectionViewCompositionalLayout.init { section, environment in
-            self.generateSection(section: section)
-        }
-        layout.register(PTBaseDecorationView_Corner.self, forDecorationViewOfKind: "background")
-        layout.register(PTBaseDecorationView.self, forDecorationViewOfKind: "background_no")
-        return layout
-    }
     
-    func generateSection(section:NSInteger)->NSCollectionLayoutSection {
-        let sectionModel = mSections[section]
-
-        var group : NSCollectionLayoutGroup
-        let behavior : UICollectionLayoutSectionOrthogonalScrollingBehavior = .continuous
+    lazy var collectionView : PTCollectionView = {
         
-        var bannerGroupSize : NSCollectionLayoutSize
-        var customers = [NSCollectionLayoutGroupCustomItem]()
-        var groupH:CGFloat = 0
-        var cellHeight:CGFloat = 54
-        var screenW:CGFloat = CGFloat.kSCREEN_WIDTH
-        if Gobal_device_info.isPad {
-            cellHeight = 54
-            screenW = CGFloat.kSCREEN_WIDTH - iPadSplitMainControl
-        } else {
-            cellHeight = 54
-            screenW = CGFloat.kSCREEN_WIDTH
+        let decorationModel = PTDecorationItemModel()
+        decorationModel.decorationID = PTBaseDecorationView_Corner.ID
+        decorationModel.decorationClass = PTBaseDecorationView_Corner.self
+        
+        let config = PTCollectionViewConfig()
+        config.viewType = .Custom
+        config.decorationModel = [decorationModel]
+        config.decorationItemsEdges = NSDirectionalEdgeInsets(top: 10, leading: PTAppBaseConfig.share.defaultViewSpace, bottom: 0, trailing: PTAppBaseConfig.share.defaultViewSpace)
+        
+        let view = PTCollectionView(viewConfig: config)
+        view.registerClassCells(classs: [PTFusionCell.ID:PTFusionCell.self])
+        view.customerLayout = { sectionIndex,sectionModel in
+            var group : NSCollectionLayoutGroup
+            let behavior : UICollectionLayoutSectionOrthogonalScrollingBehavior = .continuous
+            
+            var bannerGroupSize : NSCollectionLayoutSize
+            var customers = [NSCollectionLayoutGroupCustomItem]()
+            var groupH:CGFloat = 0
+            var cellHeight:CGFloat = 54
+            var screenW:CGFloat = CGFloat.kSCREEN_WIDTH
+            if Gobal_device_info.isPad {
+                cellHeight = 54
+                screenW = CGFloat.kSCREEN_WIDTH - iPadSplitMainControl
+            } else {
+                cellHeight = 54
+                screenW = CGFloat.kSCREEN_WIDTH
+            }
+            sectionModel.rows.enumerated().forEach { (index,model) in
+                let customItem = NSCollectionLayoutGroupCustomItem.init(frame: CGRect.init(x: PTAppBaseConfig.share.defaultViewSpace, y: groupH, width: screenW - PTAppBaseConfig.share.defaultViewSpace * 2, height: cellHeight), zIndex: 1000+index)
+                customers.append(customItem)
+                groupH += cellHeight
+            }
+            bannerGroupSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(screenW), heightDimension: NSCollectionLayoutDimension.absolute(groupH))
+            group = NSCollectionLayoutGroup.custom(layoutSize: bannerGroupSize, itemProvider: { layoutEnvironment in
+                customers
+            })
+
+            return group
         }
-        sectionModel.rows.enumerated().forEach { (index,model) in
-            let customItem = NSCollectionLayoutGroupCustomItem.init(frame: CGRect.init(x: PTAppBaseConfig.share.defaultViewSpace, y: groupH, width: screenW - PTAppBaseConfig.share.defaultViewSpace * 2, height: cellHeight), zIndex: 1000+index)
-            customers.append(customItem)
-            groupH += cellHeight
+        view.cellInCollection = { collection,sectionModel,indexPath in
+            let itemRow = sectionModel.rows[indexPath.row]
+            let cell = collection.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTFusionCell
+            cell.cellModel = (itemRow.dataModel as! PTFusionCellModel)
+    //        cell.dataContent.lineView.isHidden = true
+    //        cell.dataContent.topLineView.isHidden = (indexPath.row == 0) ? true : false
+            return cell
         }
-        bannerGroupSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(screenW), heightDimension: NSCollectionLayoutDimension.absolute(groupH))
-        group = NSCollectionLayoutGroup.custom(layoutSize: bannerGroupSize, itemProvider: { layoutEnvironment in
-            customers
-        })
-        
-        var sectionInsets = NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 0)
-        var laySection = NSCollectionLayoutSection(group: group)
-        laySection.orthogonalScrollingBehavior = behavior
-        laySection.contentInsets = sectionInsets
+        view.collectionDidSelect = { collection,sectionModel,indexPath in
+            let itemRow = sectionModel.rows[indexPath.row]
+            if itemRow.title == PTAppConfig.languageFunc(text: "color_Bubble_user") {
+                self.colorPicker(color: AppDelegate.appDelegate()!.appConfig.userBubbleColor)
+            } else if itemRow.title == PTAppConfig.languageFunc(text: "color_Bubble_bot") {
+                self.colorPicker(color: AppDelegate.appDelegate()!.appConfig.botBubbleColor)
+            } else if itemRow.title == PTAppConfig.languageFunc(text: "color_Text_user") {
+                self.colorPicker(color: AppDelegate.appDelegate()!.appConfig.userTextColor)
+            } else if itemRow.title == PTAppConfig.languageFunc(text: "color_Text_bot") {
+                self.colorPicker(color: AppDelegate.appDelegate()!.appConfig.botTextColor)
+            } else if itemRow.title == PTAppConfig.languageFunc(text: "color_Wave") {
+                self.colorPicker(color: AppDelegate.appDelegate()!.appConfig.waveColor)
+            }
 
-        sectionInsets = NSDirectionalEdgeInsets.init(top: 10, leading: 0, bottom: 0, trailing: 0)
-        laySection = NSCollectionLayoutSection(group: group)
-        laySection.orthogonalScrollingBehavior = behavior
-        laySection.contentInsets = sectionInsets
-
-        let backItem = NSCollectionLayoutDecorationItem.background(elementKind: "background")
-        backItem.contentInsets = NSDirectionalEdgeInsets.init(top: 10, leading: PTAppBaseConfig.share.defaultViewSpace, bottom: 0, trailing: PTAppBaseConfig.share.defaultViewSpace)
-        laySection.decorationItems = [backItem]
-        
-        laySection.supplementariesFollowContentInsets = false
-
-        return laySection
-    }
-
-    lazy var collectionView : UICollectionView = {
-        let view = UICollectionView.init(frame: .zero, collectionViewLayout: self.comboLayout())
-        view.backgroundColor = .clear
-        view.delegate = self
-        view.dataSource = self
+            self.currentColorName = itemRow.title
+        }
         return view
     }()
-    
+        
     init(user:PTChatUser) {
         super.init(nibName: nil, bundle: nil)
         self.user = user
@@ -176,15 +181,14 @@ class PTColorSettingViewController: PTChatBaseViewController {
         self.aboutModels().enumerated().forEach { (index,value) in
             var rows = [PTRows]()
             value.models.enumerated().forEach { (subIndex,subValue) in
-                let row_List = PTRows.init(title: subValue.name,cls: PTFusionCell.self, ID: PTFusionCell.ID, dataModel: subValue)
+                let row_List = PTRows.init(title: subValue.name, ID: PTFusionCell.ID, dataModel: subValue)
                 rows.append(row_List)
             }
             let cellSection = PTSection.init(rows: rows)
             mSections.append(cellSection)
         }
         
-        self.collectionView.pt_register(by: mSections)
-        self.collectionView.reloadData()
+        self.collectionView.showCollectionDetail(collectionData: mSections)
     }
                 
     func colorPicker(color:UIColor) {
@@ -223,44 +227,6 @@ class PTColorSettingViewController: PTChatBaseViewController {
         }
         
         self.showDetail()
-    }
-}
-
-extension PTColorSettingViewController:UICollectionViewDelegate,UICollectionViewDataSource {
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return self.mSections.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.mSections[section].rows.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let itemSec = mSections[indexPath.section]
-        let itemRow = itemSec.rows[indexPath.row]
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTFusionCell
-        cell.cellModel = (itemRow.dataModel as! PTFusionCellModel)
-//        cell.dataContent.lineView.isHidden = true
-//        cell.dataContent.topLineView.isHidden = (indexPath.row == 0) ? true : false
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let itemSec = mSections[indexPath.section]
-        let itemRow = itemSec.rows[indexPath.row]
-        if itemRow.title == PTAppConfig.languageFunc(text: "color_Bubble_user") {
-            self.colorPicker(color: AppDelegate.appDelegate()!.appConfig.userBubbleColor)
-        } else if itemRow.title == PTAppConfig.languageFunc(text: "color_Bubble_bot") {
-            self.colorPicker(color: AppDelegate.appDelegate()!.appConfig.botBubbleColor)
-        } else if itemRow.title == PTAppConfig.languageFunc(text: "color_Text_user") {
-            self.colorPicker(color: AppDelegate.appDelegate()!.appConfig.userTextColor)
-        } else if itemRow.title == PTAppConfig.languageFunc(text: "color_Text_bot") {
-            self.colorPicker(color: AppDelegate.appDelegate()!.appConfig.botTextColor)
-        } else if itemRow.title == PTAppConfig.languageFunc(text: "color_Wave") {
-            self.colorPicker(color: AppDelegate.appDelegate()!.appConfig.waveColor)
-        }
-
-        self.currentColorName = itemRow.title
     }
 }
 

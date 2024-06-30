@@ -461,84 +461,418 @@ class PTSettingListViewController: PTChatBaseViewController {
     }
     
     var mSections = [PTSection]()
-    func comboLayout()->UICollectionViewCompositionalLayout {
-        let layout = UICollectionViewCompositionalLayout.init { section, environment in
-            self.generateSection(section: section)
-        }
-        layout.register(PTBaseDecorationView_Corner.self, forDecorationViewOfKind: "background")
-        layout.register(PTBaseDecorationView.self, forDecorationViewOfKind: "background_no")
-        return layout
-    }
     
-    func generateSection(section:NSInteger)->NSCollectionLayoutSection {
-        let sectionModel = mSections[section]
-
-        var group : NSCollectionLayoutGroup
-        let behavior : UICollectionLayoutSectionOrthogonalScrollingBehavior = .continuous
+    lazy var collectionView : PTCollectionView = {
+        let config = PTCollectionViewConfig()
+        config.viewType = .Custom
         
-        var bannerGroupSize : NSCollectionLayoutSize
-        var customers = [NSCollectionLayoutGroupCustomItem]()
-        var groupH:CGFloat = 0
-        var screenW:CGFloat = 0
-        if Gobal_device_info.isPad {
-            screenW = (CGFloat.kSCREEN_WIDTH - iPadSplitMainControl)
-        } else {
-            screenW = CGFloat.kSCREEN_WIDTH
+        let view = PTCollectionView(viewConfig: config)
+        view.registerClassCells(classs: [PTAISmartCell.ID:PTAISmartCell.self,PTStableDiffusionModelCell.ID:PTStableDiffusionModelCell.self,PTFusionCell.ID:PTFusionCell.self])
+        view.registerSupplementaryView(classs: [PTSettingHeader.ID:PTSettingHeader.self], kind: UICollectionView.elementKindSectionHeader)
+        view.registerSupplementaryView(classs: [PTSettingFooter.ID:PTSettingFooter.self], kind: UICollectionView.elementKindSectionFooter)
+        view.headerInCollection = { kind, collectionView, sectionModel, indexPath in
+            let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: sectionModel.headerID!, for: indexPath) as! PTSettingHeader
+            header.titleLabel.text = sectionModel.headerTitle
+            return header
         }
-        sectionModel.rows.enumerated().forEach { (index,model) in
-            var cellHeight:CGFloat = 0
+        view.footerInCollection = { kind, collectionView, sectionModel, indexPath in
+            if sectionModel.headerTitle == PTAppConfig.languageFunc(text: "about_Main_Other") {
+                let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: sectionModel.footerID!, for: indexPath) as! PTSettingFooter
+                return footer
+            }
+            return nil
+        }
+        view.customerLayout = { sectionIndex,sectionModel in
+            var group : NSCollectionLayoutGroup
+            let behavior : UICollectionLayoutSectionOrthogonalScrollingBehavior = .continuous
+            
+            var bannerGroupSize : NSCollectionLayoutSize
+            var customers = [NSCollectionLayoutGroupCustomItem]()
+            var groupH:CGFloat = 0
+            var screenW:CGFloat = 0
             if Gobal_device_info.isPad {
-                cellHeight = 54
+                screenW = (CGFloat.kSCREEN_WIDTH - iPadSplitMainControl)
             } else {
-                cellHeight = CGFloat.ScaleW(w: 44)
+                screenW = CGFloat.kSCREEN_WIDTH
             }
-            if (model.dataModel as! PTFusionCellModel).name == PTAppConfig.languageFunc(text: "about_AI_smart") {
+            sectionModel.rows.enumerated().forEach { (index,model) in
+                var cellHeight:CGFloat = 0
                 if Gobal_device_info.isPad {
-                    cellHeight = 98
+                    cellHeight = 54
                 } else {
-                    cellHeight = CGFloat.ScaleW(w: 98)
+                    cellHeight = CGFloat.ScaleW(w: 44)
                 }
+                if (model.dataModel as! PTFusionCellModel).name == PTAppConfig.languageFunc(text: "about_AI_smart") {
+                    if Gobal_device_info.isPad {
+                        cellHeight = 98
+                    } else {
+                        cellHeight = CGFloat.ScaleW(w: 98)
+                    }
+                }
+                let customItem = NSCollectionLayoutGroupCustomItem.init(frame: CGRect.init(x: PTAppBaseConfig.share.defaultViewSpace, y: groupH, width: screenW - PTAppBaseConfig.share.defaultViewSpace * 2, height: cellHeight), zIndex: 1000+index)
+                customers.append(customItem)
+                groupH += cellHeight
             }
-            let customItem = NSCollectionLayoutGroupCustomItem.init(frame: CGRect.init(x: PTAppBaseConfig.share.defaultViewSpace, y: groupH, width: screenW - PTAppBaseConfig.share.defaultViewSpace * 2, height: cellHeight), zIndex: 1000+index)
-            customers.append(customItem)
-            groupH += cellHeight
+            bannerGroupSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(screenW), heightDimension: NSCollectionLayoutDimension.absolute(groupH))
+            group = NSCollectionLayoutGroup.custom(layoutSize: bannerGroupSize, itemProvider: { layoutEnvironment in
+                customers
+            })
+            return group
         }
-        bannerGroupSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(screenW), heightDimension: NSCollectionLayoutDimension.absolute(groupH))
-        group = NSCollectionLayoutGroup.custom(layoutSize: bannerGroupSize, itemProvider: { layoutEnvironment in
-            customers
-        })
-        
-        var sectionInsets = NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 0)
-        var laySection = NSCollectionLayoutSection(group: group)
-        laySection.orthogonalScrollingBehavior = behavior
-        laySection.contentInsets = sectionInsets
-
-        sectionInsets = NSDirectionalEdgeInsets.init(top: 10, leading: 0, bottom: 0, trailing: 0)
-        laySection = NSCollectionLayoutSection(group: group)
-        laySection.orthogonalScrollingBehavior = behavior
-        laySection.contentInsets = sectionInsets
-
-        let headerSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(screenW - PTAppBaseConfig.share.defaultViewSpace * 2), heightDimension: NSCollectionLayoutDimension.absolute(sectionModel.headerHeight ?? CGFloat.leastNormalMagnitude))
-        let footerSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(screenW - PTAppBaseConfig.share.defaultViewSpace * 2), heightDimension: NSCollectionLayoutDimension.absolute(sectionModel.footerHeight ?? CGFloat.leastNormalMagnitude))
-        let headerItem = NSCollectionLayoutBoundarySupplementaryItem.init(layoutSize: headerSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .topTrailing)
-        let footerItem = NSCollectionLayoutBoundarySupplementaryItem.init(layoutSize: footerSize, elementKind: UICollectionView.elementKindSectionFooter, alignment: .bottomTrailing)
-        if sectionModel.headerTitle == PTAppConfig.languageFunc(text: "about_Main_Other") {
-            laySection.boundarySupplementaryItems = [headerItem,footerItem]
-        } else {
-            laySection.boundarySupplementaryItems = [headerItem]
+        view.cellInCollection = { collectionView,sectionModel,indexPath in
+            let itemRow = sectionModel.rows[indexPath.row]
+            if itemRow.ID == PTFusionCell.ID {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTFusionCell
+    //            cell.dataContent.backgroundColor = .gobalCellBackgroundColor
+                cell.cellModel = (itemRow.dataModel as! PTFusionCellModel)
+    //            cell.dataContent.lineView.isHidden = false
+    //            cell.dataContent.topLineView.isHidden = (indexPath.row == 0) ? true : false
+                if itemRow.title == SettingCloudString {
+                    cell.switchValue = AppDelegate.appDelegate()!.appConfig.cloudSwitch
+                    cell.switchValueChangeBlock = { title,sender in
+                        AppDelegate.appDelegate()?.appConfig.mobileDataSavePlaceChange(value: sender.isOn)
+                    }
+                }
+                else if itemRow.title == PTAppConfig.languageFunc(text: "about_Use_custom_domain_switch") {
+                    cell.switchValue = AppDelegate.appDelegate()!.appConfig.useCustomDomain
+                    cell.switchValueChangeBlock =  { title,sender in
+                        AppDelegate.appDelegate()?.appConfig.useCustomDomain = sender.isOn
+                    }
+                } else if itemRow.title == PTAppConfig.languageFunc(text: "about_Local_upload") {
+                    cell.switchValue = self.webServerIsRunning
+                    cell.switchValueChangeBlock = { title,sender in
+                        if self.canOpenWebServer {
+                            self.webServerIsRunning = sender.isOn
+                            if sender.isOn {
+                                self.webServer = GCDWebUploader(uploadDirectory: uploadFilePath)
+                                self.webServer!.delegate = self
+                                self.webServer!.allowHiddenItems = false
+                                self.webServer.run { server in
+                                    if self.webServer!.start() {
+                                        let ipString = self.webServer!.serverURL!.absoluteString
+                                        let msg = String(format: PTAppConfig.languageFunc(text: "alert_Local_wifi"), ipString)
+                                        UIAlertController.base_alertVC(title: PTAppConfig.languageFunc(text: "alert_Info"),titleColor: .gobalTextColor,msg: msg,msgColor: .gobalTextColor,cancelBtn: PTAppConfig.languageFunc(text: "button_Cancel"))
+                                    }
+                                }
+                            } else {
+                                PTGCDManager.gcdBackground {
+                                    PTGCDManager.gcdMain {
+                                        self.webServer!.stop()
+                                    }
+                                }
+                            }
+                        } else {
+                            cell.switchValue = false
+                            PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Plz_connect_wifi"))
+                        }
+                    }
+                }
+                
+                PTGCDManager.gcdMain {
+                    if sectionModel.rows.count == 1 {
+                        cell.contentView.viewCornerRectCorner(cornerRadii:5,corner:.allCorners)
+                    } else {
+                        if indexPath.row == 0 {
+                            cell.contentView.viewCornerRectCorner(cornerRadii: 5,corner:[.topLeft,.topRight])
+                        } else if indexPath.row == (sectionModel.rows.count - 1) {
+                            cell.contentView.viewCornerRectCorner(cornerRadii: 5,corner:[.bottomLeft,.bottomRight])
+                        }
+                    }
+                }
+                return cell
+            } else if itemRow.ID == PTAISmartCell.ID {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTAISmartCell
+                cell.contentView.backgroundColor = .gobalCellBackgroundColor
+                cell.cellModel = (itemRow.dataModel as! PTFusionCellModel)
+                cell.aiSlider.addSliderAction { sender in
+                    var realSmart = (1 - sender.value)
+                    if realSmart <= 0 {
+                        realSmart = 1
+                    }
+                    AppDelegate.appDelegate()!.appConfig.aiSmart = Double(realSmart)
+                }
+                return cell
+            } else if itemRow.ID == PTStableDiffusionModelCell.ID {
+                let cellModel = self.downloadInfo[indexPath.row]
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTStableDiffusionModelCell
+                cell.contentView.backgroundColor = .gobalCellBackgroundColor
+                cell.cellModel = cellModel
+                cell.lineView.isHidden = (sectionModel.rows.count - 1) == indexPath.row
+                cell.downloadFinishBlock = {
+                    #if DEBUG
+                    self.downloadInfo[indexPath.row]!.loadFinish = indexPath.row == (self.downloadInfo.count - 1) ? false : true
+                    #else
+                    self.downloadInfo[indexPath.row]!.loadFinish = true
+                    #endif
+                    
+                    AppDelegate.appDelegate()!.appConfig.downloadInfomation = self.downloadInfo.kj.JSONObjectArray()
+                }
+                if sectionModel.rows.count == 1 {
+                    PTGCDManager.gcdMain {
+                        cell.contentView.viewCornerRectCorner(cornerRadii:5,corner:.allCorners)
+                    }
+                } else {
+                    if indexPath.row == 0 {
+                        PTGCDManager.gcdMain {
+                            cell.contentView.viewCornerRectCorner(cornerRadii: 5,corner:[.topLeft,.topRight])
+                        }
+                    } else if indexPath.row == (sectionModel.rows.count - 1) {
+                        PTGCDManager.gcdMain {
+                            cell.contentView.viewCornerRectCorner(cornerRadii: 5,corner:[.bottomLeft,.bottomRight])
+                        }
+                    }
+                }
+                return cell
+            } else {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CELL", for: indexPath)
+                cell.backgroundColor = .random
+                return cell
+            }
         }
+        view.collectionDidSelect = { collection,sectionModel,indexPath in
+            let itemRow = sectionModel.rows[indexPath.row]
+            if itemRow.title == PTAppConfig.languageFunc(text: "about_Color") {
+                let vc = PTColorSettingViewController(user: self.user)
+                self.navigationController?.pushViewController(vc)
+            } else if itemRow.title == PTAppConfig.languageFunc(text: "about_SavedChat") {
+                let vc = PTSaveChatViewController()
+                self.navigationController?.pushViewController(vc)
+            } else if itemRow.title == PTAppConfig.languageFunc(text: "about_DeleteAllChat") {
+                UIAlertController.base_alertVC(title: PTAppConfig.languageFunc(text: "alert_Info"),titleColor: .gobalTextColor,msg: PTAppConfig.languageFunc(text: "chat_Delete_all_chat"),msgColor: .gobalTextColor,okBtns: [PTAppConfig.languageFunc(text: "button_Confirm")],cancelBtn: PTAppConfig.languageFunc(text: "button_Cancel")) {
+                    
+                } moreBtn: { index, title in
+                    
+                    let arr = AppDelegate.appDelegate()!.appConfig.tagDataArr()
+                    for (index,_) in arr.enumerated() {
+                        arr[index]!.historyModel = [PTChatModel]()
+                    }
+                    AppDelegate.appDelegate()!.appConfig.setChatData = arr.kj.JSONObjectArray()
+                    PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Delete_done"))
+                    if self.cleanChatListBlock != nil {
+                        self.cleanChatListBlock!()
+                    }
+                }
+            } else if itemRow.title == PTAppConfig.languageFunc(text: "about_APIAIType") {
+                self.AIModelPicker.show()
+            } else if itemRow.title == PTAppConfig.languageFunc(text: "about_APIAIToken") {
+                let textKey = PTAppConfig.languageFunc(text: "alert_Input_token")
+                let apiToken = AppDelegate.appDelegate()!.appConfig.apiToken
+                UIAlertController.base_textfield_alertVC(title:textKey,titleColor: .gobalTextColor,okBtn: PTAppConfig.languageFunc(text: "button_Confirm"), cancelBtn: PTAppConfig.languageFunc(text: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey], textFieldTexts: [apiToken], keyboardType: [.default],textFieldDelegate: self) { result in
+                    let newToken:String? = result[textKey]!
+                    #if DEBUG
+                    AppDelegate.appDelegate()!.appConfig.apiToken = (newToken ?? "")
+                    #else
+                    if (newToken ?? "").stringIsEmpty() || !(newToken ?? "").nsString.contains("sk-") {
+                        PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Token_error"))
+                    } else {
+                        AppDelegate.appDelegate()!.appConfig.apiToken = newToken!
+                    }
+                    #endif
+                }
+            } else if itemRow.title == PTAppConfig.languageFunc(text: "about_Use_custom_domain_address") {
+                let textKey = PTAppConfig.languageFunc(text: "alert_Enter_domain")
+                let domain = AppDelegate.appDelegate()!.appConfig.customDomain
+                UIAlertController.base_textfield_alertVC(title:textKey,titleColor: .gobalTextColor,okBtn: PTAppConfig.languageFunc(text: "button_Confirm"), cancelBtn: PTAppConfig.languageFunc(text: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey], textFieldTexts: [domain], keyboardType: [.default],textFieldDelegate: self) { result in
+                    let newDomain:String? = result[textKey]!
+                    if (newDomain ?? "").stringIsEmpty() || !(newDomain ?? "").isURL() {
+                        PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Domain_error"))
+                    } else {
+                        AppDelegate.appDelegate()!.appConfig.customDomain = newDomain!
+                        self.showDetail()
+                    }
+                }
+            } else if itemRow.title == PTAppConfig.languageFunc(text: "about_GetAPIAIToken") {
+                let url = URL(string: getApiUrl)!
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            } else if itemRow.title == SettingGithub {
+                let url = URL(string: myGithubUrl)!
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            } else if itemRow.title == PTAppConfig.languageFunc(text: "about_Forum") {
+                let url = URL(string: projectGithubUrl)!
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            } else if itemRow.title == PTAppConfig.languageFunc(text: "about_Share") {
+                let title = kAppName!
+                let content = "Look at me!!!!!!!"
+                let shareLink = projectGithubUrl
+                let url = URL(string: shareLink)!
+                let shareItem = PTShareItem(title: title, content: content, url: url)
+                let activityViewController = UIActivityViewController(activityItems: [shareItem], applicationActivities: nil)
+                if Gobal_device_info.isPad {
+                    let nav = PTNavController(rootViewController: activityViewController)
+                    nav.modalPresentationStyle = .formSheet
+                    self.present(nav, animated: true, completion: nil)
+                } else {
+                    self.present(activityViewController, animated: true, completion: nil)
+                }
+            } else if itemRow.title == PTAppConfig.languageFunc(text: "about_Rate") {
+                PTAppStoreFunction.rateApp(appid: AppAppStoreID)
+            } else if itemRow.title == PTAppConfig.languageFunc(text: "about_Main_Speech") {
+                self.languagePicker.title = PTAppConfig.languageFunc(text: "about_Main_Speech")
+                self.languagePicker.selectValue = AppDelegate.appDelegate()!.appConfig.language
+                self.languagePicker.dataSourceArr = AppDelegate.appDelegate()!.appConfig.languagePickerData
+                self.languagePicker.show()
+                self.languagePicker.resultModelBlock = { route in
+                    AppDelegate.appDelegate()!.appConfig.language = OSSVoiceEnum.allCases[route!.index].rawValue
+                    self.showDetail()
+                }
+            } else if itemRow.title == PTAppConfig.languageFunc(text: "about_Language") {
+                self.languagePicker.title = PTAppConfig.languageFunc(text: "about_Language")
+                self.languagePicker.selectValue = self.currentSelectedLanguage
+                self.languagePicker.dataSourceArr = LanguageKey.allNames
+                self.languagePicker.show()
+                self.languagePicker.resultModelBlock = { route in
+                    self.currentSelectedLanguage = LanguageKey.allValues[route!.index].desc
+                    PTLanguage.share.language = LanguageKey.allValues[route!.index].rawValue
+                }
+            } else if itemRow.title == PTAppConfig.languageFunc(text: "about_Main_Theme") {
+                let vc = PTDarkModeControl()
+                self.navigationController?.pushViewController(vc)
+                vc.themeSetBlock = {
+                    self.showDetail()
+                }
+            } else if itemRow.title == PTAppConfig.languageFunc(text: "about_User_icon") {
+                let status = PHPhotoLibrary.authorizationStatus()
+                if status == .notDetermined {
+                    PHPhotoLibrary.requestAuthorization { blockStatus in
+                        if blockStatus == .authorized {
+                            PTGCDManager.gcdMain {
+                                self.enterPhotos(string: itemRow.title)
+                            }
+                        }
+                    }
+                } else if status == .authorized {
+                    self.enterPhotos(string: itemRow.title)
+                } else if status == .denied {
+                    let messageString = String(format: PTAppConfig.languageFunc(text: "alert_Go_to_photo_setting"), kAppName!)
+                    PTBaseViewController.gobal_drop(title: messageString)
+                } else {
+                    PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_No_photo_library"))
+                }
+            } else if itemRow.title == PTAppConfig.languageFunc(text: "about_User_name") {
+                PTGCDManager.gcdAfter(time: 0.5) {
+                    let title = PTAppConfig.languageFunc(text: "alert_Name_edit_title")
+                    let placeHolder = PTAppConfig.languageFunc(text: "alert_Name_edit_placeholder")
+                    UIAlertController.base_textfield_alertVC(title:title,titleColor: .gobalTextColor,okBtn: PTAppConfig.languageFunc(text: "button_Confirm"), cancelBtn: PTAppConfig.languageFunc(text: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [placeHolder], textFieldTexts: [AppDelegate.appDelegate()!.appConfig.userName], keyboardType: [.default],textFieldDelegate: self) { result in
+                        let userName:String? = result[placeHolder]!
+                        if !(userName ?? "").stringIsEmpty() {
+                            AppDelegate.appDelegate()?.appConfig.userName = userName!
+                            PTChatData.share.user = PTChatUser(senderId: "000000", displayName: AppDelegate.appDelegate()!.appConfig.userName)
+                            self.showDetail()
+                            if self.cleanChatListBlock != nil {
+                                self.cleanChatListBlock!()
+                            }
+                        } else {
+                            PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Input_error"))
+                        }
+                    }
+                }
+            } else if itemRow.title == PTAppConfig.languageFunc(text: "about_AI_name") {
+                PTGCDManager.gcdAfter(time: 0.5) {
+                    let title = PTAppConfig.languageFunc(text: "alert_AI_name_edit")
+                    UIAlertController.base_textfield_alertVC(title:title,titleColor: .gobalTextColor,okBtn: PTAppConfig.languageFunc(text: "button_Confirm"), cancelBtn: PTAppConfig.languageFunc(text: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [title], textFieldTexts: [AppDelegate.appDelegate()!.appConfig.aiName], keyboardType: [.default],textFieldDelegate: self) { result in
+                        let userName:String? = result[title]!
+                        if !(userName ?? "").stringIsEmpty() {
+                            AppDelegate.appDelegate()?.appConfig.aiName = userName!
+                            PTChatData.share.bot = PTChatUser(senderId: "000001", displayName: AppDelegate.appDelegate()!.appConfig.aiName)
+                            self.showDetail()
+                            if self.cleanChatListBlock != nil {
+                                self.cleanChatListBlock!()
+                            }
+                        } else {
+                            PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Input_error"))
+                        }
+                    }
+                }
+            } else if itemRow.title == PTAppConfig.languageFunc(text: "about_Delete_all_voice_file") {
+                UIAlertController.base_alertVC(title: PTAppConfig.languageFunc(text: "alert_Info"),titleColor: .gobalTextColor,msg: PTAppConfig.languageFunc(text: "chat_Delete_all_voice_file"),msgColor: .gobalTextColor,okBtns: [PTAppConfig.languageFunc(text: "button_Confirm")],cancelBtn: PTAppConfig.languageFunc(text: "button_Cancel")) {
+                    
+                } moreBtn: { index, title in
+                    let speechKit = OSSSpeech.shared
+                    speechKit.delegate = self
+                    speechKit.deleteVoiceFolderItem(url: nil)
+                }
+            } else if itemRow.title == PTAppConfig.languageFunc(text: "about_Draw_image_size") {
+                let imageSize = AppDelegate.appDelegate()!.appConfig.aiDrawSize
+                self.languagePicker.title = PTAppConfig.languageFunc(text: "about_Language")
+                self.languagePicker.selectValue = "\(String(format: "%.0f", imageSize.width))x\(String(format: "%.0f", imageSize.height))"
+                self.languagePicker.dataSourceArr = AppDelegate.appDelegate()?.appConfig.imageSizeArray
+                self.languagePicker.show()
+                self.languagePicker.resultModelBlock = { route in
+                    switch AppDelegate.appDelegate()?.appConfig.imageSizeArray[route!.index] {
+                    case PTOpenAIImageSize.size1024.rawValue:
+                        AppDelegate.appDelegate()!.appConfig.aiDrawSize = CGSize(width: 1024, height: 1024)
+                    case PTOpenAIImageSize.size512.rawValue:
+                        AppDelegate.appDelegate()!.appConfig.aiDrawSize = CGSize(width: 512, height: 512)
+                    default:
+                        AppDelegate.appDelegate()!.appConfig.aiDrawSize = CGSize(width: 256, height: 256)
+                    }
+                    self.showDetail()
+                }
+            } else if itemRow.title == PTAppConfig.languageFunc(text: "chat_Get_image_count") {
+                let imageCount = AppDelegate.appDelegate()!.appConfig.getImageCount
+                self.languagePicker.title = PTAppConfig.languageFunc(text: "chat_Get_image_count")
+                self.languagePicker.selectValue = "\(imageCount)"
+                self.languagePicker.dataSourceArr = AppDelegate.appDelegate()?.appConfig.getImageCountPickerData
+                self.languagePicker.show()
+                self.languagePicker.resultModelBlock = { route in
+                    AppDelegate.appDelegate()?.appConfig.getImageCount = (AppDelegate.appDelegate()?.appConfig.getImageCountPickerData[route!.index].int)!
+                    self.showDetail()
+                }
+            } else if itemRow.title == PTAppConfig.languageFunc(text: "draw_Reference") {
+                let status = PHPhotoLibrary.authorizationStatus()
+                if status == .notDetermined {
+                    PHPhotoLibrary.requestAuthorization { blockStatus in
+                        if blockStatus == .authorized {
+                            PTGCDManager.gcdMain {
+                                self.enterPhotos(string: itemRow.title)
+                            }
+                        }
+                    }
+                } else if status == .authorized {
+                    self.enterPhotos(string: itemRow.title)
+                } else if status == .denied {
+                    let messageString = String(format: PTAppConfig.languageFunc(text: "alert_Go_to_photo_setting"), kAppName!)
+                    PTBaseViewController.gobal_drop(title: messageString)
+                } else {
+                    PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_No_photo_library"))
+                }
+            } else if itemRow.title == PTAppConfig.languageFunc(text: "setting_Reset") {
+                UIAlertController.base_alertVC(title: PTAppConfig.languageFunc(text: "alert_Info"),titleColor: .gobalTextColor,msg: PTAppConfig.languageFunc(text: "alert_Reset_all_setting"),msgColor: .gobalTextColor,okBtns: [PTAppConfig.languageFunc(text: "button_Confirm")],cancelBtn: PTAppConfig.languageFunc(text: "button_Cancel")) {
+                    
+                } moreBtn: { index, title in
+                    PTGCDManager.gcdMain {
+                        SwiftSpinner.show(PTAppConfig.languageFunc(text: "about_Reset_ing"))
+                        AppDelegate.appDelegate()!.appConfig.mobileDataReset(delegate:self) {
+                            SwiftSpinner.show(PTAppConfig.languageFunc(text: "about_Reset_chat"))
+                        } resetChat: {
+                            SwiftSpinner.show(PTAppConfig.languageFunc(text: "about_Reset_photo"))
+                        } resetVoiceFile: {
+                            SwiftSpinner.show(PTAppConfig.languageFunc(text: "about_Reset_voice"))
+                        } resetImage: {
+                            SwiftSpinner.show(PTAppConfig.languageFunc(text: "about_Reset_done"))
 
-        return laySection
-    }
-
-    lazy var collectionView : UICollectionView = {
-        let view = UICollectionView.init(frame: .zero, collectionViewLayout: self.comboLayout())
-        view.backgroundColor = .clear
-        view.delegate = self
-        view.dataSource = self
+                            PTGCDManager.gcdAfter(time: 1) {
+                                SwiftSpinner.hide() {
+                                    self.showDetail()
+                                    if self.cleanChatListBlock != nil {
+                                        self.cleanChatListBlock!()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } else if itemRow.title == PTAppConfig.languageFunc(text: "about_Help") {
+                let vc = PTHelpViewController()
+                self.navigationController?.pushViewController(vc, animated: true)
+            } else if itemRow.title == PTAppConfig.languageFunc(text: "about_Local_model") {
+                let vc = PTLocalFileViewController()
+                self.navigationController?.pushViewController(vc)
+            }
+        }
         return view
     }()
-    
+        
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     }
@@ -656,13 +990,13 @@ class PTSettingListViewController: PTChatBaseViewController {
             var rows = [PTRows]()
             value.models.enumerated().forEach { (subIndex,subValue) in
                 if subValue.name == PTAppConfig.languageFunc(text: "about_AI_smart") {
-                    let row_List = PTRows.init(title: subValue.name,cls: PTAISmartCell.self, ID: PTAISmartCell.ID, dataModel: subValue)
+                    let row_List = PTRows.init(title: subValue.name, ID: PTAISmartCell.ID, dataModel: subValue)
                     rows.append(row_List)
                 } else if subValue.name == PTAppConfig.languageFunc(text: "MoDi") || subValue.name == PTAppConfig.languageFunc(text: "V1.4") || subValue.name == PTAppConfig.languageFunc(text: "V1.5") || subValue.name == PTAppConfig.languageFunc(text: "TEST") {
-                    let row_List = PTRows.init(cls: PTStableDiffusionModelCell.self, ID: PTStableDiffusionModelCell.ID, dataModel: subValue)
+                    let row_List = PTRows.init(ID: PTStableDiffusionModelCell.ID, dataModel: subValue)
                     rows.append(row_List)
                 } else {
-                    let row_List = PTRows.init(title: subValue.name,cls: PTFusionCell.self, ID: PTFusionCell.ID, dataModel: subValue)
+                    let row_List = PTRows.init(title: subValue.name,ID: PTFusionCell.ID, dataModel: subValue)
                     rows.append(row_List)
                 }
             }
@@ -674,16 +1008,15 @@ class PTSettingListViewController: PTChatBaseViewController {
                 headerHeight = CGFloat.ScaleW(w: 44)
             }
             if value.name == PTAppConfig.languageFunc(text: "about_Main_Other") {
-                let cellSection = PTSection.init(headerTitle:value.name,headerCls:PTSettingHeader.self,headerID: PTSettingHeader.ID,footerCls:PTSettingFooter.self,footerID:PTSettingFooter.ID,footerHeight:CGFloat.kTabbarHeight_Total,headerHeight: headerHeight,rows: rows)
+                let cellSection = PTSection.init(headerTitle:value.name,headerID: PTSettingHeader.ID,footerID:PTSettingFooter.ID,footerHeight:CGFloat.kTabbarHeight_Total,headerHeight: headerHeight,rows: rows)
                 mSections.append(cellSection)
             } else {
-                let cellSection = PTSection.init(headerTitle:value.name,headerCls:PTSettingHeader.self,headerID: PTSettingHeader.ID,headerHeight: headerHeight,rows: rows)
+                let cellSection = PTSection.init(headerTitle:value.name,headerID: PTSettingHeader.ID,headerHeight: headerHeight,rows: rows)
                 mSections.append(cellSection)
             }
         }
         
-        self.collectionView.pt_register(by: mSections)
-        self.collectionView.reloadData()
+        self.collectionView.showCollectionDetail(collectionData: mSections)
     }
     
     //MARK: 進入相冊

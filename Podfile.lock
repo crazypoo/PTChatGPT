@@ -76,14 +76,14 @@ PODS:
   - PhoneNumberKit/PhoneNumberKitCore (3.7.11)
   - PhoneNumberKit/UIKit (3.7.11):
     - PhoneNumberKit/PhoneNumberKitCore
-  - PooTools/CameraPermission (3.54.15):
+  - PooTools/CameraPermission (3.55.7):
     - PooTools/Core
-  - PooTools/CheckUpdate (3.54.15):
+  - PooTools/CheckUpdate (3.55.7):
     - PooTools/NetWork
-  - PooTools/ColorPicker (3.54.15):
+  - PooTools/ColorPicker (3.55.7):
     - ChromaColorPicker
     - PooTools/Core
-  - PooTools/Core (3.54.15):
+  - PooTools/Core (3.55.7):
     - AttributedString
     - CocoaLumberjack/Swift
     - DeviceKit
@@ -98,10 +98,10 @@ PODS:
     - UIColor_Hex_Swift
     - "UIViewController+Swizzled"
     - YYText
-  - PooTools/CustomerLabel (3.54.15):
+  - PooTools/CustomerLabel (3.55.7):
     - PooTools/Core
     - YYText
-  - PooTools/DEBUG (3.54.15):
+  - PooTools/DEBUG (3.55.7):
     - PooTools/ColorPicker
     - PooTools/Core
     - PooTools/FloatingPanel
@@ -110,7 +110,7 @@ PODS:
     - PooTools/SearchBar
     - PooTools/Share
     - PooTools/SideControl
-  - PooTools/FilterCamera (3.54.15):
+  - PooTools/FilterCamera (3.55.7):
     - PooTools/CameraPermission
     - PooTools/Core
     - PooTools/HarbethKit
@@ -118,64 +118,64 @@ PODS:
     - PooTools/MediaViewer
     - PooTools/MicPermission
     - PooTools/NavBarController
-  - PooTools/FloatingPanel (3.54.15):
+  - PooTools/FloatingPanel (3.55.7):
     - PooTools/Core
-  - PooTools/GCDWebServer (3.54.15):
+  - PooTools/GCDWebServer (3.55.7):
     - GCDWebServer
     - GCDWebServer/WebUploader
     - PooTools/Core
-  - PooTools/HarbethKit (3.54.15):
+  - PooTools/HarbethKit (3.55.7):
     - Harbeth
     - PooTools/CameraPermission
     - PooTools/Core
-  - PooTools/ImageEditor (3.54.15):
+  - PooTools/ImageEditor (3.55.7):
     - PooTools/Core
     - PooTools/HarbethKit
     - PooTools/NavBarController
-  - PooTools/Input (3.54.15):
+  - PooTools/Input (3.55.7):
     - PhoneNumberKit
     - PooTools/Core
     - TextFieldEffects
     - "UITextField+Shake"
-  - PooTools/Instructions (3.54.15):
+  - PooTools/Instructions (3.55.7):
     - Instructions
     - PooTools/Core
-  - PooTools/ListEmptyData (3.54.15):
+  - PooTools/ListEmptyData (3.55.7):
     - EmptyDataSet-Swift
     - LXFProtocolTool/LXFEmptyDataSetable
     - PooTools/Core
-  - PooTools/Loading (3.54.15):
+  - PooTools/Loading (3.55.7):
     - PooTools/Core
-  - PooTools/MediaViewer (3.54.15):
+  - PooTools/MediaViewer (3.55.7):
     - PooTools/Core
     - PooTools/NetWork
     - PooTools/PageControl
     - PooTools/ProgressBar
-  - PooTools/MicPermission (3.54.15):
+  - PooTools/MicPermission (3.55.7):
     - PooTools/Core
-  - PooTools/NavBarController (3.54.15):
+  - PooTools/NavBarController (3.55.7):
     - PooTools/Core
     - ZXNavigationBar
-  - PooTools/NetWork (3.54.15):
+  - PooTools/NetWork (3.55.7):
     - Alamofire
     - KakaJSON
     - PooTools/Core
     - PooTools/Loading
-  - PooTools/NotificationBanner (3.54.15):
+  - PooTools/NotificationBanner (3.55.7):
     - NotificationBannerSwift
     - PooTools/Core
-  - PooTools/OSSKitSpeech (3.54.15):
+  - PooTools/OSSKitSpeech (3.55.7):
     - PooTools/Core
     - PooTools/SpeechRecognizerPermission
-  - PooTools/PageControl (3.54.15):
+  - PooTools/PageControl (3.55.7):
     - PooTools/Core
-  - PooTools/PagingControl (3.54.15):
+  - PooTools/PagingControl (3.55.7):
     - JXPagingView/Paging
     - JXSegmentedView
     - PooTools/Core
-  - PooTools/PDF (3.54.15):
+  - PooTools/PDF (3.55.7):
     - PooTools/Core
-  - PooTools/PhotoPicker (3.54.15):
+  - PooTools/PhotoPicker (3.55.7):
     - ChromaColorPicker
     - PooTools/CameraPermission
     - PooTools/Core
@@ -186,32 +186,32 @@ PODS:
     - PooTools/NavBarController
     - PooTools/NetWork
     - PooTools/VideoEditor
-  - PooTools/Picker (3.54.15):
+  - PooTools/Picker (3.55.7):
     - BRPickerView
     - PooTools/Core
-  - PooTools/ProgressBar (3.54.15):
+  - PooTools/ProgressBar (3.55.7):
     - PooTools/Core
-  - PooTools/SearchBar (3.54.15):
+  - PooTools/SearchBar (3.55.7):
     - PooTools/Core
-  - PooTools/Share (3.54.15):
+  - PooTools/Share (3.55.7):
     - PooTools/CustomerLabel
-  - PooTools/SideControl (3.54.15):
+  - PooTools/SideControl (3.55.7):
     - PooTools/Core
-  - PooTools/Slider (3.54.15):
+  - PooTools/Slider (3.55.7):
     - PooTools/Core
     - RangeSeekSlider
-  - PooTools/SpeechRecognizerPermission (3.54.15):
+  - PooTools/SpeechRecognizerPermission (3.55.7):
     - PooTools/Core
-  - PooTools/SwipeCell (3.54.15):
+  - PooTools/SwipeCell (3.55.7):
     - PooTools/Core
     - SwipeCellKit
-  - PooTools/VideoEditor (3.54.15):
+  - PooTools/VideoEditor (3.55.7):
     - PooTools/Core
     - PooTools/FloatingPanel
     - PooTools/HarbethKit
     - PooTools/Loading
     - PooTools/ProgressBar
-  - PooTools/ZipArchive (3.54.15):
+  - PooTools/ZipArchive (3.55.7):
     - PooTools/Core
     - SSZipArchive
   - pop (1.0.12)
@@ -375,7 +375,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   PooTools:
-    :commit: 92e79e7990000315432865e88ecf8920b6343d94
+    :commit: 465d98c8225c5680fd152dfaa7ed4977c73e39f5
     :git: https://github.com/crazypoo/PTools.git
 
 SPEC CHECKSUMS:
@@ -407,7 +407,7 @@ SPEC CHECKSUMS:
   MarqueeLabel: 15e524a6762552bb279cb17438b8a94990269fb9
   NotificationBannerSwift: dce54ded532b26e30cd8e7f4d80e124a0f2ba7d1
   PhoneNumberKit: ced55861269312a5e3bc2ef82a58d6255b1c976a
-  PooTools: e8a4251e805d18a1477f80aa2c9b9698ec2e140e
+  PooTools: 44034cf8f359961611785d882eea2577bb2a5e8f
   pop: d582054913807fd11fd50bfe6a539d91c7e1a55a
   RangeSeekSlider: 650b11fa1edcb92e1e0ede797669d98622570fb5
   SafeSFSymbols: c57c8752149b2ddc0213d3d519a3a31a8bd76340

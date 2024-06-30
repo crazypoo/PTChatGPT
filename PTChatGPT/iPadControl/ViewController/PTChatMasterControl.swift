@@ -143,51 +143,126 @@ class PTChatMasterControl: PTChatBaseViewController {
     }
 
     var mSections = [PTSection]()
-    func comboLayout()->UICollectionViewCompositionalLayout {
-        let layout = UICollectionViewCompositionalLayout.init { section, environment in
-            self.generateSection(section: section)
-        }
-        layout.register(PTBaseDecorationView_Corner.self, forDecorationViewOfKind: "background")
-        layout.register(PTBaseDecorationView.self, forDecorationViewOfKind: "background_no")
-        return layout
-    }
-    
-    func generateSection(section:NSInteger)->NSCollectionLayoutSection {
-        let sectionModel = mSections[section]
-
-        var group : NSCollectionLayoutGroup
-        let behavior : UICollectionLayoutSectionOrthogonalScrollingBehavior = .continuous
+    lazy var collectionView : PTCollectionView = {
+        let config = PTCollectionViewConfig()
+        config.viewType = .Custom
         
-        var bannerGroupSize : NSCollectionLayoutSize
-        var customers = [NSCollectionLayoutGroupCustomItem]()
-        var groupH:CGFloat = 0
-        sectionModel.rows.enumerated().forEach { (index,model) in
-            let cellHeight:CGFloat = self.popoverCellBaseHeight
-            let customItem = NSCollectionLayoutGroupCustomItem.init(frame: CGRect.init(x: 0, y: groupH, width: self.popoverWidth, height: cellHeight), zIndex: 1000+index)
-            customers.append(customItem)
-            groupH += cellHeight
+        let view = PTCollectionView(viewConfig: config)
+        view.registerClassCells(classs: [PTPopoverCell.ID:PTPopoverCell.self])
+        view.customerLayout = { sectionIndex,sectionModel in
+            return UICollectionView.girdCollectionLayout(data: sectionModel.rows,groupWidth: iPadSplitMainControl, itemHeight: self.popoverCellBaseHeight,cellRowCount: 1,originalX: 0)
         }
-        bannerGroupSize = NSCollectionLayoutSize.init(widthDimension: NSCollectionLayoutDimension.absolute(iPadSplitMainControl), heightDimension: NSCollectionLayoutDimension.absolute(groupH))
-        group = NSCollectionLayoutGroup.custom(layoutSize: bannerGroupSize, itemProvider: { layoutEnvironment in
-            customers
-        })
-        
-        let sectionInsets = NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 0)
-        let laySection = NSCollectionLayoutSection(group: group)
-        laySection.orthogonalScrollingBehavior = behavior
-        laySection.contentInsets = sectionInsets
+        view.indexPathSwipe = { sectionModel,indexPath in
+            if indexPath.row != 0 {
+                return true
+            }
+            return false
+        }
+        view.swipeLeftHandler = { collectionView,sectionModel,indexPath in
+            let delete = SwipeAction(style: .destructive, title: PTAppConfig.languageFunc(text: "cell_Delete")) { action, indexPath in
+                PTGCDManager.gcdMain {
+                    if self.segDataArr()[indexPath.row]!.keyName == "Base" {
+                        PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Delete_error"))
+                        self.showDetail()
+                    } else if self.segDataArr()[indexPath.row]!.keyName == self.currentHistoryModel.keyName && self.segDataArr()[indexPath.row]!.keyName != "Base" {
+                        var data = self.segDataArr()
+                        data.remove(at: indexPath.row)
+                        PTAppConfig.refreshTagData(segDataArr: data)
+                        self.reloadTagChat(index: 0)
+                        self.showDetail()
+                        self.collectionView.mtSelectItem(indexPath: IndexPath(item: 0, section: 0), animated: true, scrollPosition: .top)
+                    } else {
+                        var data = self.segDataArr()
+                        data.remove(at: indexPath.row)
+                        PTAppConfig.refreshTagData(segDataArr: data)
+                        self.showDetail()
 
-        return laySection
-    }
+                        for (index,value) in self.segDataArr().enumerated() {
+                            if value!.keyName == self.currentHistoryModel.keyName {
+                                self.collectionView.mtSelectItem(indexPath: IndexPath(row: index, section: 0), animated: false, scrollPosition: .top)
+                                break
+                            }
+                        }
+                        
+                        PTAppConfig.refreshTagData(segDataArr: data)
+                        self.currentChatViewController.segDataArr = data
+                    }
+                }
+            }
+            delete.font = .appfont(size: 14)
+            delete.backgroundColor = .clear
+            delete.fulfill(with: .delete)
+            self.swipe_cell_configure(action: delete, with: .trash)
+            
+            let edit = SwipeAction(style: .destructive, title: "编辑") { action, indexPath in
+                PTGCDManager.gcdAfter(time: 0.5) {
+                    let itemSec = self.mSections[indexPath.section]
+                    let itemRow = itemSec.rows[indexPath.row]
+                    let cellModel = (itemRow.dataModel as! PTSegHistoryModel)
+                    if cellModel.keyName == "Base" {
+                        PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Edit_error"))
+                    } else {
+                        let textKey = PTAppConfig.languageFunc(text: "alert_Tag_set")
+                        let aiKey = PTAppConfig.languageFunc(text: "alert_AI_Set")
+                                           
+                        let currentTitle = cellModel.keyName
+                        let aiSet = cellModel.systemContent
 
-    lazy var collectionView : UICollectionView = {
-        let view = UICollectionView.init(frame: .zero, collectionViewLayout: self.comboLayout())
-        view.backgroundColor = .clear
-        view.delegate = self
-        view.dataSource = self
+                        UIAlertController.base_textfield_alertVC(title:PTAppConfig.languageFunc(text: "alert_Edit_ai"),titleColor: .gobalTextColor,okBtn: PTAppConfig.languageFunc(text: "button_Confirm"), cancelBtn: PTAppConfig.languageFunc(text: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey,aiKey], textFieldTexts: [currentTitle,aiSet], keyboardType: [.default,.default], textFieldDelegate: self) { result in
+                            let newKey:String? = result[textKey]!
+                            let newAiKey:String? = result[aiKey]
+                            if !(newKey ?? "").stringIsEmpty() {
+                                var segDatas = AppDelegate.appDelegate()?.appConfig.tagDataArr()
+                                let currentCellBaseData = segDatas![indexPath.row]
+                                currentCellBaseData!.keyName = newKey!
+                                currentCellBaseData!.systemContent = newAiKey ?? ""
+                                segDatas![indexPath.row] = currentCellBaseData
+                                
+                                AppDelegate.appDelegate()?.appConfig.setChatData = segDatas!.kj.JSONObjectArray()
+                                
+                                var indexPathSelect = IndexPath()
+                                self.segDataArr().enumerated().forEach { index,value in
+                                    if value!.keyName == self.currentHistoryModel.keyName {
+                                        indexPathSelect = IndexPath.init(row: index, section: 0)
+                                    }
+                                }
+                                var data = self.segDataArr()
+                                data[indexPath.row] = currentCellBaseData!
+                                PTAppConfig.refreshTagData(segDataArr: data)
+                                self.showDetail()
+                                self.collectionView.mtSelectItem(indexPath: indexPathSelect, animated: false, scrollPosition: .top)
+                                
+                                if indexPathSelect.row == indexPath.row {
+                                    self.reloadTagChat(index: indexPath.row)
+                                }
+                            } else {
+                                PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Input_error"))
+                            }
+                        }
+                    }
+                }
+            }
+            edit.font = .appfont(size: 14)
+            edit.backgroundColor = .clear
+            edit.fulfill(with: .reset)
+            self.swipe_cell_configure(action: edit, with: .edit)
+
+            return [delete,edit]
+        }
+        view.cellInCollection = { collection,sectionModel,indexPath in
+            let itemRow = sectionModel.rows[indexPath.row]
+            let cell = collection.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTPopoverCell
+            cell.cellModel = (itemRow.dataModel as! PTSegHistoryModel)
+            cell.bottomLine.isHidden = indexPath.row == (self.segDataArr().count - 1) ? true : false
+            return cell
+        }
+        view.collectionDidSelect = { collection,sectionModel,indexPath in
+            self.currentHistoryModel = self.segDataArr()[indexPath.row]!
+            self.reloadTagChat(index: indexPath.row)
+        }
         return view
     }()
-
+    
     lazy var deleteAllTag:UIButton = {
         let deleteAllTag = UIButton(type: .custom)
         deleteAllTag.setImage("🗑️".emojiToImage(emojiFont: .appfont(size: 34)), for: .normal)
@@ -210,7 +285,7 @@ class PTChatMasterControl: PTChatBaseViewController {
                     self.reloadTagChat(index: 0)
                     self.currentHistoryModel = self.segDataArr()[0]!
                     self.showDetail()
-                    self.collectionView.selectItem(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .top)
+                    self.collectionView.mtSelectItem(indexPath: IndexPath(row: 0, section: 0), animated: true, scrollPosition: .top)
                     PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Delete_done"))
                 }
             }
@@ -393,7 +468,7 @@ class PTChatMasterControl: PTChatBaseViewController {
         self.showDetail()
         
         let indexPath = IndexPath(row: self.segDataArr().firstIndex(where: {$0!.keyName == self.currentHistoryModel.keyName})!, section: 0)
-        self.collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .top)
+        self.collectionView.mtSelectItem(indexPath: indexPath, animated: true, scrollPosition: .top)
     }
     
     func showDetail() {
@@ -401,15 +476,14 @@ class PTChatMasterControl: PTChatBaseViewController {
 
         var rows = [PTRows]()
         self.segDataArr().enumerated().forEach { (index,value) in
-            let row_List = PTRows.init(cls: PTPopoverCell.self, ID: PTPopoverCell.ID, dataModel: value)
+            let row_List = PTRows.init(ID: PTPopoverCell.ID, dataModel: value)
             rows.append(row_List)
         }
         
         let sections = PTSection.init(rows: rows)
         mSections.append(sections)
 
-        self.collectionView.pt_register(by: mSections)
-        self.collectionView.reloadData()
+        self.collectionView.showCollectionDetail(collectionData: mSections)
     }
     
     //MARK: 進入相冊
@@ -450,41 +524,7 @@ class PTChatMasterControl: PTChatBaseViewController {
     }
 }
 
-extension PTChatMasterControl:UICollectionViewDelegate,UICollectionViewDataSource
-{
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return self.mSections.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.mSections[section].rows.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let itemSec = mSections[indexPath.section]
-        let itemRow = itemSec.rows[indexPath.row]
-        if itemRow.ID == PTPopoverCell.ID {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: itemRow.ID, for: indexPath) as! PTPopoverCell
-            cell.cellModel = (itemRow.dataModel as! PTSegHistoryModel)
-            cell.bottomLine.isHidden = indexPath.row == (self.segDataArr().count - 1) ? true : false
-            if indexPath.row != 0 {
-                cell.delegate = self
-            }
-            return cell
-        } else {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CELL", for: indexPath)
-            cell.backgroundColor = .random
-            return cell
-        }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        self.currentHistoryModel = self.segDataArr()[indexPath.row]!
-        self.reloadTagChat(index: indexPath.row)
-    }
-}
-
-extension PTChatMasterControl:SwipeCollectionViewCellDelegate {
+extension PTChatMasterControl {
     func swipe_cell_configure(action: SwipeAction, with descriptor: ActionDescriptor,buttonDisplayMode: ButtonDisplayMode? = PTSaveChatViewController.swipe_cell_buttonDisplayMode(),buttonStyle: ButtonStyle? = PTSaveChatViewController.swipe_cell_buttonStyle()) {
        action.title = descriptor.title(forDisplayMode: buttonDisplayMode!)
        action.image = descriptor.image(forStyle: buttonStyle!, displayMode: buttonDisplayMode!)
@@ -498,126 +538,6 @@ extension PTChatMasterControl:SwipeCollectionViewCellDelegate {
            action.textColor = descriptor.color(forStyle: buttonStyle!)
            action.font = UIFont.appfont(size: 13)
            action.transitionDelegate = ScaleTransition.default
-       }
-   }
-   
-   func collectionView(_ collectionView: UICollectionView, editActionsOptionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
-       var options = SwipeOptions()
-       options.expansionStyle = orientation == .left ? .selection : .destructive(automaticallyDelete: false)
-       options.transitionStyle = .border
-       switch PTSaveChatViewController.swipe_cell_buttonStyle() {
-       case .backgroundColor:
-           options.buttonSpacing = 4
-       case .circular:
-           options.buttonSpacing = 4
-           options.backgroundColor = .clear
-       }
-       return options
-   }
-   
-   func collectionView(_ collectionView: UICollectionView, editActionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
-       if orientation == .right {
-           
-           let delete = SwipeAction(style: .destructive, title: PTAppConfig.languageFunc(text: "cell_Delete")) { action, indexPath in
-               PTGCDManager.gcdMain {
-                   if self.segDataArr()[indexPath.row]!.keyName == "Base" {
-                       PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Delete_error"))
-                       self.showDetail()
-                   } else if self.segDataArr()[indexPath.row]!.keyName == self.currentHistoryModel.keyName && self.segDataArr()[indexPath.row]!.keyName != "Base" {
-                       var data = self.segDataArr()
-                       data.remove(at: indexPath.row)
-                       PTAppConfig.refreshTagData(segDataArr: data)
-                       self.reloadTagChat(index: 0)
-                       self.showDetail()
-                       self.collectionView.selectItem(at: IndexPath(item: 0, section: 0), animated: true, scrollPosition: .top)
-                   } else {
-                       var data = self.segDataArr()
-                       data.remove(at: indexPath.row)
-                       PTAppConfig.refreshTagData(segDataArr: data)
-                       self.showDetail()
-
-                       for (index,value) in self.segDataArr().enumerated() {
-                           if value!.keyName == self.currentHistoryModel.keyName {
-                               self.collectionView.selectItem(at: IndexPath(row: index, section: 0), animated: false, scrollPosition: .top)
-                               break
-                           }
-                       }
-                       
-                       PTAppConfig.refreshTagData(segDataArr: data)
-                       self.currentChatViewController.segDataArr = data
-                   }
-               }
-           }
-           delete.font = .appfont(size: 14)
-           delete.backgroundColor = .clear
-           delete.fulfill(with: .delete)
-           self.swipe_cell_configure(action: delete, with: .trash)
-           
-           let edit = SwipeAction(style: .destructive, title: "编辑") { action, indexPath in
-               PTGCDManager.gcdAfter(time: 0.5) {
-                   let itemSec = self.mSections[indexPath.section]
-                   let itemRow = itemSec.rows[indexPath.row]
-                   let cellModel = (itemRow.dataModel as! PTSegHistoryModel)
-                   if cellModel.keyName == "Base" {
-                       PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Edit_error"))
-                   } else {
-                       let textKey = PTAppConfig.languageFunc(text: "alert_Tag_set")
-                       let aiKey = PTAppConfig.languageFunc(text: "alert_AI_Set")
-                                          
-                       let currentTitle = cellModel.keyName
-                       let aiSet = cellModel.systemContent
-
-                       UIAlertController.base_textfield_alertVC(title:PTAppConfig.languageFunc(text: "alert_Edit_ai"),titleColor: .gobalTextColor,okBtn: PTAppConfig.languageFunc(text: "button_Confirm"), cancelBtn: PTAppConfig.languageFunc(text: "button_Cancel"),cancelBtnColor: .systemBlue, placeHolders: [textKey,aiKey], textFieldTexts: [currentTitle,aiSet], keyboardType: [.default,.default], textFieldDelegate: self) { result in
-                           let newKey:String? = result[textKey]!
-                           let newAiKey:String? = result[aiKey]
-                           if !(newKey ?? "").stringIsEmpty() {
-                               var segDatas = AppDelegate.appDelegate()?.appConfig.tagDataArr()
-                               let currentCellBaseData = segDatas![indexPath.row]
-                               currentCellBaseData!.keyName = newKey!
-                               currentCellBaseData!.systemContent = newAiKey ?? ""
-                               segDatas![indexPath.row] = currentCellBaseData
-                               
-                               AppDelegate.appDelegate()?.appConfig.setChatData = segDatas!.kj.JSONObjectArray()
-                               
-                               var indexPathSelect = IndexPath()
-                               self.segDataArr().enumerated().forEach { index,value in
-                                   if value!.keyName == self.currentHistoryModel.keyName {
-                                       indexPathSelect = IndexPath.init(row: index, section: 0)
-                                   }
-                               }
-                               var data = self.segDataArr()
-                               data[indexPath.row] = currentCellBaseData!
-                               PTAppConfig.refreshTagData(segDataArr: data)
-                               self.showDetail()
-                               self.collectionView.selectItem(at: indexPathSelect, animated: false, scrollPosition: .top)
-                               
-                               if indexPathSelect.row == indexPath.row {
-                                   self.reloadTagChat(index: indexPath.row)
-                               }
-                           } else {
-                               PTBaseViewController.gobal_drop(title: PTAppConfig.languageFunc(text: "alert_Input_error"))
-                           }
-                       }
-                   }
-               }
-           }
-           edit.font = .appfont(size: 14)
-           edit.backgroundColor = .clear
-           edit.fulfill(with: .reset)
-           self.swipe_cell_configure(action: edit, with: .edit)
-
-           return [delete,edit]
-       } else {
-           guard isSwipeRightEnabled else { return nil }
-
-           let read = SwipeAction(style: .default, title: nil) { action, indexPath in
-           }
-
-           read.hidesWhenSelected = true
-
-           let descriptor: ActionDescriptor = .unread
-           self.swipe_cell_configure(action: read, with: descriptor)
-           return [read]
        }
    }
 }
